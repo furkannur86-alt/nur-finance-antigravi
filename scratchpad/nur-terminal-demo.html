@@ -284,6 +284,61 @@
   }
 
   .ascii-chart { color: #00d4aa; }
+
+  /* ── Canvas containers ── */
+  .canvas-wrap {
+    margin: 4px 8px;
+    border: 1px solid #222;
+    border-radius: 2px;
+    overflow: hidden;
+    background: #050510;
+    position: relative;
+  }
+  .canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .hmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 3px;
+    padding: 6px 8px;
+  }
+  .hmap-cell {
+    padding: 10px 8px;
+    border-radius: 2px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    cursor: default;
+    transition: opacity 0.1s;
+    position: relative;
+  }
+  .hmap-cell:hover { opacity: 0.85; }
+  .hmap-cell .hm-sym { font-weight: 700; font-size: 12px; }
+  .hmap-cell .hm-px { font-size: 10px; opacity: 0.9; }
+  .hmap-cell .hm-chg { font-weight: 700; font-size: 13px; }
+  .geo-hmap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 6px 8px;
+  }
+  .geo-cell {
+    padding: 12px 10px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    cursor: default;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .geo-cell .geo-name { font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+  .geo-cell .geo-risk { font-weight: 700; font-size: 18px; }
+  .geo-cell .geo-bar { height: 4px; border-radius: 2px; margin-top: 6px; }
+
   button:focus-visible { outline: 1px solid #ff8c00; outline-offset: 1px; }
   @media (prefers-reduced-motion: reduce) {
     .boot { transition: none; }
@@ -430,6 +485,7 @@ const EIKON_MAP = {
   'EQ':'equity', 'HELP':'help', 'MENU':'help', 'CLS':'cls', 'CLEAR':'cls',
   'MBS':'stub', 'MM':'stub', 'COM':'stub', 'MUNI':'stub', 'PFD':'stub', 'GOVT':'stub', 'CORP':'stub',
   'GEOP':'bmap', 'CONFLICT':'cris', 'LIVE':'live',
+  'SMAP':'hmap', 'HEAT':'hmap',
 };
 
 const BLOOMBERG_MAP = {
@@ -442,6 +498,7 @@ const BLOOMBERG_MAP = {
   'GOVT':'stub', 'CORP':'stub', 'MTGE':'stub', 'M-MKT':'stub', 'MUNI':'stub',
   'PFD':'stub', 'CMDTY':'stub',
   'BMAP':'bmap', 'CRIS':'cris', 'LIVE':'live',
+  'HMAP':'hmap', 'HEAT':'hmap',
 };
 
 // RIC to internal key mapping for Eikon mode
@@ -622,8 +679,102 @@ function screenDES(key) {
   printHTML(`  Beta             <span class="c-white">${s.beta||'N/A'}</span>         Shares Out   <span class="c-white">${s.shares||'N/A'}</span>`);
   printHTML(`  Analyst Rating   <span class="c-teal c-bold">${s.rating||'N/A'}</span>`);
   printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+
+  // Mini 30-day price chart
+  printHTML(`  <span class="c-amber">30-DAY PRICE TREND</span>`);
+  const miniWrap = document.createElement('div');
+  miniWrap.className = 'canvas-wrap';
+  miniWrap.style.maxWidth = '500px';
+  const miniCvs = document.createElement('canvas');
+  miniCvs.width = 500; miniCvs.height = 120;
+  miniWrap.appendChild(miniCvs);
+  out.appendChild(miniWrap);
+  out.scrollTop = out.scrollHeight;
+
+  const mctx = miniCvs.getContext('2d');
+  mctx.fillStyle = '#050510';
+  mctx.fillRect(0, 0, 500, 120);
+
+  const miniPts = 30;
+  const miniData = [];
+  let mp = s.px * (0.95 + Math.random()*0.04);
+  for (let i = 0; i < miniPts; i++) {
+    mp += (Math.random()-0.47) * s.px * 0.012;
+    miniData.push(mp);
+  }
+  miniData[miniPts-1] = s.px;
+  const mmn = Math.min(...miniData), mmx = Math.max(...miniData);
+  const mrange = mmx - mmn || 1;
+  const mPadL = 55, mPadR = 10, mPadT = 10, mPadB = 18;
+  const mW = 500 - mPadL - mPadR;
+  const mH = 120 - mPadT - mPadB;
+
+  // Grid
+  mctx.strokeStyle = '#1a1a2e';
+  mctx.lineWidth = 0.5;
+  for (let i = 0; i <= 3; i++) {
+    const y = mPadT + (i / 3) * mH;
+    mctx.beginPath(); mctx.moveTo(mPadL, y); mctx.lineTo(500 - mPadR, y); mctx.stroke();
+    const val = mmx - (i / 3) * mrange;
+    mctx.fillStyle = '#555';
+    mctx.font = '9px JetBrains Mono';
+    mctx.textAlign = 'right';
+    mctx.fillText(fmtPx(val), mPadL - 4, y + 3);
+  }
+
+  // Area fill
+  const mGrad = mctx.createLinearGradient(0, mPadT, 0, mPadT + mH);
+  const trendUp = s.chg >= 0;
+  mGrad.addColorStop(0, trendUp ? 'rgba(0,212,170,0.3)' : 'rgba(239,68,68,0.3)');
+  mGrad.addColorStop(1, trendUp ? 'rgba(0,212,170,0.02)' : 'rgba(239,68,68,0.02)');
+  mctx.fillStyle = mGrad;
+  mctx.beginPath();
+  for (let i = 0; i < miniPts; i++) {
+    const x = mPadL + (i / (miniPts-1)) * mW;
+    const y = mPadT + (1 - (miniData[i] - mmn) / mrange) * mH;
+    i === 0 ? mctx.moveTo(x, y) : mctx.lineTo(x, y);
+  }
+  mctx.lineTo(mPadL + mW, mPadT + mH);
+  mctx.lineTo(mPadL, mPadT + mH);
+  mctx.closePath();
+  mctx.fill();
+
+  // Line
+  mctx.strokeStyle = trendUp ? '#00d4aa' : '#ef4444';
+  mctx.lineWidth = 2;
+  mctx.beginPath();
+  for (let i = 0; i < miniPts; i++) {
+    const x = mPadL + (i / (miniPts-1)) * mW;
+    const y = mPadT + (1 - (miniData[i] - mmn) / mrange) * mH;
+    i === 0 ? mctx.moveTo(x, y) : mctx.lineTo(x, y);
+  }
+  mctx.stroke();
+
+  // Endpoint
+  const endX = mPadL + mW;
+  const endY = mPadT + (1 - (s.px - mmn) / mrange) * mH;
+  mctx.fillStyle = trendUp ? '#00d4aa' : '#ef4444';
+  mctx.beginPath();
+  mctx.arc(endX, endY, 3, 0, Math.PI * 2);
+  mctx.fill();
+
+  // Price label
+  mctx.fillStyle = trendUp ? '#00d4aa' : '#ef4444';
+  mctx.font = 'bold 11px JetBrains Mono';
+  mctx.textAlign = 'left';
+  mctx.fillText(fmtPx(s.px), endX - 50, endY - 8);
+
+  // X-axis
+  mctx.fillStyle = '#444';
+  mctx.font = '8px JetBrains Mono';
+  mctx.textAlign = 'center';
+  mctx.fillText('30D ago', mPadL + 10, 120 - 4);
+  mctx.fillText('15D', mPadL + mW/2, 120 - 4);
+  mctx.fillText('Today', mPadL + mW - 10, 120 - 4);
+
+  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
   const gpCmd = cmdName('gp'), faCmd = cmdName('fa'), anrCmd = cmdName('anr');
-  printHTML(`  <span class="c-gray">Type ${gpCmd} for price graph, ${faCmd} for financials, ${anrCmd} for analyst recs</span>`);
+  printHTML(`  <span class="c-gray">Type ${gpCmd} for full chart, ${faCmd} for financials, ${anrCmd} for analyst recs</span>`);
 }
 
 function screenGP(key) {
@@ -636,32 +787,162 @@ function screenGP(key) {
   printHTML(`<span class="c-amber c-bold">  ${label}  (90 Day)                                          ${disp}</span>`);
   printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
 
-  const pts = 60;
-  const prices = [s.px];
-  for (let i = 1; i < pts; i++) {
-    prices.unshift(prices[0] - (Math.random()-0.48) * s.px * 0.015);
+  // Generate 90 days of OHLC data
+  const days = 90;
+  const ohlc = [];
+  let p = s.px * (0.85 + Math.random()*0.1);
+  for (let i = 0; i < days; i++) {
+    const o = p;
+    const move = (Math.random()-0.47) * s.px * 0.02;
+    const c = o + move;
+    const h = Math.max(o,c) + Math.random()*s.px*0.008;
+    const l = Math.min(o,c) - Math.random()*s.px*0.008;
+    ohlc.push({o,h,l,c});
+    p = c;
   }
-  const mn = Math.min(...prices);
-  const mx = Math.max(...prices);
-  const rows = 16;
-  const cols = pts;
+  // Ensure last candle matches current price
+  ohlc[days-1].c = s.px;
 
-  const grid = Array.from({length:rows}, ()=> Array(cols).fill(' '));
-  for (let c = 0; c < cols; c++) {
-    const row = Math.round((1 - (prices[c]-mn)/(mx-mn)) * (rows-1));
-    grid[row][c] = '█';
-    for (let r = row+1; r < rows; r++) grid[r][c] = '░';
+  const allPx = ohlc.flatMap(d => [d.h, d.l]);
+  const mn = Math.min(...allPx);
+  const mx = Math.max(...allPx);
+  const range = mx - mn || 1;
+
+  // Draw canvas chart
+  const wrap = document.createElement('div');
+  wrap.className = 'canvas-wrap';
+  const cvs = document.createElement('canvas');
+  const W = 760, H = 320;
+  cvs.width = W; cvs.height = H;
+  wrap.appendChild(cvs);
+  out.appendChild(wrap);
+  out.scrollTop = out.scrollHeight;
+
+  const ctx = cvs.getContext('2d');
+  const padL = 70, padR = 16, padT = 20, padB = 30;
+  const cw = W - padL - padR;
+  const ch = H - padT - padB;
+
+  const toX = (i) => padL + (i / (days-1)) * cw;
+  const toY = (v) => padT + (1 - (v - mn) / range) * ch;
+
+  // Background
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 0.5;
+  const gridSteps = 6;
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = padT + (i / gridSteps) * ch;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    const val = mx - (i / gridSteps) * range;
+    ctx.fillStyle = '#666';
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtPx(val), padL - 6, y + 3);
   }
 
-  for (let r = 0; r < rows; r++) {
-    const label = r === 0 ? fmtPx(mx) : r === rows-1 ? fmtPx(mn) : r === Math.floor(rows/2) ? fmtPx((mx+mn)/2) : '';
-    const lbl = pad(label, 10, true);
-    printHTML(`  <span class="c-gray">${lbl}</span> <span class="c-teal">${grid[r].join('')}</span>`);
+  // X-axis labels
+  ctx.fillStyle = '#555';
+  ctx.textAlign = 'center';
+  ctx.font = '9px JetBrains Mono, monospace';
+  const xlabels = ['90D','75D','60D','45D','30D','15D','Today'];
+  for (let i = 0; i < xlabels.length; i++) {
+    const x = padL + (i / (xlabels.length-1)) * cw;
+    ctx.fillText(xlabels[i], x, H - 8);
   }
-  printHTML(`  <span class="c-gray">${' '.repeat(10)} ${'─'.repeat(cols)}</span>`);
-  printHTML(`  <span class="c-gray">${' '.repeat(10)} ${pad('90D ago',20)}${pad('45D ago',20)}${pad('Today',20)}</span>`);
+
+  // Moving average (20-day)
+  ctx.strokeStyle = 'rgba(255,140,0,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  for (let i = 19; i < days; i++) {
+    const avg = ohlc.slice(i-19, i+1).reduce((a,d)=>a+d.c,0) / 20;
+    const x = toX(i), y = toY(avg);
+    i === 19 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Area fill under close prices
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + ch);
+  grad.addColorStop(0, 'rgba(0,212,170,0.25)');
+  grad.addColorStop(1, 'rgba(0,212,170,0.01)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(ohlc[0].c));
+  for (let i = 1; i < days; i++) ctx.lineTo(toX(i), toY(ohlc[i].c));
+  ctx.lineTo(toX(days-1), padT + ch);
+  ctx.lineTo(toX(0), padT + ch);
+  ctx.closePath();
+  ctx.fill();
+
+  // Candlesticks
+  const barW = Math.max(2, cw / days * 0.6);
+  for (let i = 0; i < days; i++) {
+    const d = ohlc[i];
+    const x = toX(i);
+    const bull = d.c >= d.o;
+    ctx.strokeStyle = bull ? '#22c55e' : '#ef4444';
+    ctx.fillStyle = bull ? '#22c55e' : '#ef4444';
+
+    // Wick
+    ctx.beginPath();
+    ctx.moveTo(x, toY(d.h));
+    ctx.lineTo(x, toY(d.l));
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    // Body
+    const top = toY(Math.max(d.o, d.c));
+    const bot = toY(Math.min(d.o, d.c));
+    const bodyH = Math.max(1, bot - top);
+    ctx.fillRect(x - barW/2, top, barW, bodyH);
+  }
+
+  // Current price line
+  const lastY = toY(s.px);
+  ctx.strokeStyle = '#00d4aa';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(padL, lastY); ctx.lineTo(W - padR, lastY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Price badge
+  ctx.fillStyle = '#00d4aa';
+  ctx.fillRect(W - padR, lastY - 8, padR, 16);
+  ctx.fillStyle = '#000';
+  ctx.font = 'bold 8px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.fillText(fmtPx(s.px,0), W - padR + 2, lastY + 3);
+
+  // Volume bars along bottom
+  const maxVol = Math.max(...ohlc.map((_,i) => (s.vol * (0.5 + Math.random()*0.8))));
+  for (let i = 0; i < days; i++) {
+    const vol = s.vol * (0.5 + Math.random()*0.8);
+    const vh = (vol / maxVol) * 30;
+    const bull = ohlc[i].c >= ohlc[i].o;
+    ctx.fillStyle = bull ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)';
+    ctx.fillRect(toX(i) - barW/2, padT + ch - vh, barW, vh);
+  }
+
+  // Legend
+  ctx.fillStyle = '#666';
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.fillText('MA(20)', padL + 4, padT + 12);
+  ctx.strokeStyle = 'rgba(255,140,0,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(padL + 42, padT + 10); ctx.lineTo(padL + 70, padT + 10); ctx.stroke();
+  ctx.setLineDash([]);
+
   printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
   printHTML(`  Last: <span class="c-teal c-bold">${fmtPx(s.px)}</span>  Chg: <span class="${chgColor(s.chg)}">${chgSign(s.chg)}${s.chg.toFixed(2)}</span>  High: ${fmtPx(s.yr_hi||s.px)}  Low: ${fmtPx(s.yr_lo||s.px*0.8)}`);
+  printHTML(`  <span class="c-gray">Candles: 90D OHLC  |  Orange dash: 20-day MA  |  Green area: close trend</span>`);
 }
 
 function screenFA(key) {
@@ -755,13 +1036,27 @@ function screenWEI() {
   printHTML(`<span class="c-amber c-bold">  ${title}                                           ${cmd}</span>`);
   printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
   const idxCol = MODE === 'EK' ? 'RIC' : 'INDEX';
-  printHTML(`  <span class="c-yellow">${pad(idxCol,14)}${pad('NAME',20)}${pad('LAST',14,true)}${pad('CHG',10,true)}${pad('%CHG',10,true)}</span>`);
-  printHTML(`  <span class="c-dim">${'─'.repeat(68)}</span>`);
+  printHTML(`  <span class="c-yellow">${pad(idxCol,14)}${pad('NAME',20)}${pad('LAST',14,true)}${pad('CHG',10,true)}${pad('%CHG',10,true)}  30D</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
   for (const [k,v] of Object.entries(DB.indices)) {
     const cc = chgColor(v.chg);
     const label = MODE === 'EK' ? v.ric : k;
-    printHTML(`  ${pad(label,14)}<span class="c-gray">${pad(v.name,20)}</span><span class="c-white">${pad(fmtPx(v.px),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span>`);
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `  ${pad(label,14)}<span class="c-gray">${pad(v.name,20)}</span><span class="c-white">${pad(fmtPx(v.px),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span>  `;
+    out.appendChild(row);
+    // Generate sparkline data
+    const sparkData = [];
+    let sp = v.px * (0.97 + Math.random()*0.02);
+    for (let i = 0; i < 30; i++) {
+      sp += (Math.random()-0.48) * v.px * 0.005;
+      sparkData.push(sp);
+    }
+    sparkData[29] = v.px;
+    const color = v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)';
+    drawSparkline(row, sparkData, color, 80, 16);
   }
+  out.scrollTop = out.scrollHeight;
 }
 
 function screenMOST() {
@@ -796,8 +1091,18 @@ function screenFXIP() {
     const spread = v.px < 10 ? 0.0003 : 0.05;
     const cc = chgColor(v.chg);
     const label = MODE === 'EK' ? v.ric : pair;
-    printHTML(`  <span class="c-teal">${pad(label,14)}</span><span class="c-white">${pad(v.px.toFixed(4),14,true)}</span><span class="c-white">${pad((v.px+spread).toFixed(4),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(4),12,true)}</span><span class="c-gray">${pad('LIVE',12,true)}</span>`);
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `  <span class="c-teal">${pad(label,14)}</span><span class="c-white">${pad(v.px.toFixed(4),14,true)}</span><span class="c-white">${pad((v.px+spread).toFixed(4),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(4),12,true)}</span><span class="c-gray">${pad('LIVE',12,true)}</span>  `;
+    out.appendChild(row);
+    // FX sparkline
+    const fxData = [];
+    let fp = v.px * (0.998 + Math.random()*0.002);
+    for (let i = 0; i < 24; i++) { fp += (Math.random()-0.49) * v.px * 0.001; fxData.push(fp); }
+    fxData[23] = v.px;
+    drawSparkline(row, fxData, v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)', 70, 14);
   }
+  out.scrollTop = out.scrollHeight;
 }
 
 function screenPORT() {
@@ -831,6 +1136,96 @@ function screenPORT() {
   const totalPnl = totalVal - totalCost;
   printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
   printHTML(`  <span class="c-amber c-bold">${pad('TOTAL',10)}</span>${' '.repeat(32)}<span class="c-white c-bold">${pad('$'+(totalVal/1000).toFixed(1)+'K',14,true)}</span><span class="${chgColor(totalPnl)} c-bold">${pad(chgSign(totalPnl)+'$'+(Math.abs(totalPnl)/1000).toFixed(1)+'K',10,true)}${pad(chgSign(totalPnl/totalCost*100)+(totalPnl/totalCost*100).toFixed(1)+'%',8,true)}</span>`);
+
+  // Portfolio allocation donut chart
+  print('');
+  printHTML(`  <span class="c-amber c-bold">ALLOCATION</span>`);
+  const donutWrap = document.createElement('div');
+  donutWrap.className = 'canvas-wrap';
+  donutWrap.style.maxWidth = '500px';
+  const donutCvs = document.createElement('canvas');
+  donutCvs.width = 500; donutCvs.height = 220;
+  donutWrap.appendChild(donutCvs);
+  out.appendChild(donutWrap);
+  out.scrollTop = out.scrollHeight;
+
+  const dctx = donutCvs.getContext('2d');
+  dctx.fillStyle = '#050510';
+  dctx.fillRect(0, 0, 500, 220);
+
+  const colors = ['#00d4aa','#3b82f6','#ff8c00','#e879f9','#22c55e','#ef4444','#ffcc00'];
+  const cx = 110, cy = 110, r1 = 80, r2 = 50;
+  let startAngle = -Math.PI / 2;
+  const slices = [];
+  for (let i = 0; i < positions.length; i++) {
+    const p = positions[i];
+    const s = DB.securities[p.sym + ' US EQUITY'];
+    if (!s) continue;
+    const val = p.qty * s.px;
+    slices.push({ sym: p.sym, val, color: colors[i % colors.length] });
+  }
+  for (const sl of slices) {
+    const angle = (sl.val / totalVal) * Math.PI * 2;
+    dctx.fillStyle = sl.color;
+    dctx.beginPath();
+    dctx.moveTo(cx + Math.cos(startAngle) * r2, cy + Math.sin(startAngle) * r2);
+    dctx.arc(cx, cy, r1, startAngle, startAngle + angle);
+    dctx.arc(cx, cy, r2, startAngle + angle, startAngle, true);
+    dctx.closePath();
+    dctx.fill();
+    startAngle += angle;
+  }
+  // Center text
+  dctx.fillStyle = '#050510';
+  dctx.beginPath();
+  dctx.arc(cx, cy, r2 - 1, 0, Math.PI * 2);
+  dctx.fill();
+  dctx.fillStyle = '#e8e8e8';
+  dctx.font = 'bold 14px JetBrains Mono';
+  dctx.textAlign = 'center';
+  dctx.fillText('$' + (totalVal/1000).toFixed(0) + 'K', cx, cy - 4);
+  dctx.fillStyle = '#888';
+  dctx.font = '9px JetBrains Mono';
+  dctx.fillText('TOTAL VALUE', cx, cy + 12);
+
+  // Legend
+  let ly = 20;
+  for (const sl of slices) {
+    const pct = (sl.val / totalVal * 100).toFixed(1);
+    dctx.fillStyle = sl.color;
+    dctx.fillRect(240, ly, 12, 12);
+    dctx.fillStyle = '#e8e8e8';
+    dctx.font = '11px JetBrains Mono';
+    dctx.textAlign = 'left';
+    dctx.fillText(`${sl.sym}  ${pct}%  $${(sl.val/1000).toFixed(1)}K`, 260, ly + 10);
+    ly += 22;
+  }
+
+  // P&L bar chart
+  dctx.fillStyle = '#666';
+  dctx.font = '9px JetBrains Mono';
+  dctx.fillText('P&L BY POSITION', 240, ly + 16);
+  ly += 26;
+  for (let i = 0; i < positions.length; i++) {
+    const p = positions[i];
+    const s = DB.securities[p.sym + ' US EQUITY'];
+    if (!s) continue;
+    const pnl = (s.px - p.avg) * p.qty;
+    const maxPnl = 25000;
+    const barW = Math.abs(pnl) / maxPnl * 120;
+    const barColor = pnl >= 0 ? '#22c55e' : '#ef4444';
+    dctx.fillStyle = barColor;
+    if (pnl >= 0) {
+      dctx.fillRect(300, ly, barW, 10);
+    } else {
+      dctx.fillRect(300 - barW, ly, barW, 10);
+    }
+    dctx.fillStyle = '#888';
+    dctx.font = '9px JetBrains Mono';
+    dctx.textAlign = 'left';
+    dctx.fillText(p.sym, 240, ly + 9);
+    ly += 16;
+  }
 }
 
 function screenECO() {
@@ -882,6 +1277,9 @@ function screenHELP() {
     printHTML(`  <span class="c-teal">ECO</span>     Economic calendar`);
     printHTML(`  <span class="c-teal">SECF</span>    Security finder — search by name`);
     print('');
+    printHTML(`  <span class="c-amber">VISUAL & ANALYTICS</span>`);
+    printHTML(`  <span class="c-teal">HMAP</span>    Heat map — sector & stock performance visualization`);
+    print('');
     printHTML(`  <span class="c-amber">GEOPOLITICAL & RISK</span>`);
     printHTML(`  <span class="c-red">BMAP</span>    Geopolitical risk map — DEFCON, nuclear arsenal, regional risk`);
     printHTML(`  <span class="c-red">CRIS</span>    Crisis monitor — active armed conflicts (ACLED data)`);
@@ -913,6 +1311,9 @@ function screenHELP() {
     printHTML(`  <span class="c-blue">FXALL</span>   FX monitor`);
     printHTML(`  <span class="c-blue">ECODAY</span>  Economic calendar`);
     printHTML(`  <span class="c-blue">SEARCH</span>  Instrument finder — search by name`);
+    print('');
+    printHTML(`  <span class="c-amber">VISUAL & ANALYTICS</span>`);
+    printHTML(`  <span class="c-blue">SMAP</span>    Sector map — sector & stock heat map visualization`);
     print('');
     printHTML(`  <span class="c-amber">GEOPOLITICAL & RISK</span>`);
     printHTML(`  <span class="c-red">GEOP</span>    Geopolitical risk monitor — DEFCON, nuclear arsenal, regional risk`);
@@ -1057,10 +1458,142 @@ function screenBMAP() {
     const bar = '█'.repeat(barLen) + '░'.repeat(20-barLen);
     printHTML(`  ${pad(r.region,22)}<span class="${rc} c-bold">${pad(r.risk,6,true)}</span><span class="${sc}">${pad(r.status,12)}</span><span class="c-white">${pad(r.conflicts,10,true)}</span><span class="c-gray">${pad(r.fatalities,12,true)}</span><span class="${chgColor(parseFloat(r.trend))}">${pad(r.trend,6,true)}</span><span class="${nc}">${pad(r.nuclear?'▲YES':'—',6,true)}</span>`);
   }
+  // Canvas geopolitical risk heat map
+  print('');
+  printHTML(`  <span class="c-amber c-bold">GEOPOLITICAL RISK HEAT MAP</span>`);
+  const geoGrid = document.createElement('div');
+  geoGrid.className = 'geo-hmap';
+  for (const r of geo.regions) {
+    const cell = document.createElement('div');
+    cell.className = 'geo-cell';
+    const t = r.risk / 100;
+    const rr = Math.round(30 + t * 210);
+    const gg = Math.round(180 - t * 150);
+    const bb = Math.round(30 + (1-t) * 40);
+    cell.style.background = `rgba(${rr},${gg},${bb},0.15)`;
+    cell.style.borderColor = `rgba(${rr},${gg},${bb},0.4)`;
+    const riskColor = r.risk >= 80 ? '#ef4444' : r.risk >= 60 ? '#ff8c00' : r.risk >= 40 ? '#ffcc00' : '#22c55e';
+
+    // Risk gauge canvas
+    const gauge = document.createElement('canvas');
+    gauge.width = 120; gauge.height = 60;
+    gauge.style.cssText = 'width:120px;height:60px;display:block;margin:6px auto 0;';
+    const gctx = gauge.getContext('2d');
+
+    // Arc background
+    gctx.strokeStyle = '#1a1a2e';
+    gctx.lineWidth = 8;
+    gctx.beginPath();
+    gctx.arc(60, 52, 40, Math.PI, 0);
+    gctx.stroke();
+
+    // Arc filled
+    const angle = Math.PI + (r.risk / 100) * Math.PI;
+    const arcGrad = gctx.createLinearGradient(20, 52, 100, 52);
+    arcGrad.addColorStop(0, '#22c55e');
+    arcGrad.addColorStop(0.5, '#ffcc00');
+    arcGrad.addColorStop(1, '#ef4444');
+    gctx.strokeStyle = arcGrad;
+    gctx.lineWidth = 8;
+    gctx.lineCap = 'round';
+    gctx.beginPath();
+    gctx.arc(60, 52, 40, Math.PI, angle);
+    gctx.stroke();
+
+    // Needle
+    const needleAngle = Math.PI + (r.risk / 100) * Math.PI;
+    const nx = 60 + Math.cos(needleAngle) * 30;
+    const ny = 52 + Math.sin(needleAngle) * 30;
+    gctx.strokeStyle = '#fff';
+    gctx.lineWidth = 1.5;
+    gctx.beginPath();
+    gctx.moveTo(60, 52);
+    gctx.lineTo(nx, ny);
+    gctx.stroke();
+    gctx.fillStyle = '#fff';
+    gctx.beginPath();
+    gctx.arc(60, 52, 3, 0, Math.PI * 2);
+    gctx.fill();
+
+    cell.innerHTML = `
+      <div class="geo-name" style="color:${riskColor}">${r.region}</div>
+      <div class="geo-risk" style="color:${riskColor}">${r.risk}</div>
+      <div style="color:#888;font-size:9px">${r.status} · ${r.conflicts} conflicts</div>
+    `;
+    cell.appendChild(gauge);
+
+    // Risk bar
+    const bar = document.createElement('div');
+    bar.className = 'geo-bar';
+    bar.style.background = '#1a1a2e';
+    const fill = document.createElement('div');
+    fill.style.cssText = `width:${r.risk}%;height:100%;border-radius:2px;background:${riskColor};`;
+    bar.appendChild(fill);
+    cell.appendChild(bar);
+
+    if (r.nuclear) {
+      const nuke = document.createElement('div');
+      nuke.style.cssText = 'color:#ef4444;font-size:9px;font-weight:700;margin-top:4px;';
+      nuke.textContent = '☢ NUCLEAR CAPABLE';
+      cell.appendChild(nuke);
+    }
+
+    geoGrid.appendChild(cell);
+  }
+  out.appendChild(geoGrid);
+  out.scrollTop = out.scrollHeight;
+
+  // DEFCON gauge canvas
+  printHTML(`  <span class="c-amber c-bold">DEFCON THREAT GAUGE</span>`);
+  const defWrap = document.createElement('div');
+  defWrap.className = 'canvas-wrap';
+  defWrap.style.maxWidth = '400px';
+  const defCvs = document.createElement('canvas');
+  defCvs.width = 400; defCvs.height = 100;
+  defWrap.appendChild(defCvs);
+  out.appendChild(defWrap);
+  out.scrollTop = out.scrollHeight;
+
+  const dctx = defCvs.getContext('2d');
+  dctx.fillStyle = '#050510';
+  dctx.fillRect(0, 0, 400, 100);
+
+  // 5 DEFCON level bars
+  const defColors = ['#22c55e','#84cc16','#ffcc00','#ff8c00','#ef4444'];
+  const defLabels = ['5','4','3','2','1'];
+  for (let i = 0; i < 5; i++) {
+    const x = 30 + i * 72;
+    const active = (5 - i) <= (6 - geo.defcon);
+    dctx.fillStyle = active ? defColors[i] : '#1a1a2e';
+    dctx.fillRect(x, 20, 60, 50);
+    dctx.strokeStyle = defColors[i];
+    dctx.lineWidth = 1;
+    dctx.strokeRect(x, 20, 60, 50);
+    dctx.fillStyle = active ? '#000' : '#444';
+    dctx.font = 'bold 18px JetBrains Mono';
+    dctx.textAlign = 'center';
+    dctx.fillText(defLabels[i], x + 30, 52);
+    if ((5 - i) === geo.defcon) {
+      dctx.strokeStyle = '#fff';
+      dctx.lineWidth = 2;
+      dctx.strokeRect(x - 2, 18, 64, 54);
+      dctx.fillStyle = '#fff';
+      dctx.font = 'bold 9px JetBrains Mono';
+      dctx.fillText('▼ CURRENT', x + 30, 14);
+    }
+  }
+  dctx.fillStyle = '#666';
+  dctx.font = '9px JetBrains Mono';
+  dctx.textAlign = 'left';
+  dctx.fillText('NORMAL', 32, 88);
+  dctx.textAlign = 'right';
+  dctx.fillText('MAXIMUM', 380, 88);
+
   printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
   const crisCmd = MODE === 'EK' ? 'CONFLICT' : 'CRIS';
+  const hmapCmd = MODE === 'EK' ? 'SMAP' : 'HMAP';
   printHTML(`  <span class="c-gray">Sources: ACLED, Armed Conflicts DB, SIPRI, FAS Nuclear Notebook</span>`);
-  printHTML(`  <span class="c-gray">Type ${crisCmd} for detailed armed conflict data</span>`);
+  printHTML(`  <span class="c-gray">Type ${crisCmd} for armed conflicts | ${hmapCmd} for market sector heat map</span>`);
 }
 
 // ── Armed Conflicts Screen (CRIS / CONFLICT) ──
@@ -1166,6 +1699,177 @@ async function screenLIVE() {
     printHTML(`<span class="c-dim">  ${'─'.repeat(50)}</span>`);
     printHTML(`  <span class="c-gray">  EODHD API key: ${DB.eodhd.apiKey.slice(0,8)}...  Endpoint: eodhd.com/api</span>`);
   }
+}
+
+// ── Sector Heat Map (HMAP / SMAP) ──
+function screenHMAP() {
+  const cmd = MODE === 'EK' ? 'SMAP' : 'HMAP';
+  const title = MODE === 'EK' ? 'SECTOR MAP' : 'HEAT MAP — MARKET SECTORS';
+  setContext(null, title);
+  cls();
+  printHTML(`<span class="c-amber c-bold">  ${title}                                    ${cmd}</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+
+  const sectors = [
+    { name:'Technology', syms:['AAPL','MSFT','NVDA','GOOGL','META'], weight:38.2 },
+    { name:'Cons. Disc.', syms:['AMZN','TSLA'], weight:12.5 },
+    { name:'Financials', syms:['JPM'], weight:13.1 },
+    { name:'Healthcare', syms:[], weight:12.8, mockChg:0.45 },
+    { name:'Industrials', syms:[], weight:8.7, mockChg:-0.32 },
+    { name:'Energy', syms:[], weight:4.2, mockChg:1.15 },
+    { name:'Utilities', syms:[], weight:2.5, mockChg:0.12 },
+    { name:'Materials', syms:[], weight:2.3, mockChg:-0.78 },
+    { name:'Real Estate', syms:[], weight:2.1, mockChg:-0.55 },
+    { name:'Comm. Svcs.', syms:[], weight:2.0, mockChg:0.88 },
+    { name:'Cons. Staples', syms:[], weight:1.6, mockChg:-0.18 },
+  ];
+
+  // Compute sector performance
+  const sectorData = sectors.map(sec => {
+    let avgChg = sec.mockChg || 0;
+    if (sec.syms.length > 0) {
+      let total = 0, cnt = 0;
+      for (const sym of sec.syms) {
+        const s = DB.securities[sym + ' US EQUITY'];
+        if (s) { total += s.pct; cnt++; }
+      }
+      if (cnt) avgChg = total / cnt;
+    }
+    return { ...sec, chg: avgChg };
+  });
+
+  // Heat map grid with colored cells
+  const grid = document.createElement('div');
+  grid.className = 'hmap-grid';
+
+  for (const sd of sectorData) {
+    const cell = document.createElement('div');
+    cell.className = 'hmap-cell';
+    const intensity = Math.min(Math.abs(sd.chg) / 3, 1);
+    const r = sd.chg < 0 ? Math.round(40 + intensity * 180) : Math.round(10 + intensity * 20);
+    const g = sd.chg > 0 ? Math.round(40 + intensity * 160) : Math.round(10 + intensity * 20);
+    const b = Math.round(10 + intensity * 20);
+    cell.style.background = `rgb(${r},${g},${b})`;
+    cell.style.color = '#fff';
+
+    // Size cells proportional to weight
+    const span = sd.weight > 20 ? 2 : 1;
+    if (span > 1) cell.style.gridColumn = `span ${span}`;
+
+    cell.innerHTML = `
+      <div class="hm-sym">${sd.name}</div>
+      <div class="hm-chg">${sd.chg >= 0 ? '+' : ''}${sd.chg.toFixed(2)}%</div>
+      <div class="hm-px">${sd.weight}% of index</div>
+    `;
+
+    // Sparkline canvas
+    const spark = document.createElement('canvas');
+    spark.width = 100; spark.height = 24;
+    spark.style.cssText = 'width:100%;height:24px;margin-top:4px;';
+    const sctx = spark.getContext('2d');
+    const sparkPts = 20;
+    const sparkData = [];
+    let sp = 100;
+    for (let i = 0; i < sparkPts; i++) {
+      sp += (Math.random()-0.48) * 3;
+      sparkData.push(sp);
+    }
+    sparkData[sparkPts-1] = 100 + sd.chg * 3;
+    const smn = Math.min(...sparkData), smx = Math.max(...sparkData);
+    const srange = smx - smn || 1;
+    sctx.strokeStyle = sd.chg >= 0 ? 'rgba(34,197,94,0.8)' : 'rgba(239,68,68,0.8)';
+    sctx.lineWidth = 1.5;
+    sctx.beginPath();
+    for (let i = 0; i < sparkPts; i++) {
+      const x = (i / (sparkPts-1)) * 100;
+      const y = 22 - ((sparkData[i] - smn) / srange) * 20;
+      i === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+    }
+    sctx.stroke();
+
+    cell.appendChild(spark);
+    grid.appendChild(cell);
+  }
+
+  out.appendChild(grid);
+  out.scrollTop = out.scrollHeight;
+
+  // Individual stock tiles
+  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  printHTML(`  <span class="c-amber c-bold">INDIVIDUAL STOCKS</span>`);
+
+  const stockGrid = document.createElement('div');
+  stockGrid.className = 'hmap-grid';
+  stockGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
+
+  for (const [k,v] of Object.entries(DB.securities)) {
+    if (!k.includes('EQUITY')) continue;
+    const sym = k.split(' ')[0];
+    const cell = document.createElement('div');
+    cell.className = 'hmap-cell';
+    const intensity = Math.min(Math.abs(v.pct) / 3, 1);
+    const r = v.pct < 0 ? Math.round(40 + intensity * 180) : Math.round(10 + intensity * 20);
+    const g = v.pct > 0 ? Math.round(40 + intensity * 160) : Math.round(10 + intensity * 20);
+    const b2 = Math.round(10 + intensity * 20);
+    cell.style.background = `rgb(${r},${g},${b2})`;
+    cell.style.color = '#fff';
+    cell.innerHTML = `
+      <div class="hm-sym">${sym}</div>
+      <div class="hm-chg">${v.pct >= 0 ? '+' : ''}${v.pct.toFixed(2)}%</div>
+      <div class="hm-px">${fmtPx(v.px)}</div>
+    `;
+    stockGrid.appendChild(cell);
+  }
+  out.appendChild(stockGrid);
+  out.scrollTop = out.scrollHeight;
+}
+
+// ── Canvas sparkline helper ──
+function drawSparkline(parentEl, data, color, w, h) {
+  const cvs = document.createElement('canvas');
+  cvs.width = w; cvs.height = h;
+  cvs.style.cssText = `width:${w}px;height:${h}px;vertical-align:middle;margin-left:6px;`;
+  const ctx = cvs.getContext('2d');
+  const mn = Math.min(...data), mx = Math.max(...data);
+  const range = mx - mn || 1;
+
+  // Area fill
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, color.replace(')', ',0.3)').replace('rgb', 'rgba'));
+  grad.addColorStop(1, color.replace(')', ',0.02)').replace('rgb', 'rgba'));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  for (let i = 0; i < data.length; i++) {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - 2 - ((data[i] - mn) / range) * (h - 4);
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(w, h);
+  ctx.closePath();
+  ctx.fill();
+
+  // Line
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < data.length; i++) {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - 2 - ((data[i] - mn) / range) * (h - 4);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Endpoint dot
+  const lastX = w;
+  const lastY = h - 2 - ((data[data.length-1] - mn) / range) * (h - 4);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(lastX - 1, lastY, 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  parentEl.appendChild(cvs);
+  return cvs;
 }
 
 // ── Mode switching ──
@@ -1297,6 +2001,7 @@ function execCmd(raw) {
     if (resolved === 'bmap') { screenBMAP(); return; }
     if (resolved === 'cris') { screenCRIS(); return; }
     if (resolved === 'live') { screenLIVE(); return; }
+    if (resolved === 'hmap') { screenHMAP(); return; }
     if (resolved === 'stub') {
       printHTML(`<span class="c-yellow">  ${input} market — coming soon. Type HELP for available commands.</span>`);
       return;
