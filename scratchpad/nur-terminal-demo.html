@@ -385,6 +385,7 @@ const MODES = {
       top: 'TOP', wei: 'WEI', most: 'MOST', port: 'PORT', fxip: 'FXIP',
       eco: 'ECO', secf: 'SECF', equity: 'EQUITY', help: 'HELP',
       curncy: 'CURNCY', index: 'INDEX', menu: 'MENU', cls: 'CLS',
+      bmap: 'BMAP', cris: 'CRIS', live: 'LIVE',
     },
   },
   EK: {
@@ -415,6 +416,7 @@ const MODES = {
       top: 'NEWS', wei: 'INDX', most: 'ACT', port: 'PORT', fxip: 'FXALL',
       eco: 'ECODAY', secf: 'SEARCH', equity: 'EQ', help: 'HELP',
       curncy: 'FX', index: 'INDX', menu: 'MENU', cls: 'CLS',
+      bmap: 'GEOP', cris: 'CONFLICT', live: 'LIVE',
     },
   },
 };
@@ -427,6 +429,7 @@ const EIKON_MAP = {
   'FXALL':'fxip', 'FX':'fxip', 'ECODAY':'eco', 'SEARCH':'secf',
   'EQ':'equity', 'HELP':'help', 'MENU':'help', 'CLS':'cls', 'CLEAR':'cls',
   'MBS':'stub', 'MM':'stub', 'COM':'stub', 'MUNI':'stub', 'PFD':'stub', 'GOVT':'stub', 'CORP':'stub',
+  'GEOP':'bmap', 'CONFLICT':'cris', 'LIVE':'live',
 };
 
 const BLOOMBERG_MAP = {
@@ -438,6 +441,7 @@ const BLOOMBERG_MAP = {
   'CLS':'cls', 'CLEAR':'cls',
   'GOVT':'stub', 'CORP':'stub', 'MTGE':'stub', 'M-MKT':'stub', 'MUNI':'stub',
   'PFD':'stub', 'CMDTY':'stub',
+  'BMAP':'bmap', 'CRIS':'cris', 'LIVE':'live',
 };
 
 // RIC to internal key mapping for Eikon mode
@@ -490,6 +494,53 @@ const DB = {
     'USD/TRY': { px:32.4850, chg:0.073, ric:'TRY=' },
     'USD/CHF': { px:0.8812, chg:-0.0008, ric:'CHF=' },
     'AUD/USD': { px:0.6534, chg:0.0018, ric:'AUD=' },
+  },
+  geopolitical: {
+    defcon: 3,
+    globalRiskIndex: 72.4,
+    riskTrend: +2.1,
+    nuclearThreatLevel: 'ELEVATED',
+    lastUpdate: '2026-08-28 14:35 UTC',
+    regions: [
+      { region:'Eastern Europe',   risk:89, status:'CRITICAL',  conflicts:3, fatalities:'142K+', trend:'+4.2', nuclear: true },
+      { region:'Middle East',      risk:82, status:'CRITICAL',  conflicts:5, fatalities:'98K+',  trend:'+1.8', nuclear: false },
+      { region:'East Asia',        risk:68, status:'HIGH',      conflicts:1, fatalities:'—',     trend:'+6.5', nuclear: true },
+      { region:'Sub-Saharan Africa',risk:74, status:'HIGH',     conflicts:12,fatalities:'67K+',  trend:'-2.1', nuclear: false },
+      { region:'South Asia',       risk:58, status:'ELEVATED',  conflicts:2, fatalities:'12K+',  trend:'-0.5', nuclear: true },
+      { region:'Latin America',    risk:45, status:'MODERATE',  conflicts:3, fatalities:'8K+',   trend:'+0.3', nuclear: false },
+      { region:'Southeast Asia',   risk:38, status:'MODERATE',  conflicts:1, fatalities:'2K+',   trend:'-1.2', nuclear: false },
+      { region:'Western Europe',   risk:22, status:'LOW',       conflicts:0, fatalities:'—',     trend:'+0.8', nuclear: false },
+      { region:'North America',    risk:18, status:'LOW',       conflicts:0, fatalities:'—',     trend:'+0.2', nuclear: false },
+    ],
+    conflicts: [
+      { name:'Russia-Ukraine War',       type:'Interstate',   start:'2022-02-24', parties:'RUS vs UKR/NATO', fatalities:'~350,000', status:'ACTIVE — HIGH INTENSITY', region:'Eastern Europe', nuclear:'RISK PRESENT' },
+      { name:'Israel-Palestine',         type:'Asymmetric',   start:'2023-10-07', parties:'ISR vs Hamas/PIJ', fatalities:'~145,000', status:'ACTIVE — HIGH INTENSITY', region:'Middle East', nuclear:'LOW' },
+      { name:'Sudan Civil War',          type:'Civil War',    start:'2023-04-15', parties:'SAF vs RSF', fatalities:'~50,000', status:'ACTIVE — HIGH INTENSITY', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'Myanmar Civil War',        type:'Civil War',    start:'2021-02-01', parties:'Junta vs NUG/EAO', fatalities:'~35,000', status:'ACTIVE — MEDIUM', region:'Southeast Asia', nuclear:'NONE' },
+      { name:'Ethiopia (Amhara/Oromia)', type:'Internal',     start:'2023-08-01', parties:'ENDF vs Fano/OLA', fatalities:'~15,000', status:'ACTIVE — MEDIUM', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'Taiwan Strait Tensions',   type:'Standoff',     start:'2022-08-01', parties:'PRC vs ROC/US', fatalities:'—', status:'TENSE — ESCALATION RISK', region:'East Asia', nuclear:'RISK PRESENT' },
+      { name:'DR Congo (M23)',           type:'Insurgency',   start:'2022-03-01', parties:'FARDC vs M23/Rwanda', fatalities:'~12,000', status:'ACTIVE — MEDIUM', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'India-Pakistan (LoC)',     type:'Standoff',     start:'1947-01-01', parties:'IND vs PAK', fatalities:'Periodic', status:'TENSE — MONITORED', region:'South Asia', nuclear:'RISK PRESENT' },
+      { name:'Yemen (Houthi)',           type:'Civil/Proxy',  start:'2014-09-01', parties:'Saudi/UAE vs Houthis', fatalities:'~150,000', status:'LOW INTENSITY', region:'Middle East', nuclear:'NONE' },
+      { name:'Sahel (Mali/Burkina/Niger)',type:'Insurgency',  start:'2012-01-01', parties:'Juntas vs JNIM/ISGS', fatalities:'~30,000', status:'ACTIVE — MEDIUM', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'Colombia (ELN/FARC-EP)',   type:'Insurgency',   start:'1964-01-01', parties:'GOV vs ELN/dissidents', fatalities:'Ongoing', status:'LOW INTENSITY', region:'Latin America', nuclear:'NONE' },
+      { name:'North Korea Provocations', type:'Standoff',     start:'1953-07-27', parties:'DPRK vs ROK/US/JPN', fatalities:'—', status:'TENSE — NUCLEAR CAPABLE', region:'East Asia', nuclear:'CRITICAL' },
+    ],
+    nuclearStates: [
+      { state:'Russia',   warheads:5580, deployed:1710, status:'LAUNCH-READY', posture:'High Alert', doctrine:'First-use reserved' },
+      { state:'USA',      warheads:5044, deployed:1670, status:'LAUNCH-READY', posture:'High Alert', doctrine:'Calculated ambiguity' },
+      { state:'China',    warheads:500,  deployed:0,    status:'STOCKPILE',    posture:'Expanding', doctrine:'No-first-use declared' },
+      { state:'France',   warheads:290,  deployed:280,  status:'LAUNCH-READY', posture:'Stable', doctrine:'Vital interests' },
+      { state:'UK',       warheads:225,  deployed:120,  status:'LAUNCH-READY', posture:'Stable', doctrine:'Extreme self-defence' },
+      { state:'Pakistan', warheads:170,  deployed:'?',  status:'STOCKPILE',    posture:'Expanding', doctrine:'First-use reserved' },
+      { state:'India',    warheads:172,  deployed:'?',  status:'STOCKPILE',    posture:'Expanding', doctrine:'No-first-use declared' },
+      { state:'Israel',   warheads:90,   deployed:'?',  status:'UNDECLARED',   posture:'Opaque', doctrine:'Ambiguity policy' },
+      { state:'N. Korea', warheads:50,   deployed:'?',  status:'EXPANDING',    posture:'Aggressive', doctrine:'Pre-emptive declared' },
+    ],
+  },
+  eodhd: {
+    apiKey: '6a632b4208f659.13200749',
+    baseUrl: 'https://eodhd.com/api',
   },
 };
 
@@ -831,6 +882,13 @@ function screenHELP() {
     printHTML(`  <span class="c-teal">ECO</span>     Economic calendar`);
     printHTML(`  <span class="c-teal">SECF</span>    Security finder — search by name`);
     print('');
+    printHTML(`  <span class="c-amber">GEOPOLITICAL & RISK</span>`);
+    printHTML(`  <span class="c-red">BMAP</span>    Geopolitical risk map — DEFCON, nuclear arsenal, regional risk`);
+    printHTML(`  <span class="c-red">CRIS</span>    Crisis monitor — active armed conflicts (ACLED data)`);
+    print('');
+    printHTML(`  <span class="c-amber">LIVE DATA</span>`);
+    printHTML(`  <span class="c-teal">LIVE</span>    Fetch real-time prices from EODHD API`);
+    print('');
     printHTML(`  <span class="c-amber">FUNCTION KEYS</span>  <span class="c-gray">(or type the label)</span>`);
     printHTML(`  <span class="c-yellow">EQUITY</span>  GOVT  CORP  CMDTY  INDEX  CURNCY  M-MKT  MTGE  MUNI  PFD`);
     print('');
@@ -855,6 +913,13 @@ function screenHELP() {
     printHTML(`  <span class="c-blue">FXALL</span>   FX monitor`);
     printHTML(`  <span class="c-blue">ECODAY</span>  Economic calendar`);
     printHTML(`  <span class="c-blue">SEARCH</span>  Instrument finder — search by name`);
+    print('');
+    printHTML(`  <span class="c-amber">GEOPOLITICAL & RISK</span>`);
+    printHTML(`  <span class="c-red">GEOP</span>    Geopolitical risk monitor — DEFCON, nuclear arsenal, regional risk`);
+    printHTML(`  <span class="c-red">CONFLICT</span> Active armed conflicts (ACLED data)`);
+    print('');
+    printHTML(`  <span class="c-amber">LIVE DATA</span>`);
+    printHTML(`  <span class="c-blue">LIVE</span>    Fetch real-time prices from EODHD API`);
     print('');
     printHTML(`  <span class="c-amber">FUNCTION KEYS</span>  <span class="c-gray">(or type the label)</span>`);
     printHTML(`  <span class="c-blue">EQ</span>  GOVT  CORP  COM  INDX  FX  MM  MBS  MUNI  PFD`);
@@ -945,6 +1010,161 @@ function screenEQUITY() {
     if (!k.includes('EQUITY')) continue;
     const sym = MODE === 'EK' ? (v.ric||k.split(' ')[0]) : k.split(' ')[0];
     printHTML(`  <span class="c-teal">${pad(sym,12)}</span>${pad(v.name,22)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.chg)}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',8,true)}</span><span class="c-gray">${pad((v.vol/1e6).toFixed(1)+'M',10,true)}</span>`);
+  }
+}
+
+// ── Geopolitical Risk Monitor (BMAP / GEOP) ──
+function screenBMAP() {
+  const geo = DB.geopolitical;
+  const cmd = MODE === 'EK' ? 'GEOP' : 'BMAP';
+  const title = MODE === 'EK' ? 'GEOPOLITICAL RISK MONITOR' : 'BLOOMBERG MAP — GEOPOLITICAL RISK';
+  setContext(null, title);
+  cls();
+  printHTML(`<span class="c-red c-bold">  ${title}                          ${cmd}</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+
+  // DEFCON + Global Risk
+  const defconColors = {1:'c-red',2:'c-red',3:'c-yellow',4:'c-teal',5:'c-green'};
+  const defconLabels = {1:'MAXIMUM READINESS',2:'ARMED FORCES READY',3:'INCREASE IN FORCE READINESS',4:'INCREASED INTELLIGENCE',5:'NORMAL READINESS'};
+  printHTML(`  <span class="c-amber c-bold">GLOBAL THREAT ASSESSMENT</span>            <span class="c-gray">${geo.lastUpdate}</span>`);
+  printHTML(`  DEFCON Level        <span class="${defconColors[geo.defcon]} c-bold">██ ${geo.defcon} — ${defconLabels[geo.defcon]} ██</span>`);
+  printHTML(`  Global Risk Index   <span class="${geo.globalRiskIndex>70?'c-red':geo.globalRiskIndex>50?'c-yellow':'c-green'} c-bold">${geo.globalRiskIndex}/100</span>  <span class="${chgColor(geo.riskTrend)}">${chgSign(geo.riskTrend)}${geo.riskTrend} (30d)</span>`);
+  printHTML(`  Nuclear Threat      <span class="c-red c-bold">${geo.nuclearThreatLevel}</span>`);
+  print('');
+
+  // Nuclear Arsenal Summary
+  printHTML(`  <span class="c-amber c-bold">NUCLEAR ARSENAL — STATE OVERVIEW</span>`);
+  printHTML(`  <span class="c-yellow">${pad('STATE',12)}${pad('TOTAL',8,true)}${pad('DEPLOYED',10,true)}${pad('STATUS',16)}${pad('POSTURE',14)}${pad('DOCTRINE',22)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
+  for (const n of geo.nuclearStates) {
+    const sc = n.posture==='High Alert'||n.posture==='Aggressive'?'c-red':n.posture==='Expanding'?'c-yellow':'c-gray';
+    printHTML(`  <span class="c-white">${pad(n.state,12)}</span><span class="c-red c-bold">${pad(n.warheads,8,true)}</span><span class="c-white">${pad(n.deployed,10,true)}</span><span class="${sc}">${pad(n.status,16)}</span><span class="c-white">${pad(n.posture,14)}</span><span class="c-gray">${pad(n.doctrine,22)}</span>`);
+  }
+  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Total estimated warheads worldwide: ~12,100</span>`);
+  print('');
+
+  // Risk by Region
+  printHTML(`  <span class="c-amber c-bold">REGIONAL RISK INDEX</span>`);
+  printHTML(`  <span class="c-yellow">${pad('REGION',22)}${pad('RISK',6,true)}${pad('STATUS',12)}${pad('CONFLICTS',10,true)}${pad('FATALITIES',12,true)}${pad('30D',6,true)}${pad('NUC',6,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  for (const r of geo.regions) {
+    const rc = r.risk>=80?'c-red':r.risk>=60?'c-yellow':r.risk>=40?'c-teal':'c-green';
+    const sc = r.status==='CRITICAL'?'c-red':r.status==='HIGH'?'c-yellow':r.status==='ELEVATED'?'c-teal':'c-green';
+    const nc = r.nuclear?'c-red':'c-gray';
+    // Risk bar
+    const barLen = Math.round(r.risk / 5);
+    const bar = '█'.repeat(barLen) + '░'.repeat(20-barLen);
+    printHTML(`  ${pad(r.region,22)}<span class="${rc} c-bold">${pad(r.risk,6,true)}</span><span class="${sc}">${pad(r.status,12)}</span><span class="c-white">${pad(r.conflicts,10,true)}</span><span class="c-gray">${pad(r.fatalities,12,true)}</span><span class="${chgColor(parseFloat(r.trend))}">${pad(r.trend,6,true)}</span><span class="${nc}">${pad(r.nuclear?'▲YES':'—',6,true)}</span>`);
+  }
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  const crisCmd = MODE === 'EK' ? 'CONFLICT' : 'CRIS';
+  printHTML(`  <span class="c-gray">Sources: ACLED, Armed Conflicts DB, SIPRI, FAS Nuclear Notebook</span>`);
+  printHTML(`  <span class="c-gray">Type ${crisCmd} for detailed armed conflict data</span>`);
+}
+
+// ── Armed Conflicts Screen (CRIS / CONFLICT) ──
+function screenCRIS() {
+  const geo = DB.geopolitical;
+  const cmd = MODE === 'EK' ? 'CONFLICT' : 'CRIS';
+  const title = MODE === 'EK' ? 'ACTIVE CONFLICTS MONITOR' : 'CRISIS MONITOR — ARMED CONFLICTS';
+  setContext(null, title);
+  cls();
+  printHTML(`<span class="c-red c-bold">  ${title}                          ${cmd}</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-amber c-bold">ACTIVE ARMED CONFLICTS & SECURITY CRISES</span>    <span class="c-gray">${geo.lastUpdate}</span>`);
+  print('');
+
+  for (let i = 0; i < geo.conflicts.length; i++) {
+    const c = geo.conflicts[i];
+    const sc = c.status.includes('HIGH')?'c-red':c.status.includes('NUCLEAR')||c.status.includes('ESCALATION')?'c-red':c.status.includes('MEDIUM')?'c-yellow':'c-teal';
+    const nc = c.nuclear==='CRITICAL'?'c-red c-bold':c.nuclear==='RISK PRESENT'?'c-yellow':'c-gray';
+    const alt = i % 2 === 0 ? '' : ' style="background:#0a0a14"';
+    printHTML(`  <span class="c-white c-bold">${pad(i+1+'.',4)}${c.name}</span>`);
+    printHTML(`  <span class="c-gray">    Type: ${pad(c.type,14)} Parties: ${c.parties}</span>`);
+    printHTML(`  <span class="c-gray">    Since: ${c.start}     Fatalities: <span class="c-red">${c.fatalities}</span></span>`);
+    printHTML(`  <span class="c-gray">    Status: </span><span class="${sc} c-bold">${c.status}</span>`);
+    printHTML(`  <span class="c-gray">    Region: ${c.region}   Nuclear: </span><span class="${nc}">${c.nuclear}</span>`);
+    print('');
+  }
+
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Active conflicts tracked: ${geo.conflicts.length}</span>`);
+  printHTML(`  <span class="c-gray">  Sources: ACLED (acleddata.com), Armed Conflicts Database (armedconflicts.org)</span>`);
+  printHTML(`  <span class="c-gray">  Uppsala Conflict Data Program (UCDP), International Crisis Group (ICG)</span>`);
+  const bmapCmd = MODE === 'EK' ? 'GEOP' : 'BMAP';
+  printHTML(`  <span class="c-gray">  Type ${bmapCmd} for geopolitical risk overview & nuclear arsenal data</span>`);
+}
+
+// ── EODHD Live Market Data (LIVE) ──
+async function screenLIVE() {
+  setContext(null, 'LIVE MARKET DATA');
+  cls();
+  printHTML(`<span class="c-amber c-bold">  LIVE MARKET DATA — EODHD API                                   LIVE</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  printHTML(`  <span class="c-teal">Fetching real-time data from EODHD...</span>`);
+
+  const symbols = ['AAPL.US','MSFT.US','NVDA.US','GOOGL.US','AMZN.US','TSLA.US','META.US','JPM.US'];
+  const url = `${DB.eodhd.baseUrl}/real-time/${symbols[0]}?api_token=${DB.eodhd.apiKey}&fmt=json&s=${symbols.join(',')}`;
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    const items = Array.isArray(data) ? data : [data];
+
+    cls();
+    printHTML(`<span class="c-amber c-bold">  LIVE MARKET DATA — EODHD REAL-TIME                             LIVE</span>`);
+    printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+    printHTML(`  <span class="c-green c-bold">● LIVE DATA</span>  <span class="c-gray">${new Date().toLocaleTimeString('en-US',{hour12:false})} — Source: EODHD.com API</span>`);
+    print('');
+    printHTML(`  <span class="c-yellow">${pad('SYMBOL',10)}${pad('LAST',12,true)}${pad('OPEN',12,true)}${pad('HIGH',12,true)}${pad('LOW',12,true)}${pad('VOLUME',14,true)}${pad('CHG%',8,true)}</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
+
+    for (const item of items) {
+      const sym = (item.code || '').replace('.US','');
+      const close = item.close || item.previousClose || 0;
+      const prevClose = item.previousClose || close;
+      const chg = close - prevClose;
+      const pct = prevClose ? (chg / prevClose * 100) : 0;
+      const cc = chgColor(chg);
+      printHTML(`  <span class="c-teal">${pad(sym,10)}</span><span class="c-white c-bold">${pad(fmtPx(close),12,true)}</span><span class="c-white">${pad(fmtPx(item.open||0),12,true)}${pad(fmtPx(item.high||0),12,true)}${pad(fmtPx(item.low||0),12,true)}</span><span class="c-gray">${pad(item.volume?Math.round(item.volume/1e6)+'M':'—',14,true)}</span><span class="${cc}">${pad(chgSign(pct)+pct.toFixed(2)+'%',8,true)}</span>`);
+    }
+    printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+    printHTML(`  <span class="c-gray">  Data: EODHD.com Real-Time API  |  Updated: ${new Date().toISOString().slice(0,19)}Z</span>`);
+
+    // Update DB with live data
+    for (const item of items) {
+      const sym = (item.code || '').replace('.US','');
+      const key = sym + ' US EQUITY';
+      if (DB.securities[key] && item.close) {
+        const prevClose = item.previousClose || DB.securities[key].px;
+        DB.securities[key].px = item.close;
+        DB.securities[key].chg = item.close - prevClose;
+        DB.securities[key].pct = prevClose ? ((item.close - prevClose) / prevClose * 100) : 0;
+        if (item.open) DB.securities[key].open = item.open;
+        if (item.high) DB.securities[key].hi = item.high;
+        if (item.low) DB.securities[key].lo = item.low;
+        if (item.volume) DB.securities[key].vol = item.volume;
+      }
+    }
+    printHTML(`  <span class="c-teal">  Terminal prices updated with live data.</span>`);
+  } catch (err) {
+    cls();
+    printHTML(`<span class="c-amber c-bold">  LIVE MARKET DATA — EODHD API                                   LIVE</span>`);
+    printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+    printHTML(`  <span class="c-red">  API Error: ${err.message}</span>`);
+    printHTML(`  <span class="c-yellow">  Showing cached terminal data instead.</span>`);
+    print('');
+    printHTML(`  <span class="c-yellow">${pad('SYMBOL',10)}${pad('LAST',12,true)}${pad('CHG',10,true)}${pad('%CHG',8,true)}${pad('SOURCE',10)}</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(50)}</span>`);
+    for (const [k,v] of Object.entries(DB.securities)) {
+      if (!k.includes('EQUITY')) continue;
+      const sym = k.split(' ')[0];
+      printHTML(`  <span class="c-teal">${pad(sym,10)}</span><span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.chg)}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',8,true)}</span><span class="c-gray">${pad('CACHED',10)}</span>`);
+    }
+    printHTML(`<span class="c-dim">  ${'─'.repeat(50)}</span>`);
+    printHTML(`  <span class="c-gray">  EODHD API key: ${DB.eodhd.apiKey.slice(0,8)}...  Endpoint: eodhd.com/api</span>`);
   }
 }
 
@@ -1074,6 +1294,9 @@ function execCmd(raw) {
     if (resolved === 'help') { screenHELP(); return; }
     if (resolved === 'equity') { screenEQUITY(); return; }
     if (resolved === 'secf') { screenSECF(''); return; }
+    if (resolved === 'bmap') { screenBMAP(); return; }
+    if (resolved === 'cris') { screenCRIS(); return; }
+    if (resolved === 'live') { screenLIVE(); return; }
     if (resolved === 'stub') {
       printHTML(`<span class="c-yellow">  ${input} market — coming soon. Type HELP for available commands.</span>`);
       return;
