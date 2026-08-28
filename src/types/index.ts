@@ -38,4 +38,30 @@ export interface ChartDataPoint {
   value: number;
 }
 
-export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts";
+export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest";
+
+export interface MarketQuote {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  previousClose: number;
+  open: number;
+  dayHigh: number;
+  dayLow: number;
+  volume: number;
+}
+
+export interface BacktestResult {
+  strategy: string;
+  symbol: string;
+  totalReturn: number;
+  sharpeRatio: number;
+  maxDrawdown: number;
+  volatility: number;
+  trades: number;
+  winRate: number;
+  equity: number[];
+  signals: Array<{ index: number; type: "buy" | "sell"; price: number }>;
+}

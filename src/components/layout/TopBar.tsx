@@ -8,6 +8,7 @@ const views: { id: PanelView; label: string }[] = [
   { id: "dashboard", label: "Dashboard" },
   { id: "portfolio", label: "Portfolio" },
   { id: "charts", label: "Charts" },
+  { id: "backtest", label: "Backtest" },
 ];
 
 export default function TopBar() {

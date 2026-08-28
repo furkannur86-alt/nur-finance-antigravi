@@ -11,6 +11,7 @@ import TerminalPanel from "@/components/terminal/TerminalPanel";
 import PortfolioManager from "@/components/portfolio/PortfolioManager";
 import DashboardPanel from "@/components/dashboard/DashboardPanel";
 import ChartsPanel from "@/components/dashboard/ChartsPanel";
+import BacktestPanel from "@/components/backtest/BacktestPanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -32,6 +33,8 @@ export default function Home() {
         return <PortfolioManager />;
       case "charts":
         return <ChartsPanel />;
+      case "backtest":
+        return <BacktestPanel />;
       case "editor":
       default:
         return (
