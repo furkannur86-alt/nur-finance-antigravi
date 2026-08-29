@@ -35,6 +35,14 @@ export default function Home() {
         return <ChartsPanel />;
       case "backtest":
         return <BacktestPanel />;
+      case "terminal":
+        return (
+          <iframe
+            src="/terminal.html"
+            className="w-full h-full border-0"
+            title="NUR Finance Terminal"
+          />
+        );
       case "editor":
       default:
         return (
@@ -55,9 +63,11 @@ export default function Home() {
         {sidebarOpen && <Sidebar />}
         <div className="flex flex-col flex-1 min-w-0">
           <div className="flex-1 min-h-0">{renderMainContent()}</div>
-          <div style={{ height: 200 }}>
-            <TerminalPanel />
-          </div>
+          {activeView !== "terminal" && (
+            <div style={{ height: 200 }}>
+              <TerminalPanel />
+            </div>
+          )}
         </div>
       </div>
       <StatusBar />
