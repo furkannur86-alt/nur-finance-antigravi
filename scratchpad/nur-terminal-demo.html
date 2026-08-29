@@ -20,68 +20,85 @@
 
   .root {
     display: grid;
-    grid-template-rows: 24px 1fr 22px 32px;
+    grid-template-rows: 26px 1fr 24px 34px;
     height: 100vh;
   }
 
-  /* ── Top status bar ── */
+  /* ── Top bar — Bloomberg style ── */
   .top-bar {
     display: flex;
     align-items: center;
-    background: #1a1a2e;
     border-bottom: 1px solid #333;
     padding: 0 8px;
     font-size: 11px;
     gap: 6px;
   }
-  .tb-brand {
-    color: #00d4aa;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-right: 8px;
+  .root.mode-bb .top-bar {
+    background: #1a1a4e;
   }
-  .tb-sep { color: #333; }
+  .root.mode-ek .top-bar {
+    background: #003366;
+  }
+  .tb-brand {
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-right: 8px;
+    font-size: 11px;
+  }
+  .root.mode-bb .tb-brand { color: #ff8c00; }
+  .root.mode-ek .tb-brand { color: #fff; }
+  .tb-sep { color: #555; }
   .tb-sec {
-    color: #ff8c00;
     font-weight: 600;
   }
-  .tb-ctx { color: #888; }
-  .tb-mode {
-    color: #000;
+  .root.mode-bb .tb-sec { color: #ff8c00; }
+  .root.mode-ek .tb-sec { color: #60a5fa; }
+  .tb-ctx { color: #888; font-size: 10px; }
+  .tb-page {
     font-weight: 700;
-    font-size: 9px;
-    letter-spacing: 0.5px;
+    font-size: 10px;
     padding: 1px 6px;
     border-radius: 2px;
     cursor: pointer;
-    transition: background 0.12s;
   }
-  .tb-mode.mode-bb { background: #ff8c00; }
-  .tb-mode.mode-bb:hover { background: #ffaa33; }
-  .tb-mode.mode-ek { background: #3b82f6; }
-  .tb-mode.mode-ek:hover { background: #60a5fa; }
+  .root.mode-bb .tb-page {
+    color: #000;
+    background: #ff8c00;
+  }
+  .root.mode-bb .tb-page:hover { background: #ffaa33; }
+  .root.mode-ek .tb-page {
+    color: #fff;
+    background: #0066cc;
+  }
+  .root.mode-ek .tb-page:hover { background: #3388dd; }
   .tb-right {
     margin-left: auto;
     display: flex;
     gap: 12px;
     color: #888;
     align-items: center;
+    font-size: 10px;
   }
   .tb-live {
     color: #22c55e;
     font-weight: 600;
+  }
+  .tb-footer-brand {
+    color: #666;
+    font-size: 9px;
+    letter-spacing: 0.5px;
   }
 
   /* ── Main output area ── */
   .output-area {
     overflow-y: auto;
     padding: 6px 10px;
-    background: #000;
+    background: #0a0a0a;
     scrollbar-width: thin;
-    scrollbar-color: #333 #000;
+    scrollbar-color: #333 #0a0a0a;
   }
   .output-area::-webkit-scrollbar { width: 6px; }
-  .output-area::-webkit-scrollbar-track { background: #000; }
+  .output-area::-webkit-scrollbar-track { background: #0a0a0a; }
   .output-area::-webkit-scrollbar-thumb { background: #333; }
 
   .line { white-space: pre; min-height: 18px; }
@@ -97,25 +114,32 @@
   .c-cyan { color: #22d3ee; }
   .c-bold { font-weight: 700; }
   .c-dim { color: #444; }
-  .c-header { color: #ff8c00; font-weight: 700; background: #1a1a00; display: inline; padding: 0 2px; }
+  .c-header { font-weight: 700; display: inline; padding: 0 2px; }
+  .root.mode-bb .c-header { color: #ff8c00; background: #1a1a00; }
+  .root.mode-ek .c-header { color: #60a5fa; background: #001428; }
   .c-highlight { background: #1a2e1a; }
+  .c-accent {}
+  .root.mode-bb .c-accent { color: #ff8c00; }
+  .root.mode-ek .c-accent { color: #3b82f6; }
 
   /* ── Command input bar ── */
   .cmd-bar {
     display: flex;
     align-items: center;
-    background: #0a0a14;
     border-top: 1px solid #333;
     border-bottom: 1px solid #333;
     padding: 0 8px;
   }
+  .root.mode-bb .cmd-bar { background: #0c0c00; }
+  .root.mode-ek .cmd-bar { background: #000a14; }
   .cmd-prompt {
-    color: #ff8c00;
     font-weight: 700;
     font-size: 12px;
     margin-right: 6px;
     flex-shrink: 0;
   }
+  .root.mode-bb .cmd-prompt { color: #ff8c00; }
+  .root.mode-ek .cmd-prompt { color: #3b82f6; }
   .cmd-input {
     flex: 1;
     background: none;
@@ -124,73 +148,108 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     outline: none;
-    caret-color: #ff8c00;
     text-transform: uppercase;
   }
+  .root.mode-bb .cmd-input { caret-color: #ff8c00; }
+  .root.mode-ek .cmd-input { caret-color: #3b82f6; }
   .cmd-input::placeholder { color: #444; text-transform: none; }
-  .cmd-help-hint {
-    color: #555;
-    font-size: 10px;
+  .cmd-go {
+    font-weight: 700;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: none;
     flex-shrink: 0;
+    letter-spacing: 0.3px;
+    margin-left: 6px;
+    font-family: 'JetBrains Mono', monospace;
   }
+  .root.mode-bb .cmd-go {
+    background: #22c55e;
+    color: #000;
+  }
+  .root.mode-bb .cmd-go:hover { background: #4ade80; }
+  .root.mode-ek .cmd-go {
+    background: #0066cc;
+    color: #fff;
+  }
+  .root.mode-ek .cmd-go:hover { background: #3388dd; }
 
-  /* ── Function keys ── */
+  /* ── Function keys — Bloomberg authentic ── */
   .fkeys {
     display: flex;
     align-items: stretch;
-    background: #111;
     border-top: 1px solid #333;
     padding: 3px 4px;
-    gap: 3px;
+    gap: 2px;
   }
+  .root.mode-bb .fkeys { background: #0a0a00; }
+  .root.mode-ek .fkeys { background: #000810; }
   .fkey {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #2a2a00;
-    border: 1px solid #444400;
-    color: #ffcc00;
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     font-weight: 700;
-    padding: 0 8px;
+    padding: 0 6px;
     cursor: pointer;
     letter-spacing: 0.3px;
     transition: background 0.08s;
     flex: 1;
-    max-width: 90px;
+    max-width: 85px;
     text-align: center;
+    border: 1px solid;
   }
-  .fkey:hover { background: #3a3a00; }
-  .fkey:active { background: #ffcc00; color: #000; }
-  .fkey-label {
-    font-size: 7px;
-    color: #666;
-    margin-right: 3px;
+  /* BB fkeys: yellow sector keys */
+  .root.mode-bb .fkey {
+    background: #2a2a00;
+    border-color: #444400;
+    color: #ffcc00;
   }
-  .fkey-green {
-    background: #0a2a0a;
+  .root.mode-bb .fkey:hover { background: #3a3a00; }
+  .root.mode-bb .fkey:active { background: #ffcc00; color: #000; }
+  /* BB green fkeys (EQUITY, GO) */
+  .root.mode-bb .fkey-green {
+    background: #002a00;
     border-color: #004400;
     color: #22c55e;
   }
-  .fkey-green:hover { background: #0a3a0a; }
-  .fkey-green:active { background: #22c55e; color: #000; }
-  .fkey-red {
-    background: #2a0a0a;
+  .root.mode-bb .fkey-green:hover { background: #003a00; }
+  .root.mode-bb .fkey-green:active { background: #22c55e; color: #000; }
+  /* BB red fkeys */
+  .root.mode-bb .fkey-red {
+    background: #2a0000;
     border-color: #440000;
     color: #ef4444;
   }
-  .fkey-red:hover { background: #3a0a0a; }
-  .fkey-spacer { flex: 0 0 12px; }
-
-  /* Eikon-mode fkey tints */
-  .fkey.ek-style {
-    background: #0a1a2e;
+  .root.mode-bb .fkey-red:hover { background: #3a0000; }
+  /* EK fkeys: blue/teal */
+  .root.mode-ek .fkey {
+    background: #001428;
     border-color: #003366;
     color: #60a5fa;
   }
-  .fkey.ek-style:hover { background: #0e2540; }
-  .fkey.ek-style:active { background: #3b82f6; color: #000; }
+  .root.mode-ek .fkey:hover { background: #001e3c; }
+  .root.mode-ek .fkey:active { background: #3b82f6; color: #000; }
+  .root.mode-ek .fkey-green {
+    background: #002a14;
+    border-color: #004422;
+    color: #22c55e;
+  }
+  .root.mode-ek .fkey-green:hover { background: #003a1e; }
+  .root.mode-ek .fkey-red {
+    background: #280014;
+    border-color: #440022;
+    color: #ef4444;
+  }
+  .fkey-label {
+    font-size: 7px;
+    color: #555;
+    margin-right: 3px;
+  }
+  .fkey-spacer { flex: 0 0 8px; }
 
   /* ── Boot ── */
   .boot {
@@ -224,47 +283,55 @@
   }
   .mode-select.done { opacity: 0; pointer-events: none; }
   .mode-title {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
-    color: #00d4aa;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
+    color: #ff8c00;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
   }
   .mode-subtitle {
     color: #666;
-    font-size: 12px;
-    margin-bottom: 40px;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .mode-subtitle2 {
+    color: #444;
+    font-size: 9px;
+    margin-bottom: 36px;
+    letter-spacing: 0.5px;
   }
   .mode-cards {
     display: flex;
     gap: 24px;
   }
   .mode-card {
-    width: 260px;
+    width: 280px;
     border: 2px solid #333;
-    border-radius: 4px;
-    padding: 28px 22px;
+    border-radius: 2px;
+    padding: 24px 20px;
     cursor: pointer;
     transition: all 0.15s;
     text-align: center;
   }
   .mode-card:hover { transform: translateY(-2px); }
-  .mode-card.card-bb {
-    background: #110e00;
-  }
-  .mode-card.card-bb:hover { border-color: #ff8c00; background: #1a1200; }
-  .mode-card.card-ek {
-    background: #000a14;
-  }
-  .mode-card.card-ek:hover { border-color: #3b82f6; background: #001028; }
-  .mode-card-icon {
-    font-size: 32px;
+  .mode-card.card-bb { background: #0c0a00; }
+  .mode-card.card-bb:hover { border-color: #ff8c00; background: #141000; }
+  .mode-card.card-ek { background: #000812; }
+  .mode-card.card-ek:hover { border-color: #0066cc; background: #001024; }
+  .mode-card-brand {
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
     font-weight: 700;
-    margin-bottom: 10px;
+  }
+  .mode-card-icon {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
     letter-spacing: 1px;
   }
   .mode-card-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     margin-bottom: 6px;
   }
@@ -283,12 +350,10 @@
     text-align: left;
   }
 
-  .ascii-chart { color: #00d4aa; }
-
   /* ── Canvas containers ── */
   .canvas-wrap {
     margin: 4px 8px;
-    border: 1px solid #222;
+    border: 1px solid #1a1a2e;
     border-radius: 2px;
     overflow: hidden;
     background: #050510;
@@ -349,25 +414,28 @@
 
 <!-- Mode Selection Screen -->
 <div class="mode-select" id="mode-select">
-  <div class="mode-title">NUR FINANCE TERMINAL</div>
-  <div class="mode-subtitle">Select your preferred command language</div>
+  <div class="mode-title">NUR FINANCE</div>
+  <div class="mode-subtitle">PROFESSIONAL TERMINAL</div>
+  <div class="mode-subtitle2">Select your preferred command language</div>
   <div class="mode-cards">
     <div class="mode-card card-bb" id="pick-bb" tabindex="0" role="button" aria-label="Bloomberg mode">
+      <div class="mode-card-brand" style="color:#888">BLOOMBERG PROFESSIONAL<sup>&#174;</sup></div>
       <div class="mode-card-icon" style="color:#ff8c00">BB</div>
-      <div class="mode-card-name" style="color:#ff8c00">Bloomberg</div>
-      <div class="mode-card-desc">Bloomberg Terminal command syntax<br>Industry standard for buy-side</div>
+      <div class="mode-card-name" style="color:#ff8c00">Bloomberg Terminal</div>
+      <div class="mode-card-desc">Bloomberg Professional command syntax<br>Industry standard for buy-side &amp; sell-side</div>
       <div class="mode-card-example">
-        <span style="color:#ff8c00">AAPL US Equity</span> <span style="color:#666">→ load security</span><br>
+        <span style="color:#ff8c00">AAPL US &lt;Equity&gt;</span> <span style="color:#555">&lt;GO&gt;</span><br>
         <span style="color:#ff8c00">DES</span> description &nbsp; <span style="color:#ff8c00">GP</span> graph<br>
         <span style="color:#ff8c00">TOP</span> news &nbsp; <span style="color:#ff8c00">WEI</span> indices
       </div>
     </div>
     <div class="mode-card card-ek" id="pick-ek" tabindex="0" role="button" aria-label="Reuters Eikon mode">
-      <div class="mode-card-icon" style="color:#3b82f6">EK</div>
+      <div class="mode-card-brand" style="color:#888">LSEG / REFINITIV</div>
+      <div class="mode-card-icon" style="color:#0066cc">EK</div>
       <div class="mode-card-name" style="color:#3b82f6">Reuters Eikon</div>
-      <div class="mode-card-desc">Refinitiv Eikon / LSEG command syntax<br>Used by sell-side and global banks</div>
+      <div class="mode-card-desc">Refinitiv Workspace / LSEG command syntax<br>Used by global banks &amp; sell-side desks</div>
       <div class="mode-card-example">
-        <span style="color:#3b82f6">AAPL.O</span> <span style="color:#666">→ load security (RIC)</span><br>
+        <span style="color:#3b82f6">AAPL.O</span> <span style="color:#555">&#x23CE; Enter</span><br>
         <span style="color:#3b82f6">QUOT</span> quote &nbsp; <span style="color:#3b82f6">GRAPH</span> chart<br>
         <span style="color:#3b82f6">NEWS</span> headlines &nbsp; <span style="color:#3b82f6">INDX</span> indices
       </div>
@@ -379,26 +447,27 @@
   <div class="boot-text" id="boot-text"></div>
 </div>
 
-<div class="root" id="app" style="display:none">
+<div class="root mode-bb" id="app" style="display:none">
   <div class="top-bar">
-    <span class="tb-brand">NUR FINANCE</span>
+    <span class="tb-brand" id="tb-brand">BLOOMBERG PROFESSIONAL</span>
     <span class="tb-sep">|</span>
     <span class="tb-sec" id="tb-sec">COMMAND LINE</span>
-    <span class="tb-sep">|</span>
-    <span class="tb-ctx" id="tb-ctx">AntiGravi Terminal v3.0</span>
+    <span class="tb-sep" id="tb-sep2">|</span>
+    <span class="tb-ctx" id="tb-ctx"></span>
     <div class="tb-right">
-      <span class="tb-mode mode-bb" id="tb-mode" title="Click to switch mode">BB</span>
-      <span class="tb-live">● LIVE</span>
+      <span class="tb-page" id="tb-mode" title="Click to switch mode">BB</span>
+      <span class="tb-live">&#9679; LIVE</span>
       <span id="tb-time"></span>
+      <span class="tb-footer-brand" id="tb-footer">BLOOMBERG L.P.</span>
     </div>
   </div>
 
   <div class="output-area" id="output"></div>
 
   <div class="cmd-bar">
-    <span class="cmd-prompt" id="prompt">NUR&gt;</span>
+    <span class="cmd-prompt" id="prompt">1&gt;</span>
     <input class="cmd-input" id="cmd" placeholder="" autocomplete="off" spellcheck="false" />
-    <span class="cmd-help-hint">&lt;GO&gt; = Enter</span>
+    <button class="cmd-go" id="go-btn">&lt;GO&gt;</button>
   </div>
 
   <div class="fkeys" id="fkeys"></div>
@@ -406,19 +475,23 @@
 
 <script>
 // ═══════════════════════════════════════════════════
-// NUR FINANCE TERMINAL — Dual-Mode: Bloomberg & Eikon
+// NUR FINANCE TERMINAL — Authentic Bloomberg & Eikon
+// + NUR Financial Language Extensions
 // ═══════════════════════════════════════════════════
 
-// ── Mode definitions ──
-// Bloomberg commands mapped to their Eikon equivalents
 const MODES = {
   BB: {
     label: 'Bloomberg',
+    long: 'BLOOMBERG PROFESSIONAL',
     short: 'BB',
     promptColor: '#ff8c00',
-    accentClass: '',
+    brand: 'BLOOMBERG PROFESSIONAL',
+    footer: 'BLOOMBERG L.P.',
+    promptText: '1>',
+    goLabel: '<GO>',
+    accentClass: 'c-amber',
     secFormat: (sym) => sym + ' US Equity',
-    secLabel: (sym) => sym + ' US EQUITY',
+    secLabel: (sym) => sym + ' US <Equity>',
     fkeys: [
       { f:'F1',  cmd:'GOVT',   cls:'' },
       { f:'F2',  cmd:'CORP',   cls:'' },
@@ -429,63 +502,70 @@ const MODES = {
       { f:'F7',  cmd:'EQUITY', cls:'fkey-green' },
       { f:'F8',  cmd:'CMDTY',  cls:'' },
       { f:'F9',  cmd:'INDEX',  cls:'' },
-      { f:'F10', cmd:'CURNCY', cls:'' },
+      { f:'F10', cmd:'CRNCY',  cls:'' },
       null,
       { f:'F11', cmd:'MENU',   cls:'fkey-green' },
       { f:'F12', cmd:'HELP',   cls:'fkey-red' },
     ],
-    placeholder: 'Enter command (e.g., AAPL US Equity, TOP, WEI, HELP)',
+    placeholder: 'AAPL US Equity <GO>',
     cmds: {
-      des: 'DES', gp: 'GP', fa: 'FA', anr: 'ANR', hp: 'HP', bq: 'BQ',
-      top: 'TOP', wei: 'WEI', most: 'MOST', port: 'PORT', fxip: 'FXIP',
-      eco: 'ECO', secf: 'SECF', equity: 'EQUITY', help: 'HELP',
-      curncy: 'CURNCY', index: 'INDEX', menu: 'MENU', cls: 'CLS',
-      bmap: 'BMAP', cris: 'CRIS', live: 'LIVE',
+      des:'DES', gp:'GP', fa:'FA', anr:'ANR', hp:'HP', bq:'BQ',
+      top:'TOP', wei:'WEI', most:'MOST', port:'PORT', fxip:'FXIP',
+      eco:'ECO', secf:'SECF', equity:'EQUITY', help:'HELP',
+      curncy:'CRNCY', index:'INDEX', menu:'MENU', cls:'CLS',
+      bmap:'BMAP', cris:'CRIS', live:'LIVE', hmap:'HMAP',
+      nrsk:'NRSK', ncri:'NCRI', nnuc:'NNUC',
     },
   },
   EK: {
     label: 'Reuters Eikon',
+    long: 'LSEG WORKSPACE',
     short: 'EK',
     promptColor: '#3b82f6',
-    accentClass: 'ek-style',
+    brand: 'LSEG WORKSPACE',
+    footer: 'LSEG / REFINITIV',
+    promptText: '>>',
+    goLabel: 'Enter',
+    accentClass: 'c-blue',
     secFormat: (sym) => sym + '.O',
     secLabel: (sym) => sym + '.O',
     fkeys: [
-      { f:'F1',  cmd:'GOVT',    cls:'ek-style' },
-      { f:'F2',  cmd:'CORP',    cls:'ek-style' },
-      { f:'F3',  cmd:'MBS',     cls:'ek-style' },
-      { f:'F4',  cmd:'MM',      cls:'ek-style' },
-      { f:'F5',  cmd:'MUNI',    cls:'ek-style' },
-      { f:'F6',  cmd:'PFD',     cls:'ek-style' },
+      { f:'F1',  cmd:'GOVT',    cls:'' },
+      { f:'F2',  cmd:'CORP',    cls:'' },
+      { f:'F3',  cmd:'MBS',     cls:'' },
+      { f:'F4',  cmd:'MM',      cls:'' },
+      { f:'F5',  cmd:'MUNI',    cls:'' },
+      { f:'F6',  cmd:'PFD',     cls:'' },
       { f:'F7',  cmd:'EQ',      cls:'fkey-green' },
-      { f:'F8',  cmd:'COM',     cls:'ek-style' },
-      { f:'F9',  cmd:'INDX',    cls:'ek-style' },
-      { f:'F10', cmd:'FX',      cls:'ek-style' },
+      { f:'F8',  cmd:'COM',     cls:'' },
+      { f:'F9',  cmd:'INDX',    cls:'' },
+      { f:'F10', cmd:'FX',      cls:'' },
       null,
-      { f:'F11', cmd:'MENU',    cls:'fkey-green' },
+      { f:'F11', cmd:'APPS',    cls:'fkey-green' },
       { f:'F12', cmd:'HELP',    cls:'fkey-red' },
     ],
-    placeholder: 'Enter command (e.g., AAPL.O, NEWS, INDX, HELP)',
+    placeholder: 'AAPL.O &#x23CE;',
     cmds: {
-      des: 'QUOT', gp: 'GRAPH', fa: 'FA', anr: 'REC', hp: 'HPD', bq: 'Q',
-      top: 'NEWS', wei: 'INDX', most: 'ACT', port: 'PORT', fxip: 'FXALL',
-      eco: 'ECODAY', secf: 'SEARCH', equity: 'EQ', help: 'HELP',
-      curncy: 'FX', index: 'INDX', menu: 'MENU', cls: 'CLS',
-      bmap: 'GEOP', cris: 'CONFLICT', live: 'LIVE',
+      des:'QUOT', gp:'GRAPH', fa:'FA', anr:'REC', hp:'HPD', bq:'Q',
+      top:'NEWS', wei:'INDX', most:'ACT', port:'PORT', fxip:'FXALL',
+      eco:'ECODAY', secf:'SEARCH', equity:'EQ', help:'HELP',
+      curncy:'FX', index:'INDX', menu:'APPS', cls:'CLS',
+      bmap:'GEOP', cris:'CONFLICT', live:'LIVE', hmap:'SMAP',
+      nrsk:'NRSK', ncri:'NCRI', nnuc:'NNUC',
     },
   },
 };
 
-// Reverse lookup: Eikon command → internal function
 const EIKON_MAP = {
   'QUOT':'des', 'GRAPH':'gp', 'G':'gp', 'FA':'fa', 'REC':'anr',
   'HPD':'hp', 'Q':'bq', 'NEWS':'top', 'N':'top', 'INDX':'wei',
   'ACT':'act', 'MOVERS':'act', 'PORT':'port', 'PORTFOLIO':'port',
   'FXALL':'fxip', 'FX':'fxip', 'ECODAY':'eco', 'SEARCH':'secf',
-  'EQ':'equity', 'HELP':'help', 'MENU':'help', 'CLS':'cls', 'CLEAR':'cls',
+  'EQ':'equity', 'HELP':'help', 'APPS':'help', 'CLS':'cls', 'CLEAR':'cls',
   'MBS':'stub', 'MM':'stub', 'COM':'stub', 'MUNI':'stub', 'PFD':'stub', 'GOVT':'stub', 'CORP':'stub',
   'GEOP':'bmap', 'CONFLICT':'cris', 'LIVE':'live',
   'SMAP':'hmap', 'HEAT':'hmap',
+  'NRSK':'nrsk', 'NCRI':'ncri', 'NNUC':'nnuc',
 };
 
 const BLOOMBERG_MAP = {
@@ -493,15 +573,15 @@ const BLOOMBERG_MAP = {
   'TOP':'top', 'NEWS':'top', 'WEI':'wei', 'MOST':'act', 'MOVERS':'act', 'MOVE':'act',
   'PORT':'port', 'PORTFOLIO':'port', 'FXIP':'fxip', 'FX':'fxip',
   'ECO':'eco', 'HELP':'help', 'MENU':'help', 'EQUITY':'equity',
-  'CURNCY':'fxip', 'CURRENCY':'fxip', 'INDEX':'wei',
+  'CRNCY':'fxip', 'CURRENCY':'fxip', 'INDEX':'wei',
   'CLS':'cls', 'CLEAR':'cls',
   'GOVT':'stub', 'CORP':'stub', 'MTGE':'stub', 'M-MKT':'stub', 'MUNI':'stub',
   'PFD':'stub', 'CMDTY':'stub',
   'BMAP':'bmap', 'CRIS':'cris', 'LIVE':'live',
   'HMAP':'hmap', 'HEAT':'hmap',
+  'NRSK':'nrsk', 'NCRI':'ncri', 'NNUC':'nnuc',
 };
 
-// RIC to internal key mapping for Eikon mode
 const RIC_MAP = {
   'AAPL.O':'AAPL US EQUITY', 'MSFT.O':'MSFT US EQUITY', 'NVDA.O':'NVDA US EQUITY',
   'GOOGL.O':'GOOGL US EQUITY', 'AMZN.O':'AMZN US EQUITY', 'TSLA.O':'TSLA US EQUITY',
@@ -509,7 +589,6 @@ const RIC_MAP = {
   'BTC=':'BTC CURNCY', 'ETH=':'ETH CURNCY',
 };
 
-// Reverse: internal key → RIC
 const KEY_TO_RIC = {};
 for (const [ric, key] of Object.entries(RIC_MAP)) KEY_TO_RIC[key] = ric;
 
@@ -517,6 +596,7 @@ let MODE = 'BB';
 let currentSec = null;
 let cmdHistory = [];
 let histIdx = -1;
+let pageNum = 1;
 
 const DB = {
   securities: {
@@ -557,7 +637,7 @@ const DB = {
     globalRiskIndex: 72.4,
     riskTrend: +2.1,
     nuclearThreatLevel: 'ELEVATED',
-    lastUpdate: '2026-08-28 14:35 UTC',
+    lastUpdate: '2026-08-29 14:35 UTC',
     regions: [
       { region:'Eastern Europe',   risk:89, status:'CRITICAL',  conflicts:3, fatalities:'142K+', trend:'+4.2', nuclear: true },
       { region:'Middle East',      risk:82, status:'CRITICAL',  conflicts:5, fatalities:'98K+',  trend:'+1.8', nuclear: false },
@@ -604,6 +684,10 @@ const DB = {
 // ── Output helpers ──
 const out = document.getElementById('output');
 
+function accent() { return MODE === 'BB' ? 'c-amber' : 'c-blue'; }
+function accentHex() { return MODE === 'BB' ? '#ff8c00' : '#3b82f6'; }
+function headerBg() { return MODE === 'BB' ? '#1a1a00' : '#001428'; }
+
 function print(text, cls='') {
   const d = document.createElement('div');
   d.className = 'line';
@@ -620,7 +704,7 @@ function printHTML(html) {
   out.scrollTop = out.scrollHeight;
 }
 
-function cls() { out.innerHTML = ''; }
+function cls() { out.innerHTML = ''; pageNum = 1; }
 
 function pad(s, n, right) {
   s = String(s);
@@ -641,6 +725,13 @@ function secDisplay(key) {
   return key;
 }
 
+function secDisplayFancy(key) {
+  if (MODE === 'EK') return KEY_TO_RIC[key] || key;
+  const parts = key.split(' ');
+  if (parts.length >= 3) return parts[0] + ' ' + parts[1] + ' <' + parts[2] + '>';
+  return key;
+}
+
 function setContext(secKey, label) {
   currentSec = secKey;
   document.getElementById('tb-sec').textContent = label || (secKey ? secDisplay(secKey) : 'COMMAND LINE');
@@ -648,40 +739,53 @@ function setContext(secKey, label) {
 
 function cmdName(fn) { return MODES[MODE].cmds[fn] || fn.toUpperCase(); }
 
-// ── Screens (mode-aware labels) ──
+function pageHeader(title, rightLabel) {
+  const a = accent();
+  const pg = pageNum + '>';
+  const m = MODES[MODE];
+  printHTML(`<span class="${a} c-bold">  ${title}${' '.repeat(Math.max(2, 60 - title.length - rightLabel.length))}${rightLabel}</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+}
+
+function pageFooter(extra) {
+  const m = MODES[MODE];
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  if (extra) printHTML(`  <span class="c-gray">${extra}</span>`);
+  printHTML(`  <span class="c-dim">${m.footer} — ${new Date().toLocaleTimeString('en-US',{hour12:false})} EST</span>`);
+}
+
+// ── Screens ──
 
 function screenDES(key) {
   const s = DB.securities[key];
   if (!s) { print('Security not found.'); return; }
-  const disp = secDisplay(key);
-  setContext(key, disp);
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key));
   cls();
   const title = MODE === 'EK' ? 'QUOTE OVERVIEW' : 'DESCRIPTION';
-  printHTML(`<span class="c-amber c-bold">  ${title}                                                    ${disp}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, disp);
   printHTML(`  <span class="c-white c-bold">${s.name}</span>`);
   if (MODE === 'EK') {
-    printHTML(`  <span class="c-gray">RIC: ${s.ric||disp}    Exchange: ${s.exch||'N/A'}    Currency: ${s.ccy||'N/A'}</span>`);
+    printHTML(`  <span class="c-gray">RIC: ${s.ric||secDisplay(key)}    Exchange: ${s.exch||'N/A'}    Currency: ${s.ccy||'N/A'}</span>`);
   } else {
     printHTML(`  <span class="c-gray">Exchange: ${s.exch||'N/A'}    Currency: ${s.ccy||'N/A'}    Sector: ${s.sector||'N/A'}</span>`);
   }
   printHTML(`  <span class="c-gray">${MODE==='EK'?'Sector':'Industry'}: ${MODE==='EK'?s.sector:s.industry||'N/A'}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
-  printHTML(`  <span class="c-amber">PRICE DATA</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">PRICE DATA</span>`);
   printHTML(`  Last Price      <span class="c-teal c-bold">${fmtPx(s.px)}</span>     Change   <span class="${chgColor(s.chg)}">${chgSign(s.chg)}${s.chg.toFixed(2)} (${chgSign(s.pct)}${s.pct.toFixed(2)}%)</span>`);
   printHTML(`  Open             ${fmtPx(s.open)}     High     ${fmtPx(s.hi)}`);
   printHTML(`  Low              ${fmtPx(s.lo)}       Volume   ${(s.vol/1e6).toFixed(1)}M`);
   printHTML(`  52-Wk High       ${fmtPx(s.yr_hi||0)}     52-Wk Low  ${fmtPx(s.yr_lo||0)}`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
-  printHTML(`  <span class="c-amber">FUNDAMENTALS</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">FUNDAMENTALS</span>`);
   printHTML(`  Market Cap       <span class="c-white">${s.mktcap||'N/A'}</span>       P/E Ratio    <span class="c-white">${s.pe||'N/A'}</span>`);
   printHTML(`  EPS              <span class="c-white">${s.eps||'N/A'}</span>         Dividend     <span class="c-white">${s.div||'0.00'}</span>`);
   printHTML(`  Beta             <span class="c-white">${s.beta||'N/A'}</span>         Shares Out   <span class="c-white">${s.shares||'N/A'}</span>`);
   printHTML(`  Analyst Rating   <span class="c-teal c-bold">${s.rating||'N/A'}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
 
-  // Mini 30-day price chart
-  printHTML(`  <span class="c-amber">30-DAY PRICE TREND</span>`);
+  printHTML(`  <span class="${accent()} c-bold">30-DAY PRICE TREND</span>`);
   const miniWrap = document.createElement('div');
   miniWrap.className = 'canvas-wrap';
   miniWrap.style.maxWidth = '500px';
@@ -709,7 +813,6 @@ function screenDES(key) {
   const mW = 500 - mPadL - mPadR;
   const mH = 120 - mPadT - mPadB;
 
-  // Grid
   mctx.strokeStyle = '#1a1a2e';
   mctx.lineWidth = 0.5;
   for (let i = 0; i <= 3; i++) {
@@ -722,9 +825,8 @@ function screenDES(key) {
     mctx.fillText(fmtPx(val), mPadL - 4, y + 3);
   }
 
-  // Area fill
-  const mGrad = mctx.createLinearGradient(0, mPadT, 0, mPadT + mH);
   const trendUp = s.chg >= 0;
+  const mGrad = mctx.createLinearGradient(0, mPadT, 0, mPadT + mH);
   mGrad.addColorStop(0, trendUp ? 'rgba(0,212,170,0.3)' : 'rgba(239,68,68,0.3)');
   mGrad.addColorStop(1, trendUp ? 'rgba(0,212,170,0.02)' : 'rgba(239,68,68,0.02)');
   mctx.fillStyle = mGrad;
@@ -739,7 +841,6 @@ function screenDES(key) {
   mctx.closePath();
   mctx.fill();
 
-  // Line
   mctx.strokeStyle = trendUp ? '#00d4aa' : '#ef4444';
   mctx.lineWidth = 2;
   mctx.beginPath();
@@ -750,21 +851,16 @@ function screenDES(key) {
   }
   mctx.stroke();
 
-  // Endpoint
   const endX = mPadL + mW;
   const endY = mPadT + (1 - (s.px - mmn) / mrange) * mH;
   mctx.fillStyle = trendUp ? '#00d4aa' : '#ef4444';
   mctx.beginPath();
   mctx.arc(endX, endY, 3, 0, Math.PI * 2);
   mctx.fill();
-
-  // Price label
   mctx.fillStyle = trendUp ? '#00d4aa' : '#ef4444';
   mctx.font = 'bold 11px JetBrains Mono';
   mctx.textAlign = 'left';
   mctx.fillText(fmtPx(s.px), endX - 50, endY - 8);
-
-  // X-axis
   mctx.fillStyle = '#444';
   mctx.font = '8px JetBrains Mono';
   mctx.textAlign = 'center';
@@ -772,22 +868,19 @@ function screenDES(key) {
   mctx.fillText('15D', mPadL + mW/2, 120 - 4);
   mctx.fillText('Today', mPadL + mW - 10, 120 - 4);
 
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
   const gpCmd = cmdName('gp'), faCmd = cmdName('fa'), anrCmd = cmdName('anr');
-  printHTML(`  <span class="c-gray">Type ${gpCmd} for full chart, ${faCmd} for financials, ${anrCmd} for analyst recs</span>`);
+  pageFooter(`Type ${gpCmd} for chart, ${faCmd} for financials, ${anrCmd} for analyst recs`);
 }
 
 function screenGP(key) {
   const s = DB.securities[key];
   if (!s) { print('Security not found.'); return; }
-  const disp = secDisplay(key);
-  const label = MODE === 'EK' ? 'GRAPH' : 'PRICE GRAPH';
-  setContext(key, disp + ' ' + cmdName('gp'));
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key) + ' ' + cmdName('gp'));
   cls();
-  printHTML(`<span class="c-amber c-bold">  ${label}  (90 Day)                                          ${disp}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  const label = MODE === 'EK' ? 'GRAPH' : 'PRICE GRAPH';
+  pageHeader(label + '  (90 Day)', disp);
 
-  // Generate 90 days of OHLC data
   const days = 90;
   const ohlc = [];
   let p = s.px * (0.85 + Math.random()*0.1);
@@ -800,7 +893,6 @@ function screenGP(key) {
     ohlc.push({o,h,l,c});
     p = c;
   }
-  // Ensure last candle matches current price
   ohlc[days-1].c = s.px;
 
   const allPx = ohlc.flatMap(d => [d.h, d.l]);
@@ -808,7 +900,6 @@ function screenGP(key) {
   const mx = Math.max(...allPx);
   const range = mx - mn || 1;
 
-  // Draw canvas chart
   const wrap = document.createElement('div');
   wrap.className = 'canvas-wrap';
   const cvs = document.createElement('canvas');
@@ -822,15 +913,12 @@ function screenGP(key) {
   const padL = 70, padR = 16, padT = 20, padB = 30;
   const cw = W - padL - padR;
   const ch = H - padT - padB;
-
   const toX = (i) => padL + (i / (days-1)) * cw;
   const toY = (v) => padT + (1 - (v - mn) / range) * ch;
 
-  // Background
   ctx.fillStyle = '#050510';
   ctx.fillRect(0, 0, W, H);
 
-  // Grid lines
   ctx.strokeStyle = '#1a1a2e';
   ctx.lineWidth = 0.5;
   const gridSteps = 6;
@@ -844,7 +932,6 @@ function screenGP(key) {
     ctx.fillText(fmtPx(val), padL - 6, y + 3);
   }
 
-  // X-axis labels
   ctx.fillStyle = '#555';
   ctx.textAlign = 'center';
   ctx.font = '9px JetBrains Mono, monospace';
@@ -854,7 +941,6 @@ function screenGP(key) {
     ctx.fillText(xlabels[i], x, H - 8);
   }
 
-  // Moving average (20-day)
   ctx.strokeStyle = 'rgba(255,140,0,0.4)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([4,3]);
@@ -867,7 +953,6 @@ function screenGP(key) {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Area fill under close prices
   const grad = ctx.createLinearGradient(0, padT, 0, padT + ch);
   grad.addColorStop(0, 'rgba(0,212,170,0.25)');
   grad.addColorStop(1, 'rgba(0,212,170,0.01)');
@@ -880,7 +965,6 @@ function screenGP(key) {
   ctx.closePath();
   ctx.fill();
 
-  // Candlesticks
   const barW = Math.max(2, cw / days * 0.6);
   for (let i = 0; i < days; i++) {
     const d = ohlc[i];
@@ -888,38 +972,31 @@ function screenGP(key) {
     const bull = d.c >= d.o;
     ctx.strokeStyle = bull ? '#22c55e' : '#ef4444';
     ctx.fillStyle = bull ? '#22c55e' : '#ef4444';
-
-    // Wick
     ctx.beginPath();
     ctx.moveTo(x, toY(d.h));
     ctx.lineTo(x, toY(d.l));
     ctx.lineWidth = 0.8;
     ctx.stroke();
-
-    // Body
     const top = toY(Math.max(d.o, d.c));
     const bot = toY(Math.min(d.o, d.c));
     const bodyH = Math.max(1, bot - top);
     ctx.fillRect(x - barW/2, top, barW, bodyH);
   }
 
-  // Current price line
   const lastY = toY(s.px);
-  ctx.strokeStyle = '#00d4aa';
+  ctx.strokeStyle = accentHex();
   ctx.lineWidth = 1;
   ctx.setLineDash([3,3]);
   ctx.beginPath(); ctx.moveTo(padL, lastY); ctx.lineTo(W - padR, lastY); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Price badge
-  ctx.fillStyle = '#00d4aa';
+  ctx.fillStyle = accentHex();
   ctx.fillRect(W - padR, lastY - 8, padR, 16);
   ctx.fillStyle = '#000';
   ctx.font = 'bold 8px JetBrains Mono';
   ctx.textAlign = 'left';
   ctx.fillText(fmtPx(s.px,0), W - padR + 2, lastY + 3);
 
-  // Volume bars along bottom
   const maxVol = Math.max(...ohlc.map((_,i) => (s.vol * (0.5 + Math.random()*0.8))));
   for (let i = 0; i < days; i++) {
     const vol = s.vol * (0.5 + Math.random()*0.8);
@@ -929,7 +1006,6 @@ function screenGP(key) {
     ctx.fillRect(toX(i) - barW/2, padT + ch - vh, barW, vh);
   }
 
-  // Legend
   ctx.fillStyle = '#666';
   ctx.font = '9px JetBrains Mono';
   ctx.textAlign = 'left';
@@ -940,22 +1016,20 @@ function screenGP(key) {
   ctx.beginPath(); ctx.moveTo(padL + 42, padT + 10); ctx.lineTo(padL + 70, padT + 10); ctx.stroke();
   ctx.setLineDash([]);
 
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
   printHTML(`  Last: <span class="c-teal c-bold">${fmtPx(s.px)}</span>  Chg: <span class="${chgColor(s.chg)}">${chgSign(s.chg)}${s.chg.toFixed(2)}</span>  High: ${fmtPx(s.yr_hi||s.px)}  Low: ${fmtPx(s.yr_lo||s.px*0.8)}`);
-  printHTML(`  <span class="c-gray">Candles: 90D OHLC  |  Orange dash: 20-day MA  |  Green area: close trend</span>`);
+  pageFooter('90D OHLC  |  Orange dash: 20d MA  |  Green area: close trend');
 }
 
 function screenFA(key) {
   const s = DB.securities[key];
   if (!s) { print('Security not found.'); return; }
-  const disp = secDisplay(key);
-  setContext(key, disp + ' ' + cmdName('fa'));
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key) + ' ' + cmdName('fa'));
   cls();
-  printHTML(`<span class="c-amber c-bold">  FINANCIAL ANALYSIS                                             ${disp}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader('FINANCIAL ANALYSIS', disp);
   printHTML(`  <span class="c-white c-bold">${s.name}</span>    <span class="c-gray">${s.sector||''} / ${s.industry||''}</span>`);
   print('');
-  printHTML(`  <span class="c-amber">INCOME STATEMENT (Annual, USD Millions)</span>`);
+  printHTML(`  <span class="${accent()} c-bold">INCOME STATEMENT (Annual, USD Millions)</span>`);
   printHTML(`  <span class="c-yellow">${pad('',20)}${pad('FY2024',14,true)}${pad('FY2023',14,true)}${pad('FY2022',14,true)}</span>`);
   const rev = (s.px * 1.5).toFixed(0);
   printHTML(`  ${pad('Revenue',20)}<span class="c-white">${pad(rev+',000',14,true)}${pad((rev*0.92).toFixed(0)+',000',14,true)}${pad((rev*0.84).toFixed(0)+',000',14,true)}</span>`);
@@ -964,24 +1038,24 @@ function screenFA(key) {
   printHTML(`  ${pad('Net Income',20)}<span class="c-teal">${pad((rev*0.25).toFixed(0)+',000',14,true)}${pad((rev*0.23).toFixed(0)+',000',14,true)}${pad((rev*0.20).toFixed(0)+',000',14,true)}</span>`);
   printHTML(`  ${pad('EPS',20)}<span class="c-teal">${pad(s.eps||'N/A',14,true)}${pad(((s.eps||5)*0.9).toFixed(2),14,true)}${pad(((s.eps||5)*0.78).toFixed(2),14,true)}</span>`);
   print('');
-  printHTML(`  <span class="c-amber">KEY RATIOS</span>`);
+  printHTML(`  <span class="${accent()} c-bold">KEY RATIOS</span>`);
   printHTML(`  P/E Ratio        <span class="c-white">${s.pe||'N/A'}</span>`);
   printHTML(`  Price/Sales      <span class="c-white">${((s.pe||30)*0.3).toFixed(1)}</span>`);
   printHTML(`  Price/Book       <span class="c-white">${((s.pe||30)*0.5).toFixed(1)}</span>`);
   printHTML(`  ROE              <span class="c-teal">${(25 + Math.random()*30).toFixed(1)}%</span>`);
   printHTML(`  Debt/Equity      <span class="c-white">${(0.3 + Math.random()*1.2).toFixed(2)}</span>`);
   printHTML(`  Profit Margin    <span class="c-teal">${(15 + Math.random()*20).toFixed(1)}%</span>`);
+  pageFooter();
 }
 
 function screenANR(key) {
   const s = DB.securities[key];
   if (!s) { print('Security not found.'); return; }
-  const disp = secDisplay(key);
+  const disp = secDisplayFancy(key);
   const title = MODE === 'EK' ? 'RECOMMENDATIONS' : 'ANALYST RECOMMENDATIONS';
-  setContext(key, disp + ' ' + cmdName('anr'));
+  setContext(key, secDisplay(key) + ' ' + cmdName('anr'));
   cls();
-  printHTML(`<span class="c-amber c-bold">  ${title}                                        ${disp}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, disp);
   printHTML(`  <span class="c-white c-bold">${s.name}</span>    Consensus: <span class="c-teal c-bold">${s.rating||'N/A'}</span>`);
   print('');
   const analysts = [
@@ -1000,15 +1074,15 @@ function screenANR(key) {
   }
   print('');
   printHTML(`  <span class="c-gray">Buy: 7  |  Hold: 2  |  Sell: 1  |  Avg Target: $${(208).toFixed(2)}</span>`);
+  pageFooter();
 }
 
 function screenTOP() {
   setContext(null, MODE === 'EK' ? 'NEWS MONITOR' : 'TOP NEWS');
   cls();
   const header = MODE === 'EK' ? 'NEWS MONITOR' : 'TOP NEWS';
-  const tag = MODE === 'EK' ? 'REFINITIV WIRE' : 'NUR FINANCE WIRE';
-  printHTML(`<span class="c-amber c-bold">  ${header}                                                ${tag}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  const tag = MODE === 'EK' ? 'REFINITIV WIRE' : 'BLOOMBERG WIRE';
+  pageHeader(header, tag);
   const stories = [
     ['14:35','URGENT','Federal Reserve signals potential rate cut in September — yields drop 8bps','c-red'],
     ['14:22','EARNINGS','NVDA beats Q3: revenue $35.1B vs $33.2B est, Data Center +154% YoY','c-yellow'],
@@ -1026,15 +1100,15 @@ function screenTOP() {
   for (const [time, tag2, headline, tc] of stories) {
     printHTML(`  <span class="c-gray">${time}</span>  <span class="${tc} c-bold">${pad(tag2,12)}</span> <span class="c-white">${headline}</span>`);
   }
+  pageFooter();
 }
 
 function screenWEI() {
   const title = MODE === 'EK' ? 'INDEX MONITOR' : 'WORLD EQUITY INDICES';
-  const cmd = MODE === 'EK' ? 'INDX' : 'WEI';
+  const cmd = cmdName('wei');
   setContext(null, title);
   cls();
-  printHTML(`<span class="c-amber c-bold">  ${title}                                           ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, cmd);
   const idxCol = MODE === 'EK' ? 'RIC' : 'INDEX';
   printHTML(`  <span class="c-yellow">${pad(idxCol,14)}${pad('NAME',20)}${pad('LAST',14,true)}${pad('CHG',10,true)}${pad('%CHG',10,true)}  30D</span>`);
   printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
@@ -1045,45 +1119,40 @@ function screenWEI() {
     row.className = 'line';
     row.innerHTML = `  ${pad(label,14)}<span class="c-gray">${pad(v.name,20)}</span><span class="c-white">${pad(fmtPx(v.px),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span>  `;
     out.appendChild(row);
-    // Generate sparkline data
     const sparkData = [];
     let sp = v.px * (0.97 + Math.random()*0.02);
-    for (let i = 0; i < 30; i++) {
-      sp += (Math.random()-0.48) * v.px * 0.005;
-      sparkData.push(sp);
-    }
+    for (let i = 0; i < 30; i++) { sp += (Math.random()-0.48) * v.px * 0.005; sparkData.push(sp); }
     sparkData[29] = v.px;
-    const color = v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)';
-    drawSparkline(row, sparkData, color, 80, 16);
+    drawSparkline(row, sparkData, v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)', 80, 16);
   }
   out.scrollTop = out.scrollHeight;
+  pageFooter();
 }
 
 function screenMOST() {
   const title = MODE === 'EK' ? 'ACTIVE SECURITIES' : 'MOST ACTIVE — US EQUITIES';
-  const cmd = MODE === 'EK' ? 'ACT' : 'MOST';
+  const cmd = cmdName('most');
   setContext(null, title);
   cls();
-  printHTML(`<span class="c-amber c-bold">  ${title}                                      ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, cmd);
   const symCol = MODE === 'EK' ? 'RIC' : 'SYMBOL';
   printHTML(`  <span class="c-yellow">${pad('#',4)}${pad(symCol,14)}${pad('NAME',22)}${pad('LAST',12,true)}${pad('CHG%',10,true)}${pad('VOLUME',12,true)}</span>`);
-  printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
   const sorted = Object.entries(DB.securities).filter(([k])=>k.includes('EQUITY')).sort((a,b)=>b[1].vol-a[1].vol);
   sorted.forEach(([k,v], i) => {
     const cc = chgColor(v.pct);
     const sym = MODE === 'EK' ? (v.ric||k.split(' ')[0]) : k.split(' ')[0];
     printHTML(`  ${pad(i+1,4)}<span class="c-teal">${pad(sym,14)}</span>${pad(v.name,22)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${cc}">${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span><span class="c-gray">${pad((v.vol/1e6).toFixed(1)+'M',12,true)}</span>`);
   });
+  pageFooter();
 }
 
 function screenFXIP() {
   const title = MODE === 'EK' ? 'FX MONITOR' : 'FX INFORMATION PORTAL';
-  const cmd = MODE === 'EK' ? 'FXALL' : 'FXIP';
+  const cmd = cmdName('fxip');
   setContext(null, title);
   cls();
-  printHTML(`<span class="c-amber c-bold">  ${title}                                          ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, cmd);
   const pairCol = MODE === 'EK' ? 'RIC' : 'PAIR';
   printHTML(`  <span class="c-yellow">${pad(pairCol,14)}${pad('BID',14,true)}${pad('ASK',14,true)}${pad('CHG',12,true)}${pad('TIME',12,true)}</span>`);
   printHTML(`  <span class="c-dim">${'─'.repeat(66)}</span>`);
@@ -1095,7 +1164,6 @@ function screenFXIP() {
     row.className = 'line';
     row.innerHTML = `  <span class="c-teal">${pad(label,14)}</span><span class="c-white">${pad(v.px.toFixed(4),14,true)}</span><span class="c-white">${pad((v.px+spread).toFixed(4),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(4),12,true)}</span><span class="c-gray">${pad('LIVE',12,true)}</span>  `;
     out.appendChild(row);
-    // FX sparkline
     const fxData = [];
     let fp = v.px * (0.998 + Math.random()*0.002);
     for (let i = 0; i < 24; i++) { fp += (Math.random()-0.49) * v.px * 0.001; fxData.push(fp); }
@@ -1103,13 +1171,13 @@ function screenFXIP() {
     drawSparkline(row, fxData, v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)', 70, 14);
   }
   out.scrollTop = out.scrollHeight;
+  pageFooter();
 }
 
 function screenPORT() {
   setContext(null, 'PORTFOLIO');
   cls();
-  printHTML(`<span class="c-amber c-bold">  PORTFOLIO ANALYTICS                                            PORT</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader('PORTFOLIO ANALYTICS', 'PORT');
   const positions = [
     { sym:'AAPL', qty:250, avg:185.20 }, { sym:'NVDA', qty:100, avg:720.50 },
     { sym:'MSFT', qty:150, avg:380.40 }, { sym:'GOOGL', qty:200, avg:155.30 },
@@ -1118,7 +1186,7 @@ function screenPORT() {
   ];
   const symCol = MODE === 'EK' ? 'RIC' : 'SYM';
   printHTML(`  <span class="c-yellow">${pad(symCol,10)}${pad('QTY',8,true)}${pad('AVG PX',12,true)}${pad('MKT PX',12,true)}${pad('MKT VAL',14,true)}${pad('P&L',10,true)}${pad('P&L%',8,true)}</span>`);
-  printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
   let totalVal = 0, totalCost = 0;
   for (const p of positions) {
     const secKey = p.sym + ' US EQUITY';
@@ -1134,12 +1202,11 @@ function screenPORT() {
     printHTML(`  <span class="c-teal">${pad(symLabel,10)}</span><span class="c-white">${pad(p.qty,8,true)}${pad(fmtPx(p.avg),12,true)}${pad(fmtPx(s.px),12,true)}${pad('$'+(mktVal/1000).toFixed(1)+'K',14,true)}</span><span class="${chgColor(pnl)}">${pad(chgSign(pnl)+'$'+(Math.abs(pnl)/1000).toFixed(1)+'K',10,true)}${pad(chgSign(pnlPct)+pnlPct.toFixed(1)+'%',8,true)}</span>`);
   }
   const totalPnl = totalVal - totalCost;
-  printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
-  printHTML(`  <span class="c-amber c-bold">${pad('TOTAL',10)}</span>${' '.repeat(32)}<span class="c-white c-bold">${pad('$'+(totalVal/1000).toFixed(1)+'K',14,true)}</span><span class="${chgColor(totalPnl)} c-bold">${pad(chgSign(totalPnl)+'$'+(Math.abs(totalPnl)/1000).toFixed(1)+'K',10,true)}${pad(chgSign(totalPnl/totalCost*100)+(totalPnl/totalCost*100).toFixed(1)+'%',8,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">${pad('TOTAL',10)}</span>${' '.repeat(32)}<span class="c-white c-bold">${pad('$'+(totalVal/1000).toFixed(1)+'K',14,true)}</span><span class="${chgColor(totalPnl)} c-bold">${pad(chgSign(totalPnl)+'$'+(Math.abs(totalPnl)/1000).toFixed(1)+'K',10,true)}${pad(chgSign(totalPnl/totalCost*100)+(totalPnl/totalCost*100).toFixed(1)+'%',8,true)}</span>`);
 
-  // Portfolio allocation donut chart
   print('');
-  printHTML(`  <span class="c-amber c-bold">ALLOCATION</span>`);
+  printHTML(`  <span class="${accent()} c-bold">ALLOCATION</span>`);
   const donutWrap = document.createElement('div');
   donutWrap.className = 'canvas-wrap';
   donutWrap.style.maxWidth = '500px';
@@ -1175,7 +1242,6 @@ function screenPORT() {
     dctx.fill();
     startAngle += angle;
   }
-  // Center text
   dctx.fillStyle = '#050510';
   dctx.beginPath();
   dctx.arc(cx, cy, r2 - 1, 0, Math.PI * 2);
@@ -1188,7 +1254,6 @@ function screenPORT() {
   dctx.font = '9px JetBrains Mono';
   dctx.fillText('TOTAL VALUE', cx, cy + 12);
 
-  // Legend
   let ly = 20;
   for (const sl of slices) {
     const pct = (sl.val / totalVal * 100).toFixed(1);
@@ -1201,7 +1266,6 @@ function screenPORT() {
     ly += 22;
   }
 
-  // P&L bar chart
   dctx.fillStyle = '#666';
   dctx.font = '9px JetBrains Mono';
   dctx.fillText('P&L BY POSITION', 240, ly + 16);
@@ -1215,26 +1279,22 @@ function screenPORT() {
     const barW = Math.abs(pnl) / maxPnl * 120;
     const barColor = pnl >= 0 ? '#22c55e' : '#ef4444';
     dctx.fillStyle = barColor;
-    if (pnl >= 0) {
-      dctx.fillRect(300, ly, barW, 10);
-    } else {
-      dctx.fillRect(300 - barW, ly, barW, 10);
-    }
+    if (pnl >= 0) { dctx.fillRect(300, ly, barW, 10); }
+    else { dctx.fillRect(300 - barW, ly, barW, 10); }
     dctx.fillStyle = '#888';
     dctx.font = '9px JetBrains Mono';
     dctx.textAlign = 'left';
     dctx.fillText(p.sym, 240, ly + 9);
     ly += 16;
   }
+  pageFooter();
 }
 
 function screenECO() {
-  const title = MODE === 'EK' ? 'ECONOMIC CALENDAR' : 'ECONOMIC CALENDAR';
-  const cmd = MODE === 'EK' ? 'ECODAY' : 'ECO';
+  const cmd = cmdName('eco');
   setContext(null, 'ECONOMIC CALENDAR');
   cls();
-  printHTML(`<span class="c-amber c-bold">  ECONOMIC CALENDAR                                              ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader('ECONOMIC CALENDAR', cmd);
   const events = [
     ['08:30','US','Non-Farm Payrolls','187K','170K','175K','c-green'],
     ['08:30','US','Unemployment Rate','3.8%','3.8%','3.8%','c-white'],
@@ -1250,99 +1310,82 @@ function screenECO() {
   for (const [time, ctry, event, actual, forecast, prior, clsN] of events) {
     printHTML(`  <span class="c-gray">${pad(time,8)}</span><span class="c-cyan">${pad(ctry,6)}</span>${pad(event,26)}<span class="${clsN} c-bold">${pad(actual,10,true)}</span><span class="c-gray">${pad(forecast,10,true)}${pad(prior,10,true)}</span>`);
   }
+  pageFooter();
 }
 
 function screenHELP() {
   setContext(null, 'HELP');
   cls();
   const m = MODES[MODE];
-  printHTML(`<span class="c-amber c-bold">  NUR FINANCE TERMINAL — ${m.label.toUpperCase()} COMMAND REFERENCE              HELP</span>`);
-  printHTML(`<span class="c-dim">  ${'═'.repeat(72)}</span>`);
+  const a = accent();
+  pageHeader(m.long + ' — COMMAND REFERENCE', 'HELP');
 
   if (MODE === 'BB') {
-    printHTML(`  <span class="c-amber">SECURITY COMMANDS</span>  <span class="c-gray">(set security context: AAPL US Equity)</span>`);
+    printHTML(`  <span class="${a} c-bold">SECURITY COMMANDS</span>  <span class="c-gray">(load security: AAPL US Equity &lt;GO&gt;)</span>`);
     printHTML(`  <span class="c-teal">DES</span>     Description / overview of loaded security`);
-    printHTML(`  <span class="c-teal">GP</span>      Price graph (90-day)`);
+    printHTML(`  <span class="c-teal">GP</span>      Price graph (90-day OHLC)`);
     printHTML(`  <span class="c-teal">FA</span>      Financial analysis — income statement & ratios`);
     printHTML(`  <span class="c-teal">ANR</span>     Analyst recommendations & price targets`);
     printHTML(`  <span class="c-teal">HP</span>      Historical prices`);
     printHTML(`  <span class="c-teal">BQ</span>      Block quote — quick price snapshot`);
-    print('');
-    printHTML(`  <span class="c-amber">MARKET COMMANDS</span>`);
-    printHTML(`  <span class="c-teal">TOP</span>     Top news headlines`);
-    printHTML(`  <span class="c-teal">WEI</span>     World equity indices`);
-    printHTML(`  <span class="c-teal">MOST</span>    Most active equities`);
-    printHTML(`  <span class="c-teal">PORT</span>    Portfolio analytics`);
-    printHTML(`  <span class="c-teal">FXIP</span>    FX information portal`);
-    printHTML(`  <span class="c-teal">ECO</span>     Economic calendar`);
-    printHTML(`  <span class="c-teal">SECF</span>    Security finder — search by name`);
-    print('');
-    printHTML(`  <span class="c-amber">VISUAL & ANALYTICS</span>`);
-    printHTML(`  <span class="c-teal">HMAP</span>    Heat map — sector & stock performance visualization`);
-    print('');
-    printHTML(`  <span class="c-amber">GEOPOLITICAL & RISK</span>`);
-    printHTML(`  <span class="c-red">BMAP</span>    Geopolitical risk map — DEFCON, nuclear arsenal, regional risk`);
-    printHTML(`  <span class="c-red">CRIS</span>    Crisis monitor — active armed conflicts (ACLED data)`);
-    print('');
-    printHTML(`  <span class="c-amber">LIVE DATA</span>`);
-    printHTML(`  <span class="c-teal">LIVE</span>    Fetch real-time prices from EODHD API`);
-    print('');
-    printHTML(`  <span class="c-amber">FUNCTION KEYS</span>  <span class="c-gray">(or type the label)</span>`);
-    printHTML(`  <span class="c-yellow">EQUITY</span>  GOVT  CORP  CMDTY  INDEX  CURNCY  M-MKT  MTGE  MUNI  PFD`);
-    print('');
-    printHTML(`  <span class="c-amber">SYSTEM</span>`);
-    printHTML(`  <span class="c-teal">HELP</span>    This screen`);
-    printHTML(`  <span class="c-teal">CLS</span>     Clear screen`);
-    printHTML(`  <span class="c-teal">MODE</span>    Switch to Reuters Eikon commands`);
   } else {
-    printHTML(`  <span class="c-amber">SECURITY COMMANDS</span>  <span class="c-gray">(load instrument: AAPL.O)</span>`);
+    printHTML(`  <span class="${a} c-bold">SECURITY COMMANDS</span>  <span class="c-gray">(load instrument: AAPL.O)</span>`);
     printHTML(`  <span class="c-blue">QUOT</span>    Quote overview of loaded instrument`);
     printHTML(`  <span class="c-blue">GRAPH</span>   Price chart (90-day) — alias: G`);
     printHTML(`  <span class="c-blue">FA</span>      Financial analysis — income statement & ratios`);
     printHTML(`  <span class="c-blue">REC</span>     Analyst recommendations & price targets`);
     printHTML(`  <span class="c-blue">HPD</span>     Historical price data`);
     printHTML(`  <span class="c-blue">Q</span>       Quick quote — price snapshot`);
-    print('');
-    printHTML(`  <span class="c-amber">MARKET COMMANDS</span>`);
-    printHTML(`  <span class="c-blue">NEWS</span>    News monitor — alias: N`);
-    printHTML(`  <span class="c-blue">INDX</span>    World index monitor`);
-    printHTML(`  <span class="c-blue">ACT</span>     Active securities (most active)`);
-    printHTML(`  <span class="c-blue">PORT</span>    Portfolio analytics`);
-    printHTML(`  <span class="c-blue">FXALL</span>   FX monitor`);
-    printHTML(`  <span class="c-blue">ECODAY</span>  Economic calendar`);
-    printHTML(`  <span class="c-blue">SEARCH</span>  Instrument finder — search by name`);
-    print('');
-    printHTML(`  <span class="c-amber">VISUAL & ANALYTICS</span>`);
-    printHTML(`  <span class="c-blue">SMAP</span>    Sector map — sector & stock heat map visualization`);
-    print('');
-    printHTML(`  <span class="c-amber">GEOPOLITICAL & RISK</span>`);
-    printHTML(`  <span class="c-red">GEOP</span>    Geopolitical risk monitor — DEFCON, nuclear arsenal, regional risk`);
-    printHTML(`  <span class="c-red">CONFLICT</span> Active armed conflicts (ACLED data)`);
-    print('');
-    printHTML(`  <span class="c-amber">LIVE DATA</span>`);
-    printHTML(`  <span class="c-blue">LIVE</span>    Fetch real-time prices from EODHD API`);
-    print('');
-    printHTML(`  <span class="c-amber">FUNCTION KEYS</span>  <span class="c-gray">(or type the label)</span>`);
-    printHTML(`  <span class="c-blue">EQ</span>  GOVT  CORP  COM  INDX  FX  MM  MBS  MUNI  PFD`);
-    print('');
-    printHTML(`  <span class="c-amber">RIC FORMAT</span>  <span class="c-gray">(Refinitiv Instrument Codes)</span>`);
-    printHTML(`  <span class="c-gray">NASDAQ: .O (AAPL.O)   NYSE: .N (JPM.N)   Crypto: = (BTC=)</span>`);
-    printHTML(`  <span class="c-gray">Index: . prefix (.SPX)   FX: = suffix (EUR=)</span>`);
-    print('');
-    printHTML(`  <span class="c-amber">SYSTEM</span>`);
-    printHTML(`  <span class="c-blue">HELP</span>    This screen`);
-    printHTML(`  <span class="c-blue">CLS</span>     Clear screen`);
-    printHTML(`  <span class="c-blue">MODE</span>    Switch to Bloomberg commands`);
   }
+  print('');
+  const cc = MODE === 'BB' ? 'c-teal' : 'c-blue';
+  printHTML(`  <span class="${a} c-bold">MARKET COMMANDS</span>`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('top'),8)}</span>${MODE==='EK'?'News monitor':'Top news headlines'}`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('wei'),8)}</span>${MODE==='EK'?'World index monitor':'World equity indices'}`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('most'),8)}</span>${MODE==='EK'?'Active securities':'Most active equities'}`);
+  printHTML(`  <span class="${cc}">${pad('PORT',8)}</span>Portfolio analytics`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('fxip'),8)}</span>FX ${MODE==='EK'?'monitor':'information portal'}`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('eco'),8)}</span>Economic calendar`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('secf'),8)}</span>${MODE==='EK'?'Instrument finder':'Security finder'}`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">VISUAL & ANALYTICS</span>`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('hmap'),8)}</span>${MODE==='EK'?'Sector map':'Heat map'} — sector & stock performance`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">NUR FINANCIAL LANGUAGE (Common Commands)</span>  <span class="c-gray">Works in both BB & EK</span>`);
+  printHTML(`  <span class="c-red">${pad('NRSK',8)}</span>Geopolitical risk monitor — DEFCON, nuclear arsenal, regional risk`);
+  printHTML(`  <span class="c-red">${pad('NCRI',8)}</span>Crisis monitor — active armed conflicts (ACLED data)`);
+  printHTML(`  <span class="c-red">${pad('NNUC',8)}</span>Nuclear arsenal overview — warheads by state`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">LEGACY RISK COMMANDS</span>  <span class="c-gray">(mode-specific aliases)</span>`);
+  printHTML(`  <span class="c-red">${pad(cmdName('bmap'),8)}</span>= NRSK   <span class="c-red">${pad(cmdName('cris'),8)}</span>= NCRI`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">LIVE DATA</span>`);
+  printHTML(`  <span class="${cc}">${pad('LIVE',8)}</span>Fetch real-time prices from EODHD API`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">FUNCTION KEYS</span>  <span class="c-gray">(or type the label)</span>`);
+  if (MODE === 'BB') {
+    printHTML(`  <span class="c-yellow">GOVT  CORP  MTGE  M-MKT  MUNI  PFD</span>  <span class="c-green">EQUITY</span>  <span class="c-yellow">CMDTY  INDEX  CRNCY</span>`);
+  } else {
+    printHTML(`  <span class="c-blue">GOVT  CORP  MBS  MM  MUNI  PFD</span>  <span class="c-green">EQ</span>  <span class="c-blue">COM  INDX  FX</span>`);
+    print('');
+    printHTML(`  <span class="${a} c-bold">RIC FORMAT</span>  <span class="c-gray">(Refinitiv Instrument Codes)</span>`);
+    printHTML(`  <span class="c-gray">NASDAQ: .O (AAPL.O)   NYSE: .N (JPM.N)   Crypto: = (BTC=)</span>`);
+  }
+  print('');
+  printHTML(`  <span class="${a} c-bold">SYSTEM</span>`);
+  printHTML(`  <span class="${cc}">HELP</span>    This screen`);
+  printHTML(`  <span class="${cc}">CLS</span>     Clear screen`);
+  printHTML(`  <span class="${cc}">MODE</span>    Switch to ${MODE==='BB'?'Reuters Eikon':'Bloomberg'} commands`);
 
-  printHTML(`<span class="c-dim">  ${'═'.repeat(72)}</span>`);
-  printHTML(`  <span class="c-gray">Powered by Nur Finance AntiGravi Engine v3.0 — Mode: ${m.label}</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(74)}</span>`);
+  printHTML(`  <span class="c-gray">${m.footer} — Powered by Nur Finance AntiGravi Engine v3.0</span>`);
+  printHTML(`  <span class="c-gray">NUR Financial Language © 2024-2026 — Common extensions for BB & EK</span>`);
 }
 
 function screenBQ(key) {
   const s = DB.securities[key];
   if (!s) return;
-  const disp = secDisplay(key);
+  const disp = secDisplayFancy(key);
   const cc = chgColor(s.chg);
   printHTML(`  <span class="c-teal c-bold">${disp}</span> <span class="c-gray">${s.name}</span>  <span class="c-white c-bold">${fmtPx(s.px)}</span>  <span class="${cc}">${chgSign(s.chg)}${s.chg.toFixed(2)} (${chgSign(s.pct)}${s.pct.toFixed(2)}%)</span>  <span class="c-gray">Vol: ${(s.vol/1e6).toFixed(1)}M</span>`);
 }
@@ -1350,14 +1393,12 @@ function screenBQ(key) {
 function screenHP(key) {
   const s = DB.securities[key];
   if (!s) { print('Security not found.'); return; }
-  const disp = secDisplay(key);
-  setContext(key, disp + ' ' + cmdName('hp'));
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key) + ' ' + cmdName('hp'));
   cls();
-  const title = MODE === 'EK' ? 'HISTORICAL PRICE DATA' : 'HISTORICAL PRICES';
-  printHTML(`<span class="c-amber c-bold">  ${title}                                              ${disp}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(MODE === 'EK' ? 'HISTORICAL PRICE DATA' : 'HISTORICAL PRICES', disp);
   printHTML(`  <span class="c-yellow">${pad('DATE',14)}${pad('OPEN',12,true)}${pad('HIGH',12,true)}${pad('LOW',12,true)}${pad('CLOSE',12,true)}${pad('VOLUME',14,true)}</span>`);
-  printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
   let p = s.px;
   const now = new Date();
   for (let i = 0; i < 15; i++) {
@@ -1372,15 +1413,14 @@ function screenHP(key) {
     printHTML(`  <span class="c-gray">${pad(ds,14)}</span><span class="c-white">${pad(fmtPx(o),12,true)}${pad(fmtPx(h),12,true)}${pad(fmtPx(l),12,true)}</span><span class="${cc}">${pad(fmtPx(p),12,true)}</span><span class="c-gray">${pad(vol+'M',14,true)}</span>`);
     p += (Math.random()-0.48)*s.px*0.015;
   }
+  pageFooter();
 }
 
 function screenSECF(query) {
   setContext(null, MODE === 'EK' ? 'INSTRUMENT SEARCH' : 'SECURITY FINDER');
   cls();
   const title = MODE === 'EK' ? 'INSTRUMENT SEARCH' : 'SECURITY FINDER';
-  const cmd = MODE === 'EK' ? 'SEARCH' : 'SECF';
-  printHTML(`<span class="c-amber c-bold">  ${title}                                                ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, cmdName('secf'));
   const q = (query||'').toUpperCase();
   const results = Object.entries(DB.securities).filter(([k,v]) =>
     k.includes(q) || v.name.toUpperCase().includes(q) || (v.ric||'').toUpperCase().includes(q)
@@ -1396,71 +1436,52 @@ function screenSECF(query) {
     const label = MODE === 'EK' ? (v.ric||k) : k;
     printHTML(`  <span class="c-teal">${pad(label,24)}</span>${pad(v.name,24)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.pct)}">${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span>`);
   }
+  pageFooter();
 }
 
 function screenEQUITY() {
   setContext(null, MODE === 'EK' ? 'EQUITY MONITOR' : 'EQUITY');
   cls();
-  const cmd = MODE === 'EK' ? 'EQ' : 'EQUITY';
-  printHTML(`<span class="c-amber c-bold">  EQUITY MONITOR                                                 ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader('EQUITY MONITOR', cmdName('equity'));
   const symCol = MODE === 'EK' ? 'RIC' : 'SYMBOL';
   printHTML(`  <span class="c-yellow">${pad(symCol,12)}${pad('NAME',22)}${pad('LAST',12,true)}${pad('CHG',10,true)}${pad('%CHG',8,true)}${pad('VOLUME',10,true)}</span>`);
-  printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
   for (const [k,v] of Object.entries(DB.securities)) {
     if (!k.includes('EQUITY')) continue;
     const sym = MODE === 'EK' ? (v.ric||k.split(' ')[0]) : k.split(' ')[0];
     printHTML(`  <span class="c-teal">${pad(sym,12)}</span>${pad(v.name,22)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.chg)}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',8,true)}</span><span class="c-gray">${pad((v.vol/1e6).toFixed(1)+'M',10,true)}</span>`);
   }
+  pageFooter();
 }
 
-// ── Geopolitical Risk Monitor (BMAP / GEOP) ──
-function screenBMAP() {
+// ── NUR Financial Language: NRSK (= BMAP/GEOP) ──
+function screenNRSK() {
   const geo = DB.geopolitical;
-  const cmd = MODE === 'EK' ? 'GEOP' : 'BMAP';
-  const title = MODE === 'EK' ? 'GEOPOLITICAL RISK MONITOR' : 'BLOOMBERG MAP — GEOPOLITICAL RISK';
-  setContext(null, title);
+  setContext(null, 'NUR RISK MONITOR');
   cls();
-  printHTML(`<span class="c-red c-bold">  ${title}                          ${cmd}</span>`);
+  printHTML(`<span class="c-red c-bold">  NUR RISK MONITOR — GEOPOLITICAL ASSESSMENT                      NRSK</span>`);
   printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
 
-  // DEFCON + Global Risk
   const defconColors = {1:'c-red',2:'c-red',3:'c-yellow',4:'c-teal',5:'c-green'};
   const defconLabels = {1:'MAXIMUM READINESS',2:'ARMED FORCES READY',3:'INCREASE IN FORCE READINESS',4:'INCREASED INTELLIGENCE',5:'NORMAL READINESS'};
-  printHTML(`  <span class="c-amber c-bold">GLOBAL THREAT ASSESSMENT</span>            <span class="c-gray">${geo.lastUpdate}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">GLOBAL THREAT ASSESSMENT</span>            <span class="c-gray">${geo.lastUpdate}</span>`);
   printHTML(`  DEFCON Level        <span class="${defconColors[geo.defcon]} c-bold">██ ${geo.defcon} — ${defconLabels[geo.defcon]} ██</span>`);
   printHTML(`  Global Risk Index   <span class="${geo.globalRiskIndex>70?'c-red':geo.globalRiskIndex>50?'c-yellow':'c-green'} c-bold">${geo.globalRiskIndex}/100</span>  <span class="${chgColor(geo.riskTrend)}">${chgSign(geo.riskTrend)}${geo.riskTrend} (30d)</span>`);
   printHTML(`  Nuclear Threat      <span class="c-red c-bold">${geo.nuclearThreatLevel}</span>`);
   print('');
 
-  // Nuclear Arsenal Summary
-  printHTML(`  <span class="c-amber c-bold">NUCLEAR ARSENAL — STATE OVERVIEW</span>`);
-  printHTML(`  <span class="c-yellow">${pad('STATE',12)}${pad('TOTAL',8,true)}${pad('DEPLOYED',10,true)}${pad('STATUS',16)}${pad('POSTURE',14)}${pad('DOCTRINE',22)}</span>`);
-  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
-  for (const n of geo.nuclearStates) {
-    const sc = n.posture==='High Alert'||n.posture==='Aggressive'?'c-red':n.posture==='Expanding'?'c-yellow':'c-gray';
-    printHTML(`  <span class="c-white">${pad(n.state,12)}</span><span class="c-red c-bold">${pad(n.warheads,8,true)}</span><span class="c-white">${pad(n.deployed,10,true)}</span><span class="${sc}">${pad(n.status,16)}</span><span class="c-white">${pad(n.posture,14)}</span><span class="c-gray">${pad(n.doctrine,22)}</span>`);
-  }
-  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
-  printHTML(`  <span class="c-gray">  Total estimated warheads worldwide: ~12,100</span>`);
-  print('');
-
-  // Risk by Region
-  printHTML(`  <span class="c-amber c-bold">REGIONAL RISK INDEX</span>`);
+  printHTML(`  <span class="${accent()} c-bold">REGIONAL RISK INDEX</span>`);
   printHTML(`  <span class="c-yellow">${pad('REGION',22)}${pad('RISK',6,true)}${pad('STATUS',12)}${pad('CONFLICTS',10,true)}${pad('FATALITIES',12,true)}${pad('30D',6,true)}${pad('NUC',6,true)}</span>`);
   printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
   for (const r of geo.regions) {
     const rc = r.risk>=80?'c-red':r.risk>=60?'c-yellow':r.risk>=40?'c-teal':'c-green';
     const sc = r.status==='CRITICAL'?'c-red':r.status==='HIGH'?'c-yellow':r.status==='ELEVATED'?'c-teal':'c-green';
     const nc = r.nuclear?'c-red':'c-gray';
-    // Risk bar
-    const barLen = Math.round(r.risk / 5);
-    const bar = '█'.repeat(barLen) + '░'.repeat(20-barLen);
     printHTML(`  ${pad(r.region,22)}<span class="${rc} c-bold">${pad(r.risk,6,true)}</span><span class="${sc}">${pad(r.status,12)}</span><span class="c-white">${pad(r.conflicts,10,true)}</span><span class="c-gray">${pad(r.fatalities,12,true)}</span><span class="${chgColor(parseFloat(r.trend))}">${pad(r.trend,6,true)}</span><span class="${nc}">${pad(r.nuclear?'▲YES':'—',6,true)}</span>`);
   }
-  // Canvas geopolitical risk heat map
+
   print('');
-  printHTML(`  <span class="c-amber c-bold">GEOPOLITICAL RISK HEAT MAP</span>`);
+  printHTML(`  <span class="${accent()} c-bold">GEOPOLITICAL RISK HEAT MAP</span>`);
   const geoGrid = document.createElement('div');
   geoGrid.className = 'geo-hmap';
   for (const r of geo.regions) {
@@ -1474,20 +1495,15 @@ function screenBMAP() {
     cell.style.borderColor = `rgba(${rr},${gg},${bb},0.4)`;
     const riskColor = r.risk >= 80 ? '#ef4444' : r.risk >= 60 ? '#ff8c00' : r.risk >= 40 ? '#ffcc00' : '#22c55e';
 
-    // Risk gauge canvas
     const gauge = document.createElement('canvas');
     gauge.width = 120; gauge.height = 60;
     gauge.style.cssText = 'width:120px;height:60px;display:block;margin:6px auto 0;';
     const gctx = gauge.getContext('2d');
-
-    // Arc background
     gctx.strokeStyle = '#1a1a2e';
     gctx.lineWidth = 8;
     gctx.beginPath();
     gctx.arc(60, 52, 40, Math.PI, 0);
     gctx.stroke();
-
-    // Arc filled
     const angle = Math.PI + (r.risk / 100) * Math.PI;
     const arcGrad = gctx.createLinearGradient(20, 52, 100, 52);
     arcGrad.addColorStop(0, '#22c55e');
@@ -1499,8 +1515,6 @@ function screenBMAP() {
     gctx.beginPath();
     gctx.arc(60, 52, 40, Math.PI, angle);
     gctx.stroke();
-
-    // Needle
     const needleAngle = Math.PI + (r.risk / 100) * Math.PI;
     const nx = 60 + Math.cos(needleAngle) * 30;
     const ny = 52 + Math.sin(needleAngle) * 30;
@@ -1521,8 +1535,6 @@ function screenBMAP() {
       <div style="color:#888;font-size:9px">${r.status} · ${r.conflicts} conflicts</div>
     `;
     cell.appendChild(gauge);
-
-    // Risk bar
     const bar = document.createElement('div');
     bar.className = 'geo-bar';
     bar.style.background = '#1a1a2e';
@@ -1530,21 +1542,18 @@ function screenBMAP() {
     fill.style.cssText = `width:${r.risk}%;height:100%;border-radius:2px;background:${riskColor};`;
     bar.appendChild(fill);
     cell.appendChild(bar);
-
     if (r.nuclear) {
       const nuke = document.createElement('div');
       nuke.style.cssText = 'color:#ef4444;font-size:9px;font-weight:700;margin-top:4px;';
       nuke.textContent = '☢ NUCLEAR CAPABLE';
       cell.appendChild(nuke);
     }
-
     geoGrid.appendChild(cell);
   }
   out.appendChild(geoGrid);
   out.scrollTop = out.scrollHeight;
 
-  // DEFCON gauge canvas
-  printHTML(`  <span class="c-amber c-bold">DEFCON THREAT GAUGE</span>`);
+  printHTML(`  <span class="${accent()} c-bold">DEFCON THREAT GAUGE</span>`);
   const defWrap = document.createElement('div');
   defWrap.className = 'canvas-wrap';
   defWrap.style.maxWidth = '400px';
@@ -1557,8 +1566,6 @@ function screenBMAP() {
   const dctx = defCvs.getContext('2d');
   dctx.fillStyle = '#050510';
   dctx.fillRect(0, 0, 400, 100);
-
-  // 5 DEFCON level bars
   const defColors = ['#22c55e','#84cc16','#ffcc00','#ff8c00','#ef4444'];
   const defLabels = ['5','4','3','2','1'];
   for (let i = 0; i < 5; i++) {
@@ -1590,29 +1597,23 @@ function screenBMAP() {
   dctx.fillText('MAXIMUM', 380, 88);
 
   printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
-  const crisCmd = MODE === 'EK' ? 'CONFLICT' : 'CRIS';
-  const hmapCmd = MODE === 'EK' ? 'SMAP' : 'HMAP';
   printHTML(`  <span class="c-gray">Sources: ACLED, Armed Conflicts DB, SIPRI, FAS Nuclear Notebook</span>`);
-  printHTML(`  <span class="c-gray">Type ${crisCmd} for armed conflicts | ${hmapCmd} for market sector heat map</span>`);
+  printHTML(`  <span class="c-gray">NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
 }
 
-// ── Armed Conflicts Screen (CRIS / CONFLICT) ──
-function screenCRIS() {
+// ── NUR Financial Language: NCRI (= CRIS/CONFLICT) ──
+function screenNCRI() {
   const geo = DB.geopolitical;
-  const cmd = MODE === 'EK' ? 'CONFLICT' : 'CRIS';
-  const title = MODE === 'EK' ? 'ACTIVE CONFLICTS MONITOR' : 'CRISIS MONITOR — ARMED CONFLICTS';
-  setContext(null, title);
+  setContext(null, 'NUR CRISIS MONITOR');
   cls();
-  printHTML(`<span class="c-red c-bold">  ${title}                          ${cmd}</span>`);
+  printHTML(`<span class="c-red c-bold">  NUR CRISIS MONITOR — ARMED CONFLICTS                            NCRI</span>`);
   printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
-  printHTML(`  <span class="c-amber c-bold">ACTIVE ARMED CONFLICTS & SECURITY CRISES</span>    <span class="c-gray">${geo.lastUpdate}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">ACTIVE ARMED CONFLICTS & SECURITY CRISES</span>    <span class="c-gray">${geo.lastUpdate}</span>`);
   print('');
-
   for (let i = 0; i < geo.conflicts.length; i++) {
     const c = geo.conflicts[i];
     const sc = c.status.includes('HIGH')?'c-red':c.status.includes('NUCLEAR')||c.status.includes('ESCALATION')?'c-red':c.status.includes('MEDIUM')?'c-yellow':'c-teal';
     const nc = c.nuclear==='CRITICAL'?'c-red c-bold':c.nuclear==='RISK PRESENT'?'c-yellow':'c-gray';
-    const alt = i % 2 === 0 ? '' : ' style="background:#0a0a14"';
     printHTML(`  <span class="c-white c-bold">${pad(i+1+'.',4)}${c.name}</span>`);
     printHTML(`  <span class="c-gray">    Type: ${pad(c.type,14)} Parties: ${c.parties}</span>`);
     printHTML(`  <span class="c-gray">    Since: ${c.start}     Fatalities: <span class="c-red">${c.fatalities}</span></span>`);
@@ -1620,21 +1621,42 @@ function screenCRIS() {
     printHTML(`  <span class="c-gray">    Region: ${c.region}   Nuclear: </span><span class="${nc}">${c.nuclear}</span>`);
     print('');
   }
-
   printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
   printHTML(`  <span class="c-gray">  Active conflicts tracked: ${geo.conflicts.length}</span>`);
   printHTML(`  <span class="c-gray">  Sources: ACLED (acleddata.com), Armed Conflicts Database (armedconflicts.org)</span>`);
   printHTML(`  <span class="c-gray">  Uppsala Conflict Data Program (UCDP), International Crisis Group (ICG)</span>`);
-  const bmapCmd = MODE === 'EK' ? 'GEOP' : 'BMAP';
-  printHTML(`  <span class="c-gray">  Type ${bmapCmd} for geopolitical risk overview & nuclear arsenal data</span>`);
+  printHTML(`  <span class="c-gray">  NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
 }
 
-// ── EODHD Live Market Data (LIVE) ──
+// ── NUR Financial Language: NNUC (Nuclear Arsenal) ──
+function screenNNUC() {
+  const geo = DB.geopolitical;
+  setContext(null, 'NUR NUCLEAR MONITOR');
+  cls();
+  printHTML(`<span class="c-red c-bold">  NUR NUCLEAR MONITOR — GLOBAL ARSENAL                            NNUC</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">NUCLEAR ARSENAL — STATE OVERVIEW</span>       <span class="c-gray">${geo.lastUpdate}</span>`);
+  print('');
+  printHTML(`  <span class="c-yellow">${pad('STATE',12)}${pad('TOTAL',8,true)}${pad('DEPLOYED',10,true)}${pad('STATUS',16)}${pad('POSTURE',14)}${pad('DOCTRINE',22)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
+  for (const n of geo.nuclearStates) {
+    const sc = n.posture==='High Alert'||n.posture==='Aggressive'?'c-red':n.posture==='Expanding'?'c-yellow':'c-gray';
+    printHTML(`  <span class="c-white">${pad(n.state,12)}</span><span class="c-red c-bold">${pad(n.warheads,8,true)}</span><span class="c-white">${pad(n.deployed,10,true)}</span><span class="${sc}">${pad(n.status,16)}</span><span class="c-white">${pad(n.posture,14)}</span><span class="c-gray">${pad(n.doctrine,22)}</span>`);
+  }
+  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Total estimated warheads worldwide: ~12,100</span>`);
+  printHTML(`  <span class="c-gray">  Nuclear Threat Level: <span class="c-red c-bold">${geo.nuclearThreatLevel}</span></span>`);
+  print('');
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Sources: SIPRI Yearbook, FAS Nuclear Notebook, Arms Control Association</span>`);
+  printHTML(`  <span class="c-gray">  NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
+}
+
+// ── EODHD Live Market Data ──
 async function screenLIVE() {
   setContext(null, 'LIVE MARKET DATA');
   cls();
-  printHTML(`<span class="c-amber c-bold">  LIVE MARKET DATA — EODHD API                                   LIVE</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader('LIVE MARKET DATA — EODHD API', 'LIVE');
   printHTML(`  <span class="c-teal">Fetching real-time data from EODHD...</span>`);
 
   const symbols = ['AAPL.US','MSFT.US','NVDA.US','GOOGL.US','AMZN.US','TSLA.US','META.US','JPM.US'];
@@ -1645,15 +1667,12 @@ async function screenLIVE() {
     if (!resp.ok) throw new Error('API ' + resp.status);
     const data = await resp.json();
     const items = Array.isArray(data) ? data : [data];
-
     cls();
-    printHTML(`<span class="c-amber c-bold">  LIVE MARKET DATA — EODHD REAL-TIME                             LIVE</span>`);
-    printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+    pageHeader('LIVE MARKET DATA — EODHD REAL-TIME', 'LIVE');
     printHTML(`  <span class="c-green c-bold">● LIVE DATA</span>  <span class="c-gray">${new Date().toLocaleTimeString('en-US',{hour12:false})} — Source: EODHD.com API</span>`);
     print('');
     printHTML(`  <span class="c-yellow">${pad('SYMBOL',10)}${pad('LAST',12,true)}${pad('OPEN',12,true)}${pad('HIGH',12,true)}${pad('LOW',12,true)}${pad('VOLUME',14,true)}${pad('CHG%',8,true)}</span>`);
-    printHTML(`  <span class="c-dim">${'─'.repeat(72)}</span>`);
-
+    printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
     for (const item of items) {
       const sym = (item.code || '').replace('.US','');
       const close = item.close || item.previousClose || 0;
@@ -1663,10 +1682,6 @@ async function screenLIVE() {
       const cc = chgColor(chg);
       printHTML(`  <span class="c-teal">${pad(sym,10)}</span><span class="c-white c-bold">${pad(fmtPx(close),12,true)}</span><span class="c-white">${pad(fmtPx(item.open||0),12,true)}${pad(fmtPx(item.high||0),12,true)}${pad(fmtPx(item.low||0),12,true)}</span><span class="c-gray">${pad(item.volume?Math.round(item.volume/1e6)+'M':'—',14,true)}</span><span class="${cc}">${pad(chgSign(pct)+pct.toFixed(2)+'%',8,true)}</span>`);
     }
-    printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
-    printHTML(`  <span class="c-gray">  Data: EODHD.com Real-Time API  |  Updated: ${new Date().toISOString().slice(0,19)}Z</span>`);
-
-    // Update DB with live data
     for (const item of items) {
       const sym = (item.code || '').replace('.US','');
       const key = sym + ' US EQUITY';
@@ -1681,11 +1696,10 @@ async function screenLIVE() {
         if (item.volume) DB.securities[key].vol = item.volume;
       }
     }
-    printHTML(`  <span class="c-teal">  Terminal prices updated with live data.</span>`);
+    pageFooter('Terminal prices updated with live data — EODHD.com');
   } catch (err) {
     cls();
-    printHTML(`<span class="c-amber c-bold">  LIVE MARKET DATA — EODHD API                                   LIVE</span>`);
-    printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+    pageHeader('LIVE MARKET DATA — EODHD API', 'LIVE');
     printHTML(`  <span class="c-red">  API Error: ${err.message}</span>`);
     printHTML(`  <span class="c-yellow">  Showing cached terminal data instead.</span>`);
     print('');
@@ -1696,19 +1710,17 @@ async function screenLIVE() {
       const sym = k.split(' ')[0];
       printHTML(`  <span class="c-teal">${pad(sym,10)}</span><span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.chg)}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',8,true)}</span><span class="c-gray">${pad('CACHED',10)}</span>`);
     }
-    printHTML(`<span class="c-dim">  ${'─'.repeat(50)}</span>`);
-    printHTML(`  <span class="c-gray">  EODHD API key: ${DB.eodhd.apiKey.slice(0,8)}...  Endpoint: eodhd.com/api</span>`);
+    pageFooter('EODHD API: ' + DB.eodhd.apiKey.slice(0,8) + '...');
   }
 }
 
-// ── Sector Heat Map (HMAP / SMAP) ──
+// ── Sector Heat Map ──
 function screenHMAP() {
-  const cmd = MODE === 'EK' ? 'SMAP' : 'HMAP';
+  const cmd = cmdName('hmap');
   const title = MODE === 'EK' ? 'SECTOR MAP' : 'HEAT MAP — MARKET SECTORS';
   setContext(null, title);
   cls();
-  printHTML(`<span class="c-amber c-bold">  ${title}                                    ${cmd}</span>`);
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
+  pageHeader(title, cmd);
 
   const sectors = [
     { name:'Technology', syms:['AAPL','MSFT','NVDA','GOOGL','META'], weight:38.2 },
@@ -1724,7 +1736,6 @@ function screenHMAP() {
     { name:'Cons. Staples', syms:[], weight:1.6, mockChg:-0.18 },
   ];
 
-  // Compute sector performance
   const sectorData = sectors.map(sec => {
     let avgChg = sec.mockChg || 0;
     if (sec.syms.length > 0) {
@@ -1738,10 +1749,8 @@ function screenHMAP() {
     return { ...sec, chg: avgChg };
   });
 
-  // Heat map grid with colored cells
   const grid = document.createElement('div');
   grid.className = 'hmap-grid';
-
   for (const sd of sectorData) {
     const cell = document.createElement('div');
     cell.className = 'hmap-cell';
@@ -1751,18 +1760,13 @@ function screenHMAP() {
     const b = Math.round(10 + intensity * 20);
     cell.style.background = `rgb(${r},${g},${b})`;
     cell.style.color = '#fff';
-
-    // Size cells proportional to weight
     const span = sd.weight > 20 ? 2 : 1;
     if (span > 1) cell.style.gridColumn = `span ${span}`;
-
     cell.innerHTML = `
       <div class="hm-sym">${sd.name}</div>
       <div class="hm-chg">${sd.chg >= 0 ? '+' : ''}${sd.chg.toFixed(2)}%</div>
       <div class="hm-px">${sd.weight}% of index</div>
     `;
-
-    // Sparkline canvas
     const spark = document.createElement('canvas');
     spark.width = 100; spark.height = 24;
     spark.style.cssText = 'width:100%;height:24px;margin-top:4px;';
@@ -1770,10 +1774,7 @@ function screenHMAP() {
     const sparkPts = 20;
     const sparkData = [];
     let sp = 100;
-    for (let i = 0; i < sparkPts; i++) {
-      sp += (Math.random()-0.48) * 3;
-      sparkData.push(sp);
-    }
+    for (let i = 0; i < sparkPts; i++) { sp += (Math.random()-0.48) * 3; sparkData.push(sp); }
     sparkData[sparkPts-1] = 100 + sd.chg * 3;
     const smn = Math.min(...sparkData), smx = Math.max(...sparkData);
     const srange = smx - smn || 1;
@@ -1786,22 +1787,17 @@ function screenHMAP() {
       i === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
     }
     sctx.stroke();
-
     cell.appendChild(spark);
     grid.appendChild(cell);
   }
-
   out.appendChild(grid);
   out.scrollTop = out.scrollHeight;
 
-  // Individual stock tiles
-  printHTML(`<span class="c-dim">  ${'─'.repeat(72)}</span>`);
-  printHTML(`  <span class="c-amber c-bold">INDIVIDUAL STOCKS</span>`);
-
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">INDIVIDUAL STOCKS</span>`);
   const stockGrid = document.createElement('div');
   stockGrid.className = 'hmap-grid';
   stockGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
-
   for (const [k,v] of Object.entries(DB.securities)) {
     if (!k.includes('EQUITY')) continue;
     const sym = k.split(' ')[0];
@@ -1822,6 +1818,7 @@ function screenHMAP() {
   }
   out.appendChild(stockGrid);
   out.scrollTop = out.scrollHeight;
+  pageFooter();
 }
 
 // ── Canvas sparkline helper ──
@@ -1832,8 +1829,6 @@ function drawSparkline(parentEl, data, color, w, h) {
   const ctx = cvs.getContext('2d');
   const mn = Math.min(...data), mx = Math.max(...data);
   const range = mx - mn || 1;
-
-  // Area fill
   const grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, color.replace(')', ',0.3)').replace('rgb', 'rgba'));
   grad.addColorStop(1, color.replace(')', ',0.02)').replace('rgb', 'rgba'));
@@ -1848,8 +1843,6 @@ function drawSparkline(parentEl, data, color, w, h) {
   ctx.lineTo(w, h);
   ctx.closePath();
   ctx.fill();
-
-  // Line
   ctx.strokeStyle = color;
   ctx.lineWidth = 1.2;
   ctx.beginPath();
@@ -1859,15 +1852,12 @@ function drawSparkline(parentEl, data, color, w, h) {
     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   }
   ctx.stroke();
-
-  // Endpoint dot
   const lastX = w;
   const lastY = h - 2 - ((data[data.length-1] - mn) / range) * (h - 4);
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(lastX - 1, lastY, 2, 0, Math.PI * 2);
   ctx.fill();
-
   parentEl.appendChild(cvs);
   return cvs;
 }
@@ -1876,22 +1866,23 @@ function drawSparkline(parentEl, data, color, w, h) {
 function switchMode(newMode) {
   MODE = newMode;
   const m = MODES[MODE];
+  const app = document.getElementById('app');
+  app.className = 'root mode-' + m.short.toLowerCase();
 
-  // Update prompt color
   const prompt = document.getElementById('prompt');
-  prompt.style.color = m.promptColor;
-  prompt.innerHTML = 'NUR&gt;';
+  prompt.textContent = m.promptText;
 
-  // Update placeholder
   document.getElementById('cmd').placeholder = m.placeholder;
-  document.getElementById('cmd').style.caretColor = m.promptColor;
 
-  // Update mode badge
   const badge = document.getElementById('tb-mode');
   badge.textContent = m.short;
-  badge.className = 'tb-mode mode-' + m.short.toLowerCase();
 
-  // Rebuild function keys
+  document.getElementById('tb-brand').textContent = m.brand;
+  document.getElementById('tb-footer').textContent = m.footer;
+
+  const goBtn = document.getElementById('go-btn');
+  goBtn.innerHTML = m.goLabel === '<GO>' ? '&lt;GO&gt;' : m.goLabel;
+
   const fkeyBar = document.getElementById('fkeys');
   fkeyBar.innerHTML = '';
   for (const fk of m.fkeys) {
@@ -1910,14 +1901,13 @@ function switchMode(newMode) {
   }
 }
 
-// ── Unified command router ──
+// ── Command router ──
 function resolveCmd(input) {
   if (MODE === 'BB') return BLOOMBERG_MAP[input] || null;
   return EIKON_MAP[input] || null;
 }
 
 function resolveSecurityKey(input) {
-  // Bloomberg: "AAPL US EQUITY" or "AAPL US EQ" or "AAPL"
   if (MODE === 'BB') {
     const secMatch = input.match(/^(\S+)\s+(US\s+)?(?:EQUITY|EQ)\s*(DES|GP|FA|ANR|HP|BQ)?$/);
     if (secMatch) {
@@ -1925,19 +1915,16 @@ function resolveSecurityKey(input) {
       const func = secMatch[3] || null;
       if (DB.securities[key]) return { key, func };
     }
-    // Crypto
     const cryptoMatch = input.match(/^(BTC|ETH)\s+CURNCY\s*(DES)?$/);
     if (cryptoMatch) {
       const key = cryptoMatch[1] + ' CURNCY';
       if (DB.securities[key]) return { key, func: cryptoMatch[2] || null };
     }
-    // Quick symbol
     const quickKey = input + ' US EQUITY';
     if (DB.securities[quickKey]) return { key: quickKey, func: null };
     return null;
   }
 
-  // Eikon: "AAPL.O", "JPM.N", "BTC=", etc. — optionally followed by QUOT/GRAPH/etc
   const ekMatch = input.match(/^(\S+?(?:\.[A-Z]|=))\s*(QUOT|GRAPH|G|FA|REC|HPD|Q)?$/);
   if (ekMatch) {
     const ric = ekMatch[1];
@@ -1954,7 +1941,6 @@ function resolveSecurityKey(input) {
     return null;
   }
 
-  // Quick symbol: just "AAPL" works in both modes
   const quickKey = input + ' US EQUITY';
   if (DB.securities[quickKey]) return { key: quickKey, func: null };
   return null;
@@ -1965,10 +1951,11 @@ const SEC_FUNCS = ['des','gp','fa','anr','hp','bq'];
 function execCmd(raw) {
   const input = raw.trim().toUpperCase();
   if (!input) return;
+  pageNum++;
 
-  printHTML(`<span class="c-amber">NUR&gt;</span> <span class="c-white">${raw.trim()}</span>`);
+  const m = MODES[MODE];
+  printHTML(`<span class="${accent()}">${m.promptText}</span> <span class="c-white">${raw.trim()}</span>`);
 
-  // Mode switch
   if (input === 'MODE') {
     const newMode = MODE === 'BB' ? 'EK' : 'BB';
     switchMode(newMode);
@@ -1978,14 +1965,11 @@ function execCmd(raw) {
     return;
   }
 
-  // CLS
   if (input === 'CLS' || input === 'CLEAR') { cls(); return; }
 
-  // SECF/SEARCH with query
   if (MODE === 'BB' && input.startsWith('SECF')) { screenSECF(input.replace('SECF','').trim()); return; }
   if (MODE === 'EK' && input.startsWith('SEARCH')) { screenSECF(input.replace('SEARCH','').trim()); return; }
 
-  // Resolve as a direct command
   const resolved = resolveCmd(input);
   if (resolved) {
     if (resolved === 'cls') { cls(); return; }
@@ -1998,15 +1982,15 @@ function execCmd(raw) {
     if (resolved === 'help') { screenHELP(); return; }
     if (resolved === 'equity') { screenEQUITY(); return; }
     if (resolved === 'secf') { screenSECF(''); return; }
-    if (resolved === 'bmap') { screenBMAP(); return; }
-    if (resolved === 'cris') { screenCRIS(); return; }
+    if (resolved === 'bmap' || resolved === 'nrsk') { screenNRSK(); return; }
+    if (resolved === 'cris' || resolved === 'ncri') { screenNCRI(); return; }
+    if (resolved === 'nnuc') { screenNNUC(); return; }
     if (resolved === 'live') { screenLIVE(); return; }
     if (resolved === 'hmap') { screenHMAP(); return; }
     if (resolved === 'stub') {
       printHTML(`<span class="c-yellow">  ${input} market — coming soon. Type HELP for available commands.</span>`);
       return;
     }
-    // Security sub-commands on current context
     if (SEC_FUNCS.includes(resolved) && currentSec) {
       if (resolved === 'des') screenDES(currentSec);
       else if (resolved === 'gp') screenGP(currentSec);
@@ -2023,7 +2007,6 @@ function execCmd(raw) {
     }
   }
 
-  // Try to resolve as security
   const sec = resolveSecurityKey(input);
   if (sec) {
     currentSec = sec.key;
@@ -2037,7 +2020,6 @@ function execCmd(raw) {
     return;
   }
 
-  // Not found
   const hint = MODE === 'EK' ? 'AAPL.O' : 'AAPL US Equity';
   printHTML(`<span class="c-red">  Unknown command: ${input}</span>`);
   printHTML(`<span class="c-gray">  Type HELP for command reference, or enter a security (e.g., ${hint})</span>`);
@@ -2068,7 +2050,18 @@ cmdInput.addEventListener('keydown', (e) => {
   }
 });
 
-// Clock
+document.getElementById('go-btn').addEventListener('click', () => {
+  const val = cmdInput.value;
+  if (val.trim()) {
+    cmdHistory.unshift(val);
+    if (cmdHistory.length > 50) cmdHistory.pop();
+  }
+  histIdx = -1;
+  execCmd(val);
+  cmdInput.value = '';
+  cmdInput.focus();
+});
+
 function tick() {
   const now = new Date();
   document.getElementById('tb-time').textContent =
@@ -2094,27 +2087,34 @@ document.getElementById('pick-ek').addEventListener('keydown', (e) => { if (e.ke
 // ── Boot ──
 async function bootSequence() {
   const el = document.getElementById('boot-text');
-  const modeName = MODES[MODE].label;
+  const m = MODES[MODE];
+  const isBB = MODE === 'BB';
+
   const lines = [
-    { t:'NUR FINANCE TERMINAL v3.0', c:'c-teal c-bold', d:200 },
-    { t:'AntiGravi Quantitative Engine', c:'c-teal', d:150 },
-    { t:'(c) 2024-2026 Nur Finance. All rights reserved.', c:'c-gray', d:300 },
+    { t: isBB ? 'BLOOMBERG PROFESSIONAL' : 'LSEG WORKSPACE', c: isBB ? 'c-amber c-bold' : 'c-blue c-bold', d:200 },
+    { t: isBB ? 'Bloomberg Terminal v2027.3' : 'Refinitiv Eikon v2027.2', c: isBB ? 'c-amber' : 'c-blue', d:150 },
+    { t: isBB ? '(c) 2024-2027 Bloomberg L.P. All rights reserved.' : '(c) 2024-2027 London Stock Exchange Group plc.', c:'c-gray', d:300 },
     { t:'', d:100 },
-    { t:`Command Language: ${modeName}`, c:'c-amber c-bold', d:200 },
+    { t: 'NUR Financial Language Extensions v1.0', c:'c-teal c-bold', d:200 },
+    { t: '(c) 2024-2026 Nur Finance. All rights reserved.', c:'c-gray', d:100 },
     { t:'', d:80 },
-    { t:'Initializing system modules...', c:'c-amber', d:250 },
+    { t:`Command Language: ${m.label}`, c: isBB ? 'c-amber c-bold' : 'c-blue c-bold', d:200 },
+    { t:'', d:80 },
+    { t:'Initializing system modules...', c: isBB ? 'c-amber' : 'c-blue', d:250 },
     { t:'  Market Data Engine      [OK]', c:'c-green', d:180 },
     { t:'  Exchange Gateways       [OK]', c:'c-green', d:180 },
     { t:'  NYSE | NASDAQ | CME | ICE | BIST | LSE', c:'c-gray', d:120 },
     { t:'  Quantitative Engine     [OK]', c:'c-green', d:180 },
     { t:'  Risk Management         [OK]', c:'c-green', d:180 },
     { t:'  Portfolio Analytics     [OK]', c:'c-green', d:180 },
-    { t:'  News & Research Feed    [OK]', c:'c-green', d:180 },
+    { t: isBB ? '  Bloomberg Wire Feed     [OK]' : '  Refinitiv News Feed     [OK]', c:'c-green', d:180 },
+    { t:'  NUR Geopolitical Module [OK]', c:'c-green', d:180 },
+    { t:'  NUR Nuclear Monitor     [OK]', c:'c-green', d:180 },
     { t:'  Encryption: TLS 1.3 / AES-256-GCM', c:'c-gray', d:120 },
     { t:'', d:80 },
-    { t:'Loading user profile: furkan.nur', c:'c-amber', d:300 },
+    { t:'Loading user profile: furkan.nur', c: isBB ? 'c-amber' : 'c-blue', d:300 },
     { t:'  License: Professional Terminal', c:'c-gray', d:100 },
-    { t:`  Mode: ${modeName}`, c:'c-gray', d:100 },
+    { t:`  Mode: ${m.label}`, c:'c-gray', d:100 },
     { t:'', d:80 },
     { t:'All systems operational. Type HELP for commands.', c:'c-teal c-bold', d:200 },
   ];
@@ -2138,13 +2138,12 @@ async function bootSequence() {
   screenTOP();
 }
 
-// Mode toggle from top bar badge
 document.getElementById('tb-mode').addEventListener('click', () => {
   execCmd('MODE');
 });
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.fkey') && !e.target.closest('.tb-mode') && !e.target.closest('.mode-card')) {
+  if (!e.target.closest('.fkey') && !e.target.closest('.tb-page') && !e.target.closest('.mode-card') && !e.target.closest('.cmd-go')) {
     cmdInput.focus();
   }
 });
