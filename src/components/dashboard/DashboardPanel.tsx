@@ -1,16 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { generatePortfolio, generatePriceHistory, generateWatchlistPrices } from "@/lib/data/mockMarketData";
+import { generatePortfolio } from "@/lib/data/mockMarketData";
 import PortfolioChart from "./PortfolioChart";
-import PriceChart from "./PriceChart";
-import MetricsCards from "./MetricsCards";
-import WatchList from "./WatchList";
+import LiveMetrics from "./LiveMetrics";
+import LiveWatchList from "./LiveWatchList";
+import LiveChart from "./LiveChart";
 
 export default function DashboardPanel() {
   const portfolio = useMemo(() => generatePortfolio(), []);
-  const priceData = useMemo(() => generatePriceHistory("NVDA", 90, 875), []);
-  const watchlist = useMemo(() => generateWatchlistPrices(), []);
 
   const totalValue = portfolio.reduce((s, p) => s + p.currentPrice * p.quantity, 0);
   const totalCost = portfolio.reduce((s, p) => s + p.avgPrice * p.quantity, 0);
@@ -19,20 +17,18 @@ export default function DashboardPanel() {
 
   return (
     <div className="flex flex-col h-full overflow-y-auto p-3 gap-3" style={{ background: "var(--ag-bg)" }}>
-      <MetricsCards totalValue={totalValue} totalPnL={totalPnL} totalReturn={totalReturn} />
+      <LiveMetrics totalValue={totalValue} totalPnL={totalPnL} totalReturn={totalReturn} />
       <div className="grid grid-cols-2 gap-3 flex-1 min-h-0">
         <div className="rounded-lg border p-3" style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}>
           <h3 className="text-xs font-semibold mb-2" style={{ color: "var(--ag-muted)" }}>PORTFOLIO ALLOCATION</h3>
           <PortfolioChart portfolio={portfolio} />
         </div>
         <div className="rounded-lg border p-3" style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}>
-          <h3 className="text-xs font-semibold mb-2" style={{ color: "var(--ag-muted)" }}>NVDA - 90 DAY</h3>
-          <PriceChart data={priceData} />
+          <LiveChart symbol="SPY" color="#00d4aa" />
         </div>
       </div>
       <div className="rounded-lg border p-3" style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}>
-        <h3 className="text-xs font-semibold mb-2" style={{ color: "var(--ag-muted)" }}>WATCHLIST</h3>
-        <WatchList data={watchlist} />
+        <LiveWatchList />
       </div>
     </div>
   );
