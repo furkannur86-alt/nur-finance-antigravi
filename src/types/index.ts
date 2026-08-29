@@ -38,7 +38,7 @@ export interface ChartDataPoint {
   value: number;
 }
 
-export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest";
+export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research";
 
 export interface MarketQuote {
   symbol: string;

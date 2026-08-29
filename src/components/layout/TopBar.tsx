@@ -3,13 +3,16 @@
 import { useIDEStore } from "@/stores/useIDEStore";
 import { PanelView } from "@/types";
 
-const views: { id: PanelView; label: string }[] = [
+const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "editor", label: "Editor" },
   { id: "dashboard", label: "Dashboard" },
   { id: "portfolio", label: "Portfolio" },
   { id: "charts", label: "Charts" },
   { id: "backtest", label: "Backtest" },
   { id: "terminal", label: "Terminal" },
+  { id: "news", label: "News", group: "nfs" },
+  { id: "alerts", label: "Alerts", group: "nfs" },
+  { id: "research", label: "Research", group: "nfs" },
 ];
 
 export default function TopBar() {
@@ -72,19 +75,31 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-0.5 mr-4">
-        {views.map((v) => (
-          <button
-            key={v.id}
-            onClick={() => setActiveView(v.id)}
-            className="px-2.5 py-1 text-xs rounded transition-colors"
-            style={{
-              background: activeView === v.id ? "rgba(0,212,170,0.15)" : "transparent",
-              color: activeView === v.id ? "var(--ag-accent)" : "var(--ag-muted)",
-            }}
-          >
-            {v.label}
-          </button>
-        ))}
+        {views.map((v, i) => {
+          const prevGroup = i > 0 ? views[i - 1].group : undefined;
+          const showDivider = v.group === "nfs" && prevGroup !== "nfs";
+          return (
+            <div key={v.id} className="flex items-center">
+              {showDivider && (
+                <div className="w-px h-4 mx-1.5" style={{ background: "var(--ag-border)" }} />
+              )}
+              <button
+                onClick={() => setActiveView(v.id)}
+                className="px-2.5 py-1 text-xs rounded transition-colors"
+                style={{
+                  background: activeView === v.id
+                    ? v.group === "nfs" ? "rgba(99,102,241,0.15)" : "rgba(0,212,170,0.15)"
+                    : "transparent",
+                  color: activeView === v.id
+                    ? v.group === "nfs" ? "var(--ag-accent2)" : "var(--ag-accent)"
+                    : "var(--ag-muted)",
+                }}
+              >
+                {v.label}
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex-1" />

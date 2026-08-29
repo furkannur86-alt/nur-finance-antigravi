@@ -43,6 +43,30 @@ export default function Home() {
             title="NUR Finance Terminal"
           />
         );
+      case "news":
+        return (
+          <iframe
+            src="/news"
+            className="w-full h-full border-0"
+            title="NFS Market Briefs"
+          />
+        );
+      case "alerts":
+        return (
+          <iframe
+            src="/alerts"
+            className="w-full h-full border-0"
+            title="NFS Risk Alerts"
+          />
+        );
+      case "research":
+        return (
+          <iframe
+            src="/research"
+            className="w-full h-full border-0"
+            title="NFS Equity Research"
+          />
+        );
       case "editor":
       default:
         return (
@@ -63,7 +87,7 @@ export default function Home() {
         {sidebarOpen && <Sidebar />}
         <div className="flex flex-col flex-1 min-w-0">
           <div className="flex-1 min-h-0">{renderMainContent()}</div>
-          {activeView !== "terminal" && (
+          {!["terminal", "news", "alerts", "research"].includes(activeView) && (
             <div style={{ height: 200 }}>
               <TerminalPanel />
             </div>
