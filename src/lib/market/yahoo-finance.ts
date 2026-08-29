@@ -1,4 +1,6 @@
-import { ChartDataPoint } from "@/types";
+import { ChartDataPoint, MarketQuote } from "@/types";
+
+export type { MarketQuote };
 
 const YF_BASE = "https://query1.finance.yahoo.com/v8/finance";
 
@@ -13,19 +15,6 @@ interface YFQuoteResult {
   regularMarketVolume?: number;
   shortName?: string;
   symbol?: string;
-}
-
-export interface MarketQuote {
-  symbol: string;
-  name: string;
-  price: number;
-  change: number;
-  changePercent: number;
-  previousClose: number;
-  open: number;
-  dayHigh: number;
-  dayLow: number;
-  volume: number;
 }
 
 export interface HistoricalBar {

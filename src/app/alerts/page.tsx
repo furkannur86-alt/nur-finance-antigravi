@@ -46,7 +46,7 @@ export default function AlertsPage() {
       <header className="border-b px-6 py-4" style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
-            <Link href="/" className="text-xs mb-1 block hover:underline" style={{ color: "var(--ag-muted)" }}>
+            <Link href="/" target="_top" className="text-xs mb-1 block hover:underline" style={{ color: "var(--ag-muted)" }}>
               &larr; AntiGravi IDE
             </Link>
             <h1 className="text-xl font-bold" style={{ color: "var(--ag-danger)" }}>NFS Risk Alerts</h1>

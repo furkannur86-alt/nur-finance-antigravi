@@ -51,6 +51,8 @@ export default function CodeEditor() {
     }
   }, [activeTab, updateTabContent]);
 
+  const runActiveFile = useIDEStore((s) => s.runActiveFile);
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Tab") {
       e.preventDefault();
@@ -62,8 +64,11 @@ export default function CodeEditor() {
       textarea.value = value.substring(0, start) + "    " + value.substring(end);
       textarea.selectionStart = textarea.selectionEnd = start + 4;
       if (activeTab) updateTabContent(activeTab.id, textarea.value);
+    } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      runActiveFile();
     }
-  }, [activeTab, updateTabContent]);
+  }, [activeTab, updateTabContent, runActiveFile]);
 
   const handleCursorChange = useCallback(() => {
     const textarea = textareaRef.current;
@@ -96,15 +101,14 @@ export default function CodeEditor() {
   const lineCount = lines.length;
 
   return (
-    <div className="relative flex h-full overflow-hidden" style={{ background: "#0a0e17" }} ref={containerRef}>
-      {/* Line numbers */}
+    <div className="relative flex h-full overflow-hidden" style={{ background: "var(--ag-bg)" }} ref={containerRef}>
       <div
         ref={lineNumbersRef}
         className="flex-shrink-0 overflow-hidden select-none text-right pr-3 pl-2 pt-2 font-mono text-xs leading-5"
-        style={{ color: "#334155", width: 50, background: "#0a0e17" }}
+        style={{ color: "var(--ag-border)", width: 50, background: "var(--ag-bg)" }}
       >
         {Array.from({ length: lineCount }, (_, i) => (
-          <div key={i} style={{ color: i + 1 === cursorPos.line ? "#64748b" : "#334155" }}>
+          <div key={i} style={{ color: i + 1 === cursorPos.line ? "var(--ag-muted)" : "var(--ag-border)" }}>
             {i + 1}
           </div>
         ))}
@@ -145,7 +149,7 @@ export default function CodeEditor() {
       </div>
 
       {/* Cursor position */}
-      <div className="absolute bottom-1 right-3 text-[10px] font-mono" style={{ color: "#334155" }}>
+      <div className="absolute bottom-1 right-3 text-[10px] font-mono" style={{ color: "var(--ag-border)" }}>
         Ln {cursorPos.line}, Col {cursorPos.col}
       </div>
 

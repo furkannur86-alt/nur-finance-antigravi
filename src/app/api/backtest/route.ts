@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SMA, EMA, RSI, returns, sharpeRatio, maxDrawdown, volatility, cumulativeReturns } from "@/lib/financial/functions";
+import { SMA, RSI, returns, sharpeRatio, maxDrawdown, volatility } from "@/lib/financial/functions";
 import { fetchHistory } from "@/lib/market/yahoo-finance";
 import { generatePriceHistory } from "@/lib/data/mockMarketData";
+import type { BacktestResult } from "@/types";
 
 type Strategy = "sma_crossover" | "rsi_mean_reversion" | "momentum";
-
-interface BacktestResult {
-  strategy: string;
-  symbol: string;
-  totalReturn: number;
-  sharpeRatio: number;
-  maxDrawdown: number;
-  volatility: number;
-  trades: number;
-  winRate: number;
-  equity: number[];
-  signals: Array<{ index: number; type: "buy" | "sell"; price: number }>;
-}
 
 function runSMACrossover(closes: number[], fastPeriod: number, slowPeriod: number): BacktestResult {
   const fast = SMA(closes, fastPeriod);
@@ -176,55 +164,59 @@ function runMomentum(closes: number[], lookback: number): BacktestResult {
 }
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = request.nextUrl;
-  const symbol = searchParams.get("symbol") || "AAPL";
-  const strategy = (searchParams.get("strategy") || "sma_crossover") as Strategy;
-  const range = searchParams.get("range") || "1y";
+  try {
+    const { searchParams } = request.nextUrl;
+    const symbol = searchParams.get("symbol") || "AAPL";
+    const strategy = (searchParams.get("strategy") || "sma_crossover") as Strategy;
+    const range = searchParams.get("range") || "1y";
 
-  let closes: number[];
-  let source = "live";
+    let closes: number[];
+    let source = "live";
 
-  const bars = await fetchHistory(symbol, range);
-  if (bars.length > 0) {
-    closes = bars.filter((b) => b.close > 0).map((b) => b.close);
-  } else {
-    source = "mock";
-    const baseMap: Record<string, number> = {
-      AAPL: 198, MSFT: 425, GOOGL: 176, NVDA: 875, TSLA: 248,
-    };
-    const days = range === "6mo" ? 180 : range === "2y" ? 500 : 365;
-    const mock = generatePriceHistory(symbol, days, baseMap[symbol] || 100);
-    closes = mock.map((d) => d.value);
+    const bars = await fetchHistory(symbol, range);
+    if (bars.length > 0) {
+      closes = bars.filter((b) => b.close > 0).map((b) => b.close);
+    } else {
+      source = "mock";
+      const baseMap: Record<string, number> = {
+        AAPL: 198, MSFT: 425, GOOGL: 176, NVDA: 875, TSLA: 248,
+      };
+      const days = range === "6mo" ? 180 : range === "2y" ? 500 : 365;
+      const mock = generatePriceHistory(symbol, days, baseMap[symbol] || 100);
+      closes = mock.map((d) => d.value);
+    }
+
+    if (closes.length < 30) {
+      return NextResponse.json({ error: "Not enough data for backtest" }, { status: 400 });
+    }
+
+    let result: BacktestResult;
+    switch (strategy) {
+      case "rsi_mean_reversion":
+        result = runRSIMeanReversion(closes, 14, 30, 70);
+        break;
+      case "momentum":
+        result = runMomentum(closes, 20);
+        break;
+      case "sma_crossover":
+      default:
+        result = runSMACrossover(closes, 10, 30);
+        break;
+    }
+
+    result.symbol = symbol;
+
+    const buyHoldReturn = Math.round(((closes[closes.length - 1] - closes[0]) / closes[0]) * 10000) / 100;
+
+    return NextResponse.json({
+      source,
+      result,
+      benchmark: {
+        strategy: "Buy & Hold",
+        totalReturn: buyHoldReturn,
+      },
+    });
+  } catch (err) {
+    return NextResponse.json({ error: "Backtest failed", detail: err instanceof Error ? err.message : "Unknown error" }, { status: 500 });
   }
-
-  if (closes.length < 30) {
-    return NextResponse.json({ error: "Not enough data for backtest" }, { status: 400 });
-  }
-
-  let result: BacktestResult;
-  switch (strategy) {
-    case "rsi_mean_reversion":
-      result = runRSIMeanReversion(closes, 14, 30, 70);
-      break;
-    case "momentum":
-      result = runMomentum(closes, 20);
-      break;
-    case "sma_crossover":
-    default:
-      result = runSMACrossover(closes, 10, 30);
-      break;
-  }
-
-  result.symbol = symbol;
-
-  const buyHoldReturn = Math.round(((closes[closes.length - 1] - closes[0]) / closes[0]) * 10000) / 100;
-
-  return NextResponse.json({
-    source,
-    result,
-    benchmark: {
-      strategy: "Buy & Hold",
-      totalReturn: buyHoldReturn,
-    },
-  });
 }

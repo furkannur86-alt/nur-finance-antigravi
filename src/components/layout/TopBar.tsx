@@ -16,39 +16,8 @@ const views: { id: PanelView; label: string; group?: string }[] = [
 ];
 
 export default function TopBar() {
-  const { activeView, setActiveView, toggleSidebar, isRunning, tabs, activeTabId, addConsoleMessage, setRunning } =
+  const { activeView, setActiveView, toggleSidebar, isRunning, activeTabId, runActiveFile } =
     useIDEStore();
-
-  const handleRun = () => {
-    const activeTab = tabs.find((t) => t.id === activeTabId);
-    if (!activeTab) return;
-
-    setRunning(true);
-    addConsoleMessage({ type: "info", text: `>>> Running ${activeTab.name}...` });
-
-    setTimeout(() => {
-      const lines = activeTab.content.split("\n").filter((l) => {
-        const trimmed = l.trim();
-        return trimmed.startsWith("print(") || trimmed.startsWith("print (");
-      });
-
-      if (lines.length > 0) {
-        for (const line of lines) {
-          const match = line.match(/print\s*\(\s*(?:f?["'](.+?)["']|(.+?))\s*\)/);
-          if (match) {
-            addConsoleMessage({ type: "output", text: match[1] || match[2] || line });
-          }
-        }
-      }
-
-      addConsoleMessage({ type: "success", text: `[AntiGravi] ${activeTab.name} executed successfully.` });
-      addConsoleMessage({
-        type: "info",
-        text: `[Engine] Processed in ${(Math.random() * 200 + 50).toFixed(1)}ms`,
-      });
-      setRunning(false);
-    }, 800);
-  };
 
   return (
     <div className="flex items-center h-10 px-3 border-b select-none"
@@ -70,7 +39,7 @@ export default function TopBar() {
         </span>
         <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded"
           style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}>
-          v2.0
+          v2.1
         </span>
       </div>
 
@@ -105,7 +74,7 @@ export default function TopBar() {
       <div className="flex-1" />
 
       <button
-        onClick={handleRun}
+        onClick={runActiveFile}
         disabled={isRunning || !activeTabId}
         className="flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-all disabled:opacity-40"
         style={{ background: "var(--ag-accent)", color: "var(--ag-bg)" }}

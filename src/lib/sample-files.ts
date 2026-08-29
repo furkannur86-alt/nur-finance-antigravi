@@ -253,7 +253,7 @@ class AntiGraviEngine:
         content: `{
   "engine": {
     "name": "AntiGravi",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "mode": "production"
   },
   "trading": {
@@ -361,12 +361,3 @@ if __name__ == "__main__":
   },
 ];
 
-export const defaultFileContent = `# Welcome to AntiGravi IDE
-# Nur Finance - Quantitative Development Environment
-#
-# Start coding your trading strategies here.
-# Use Ctrl+Enter to execute code in the terminal.
-
-print("AntiGravi Engine v2.0 initialized")
-print("Ready for quantitative analysis...")
-`;

@@ -8,8 +8,6 @@ interface IDEState {
   activeTabId: string | null;
   consoleMessages: ConsoleMessage[];
   isRunning: boolean;
-  sidebarWidth: number;
-  bottomPanelHeight: number;
   activeView: PanelView;
   sidebarOpen: boolean;
   openFile: (node: FileNode) => void;
@@ -19,10 +17,9 @@ interface IDEState {
   addConsoleMessage: (msg: Omit<ConsoleMessage, "id" | "timestamp">) => void;
   clearConsole: () => void;
   setRunning: (running: boolean) => void;
-  setSidebarWidth: (w: number) => void;
-  setBottomPanelHeight: (h: number) => void;
   setActiveView: (view: PanelView) => void;
   toggleSidebar: () => void;
+  runActiveFile: () => void;
 }
 
 export const useIDEStore = create<IDEState>((set, get) => ({
@@ -31,8 +28,6 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   activeTabId: null,
   consoleMessages: [],
   isRunning: false,
-  sidebarWidth: 240,
-  bottomPanelHeight: 200,
   activeView: "editor",
   sidebarOpen: true,
 
@@ -85,8 +80,39 @@ export const useIDEStore = create<IDEState>((set, get) => ({
 
   clearConsole: () => set({ consoleMessages: [] }),
   setRunning: (isRunning) => set({ isRunning }),
-  setSidebarWidth: (sidebarWidth) => set({ sidebarWidth }),
-  setBottomPanelHeight: (bottomPanelHeight) => set({ bottomPanelHeight }),
   setActiveView: (activeView) => set({ activeView }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+
+  runActiveFile: () => {
+    const { tabs, activeTabId, isRunning } = get();
+    if (isRunning) return;
+    const activeTab = tabs.find((t) => t.id === activeTabId);
+    if (!activeTab) return;
+
+    set({ isRunning: true });
+    const addMsg = (msg: Omit<ConsoleMessage, "id" | "timestamp">) => {
+      const message: ConsoleMessage = { ...msg, id: crypto.randomUUID(), timestamp: new Date() };
+      set((s) => ({ consoleMessages: [...s.consoleMessages, message] }));
+    };
+
+    addMsg({ type: "info", text: `>>> Running ${activeTab.name}...` });
+
+    setTimeout(() => {
+      const lines = activeTab.content.split("\n").filter((l) => {
+        const trimmed = l.trim();
+        return trimmed.startsWith("print(") || trimmed.startsWith("print (");
+      });
+
+      for (const line of lines) {
+        const match = line.match(/print\s*\(\s*(?:f?["'](.+?)["']|(.+?))\s*\)/);
+        if (match) {
+          addMsg({ type: "output", text: match[1] || match[2] || line });
+        }
+      }
+
+      addMsg({ type: "success", text: `[AntiGravi] ${activeTab.name} executed successfully.` });
+      addMsg({ type: "info", text: `[Engine] Processed in ${(Math.random() * 200 + 50).toFixed(1)}ms` });
+      set({ isRunning: false });
+    }, 800);
+  },
 }));

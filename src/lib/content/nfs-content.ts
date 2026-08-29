@@ -35,8 +35,6 @@ export interface ResearchNote {
   publishedAt: string;
 }
 
-export type ContentType = "briefs" | "alerts" | "research";
-
 const now = new Date();
 function ago(hours: number): string {
   return new Date(now.getTime() - hours * 3600000).toISOString();

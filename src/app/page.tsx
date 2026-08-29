@@ -20,7 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     if (consoleMessages.length === 0) {
-      addConsoleMessage({ type: "info", text: "AntiGravi IDE v2.0 - Nur Finance Quantitative Engine" });
+      addConsoleMessage({ type: "info", text: "AntiGravi IDE v2.1 - Nur Finance Quantitative Engine" });
       addConsoleMessage({ type: "success", text: "Engine initialized. Ready for development." });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
