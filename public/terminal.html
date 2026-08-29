@@ -567,6 +567,7 @@ const EIKON_MAP = {
   'GEOP':'bmap', 'CONFLICT':'cris', 'LIVE':'live',
   'SMAP':'hmap', 'HEAT':'hmap',
   'NRSK':'nrsk', 'NCRI':'ncri', 'NNUC':'nnuc',
+  'NFEED':'nfeed', 'NBRIEF':'nbrief', 'NALERT':'nalert', 'NRESEARCH':'nresearch',
 };
 
 const BLOOMBERG_MAP = {
@@ -581,6 +582,7 @@ const BLOOMBERG_MAP = {
   'BMAP':'bmap', 'CRIS':'cris', 'LIVE':'live',
   'HMAP':'hmap', 'HEAT':'hmap',
   'NRSK':'nrsk', 'NCRI':'ncri', 'NNUC':'nnuc',
+  'NFEED':'nfeed', 'NBRIEF':'nbrief', 'NALERT':'nalert', 'NRESEARCH':'nresearch',
 };
 
 const RIC_MAP = {
@@ -1357,6 +1359,12 @@ function screenHELP() {
   printHTML(`  <span class="c-red">${pad('NCRI',8)}</span>Crisis monitor — active armed conflicts (ACLED data)`);
   printHTML(`  <span class="c-red">${pad('NNUC',8)}</span>Nuclear arsenal overview — warheads by state`);
   print('');
+  printHTML(`  <span class="${a} c-bold">NFS MEDIA CHANNELS</span>  <span class="c-gray">Content API — works in both BB & EK</span>`);
+  printHTML(`  <span class="c-magenta">${pad('NFEED',8)}</span>Combined NFS media feed — briefs, alerts, research`);
+  printHTML(`  <span class="c-magenta">${pad('NBRIEF',8)}</span>Market briefs — NBRIEF [MACRO|EQUITY|FX|CRYPTO|COMMODITIES]`);
+  printHTML(`  <span class="c-magenta">${pad('NALERT',8)}</span>Risk alerts — NALERT [CRITICAL|HIGH|MEDIUM|LOW]`);
+  printHTML(`  <span class="c-magenta">${pad('NRESEARCH',10)}</span>Equity research — NRESEARCH [TECHNOLOGY|ENERGY|FINANCIALS]`);
+  print('');
   printHTML(`  <span class="${a} c-bold">LEGACY RISK COMMANDS</span>  <span class="c-gray">(mode-specific aliases)</span>`);
   printHTML(`  <span class="c-red">${pad(cmdName('bmap'),8)}</span>= NRSK   <span class="c-red">${pad(cmdName('cris'),8)}</span>= NCRI`);
   print('');
@@ -1651,6 +1659,144 @@ function screenNNUC() {
   printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
   printHTML(`  <span class="c-gray">  Sources: SIPRI Yearbook, FAS Nuclear Notebook, Arms Control Association</span>`);
   printHTML(`  <span class="c-gray">  NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
+}
+
+// ── NFS Content API Integration ──
+
+async function screenNFEED() {
+  setContext(null, 'NFS MEDIA FEED');
+  cls();
+  pageHeader('NFS MEDIA FEED', 'NFEED');
+  printHTML(`  <span class="c-teal">Loading NFS content feed...</span>`);
+  try {
+    const res = await fetch('/api/content?type=feed');
+    const data = await res.json();
+    out.lastChild.remove();
+
+    printHTML(`  <span class="${accent()} c-bold">MARKET BRIEFS</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+    for (const b of data.briefs || []) {
+      const sentColor = b.sentiment === 'bullish' ? 'c-green' : b.sentiment === 'bearish' ? 'c-red' : 'c-gray';
+      const sentIcon = b.sentiment === 'bullish' ? '▲' : b.sentiment === 'bearish' ? '▼' : '●';
+      const ts = new Date(b.publishedAt).toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'});
+      printHTML(`  <span class="c-gray">${ts}</span>  <span class="c-yellow c-bold">${pad(b.category.toUpperCase(),12)}</span><span class="${sentColor}">${sentIcon}</span> <span class="c-white">${b.title}</span>`);
+    }
+
+    print('');
+    printHTML(`  <span class="c-red c-bold">RISK ALERTS</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+    for (const a of data.alerts || []) {
+      const sevColor = a.severity === 'critical' ? 'c-red' : a.severity === 'high' ? 'c-yellow' : 'c-blue';
+      const ts = new Date(a.publishedAt).toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'});
+      printHTML(`  <span class="c-gray">${ts}</span>  <span class="${sevColor} c-bold">${pad(a.severity.toUpperCase(),10)}</span><span class="c-gray">${pad(a.region,16)}</span> <span class="c-white">${a.title}</span>`);
+    }
+
+    print('');
+    printHTML(`  <span class="c-magenta c-bold">EQUITY RESEARCH</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+    for (const r of data.research || []) {
+      const ratColor = r.rating === 'buy' || r.rating === 'overweight' ? 'c-green' : r.rating === 'sell' || r.rating === 'underweight' ? 'c-red' : 'c-yellow';
+      printHTML(`  <span class="${ratColor} c-bold">${pad(r.rating.toUpperCase(),12)}</span><span class="c-gray">${pad(r.sector,14)}</span> <span class="c-white">${r.title}</span>`);
+    }
+
+    pageFooter('Commands: NBRIEF (market briefs) | NALERT (risk alerts) | NRESEARCH (equity research)');
+  } catch (e) {
+    printHTML(`  <span class="c-red">Failed to load NFS feed: ${e.message}</span>`);
+  }
+}
+
+async function screenNBRIEF(category) {
+  setContext(null, 'NFS MARKET BRIEFS');
+  cls();
+  const catParam = category ? `&category=${category.toLowerCase()}` : '';
+  pageHeader('NFS MARKET BRIEFS', 'NBRIEF');
+  printHTML(`  <span class="c-teal">Loading market briefs...</span>`);
+  try {
+    const res = await fetch(`/api/content?type=briefs${catParam}`);
+    const data = await res.json();
+    out.lastChild.remove();
+
+    for (const b of data.data || []) {
+      const sentColor = b.sentiment === 'bullish' ? 'c-green' : b.sentiment === 'bearish' ? 'c-red' : 'c-gray';
+      const sentIcon = b.sentiment === 'bullish' ? '▲' : b.sentiment === 'bearish' ? '▼' : '●';
+      const ts = new Date(b.publishedAt).toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'});
+      printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+      printHTML(`  <span class="c-gray">${ts}</span>  <span class="c-yellow c-bold">${pad(b.category.toUpperCase(),12)}</span><span class="${sentColor}">${sentIcon} ${b.sentiment.toUpperCase()}</span>  <span class="c-gray">${b.author}</span>`);
+      printHTML(`  <span class="c-white c-bold">${b.title}</span>`);
+      printHTML(`  <span class="c-gray">${b.summary}</span>`);
+      print('');
+      printHTML(`  <span class="c-white">${b.body}</span>`);
+      print('');
+      const tickers = (b.tickers || []).map(t => `<span class="c-teal">${t}</span>`).join('  ');
+      printHTML(`  Tickers: ${tickers}`);
+    }
+
+    pageFooter('Categories: MACRO | EQUITY | FX | CRYPTO | COMMODITIES');
+  } catch (e) {
+    printHTML(`  <span class="c-red">Failed to load briefs: ${e.message}</span>`);
+  }
+}
+
+async function screenNALERT(severity) {
+  setContext(null, 'NFS RISK ALERTS');
+  cls();
+  const sevParam = severity ? `&severity=${severity.toLowerCase()}` : '';
+  pageHeader('NFS RISK ALERTS — ACTIVE THREATS', 'NALERT');
+  printHTML(`  <span class="c-teal">Loading risk alerts...</span>`);
+  try {
+    const res = await fetch(`/api/content?type=alerts${sevParam}`);
+    const data = await res.json();
+    out.lastChild.remove();
+
+    const sevOrder = {critical:0, high:1, medium:2, low:3};
+    const sorted = (data.data || []).sort((a,b) => (sevOrder[a.severity]||9) - (sevOrder[b.severity]||9));
+
+    printHTML(`  <span class="c-yellow">${pad('SEV',10)}${pad('CATEGORY',14)}${pad('REGION',16)}TITLE</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+
+    for (const a of sorted) {
+      const sevColor = a.severity === 'critical' ? 'c-red' : a.severity === 'high' ? 'c-yellow' : a.severity === 'medium' ? 'c-blue' : 'c-gray';
+      printHTML(`  <span class="${sevColor} c-bold">${pad(a.severity.toUpperCase(),10)}</span><span class="c-gray">${pad(a.category,14)}${pad(a.region,16)}</span><span class="c-white">${a.title}</span>`);
+      printHTML(`  <span class="c-gray">  ${a.description.substring(0, 120)}...</span>`);
+      const assets = (a.affectedAssets || []).map(t => `<span class="${sevColor}">${t}</span>`).join('  ');
+      printHTML(`  <span class="c-gray">  Affected:</span> ${assets}`);
+      print('');
+    }
+
+    pageFooter('Severity: CRITICAL | HIGH | MEDIUM | LOW');
+  } catch (e) {
+    printHTML(`  <span class="c-red">Failed to load alerts: ${e.message}</span>`);
+  }
+}
+
+async function screenNRESEARCH(sector) {
+  setContext(null, 'NFS EQUITY RESEARCH');
+  cls();
+  const secParam = sector ? `&sector=${sector}` : '';
+  pageHeader('NFS EQUITY RESEARCH — ANALYST NOTES', 'NRESEARCH');
+  printHTML(`  <span class="c-teal">Loading research notes...</span>`);
+  try {
+    const res = await fetch(`/api/content?type=research${secParam}`);
+    const data = await res.json();
+    out.lastChild.remove();
+
+    for (const n of data.data || []) {
+      const ratColor = n.rating === 'buy' || n.rating === 'overweight' ? 'c-green' : n.rating === 'sell' || n.rating === 'underweight' ? 'c-red' : 'c-yellow';
+      printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+      printHTML(`  <span class="${ratColor} c-bold">${pad(n.rating.toUpperCase(),12)}</span><span class="c-magenta">${pad(n.sector,14)}</span><span class="c-gray">${n.author}</span>${n.targetPrice ? `  <span class="c-teal">TP $${n.targetPrice}</span>` : ''}`);
+      printHTML(`  <span class="c-white c-bold">${n.title}</span>`);
+      printHTML(`  <span class="c-gray">${n.abstract}</span>`);
+      print('');
+      printHTML(`  <span class="c-white">${n.body}</span>`);
+      print('');
+      const tickers = (n.tickers || []).map(t => `<span class="c-teal">${t}</span>`).join('  ');
+      printHTML(`  Tickers: ${tickers}`);
+    }
+
+    pageFooter('Sectors: TECHNOLOGY | ENERGY | FINANCIALS');
+  } catch (e) {
+    printHTML(`  <span class="c-red">Failed to load research: ${e.message}</span>`);
+  }
 }
 
 // ── EODHD Live Market Data ──
@@ -1988,6 +2134,10 @@ function execCmd(raw) {
     if (resolved === 'nnuc') { screenNNUC(); return; }
     if (resolved === 'live') { screenLIVE(); return; }
     if (resolved === 'hmap') { screenHMAP(); return; }
+    if (resolved === 'nfeed') { screenNFEED(); return; }
+    if (resolved === 'nbrief') { screenNBRIEF(input.replace(/^NBRIEF\s*/i,'').trim() || null); return; }
+    if (resolved === 'nalert') { screenNALERT(input.replace(/^NALERT\s*/i,'').trim() || null); return; }
+    if (resolved === 'nresearch') { screenNRESEARCH(input.replace(/^NRESEARCH\s*/i,'').trim() || null); return; }
     if (resolved === 'stub') {
       printHTML(`<span class="c-yellow">  ${input} market — coming soon. Type HELP for available commands.</span>`);
       return;
