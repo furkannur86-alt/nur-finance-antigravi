@@ -24,14 +24,17 @@ export default function AlertsPage() {
   const [filterSeverity, setFilterSeverity] = useState<string>("all");
 
   useEffect(() => {
+    let cancelled = false;
     const url = filterSeverity === "all" ? "/api/content?type=alerts" : `/api/content?type=alerts&severity=${filterSeverity}`;
     fetch(url)
       .then((r) => r.json())
-      .then((d) => setAlerts(d.data || []));
+      .then((d) => { if (!cancelled) setAlerts(d.data || []); });
+    return () => { cancelled = true; };
   }, [filterSeverity]);
 
+  const [now] = useState(() => Date.now());
   function timeAgo(iso: string): string {
-    const diff = Date.now() - new Date(iso).getTime();
+    const diff = now - new Date(iso).getTime();
     const hours = Math.floor(diff / 3600000);
     if (hours < 1) return "just now";
     if (hours < 24) return `${hours}h ago`;

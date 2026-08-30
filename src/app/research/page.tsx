@@ -18,14 +18,17 @@ export default function ResearchPage() {
   const [filterSector, setFilterSector] = useState<string>("all");
 
   useEffect(() => {
+    let cancelled = false;
     const url = filterSector === "all" ? "/api/content?type=research" : `/api/content?type=research&sector=${filterSector}`;
     fetch(url)
       .then((r) => r.json())
-      .then((d) => setNotes(d.data || []));
+      .then((d) => { if (!cancelled) setNotes(d.data || []); });
+    return () => { cancelled = true; };
   }, [filterSector]);
 
+  const [now] = useState(() => Date.now());
   function timeAgo(iso: string): string {
-    const diff = Date.now() - new Date(iso).getTime();
+    const diff = now - new Date(iso).getTime();
     const hours = Math.floor(diff / 3600000);
     if (hours < 1) return "just now";
     if (hours < 24) return `${hours}h ago`;

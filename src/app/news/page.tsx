@@ -24,14 +24,17 @@ export default function NewsPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const url = filter === "all" ? "/api/content?type=briefs" : `/api/content?type=briefs&category=${filter}`;
     fetch(url)
       .then((r) => r.json())
-      .then((d) => setBriefs(d.data || []));
+      .then((d) => { if (!cancelled) setBriefs(d.data || []); });
+    return () => { cancelled = true; };
   }, [filter]);
 
+  const [now] = useState(() => Date.now());
   function timeAgo(iso: string): string {
-    const diff = Date.now() - new Date(iso).getTime();
+    const diff = now - new Date(iso).getTime();
     const hours = Math.floor(diff / 3600000);
     if (hours < 1) return "just now";
     if (hours < 24) return `${hours}h ago`;

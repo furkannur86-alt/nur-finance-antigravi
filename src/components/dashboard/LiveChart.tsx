@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ChartDataPoint } from "@/types";
 import PriceChart from "./PriceChart";
 
@@ -14,20 +14,18 @@ export default function LiveChart({ symbol, color }: Props) {
   const [source, setSource] = useState<string>("loading");
   const [range, setRange] = useState("3mo");
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/market-data?type=history&symbol=${symbol}&range=${range}`);
-      const json = await res.json();
-      setData(json.chart || []);
-      setSource(json.source || "unknown");
-    } catch {
-      setSource("error");
-    }
-  }, [symbol, range]);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    let cancelled = false;
+    fetch(`/api/market-data?type=history&symbol=${symbol}&range=${range}`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (cancelled) return;
+        setData(json.chart || []);
+        setSource(json.source || "unknown");
+      })
+      .catch(() => { if (!cancelled) setSource("error"); });
+    return () => { cancelled = true; };
+  }, [symbol, range]);
 
   const ranges = ["1mo", "3mo", "6mo", "1y"];
 
