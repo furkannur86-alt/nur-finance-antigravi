@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useIDEStore } from "@/stores/useIDEStore";
 import TopBar from "@/components/layout/TopBar";
@@ -12,12 +12,22 @@ import PortfolioManager from "@/components/portfolio/PortfolioManager";
 import DashboardPanel from "@/components/dashboard/DashboardPanel";
 import ChartsPanel from "@/components/dashboard/ChartsPanel";
 import BacktestPanel from "@/components/backtest/BacktestPanel";
+import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
+
+const MIN_CONSOLE_HEIGHT = 80;
+const MAX_CONSOLE_HEIGHT = 500;
+const DEFAULT_CONSOLE_HEIGHT = 200;
 
 export default function Home() {
   const { activeView, sidebarOpen, addConsoleMessage, consoleMessages } = useIDEStore();
   const didInit = useRef(false);
+  const [consoleHeight, setConsoleHeight] = useState(DEFAULT_CONSOLE_HEIGHT);
+  const [consoleCollapsed, setConsoleCollapsed] = useState(false);
+  const dragging = useRef(false);
+  const startY = useRef(0);
+  const startHeight = useRef(0);
 
   useEffect(() => {
     if (didInit.current) return;
@@ -27,6 +37,33 @@ export default function Home() {
       addConsoleMessage({ type: "success", text: "Engine initialized. Ready for development." });
     }
   }, [addConsoleMessage, consoleMessages.length]);
+
+  const onDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    startY.current = e.clientY;
+    startHeight.current = consoleHeight;
+    document.body.style.cursor = "ns-resize";
+    document.body.style.userSelect = "none";
+
+    function onMove(ev: MouseEvent) {
+      if (!dragging.current) return;
+      const delta = startY.current - ev.clientY;
+      const next = Math.max(MIN_CONSOLE_HEIGHT, Math.min(MAX_CONSOLE_HEIGHT, startHeight.current + delta));
+      setConsoleHeight(next);
+    }
+    function onUp() {
+      dragging.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, [consoleHeight]);
+
+  const showConsole = !["terminal", "news", "alerts", "research"].includes(activeView);
 
   const renderMainContent = () => {
     switch (activeView) {
@@ -85,15 +122,25 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen" style={{ background: "var(--ag-bg)" }}>
+      <CommandPalette />
       <TopBar />
       <div className="flex flex-1 min-h-0">
         {sidebarOpen && <Sidebar />}
         <div className="flex flex-col flex-1 min-w-0">
           <div className="flex-1 min-h-0">{renderMainContent()}</div>
-          {!["terminal", "news", "alerts", "research"].includes(activeView) && (
-            <div style={{ height: 200 }}>
-              <TerminalPanel />
-            </div>
+          {showConsole && (
+            <>
+              <div
+                onMouseDown={onDragStart}
+                onDoubleClick={() => setConsoleCollapsed((c) => !c)}
+                className="h-1 cursor-ns-resize hover:bg-[var(--ag-accent)] transition-colors flex-shrink-0"
+                style={{ background: "var(--ag-border)" }}
+                title="Drag to resize, double-click to toggle"
+              />
+              <div style={{ height: consoleCollapsed ? 0 : consoleHeight, overflow: "hidden" }}>
+                <TerminalPanel />
+              </div>
+            </>
           )}
         </div>
       </div>

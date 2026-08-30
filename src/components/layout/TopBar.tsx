@@ -93,7 +93,15 @@ export default function TopBar() {
         )}
       </button>
 
-      <div className="ml-3 flex items-center gap-1.5">
+      <kbd
+        className="ml-3 text-[9px] px-1.5 py-0.5 rounded border cursor-pointer hover:border-[var(--ag-accent)] transition-colors"
+        style={{ borderColor: "var(--ag-border)", color: "var(--ag-muted)" }}
+        title="Command Palette"
+      >
+        Ctrl+K
+      </kbd>
+
+      <div className="ml-2 flex items-center gap-1.5">
         <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--ag-success)" }} />
         <span className="text-[10px]" style={{ color: "var(--ag-muted)" }}>LIVE</span>
       </div>

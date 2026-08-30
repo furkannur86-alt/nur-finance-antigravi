@@ -2,8 +2,20 @@
 
 import { useIDEStore } from "@/stores/useIDEStore";
 
+const viewLabels: Record<string, string> = {
+  editor: "Editor",
+  dashboard: "Dashboard",
+  portfolio: "Portfolio",
+  charts: "Charts",
+  backtest: "Backtest",
+  terminal: "Terminal",
+  news: "NFS News",
+  alerts: "NFS Alerts",
+  research: "NFS Research",
+};
+
 export default function StatusBar() {
-  const { tabs, activeTabId, isRunning } = useIDEStore();
+  const { tabs, activeTabId, isRunning, activeView } = useIDEStore();
   const activeTab = tabs.find((t) => t.id === activeTabId);
 
   return (
@@ -17,14 +29,18 @@ export default function StatusBar() {
           {isRunning ? "Running" : "Ready"}
         </span>
         <span>|</span>
-        <span>AntiGravi Engine v2.0</span>
+        <span>AntiGravi Engine v2.1</span>
+        <span>|</span>
+        <span style={{ color: "var(--ag-accent)" }}>{viewLabels[activeView] || activeView}</span>
       </div>
       <div className="flex-1" />
       <div className="flex items-center gap-3">
         {activeTab && (
           <>
             <span>{activeTab.language.toUpperCase()}</span>
-            <span>{activeTab.modified ? "Modified" : "Saved"}</span>
+            <span style={{ color: activeTab.modified ? "var(--ag-warning)" : "var(--ag-muted)" }}>
+              {activeTab.modified ? "Modified" : "Saved"}
+            </span>
           </>
         )}
         <span>UTF-8</span>
