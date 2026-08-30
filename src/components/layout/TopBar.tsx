@@ -9,6 +9,8 @@ const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "portfolio", label: "Portfolio" },
   { id: "charts", label: "Charts" },
   { id: "backtest", label: "Backtest" },
+  { id: "global-markets", label: "Global" },
+  { id: "economic-data", label: "Macro" },
   { id: "terminal", label: "Terminal" },
   { id: "news", label: "News", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },

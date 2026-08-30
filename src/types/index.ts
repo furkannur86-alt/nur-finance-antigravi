@@ -38,8 +38,6 @@ export interface ChartDataPoint {
   value: number;
 }
 
-export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research";
-
 export interface MarketQuote {
   symbol: string;
   name: string;
@@ -64,4 +62,29 @@ export interface BacktestResult {
   winRate: number;
   equity: number[];
   signals: Array<{ index: number; type: "buy" | "sell"; price: number }>;
+  sortinoRatio: number;
+  calmarRatio: number;
+  maxDrawdownDuration: number;
+  valueAtRisk: number;
+  expectedShortfall: number;
+  kellyFraction: number;
+}
+
+export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research" | "global-markets" | "economic-data";
+
+export interface GlobalMarketQuote {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  region: string;
+}
+
+export interface EconomicDataPoint {
+  seriesId: string;
+  name: string;
+  date: string;
+  value: number;
+  category: string;
 }

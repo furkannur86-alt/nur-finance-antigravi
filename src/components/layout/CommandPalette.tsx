@@ -18,10 +18,10 @@ const views: { id: PanelView; label: string; num: number }[] = [
   { id: "portfolio", label: "Portfolio", num: 3 },
   { id: "charts", label: "Charts", num: 4 },
   { id: "backtest", label: "Backtest", num: 5 },
-  { id: "terminal", label: "Terminal", num: 6 },
-  { id: "news", label: "News", num: 7 },
-  { id: "alerts", label: "Alerts", num: 8 },
-  { id: "research", label: "Research", num: 9 },
+  { id: "global-markets", label: "Global Markets", num: 6 },
+  { id: "economic-data", label: "Economic Data", num: 7 },
+  { id: "terminal", label: "Terminal", num: 8 },
+  { id: "news", label: "News", num: 9 },
 ];
 
 export default function CommandPalette() {
