@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useIDEStore } from "@/stores/useIDEStore";
 import TopBar from "@/components/layout/TopBar";
@@ -17,13 +17,16 @@ const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr
 
 export default function Home() {
   const { activeView, sidebarOpen, addConsoleMessage, consoleMessages } = useIDEStore();
+  const didInit = useRef(false);
 
   useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
     if (consoleMessages.length === 0) {
       addConsoleMessage({ type: "info", text: "AntiGravi IDE v2.1 - Nur Finance Quantitative Engine" });
       addConsoleMessage({ type: "success", text: "Engine initialized. Ready for development." });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [addConsoleMessage, consoleMessages.length]);
 
   const renderMainContent = () => {
     switch (activeView) {

@@ -1,7 +1,5 @@
 import { ChartDataPoint, MarketQuote } from "@/types";
 
-export type { MarketQuote };
-
 const YF_BASE = "https://query1.finance.yahoo.com/v8/finance";
 
 interface YFQuoteResult {

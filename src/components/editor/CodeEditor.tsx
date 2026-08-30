@@ -39,11 +39,15 @@ export default function CodeEditor() {
     return code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }, [getLanguage]);
 
+  const prevTabIdRef = useRef(activeTabId);
   useEffect(() => {
-    if (textareaRef.current && activeTab) {
-      textareaRef.current.value = activeTab.content;
+    if (prevTabIdRef.current !== activeTabId) {
+      prevTabIdRef.current = activeTabId;
+      if (textareaRef.current && activeTab) {
+        textareaRef.current.value = activeTab.content;
+      }
     }
-  }, [activeTabId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeTabId, activeTab]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (activeTab) {
