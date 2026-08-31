@@ -3,6 +3,8 @@ import { runStrategy, STRATEGIES } from "@/lib/strategies";
 import { fetchHistory } from "@/lib/market/yahoo-finance";
 import { fetchEODHDHistory } from "@/lib/market/eodhd";
 import { generatePriceHistory } from "@/lib/data/mockMarketData";
+import { getStoredHistory } from "@/lib/db/ingest";
+import { isSupabaseAdminConfigured } from "@/lib/db/supabase";
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +34,22 @@ export async function GET(request: NextRequest) {
     let volumes: number[] = [];
     let source = "live";
 
-    if (exchange) {
+    // Try stored historical data first (Supabase)
+    if (isSupabaseAdminConfigured()) {
+      const ex = exchange || "US";
+      const days = range === "6mo" ? 180 : range === "2y" ? 730 : range === "5y" ? 1825 : range === "10y" ? 3650 : range === "max" ? 12000 : 365;
+      const from = new Date(Date.now() - days * 86400000).toISOString().split("T")[0];
+      const stored = await getStoredHistory(symbol, ex, from);
+      if (stored.length > 0) {
+        closes = stored.map((b) => b.close);
+        highs = stored.map((b) => b.high);
+        lows = stored.map((b) => b.low);
+        volumes = stored.map((b) => b.volume);
+        source = "database";
+      }
+    }
+
+    if (exchange && closes.length === 0) {
       const eodhSymbol = `${symbol}.${exchange}`;
       const days = range === "6mo" ? 180 : range === "2y" ? 730 : 365;
       const from = new Date(Date.now() - days * 86400000).toISOString().split("T")[0];
