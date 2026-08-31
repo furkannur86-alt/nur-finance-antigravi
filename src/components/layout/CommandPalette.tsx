@@ -21,7 +21,7 @@ const views: { id: PanelView; label: string; num: number }[] = [
   { id: "global-markets", label: "Global Markets", num: 6 },
   { id: "economic-data", label: "Economic Data", num: 7 },
   { id: "data-ingest", label: "Data Ingestion", num: 8 },
-  { id: "terminal", label: "Terminal", num: 9 },
+  { id: "geopolitics", label: "Geopolitical Risk", num: 9 },
 ];
 
 export default function CommandPalette() {

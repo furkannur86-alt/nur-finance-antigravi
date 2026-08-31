@@ -70,7 +70,7 @@ export interface BacktestResult {
   kellyFraction: number;
 }
 
-export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research" | "global-markets" | "economic-data" | "data-ingest";
+export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research" | "global-markets" | "economic-data" | "data-ingest" | "geopolitics";
 
 export interface GlobalMarketQuote {
   symbol: string;
