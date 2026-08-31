@@ -20,8 +20,8 @@ const views: { id: PanelView; label: string; num: number }[] = [
   { id: "backtest", label: "Backtest", num: 5 },
   { id: "global-markets", label: "Global Markets", num: 6 },
   { id: "economic-data", label: "Economic Data", num: 7 },
-  { id: "terminal", label: "Terminal", num: 8 },
-  { id: "news", label: "News", num: 9 },
+  { id: "data-ingest", label: "Data Ingestion", num: 8 },
+  { id: "terminal", label: "Terminal", num: 9 },
 ];
 
 export default function CommandPalette() {

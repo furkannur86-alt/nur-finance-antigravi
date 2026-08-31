@@ -14,6 +14,7 @@ import ChartsPanel from "@/components/dashboard/ChartsPanel";
 import BacktestPanel from "@/components/backtest/BacktestPanel";
 import GlobalMarketsPanel from "@/components/markets/GlobalMarketsPanel";
 import EconomicDataPanel from "@/components/markets/EconomicDataPanel";
+import DataIngestPanel from "@/components/ingest/DataIngestPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -65,7 +66,7 @@ export default function Home() {
     document.addEventListener("mouseup", onUp);
   }, [consoleHeight]);
 
-  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data"].includes(activeView);
+  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest"].includes(activeView);
 
   const renderMainContent = () => {
     switch (activeView) {
@@ -81,6 +82,8 @@ export default function Home() {
         return <GlobalMarketsPanel />;
       case "economic-data":
         return <EconomicDataPanel />;
+      case "data-ingest":
+        return <DataIngestPanel />;
       case "terminal":
         return (
           <iframe

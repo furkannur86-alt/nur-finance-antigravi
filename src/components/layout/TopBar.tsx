@@ -11,6 +11,7 @@ const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "backtest", label: "Backtest" },
   { id: "global-markets", label: "Global" },
   { id: "economic-data", label: "Macro" },
+  { id: "data-ingest", label: "Ingest" },
   { id: "terminal", label: "Terminal" },
   { id: "news", label: "News", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
