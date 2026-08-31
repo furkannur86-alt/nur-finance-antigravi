@@ -102,7 +102,7 @@ export async function ingestExchange(
 
   let query = getSupabaseAdmin()
     .from("stocks")
-    .select("id, code, exchange, full_symbol")
+    .select("id, code, exchange")
     .eq("exchange", exchangeCode)
     .eq("is_active", true);
 
@@ -134,7 +134,7 @@ export async function ingestExchange(
 
   for (const stock of stockRows) {
     try {
-      await downloadStockHistory(stock.id, stock.full_symbol, fromDate);
+      await downloadStockHistory(stock.id, `${stock.code}.${stock.exchange}`, fromDate);
       processed++;
     } catch {
       failed++;

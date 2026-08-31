@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
             let query = getSupabaseAdmin()
               .from("stocks")
-              .select("id, code, exchange, full_symbol")
+              .select("id, code, exchange")
               .eq("exchange", ex.code)
               .eq("is_active", true);
 
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
             for (let si = 0; si < stocks.length; si++) {
               const stock = stocks[si];
               try {
-                const count = await downloadStockHistory(stock.id, stock.full_symbol, fromDate);
+                const count = await downloadStockHistory(stock.id, `${stock.code}.${stock.exchange}`, fromDate);
                 exProcessed++;
                 if ((si + 1) % 5 === 0 || si === stocks.length - 1) {
                   send({
