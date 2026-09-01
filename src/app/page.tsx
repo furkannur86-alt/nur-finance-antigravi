@@ -16,6 +16,8 @@ import GlobalMarketsPanel from "@/components/markets/GlobalMarketsPanel";
 import EconomicDataPanel from "@/components/markets/EconomicDataPanel";
 import DataIngestPanel from "@/components/ingest/DataIngestPanel";
 import GeopoliticsPanel from "@/components/geopolitics/GeopoliticsPanel";
+import FundamentalsPanel from "@/components/fundamentals/FundamentalsPanel";
+import ScreenerPanel from "@/components/screener/ScreenerPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -67,7 +69,7 @@ export default function Home() {
     document.addEventListener("mouseup", onUp);
   }, [consoleHeight]);
 
-  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics"].includes(activeView);
+  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics", "fundamentals", "screener"].includes(activeView);
 
   const renderMainContent = () => {
     switch (activeView) {
@@ -87,6 +89,10 @@ export default function Home() {
         return <DataIngestPanel />;
       case "geopolitics":
         return <GeopoliticsPanel />;
+      case "fundamentals":
+        return <FundamentalsPanel />;
+      case "screener":
+        return <ScreenerPanel />;
       case "terminal":
         return (
           <iframe

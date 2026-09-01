@@ -341,7 +341,7 @@ export default function GeopoliticsPanel() {
             LIVE
           </span>
           <span className="text-[9px]" style={{ color: "var(--ag-muted)" }}>
-            {data.source === "UCDP" ? "UCDP" : "ACLED"} | {data.totalEvents} events
+            {data.totalEvents} events
           </span>
         </div>
         <div className="flex items-center gap-1">

@@ -13,6 +13,8 @@ const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "economic-data", label: "Macro" },
   { id: "data-ingest", label: "Ingest" },
   { id: "geopolitics", label: "GeoRisk" },
+  { id: "fundamentals", label: "Fundmntl" },
+  { id: "screener", label: "Screener" },
   { id: "terminal", label: "Terminal" },
   { id: "news", label: "News", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },

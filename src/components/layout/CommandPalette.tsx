@@ -24,6 +24,11 @@ const views: { id: PanelView; label: string; num: number }[] = [
   { id: "geopolitics", label: "Geopolitical Risk", num: 9 },
 ];
 
+const extraViews: { id: PanelView; label: string }[] = [
+  { id: "fundamentals", label: "Company Fundamentals" },
+  { id: "screener", label: "Stock Screener" },
+];
+
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -36,6 +41,12 @@ export default function CommandPalette() {
       id: `view-${v.id}`,
       label: `Go to ${v.label}`,
       shortcut: `Ctrl+${v.num}`,
+      group: "Navigation",
+      action: () => setActiveView(v.id),
+    })),
+    ...extraViews.map((v) => ({
+      id: `view-${v.id}`,
+      label: `Go to ${v.label}`,
       group: "Navigation",
       action: () => setActiveView(v.id),
     })),
