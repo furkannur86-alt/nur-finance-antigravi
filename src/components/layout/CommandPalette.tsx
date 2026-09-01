@@ -27,6 +27,7 @@ const views: { id: PanelView; label: string; num: number }[] = [
 const extraViews: { id: PanelView; label: string }[] = [
   { id: "fundamentals", label: "Company Fundamentals" },
   { id: "screener", label: "Stock Screener" },
+  { id: "news-feed", label: "Live News Feed" },
 ];
 
 export default function CommandPalette() {

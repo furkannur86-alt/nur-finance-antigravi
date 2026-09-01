@@ -15,6 +15,7 @@ const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "geopolitics", label: "GeoRisk" },
   { id: "fundamentals", label: "Fundmntl" },
   { id: "screener", label: "Screener" },
+  { id: "news-feed", label: "LiveNews" },
   { id: "terminal", label: "Terminal" },
   { id: "news", label: "News", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
