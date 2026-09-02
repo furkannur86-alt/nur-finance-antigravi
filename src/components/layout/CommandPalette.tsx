@@ -12,27 +12,30 @@ interface Command {
   action: () => void;
 }
 
-const views: { id: PanelView; label: string; num: number }[] = [
-  { id: "editor", label: "Editor", num: 1 },
-  { id: "dashboard", label: "Dashboard", num: 2 },
-  { id: "portfolio", label: "Portfolio", num: 3 },
-  { id: "charts", label: "Charts", num: 4 },
-  { id: "backtest", label: "Backtest", num: 5 },
-  { id: "global-markets", label: "Global Markets", num: 6 },
-  { id: "economic-data", label: "Economic Data", num: 7 },
-  { id: "data-ingest", label: "Data Ingestion", num: 8 },
-  { id: "geopolitics", label: "Geopolitical Risk", num: 9 },
-];
+const views: { id: PanelView; label: string; num?: number; group: string }[] = [
+  { id: "editor", label: "Editor", num: 1, group: "Core" },
+  { id: "dashboard", label: "Dashboard", num: 2, group: "Core" },
+  { id: "portfolio", label: "Portfolio", num: 3, group: "Core" },
+  { id: "charts", label: "Charts", num: 4, group: "Core" },
 
-const extraViews: { id: PanelView; label: string }[] = [
-  { id: "fundamentals", label: "Company Fundamentals" },
-  { id: "screener", label: "Stock Screener" },
-  { id: "news-feed", label: "Live News Feed" },
-  { id: "options", label: "Options & Derivatives" },
-  { id: "encyclopedia", label: "Financial Encyclopedia" },
-  { id: "ai-tools", label: "AI Analysis Tools" },
-  { id: "pricing", label: "Pricing & Plans" },
-  { id: "media", label: "NUR Media Channels" },
+  { id: "global-markets", label: "Global Markets", num: 5, group: "Markets" },
+  { id: "economic-data", label: "Economic Data", num: 6, group: "Markets" },
+  { id: "fundamentals", label: "Company Fundamentals", num: 7, group: "Markets" },
+  { id: "screener", label: "Stock Screener", num: 8, group: "Markets" },
+  { id: "news-feed", label: "Live News Feed", num: 9, group: "Markets" },
+  { id: "options", label: "Options & Derivatives", group: "Markets" },
+
+  { id: "backtest", label: "Backtesting Engine", group: "Analysis" },
+  { id: "geopolitics", label: "Geopolitical Risk", group: "Analysis" },
+  { id: "ai-tools", label: "AI Analysis Tools", group: "Analysis" },
+  { id: "data-ingest", label: "Data Ingestion", group: "Analysis" },
+  { id: "encyclopedia", label: "Financial Encyclopedia", group: "Analysis" },
+
+  { id: "news", label: "NFS Market Briefs", group: "NFS" },
+  { id: "alerts", label: "NFS Risk Alerts", group: "NFS" },
+  { id: "research", label: "NFS Equity Research", group: "NFS" },
+  { id: "media", label: "NUR Media Channels", group: "NFS" },
+  { id: "pricing", label: "Pricing & Plans", group: "NFS" },
 ];
 
 export default function CommandPalette() {
@@ -46,14 +49,8 @@ export default function CommandPalette() {
     ...views.map((v) => ({
       id: `view-${v.id}`,
       label: `Go to ${v.label}`,
-      shortcut: `Ctrl+${v.num}`,
-      group: "Navigation",
-      action: () => setActiveView(v.id),
-    })),
-    ...extraViews.map((v) => ({
-      id: `view-${v.id}`,
-      label: `Go to ${v.label}`,
-      group: "Navigation",
+      shortcut: v.num ? `Ctrl+${v.num}` : undefined,
+      group: v.group,
       action: () => setActiveView(v.id),
     })),
     {
@@ -89,6 +86,8 @@ export default function CommandPalette() {
   }, []);
 
   useEffect(() => {
+    const numViews = views.filter((v) => v.num);
+
     function handleGlobalKey(e: KeyboardEvent) {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
@@ -107,8 +106,8 @@ export default function CommandPalette() {
         if (target.tagName === "TEXTAREA" || target.tagName === "INPUT") return;
         e.preventDefault();
         const idx = parseInt(e.key) - 1;
-        if (idx < views.length) {
-          setActiveView(views[idx].id);
+        if (idx < numViews.length) {
+          setActiveView(numViews[idx].id);
         }
       }
     }

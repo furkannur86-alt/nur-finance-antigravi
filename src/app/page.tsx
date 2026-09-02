@@ -24,6 +24,9 @@ import PricingPanel from "@/components/pricing/PricingPanel";
 import MediaPanel from "@/components/media/MediaPanel";
 import OptionsPanel from "@/components/derivatives/OptionsPanel";
 import AIToolsPanel from "@/components/ai/AIToolsPanel";
+import MarketBriefsPanel from "@/components/nfs/MarketBriefsPanel";
+import RiskAlertsPanel from "@/components/nfs/RiskAlertsPanel";
+import ResearchPanel from "@/components/nfs/ResearchPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -31,6 +34,12 @@ const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr
 const MIN_CONSOLE_HEIGHT = 80;
 const MAX_CONSOLE_HEIGHT = 500;
 const DEFAULT_CONSOLE_HEIGHT = 200;
+
+const FULLSCREEN_VIEWS = [
+  "global-markets", "economic-data", "data-ingest", "geopolitics",
+  "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
+  "media", "options", "ai-tools", "news", "alerts", "research",
+];
 
 export default function Home() {
   const { activeView, sidebarOpen, addConsoleMessage, consoleMessages } = useIDEStore();
@@ -75,7 +84,7 @@ export default function Home() {
     document.addEventListener("mouseup", onUp);
   }, [consoleHeight]);
 
-  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics", "fundamentals", "screener", "news-feed", "encyclopedia", "pricing", "media", "options", "ai-tools"].includes(activeView);
+  const showConsole = !FULLSCREEN_VIEWS.includes(activeView);
 
   const renderMainContent = () => {
     switch (activeView) {
@@ -111,38 +120,12 @@ export default function Home() {
         return <OptionsPanel />;
       case "ai-tools":
         return <AIToolsPanel />;
-      case "terminal":
-        return (
-          <iframe
-            src="/terminal.html"
-            className="w-full h-full border-0"
-            title="NUR Finance Terminal"
-          />
-        );
       case "news":
-        return (
-          <iframe
-            src="/news"
-            className="w-full h-full border-0"
-            title="NFS Market Briefs"
-          />
-        );
+        return <MarketBriefsPanel />;
       case "alerts":
-        return (
-          <iframe
-            src="/alerts"
-            className="w-full h-full border-0"
-            title="NFS Risk Alerts"
-          />
-        );
+        return <RiskAlertsPanel />;
       case "research":
-        return (
-          <iframe
-            src="/research"
-            className="w-full h-full border-0"
-            title="NFS Equity Research"
-          />
-        );
+        return <ResearchPanel />;
       case "editor":
       default:
         return (

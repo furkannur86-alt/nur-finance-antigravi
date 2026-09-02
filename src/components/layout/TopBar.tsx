@@ -3,33 +3,50 @@
 import { useIDEStore } from "@/stores/useIDEStore";
 import { PanelView } from "@/types";
 
-const views: { id: PanelView; label: string; group?: string }[] = [
-  { id: "editor", label: "Editor" },
-  { id: "dashboard", label: "Dashboard" },
-  { id: "portfolio", label: "Portfolio" },
-  { id: "charts", label: "Charts" },
-  { id: "backtest", label: "Backtest" },
-  { id: "global-markets", label: "Global" },
-  { id: "economic-data", label: "Macro" },
-  { id: "data-ingest", label: "Ingest" },
-  { id: "geopolitics", label: "GeoRisk" },
-  { id: "fundamentals", label: "Fundmntl" },
-  { id: "screener", label: "Screener" },
-  { id: "news-feed", label: "LiveNews" },
-  { id: "options", label: "Options" },
-  { id: "encyclopedia", label: "Wiki" },
-  { id: "ai-tools", label: "AI Tools" },
-  { id: "terminal", label: "Terminal" },
-  { id: "media", label: "Media", group: "nfs" },
-  { id: "news", label: "News", group: "nfs" },
+interface ViewTab {
+  id: PanelView;
+  label: string;
+  group: "core" | "markets" | "analysis" | "nfs";
+}
+
+const views: ViewTab[] = [
+  { id: "editor", label: "Editor", group: "core" },
+  { id: "dashboard", label: "Dashboard", group: "core" },
+  { id: "portfolio", label: "Portfolio", group: "core" },
+  { id: "charts", label: "Charts", group: "core" },
+
+  { id: "global-markets", label: "Markets", group: "markets" },
+  { id: "economic-data", label: "Macro", group: "markets" },
+  { id: "fundamentals", label: "Fundmntl", group: "markets" },
+  { id: "screener", label: "Screener", group: "markets" },
+  { id: "news-feed", label: "LiveNews", group: "markets" },
+  { id: "options", label: "Options", group: "markets" },
+
+  { id: "backtest", label: "Backtest", group: "analysis" },
+  { id: "geopolitics", label: "GeoRisk", group: "analysis" },
+  { id: "ai-tools", label: "AI Tools", group: "analysis" },
+  { id: "data-ingest", label: "Ingest", group: "analysis" },
+  { id: "encyclopedia", label: "Wiki", group: "analysis" },
+
+  { id: "news", label: "Briefs", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
   { id: "research", label: "Research", group: "nfs" },
+  { id: "media", label: "Media", group: "nfs" },
   { id: "pricing", label: "Plans", group: "nfs" },
 ];
+
+const GROUP_ACCENT: Record<string, string> = {
+  core: "var(--ag-accent)",
+  markets: "var(--ag-accent)",
+  analysis: "var(--ag-accent)",
+  nfs: "var(--ag-accent2)",
+};
 
 export default function TopBar() {
   const { activeView, setActiveView, toggleSidebar, isRunning, activeTabId, runActiveFile } =
     useIDEStore();
+
+  let lastGroup = "";
 
   return (
     <div className="flex items-center h-10 px-3 border-b select-none"
@@ -55,25 +72,26 @@ export default function TopBar() {
         </span>
       </div>
 
-      <div className="flex items-center gap-0.5 mr-4">
-        {views.map((v, i) => {
-          const prevGroup = i > 0 ? views[i - 1].group : undefined;
-          const showDivider = v.group === "nfs" && prevGroup !== "nfs";
+      <div className="flex items-center gap-0.5 mr-4 overflow-x-auto">
+        {views.map((v) => {
+          const showDivider = v.group !== lastGroup && lastGroup !== "";
+          lastGroup = v.group;
+          const accent = GROUP_ACCENT[v.group];
+          const isActive = activeView === v.id;
+
           return (
-            <div key={v.id} className="flex items-center">
+            <div key={v.id} className="flex items-center shrink-0">
               {showDivider && (
-                <div className="w-px h-4 mx-1.5" style={{ background: "var(--ag-border)" }} />
+                <div className="w-px h-4 mx-1" style={{ background: "var(--ag-border)" }} />
               )}
               <button
                 onClick={() => setActiveView(v.id)}
-                className="px-2.5 py-1 text-xs rounded transition-colors"
+                className="px-2 py-1 text-[11px] rounded transition-colors whitespace-nowrap"
                 style={{
-                  background: activeView === v.id
+                  background: isActive
                     ? v.group === "nfs" ? "rgba(99,102,241,0.15)" : "rgba(0,212,170,0.15)"
                     : "transparent",
-                  color: activeView === v.id
-                    ? v.group === "nfs" ? "var(--ag-accent2)" : "var(--ag-accent)"
-                    : "var(--ag-muted)",
+                  color: isActive ? accent : "var(--ag-muted)",
                 }}
               >
                 {v.label}
