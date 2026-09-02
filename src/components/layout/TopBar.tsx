@@ -18,6 +18,7 @@ const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "news-feed", label: "LiveNews" },
   { id: "options", label: "Options" },
   { id: "encyclopedia", label: "Wiki" },
+  { id: "ai-tools", label: "AI Tools" },
   { id: "terminal", label: "Terminal" },
   { id: "media", label: "Media", group: "nfs" },
   { id: "news", label: "News", group: "nfs" },

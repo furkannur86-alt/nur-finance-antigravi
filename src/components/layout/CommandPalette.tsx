@@ -30,6 +30,7 @@ const extraViews: { id: PanelView; label: string }[] = [
   { id: "news-feed", label: "Live News Feed" },
   { id: "options", label: "Options & Derivatives" },
   { id: "encyclopedia", label: "Financial Encyclopedia" },
+  { id: "ai-tools", label: "AI Analysis Tools" },
   { id: "pricing", label: "Pricing & Plans" },
   { id: "media", label: "NUR Media Channels" },
 ];

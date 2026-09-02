@@ -23,6 +23,7 @@ import EncyclopediaPanel from "@/components/encyclopedia/EncyclopediaPanel";
 import PricingPanel from "@/components/pricing/PricingPanel";
 import MediaPanel from "@/components/media/MediaPanel";
 import OptionsPanel from "@/components/derivatives/OptionsPanel";
+import AIToolsPanel from "@/components/ai/AIToolsPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -74,7 +75,7 @@ export default function Home() {
     document.addEventListener("mouseup", onUp);
   }, [consoleHeight]);
 
-  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics", "fundamentals", "screener", "news-feed", "encyclopedia", "pricing", "media", "options"].includes(activeView);
+  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics", "fundamentals", "screener", "news-feed", "encyclopedia", "pricing", "media", "options", "ai-tools"].includes(activeView);
 
   const renderMainContent = () => {
     switch (activeView) {
@@ -108,6 +109,8 @@ export default function Home() {
         return <MediaPanel />;
       case "options":
         return <OptionsPanel />;
+      case "ai-tools":
+        return <AIToolsPanel />;
       case "terminal":
         return (
           <iframe
