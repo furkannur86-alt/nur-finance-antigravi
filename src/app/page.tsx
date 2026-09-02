@@ -27,6 +27,7 @@ import AIToolsPanel from "@/components/ai/AIToolsPanel";
 import MarketBriefsPanel from "@/components/nfs/MarketBriefsPanel";
 import RiskAlertsPanel from "@/components/nfs/RiskAlertsPanel";
 import ResearchPanel from "@/components/nfs/ResearchPanel";
+import NURTerminalPanel from "@/components/terminal/NURTerminalPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -38,7 +39,7 @@ const DEFAULT_CONSOLE_HEIGHT = 200;
 const FULLSCREEN_VIEWS = [
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
-  "media", "options", "ai-tools", "news", "alerts", "research",
+  "media", "options", "ai-tools", "news", "alerts", "research", "terminal",
 ];
 
 export default function Home() {
@@ -126,6 +127,8 @@ export default function Home() {
         return <RiskAlertsPanel />;
       case "research":
         return <ResearchPanel />;
+      case "terminal":
+        return <NURTerminalPanel />;
       case "editor":
       default:
         return (

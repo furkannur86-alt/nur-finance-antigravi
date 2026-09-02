@@ -28,6 +28,7 @@ const views: ViewTab[] = [
   { id: "data-ingest", label: "Ingest", group: "analysis" },
   { id: "encyclopedia", label: "Wiki", group: "analysis" },
 
+  { id: "terminal", label: "NUR Terminal", group: "nfs" },
   { id: "news", label: "Briefs", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
   { id: "research", label: "Research", group: "nfs" },
