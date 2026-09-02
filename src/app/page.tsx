@@ -19,6 +19,10 @@ import GeopoliticsPanel from "@/components/geopolitics/GeopoliticsPanel";
 import FundamentalsPanel from "@/components/fundamentals/FundamentalsPanel";
 import ScreenerPanel from "@/components/screener/ScreenerPanel";
 import NewsFeedPanel from "@/components/news/NewsFeedPanel";
+import EncyclopediaPanel from "@/components/encyclopedia/EncyclopediaPanel";
+import PricingPanel from "@/components/pricing/PricingPanel";
+import MediaPanel from "@/components/media/MediaPanel";
+import OptionsPanel from "@/components/derivatives/OptionsPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -70,7 +74,7 @@ export default function Home() {
     document.addEventListener("mouseup", onUp);
   }, [consoleHeight]);
 
-  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics", "fundamentals", "screener", "news-feed"].includes(activeView);
+  const showConsole = !["terminal", "news", "alerts", "research", "global-markets", "economic-data", "data-ingest", "geopolitics", "fundamentals", "screener", "news-feed", "encyclopedia", "pricing", "media", "options"].includes(activeView);
 
   const renderMainContent = () => {
     switch (activeView) {
@@ -96,6 +100,14 @@ export default function Home() {
         return <ScreenerPanel />;
       case "news-feed":
         return <NewsFeedPanel />;
+      case "encyclopedia":
+        return <EncyclopediaPanel />;
+      case "pricing":
+        return <PricingPanel />;
+      case "media":
+        return <MediaPanel />;
+      case "options":
+        return <OptionsPanel />;
       case "terminal":
         return (
           <iframe

@@ -16,10 +16,14 @@ const views: { id: PanelView; label: string; group?: string }[] = [
   { id: "fundamentals", label: "Fundmntl" },
   { id: "screener", label: "Screener" },
   { id: "news-feed", label: "LiveNews" },
+  { id: "options", label: "Options" },
+  { id: "encyclopedia", label: "Wiki" },
   { id: "terminal", label: "Terminal" },
+  { id: "media", label: "Media", group: "nfs" },
   { id: "news", label: "News", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
   { id: "research", label: "Research", group: "nfs" },
+  { id: "pricing", label: "Plans", group: "nfs" },
 ];
 
 export default function TopBar() {

@@ -28,6 +28,10 @@ const extraViews: { id: PanelView; label: string }[] = [
   { id: "fundamentals", label: "Company Fundamentals" },
   { id: "screener", label: "Stock Screener" },
   { id: "news-feed", label: "Live News Feed" },
+  { id: "options", label: "Options & Derivatives" },
+  { id: "encyclopedia", label: "Financial Encyclopedia" },
+  { id: "pricing", label: "Pricing & Plans" },
+  { id: "media", label: "NUR Media Channels" },
 ];
 
 export default function CommandPalette() {
