@@ -14,12 +14,15 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import shutil
 import subprocess
 import logging
+import tempfile
 from datetime import datetime, timezone
 from PIL import Image, ImageDraw, ImageFont
 
 from core_engine.tts_engine import generate_speech_auto, CHANNEL_VOICES
+from core_engine.portrait_animator import stream_frames_to_pipe
 
 logger = logging.getLogger("nur.composer")
 
@@ -334,38 +337,73 @@ def compose_video(
         logger.error("TTS failed for %s", channel_id)
         return None
 
-    # 2. Create broadcast frame
-    logger.info("Creating broadcast frame for %s...", channel_id)
+    # 2. Create animated broadcast frames
+    logger.info("Creating animated frames for %s...", channel_id)
     brand_colors = {
         "nur-global": "#00d4aa", "nur-usa": "#3b82f6", "nur-turkey": "#e30a17",
         "nur-arabic": "#e8a838", "nur-deutsch": "#ffcc00", "nur-france": "#0055a4",
         "nur-japan": "#bc002d", "nur-china": "#de2910", "nur-korea": "#003478",
         "nur-india": "#ff9933", "nur-brazil": "#009c3b", "nur-latam": "#006847",
     }
-    frame = create_broadcast_frame(
+
+    # Get audio duration to determine frame count
+    duration_cmd = ["ffprobe", "-v", "quiet", "-show_entries", "format=duration",
+                    "-of", "default=noprint_wrappers=1:nokey=1", audio_path]
+    dur_result = subprocess.run(duration_cmd, capture_output=True, text=True)
+    audio_duration = float(dur_result.stdout.strip()) if dur_result.returncode == 0 else 60.0
+    total_frames = int(audio_duration * FPS) + FPS
+
+    # Create static background (once)
+    bg = create_broadcast_frame(
         channel_name=config["name"],
         host_name=config["host"],
-        host_id=config["host_id"],
+        host_id="",
         brand_color=brand_colors.get(channel_id, "#00d4aa"),
     )
-    frame.save(frame_path, "PNG")
 
-    # 3. Compose video: static frame + audio → MP4
-    logger.info("Composing video for %s...", channel_id)
+    portrait_path = os.path.join("public/assets/characters", f"{config['host_id']}.png")
+    paste_x = (WIDTH - 480) // 2
+    paste_y = 140
+
+    # 3. Compose video: stream animated frames + audio → MP4
+    logger.info("Composing video for %s (%d frames)...", channel_id, total_frames)
     cmd = [
         "ffmpeg", "-y",
-        "-loop", "1", "-i", frame_path,
+        "-f", "rawvideo", "-pix_fmt", "rgb24",
+        "-s", f"{WIDTH}x{HEIGHT}", "-r", str(FPS),
+        "-i", "pipe:0",
         "-i", audio_path,
-        "-c:v", "libx264", "-preset", "ultrafast", "-tune", "stillimage",
+        "-map", "0:v", "-map", "1:a",
+        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
         "-c:a", "aac", "-b:a", "128k",
         "-pix_fmt", "yuv420p",
         "-shortest",
-        "-r", str(FPS),
         video_path,
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        logger.error("ffmpeg failed for %s: %s", channel_id, result.stderr[-500:])
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    if os.path.exists(portrait_path):
+        stream_frames_to_pipe(
+            background=bg, portrait_path=portrait_path,
+            paste_x=paste_x, paste_y=paste_y,
+            total_frames=total_frames, pipe=proc.stdin, fps=FPS,
+        )
+    else:
+        static_bytes = bg.convert("RGB").tobytes()
+        for _ in range(total_frames):
+            try:
+                proc.stdin.write(static_bytes)
+            except BrokenPipeError:
+                break
+
+    try:
+        proc.stdin.close()
+    except (BrokenPipeError, OSError):
+        pass
+    proc.wait()
+
+    if proc.returncode != 0:
+        logger.error("ffmpeg failed for %s: %s", channel_id, proc.stderr.read().decode()[-500:])
         return None
 
     # 4. Write metadata
