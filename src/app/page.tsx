@@ -36,6 +36,7 @@ import AIQuantCopilot from "@/components/ai/AIQuantCopilot";
 import BroadcastStudioPanel from "@/components/media/BroadcastStudioPanel";
 import VerificationPanel from "@/components/pricing/VerificationPanel";
 import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
+import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -48,6 +49,7 @@ const FULLSCREEN_VIEWS = [
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
   "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
+  "wallet-gateway",
 ];
 
 export default function Home() {
@@ -113,6 +115,8 @@ export default function Home() {
         return <BroadcastStudioPanel />;
       case "verification-portal":
         return <VerificationPanel />;
+      case "wallet-gateway":
+        return <DigitalWalletGateway />;
       case "global-markets":
         return <GlobalMarketsPanel />;
       case "economic-data":

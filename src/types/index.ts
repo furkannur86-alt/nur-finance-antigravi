@@ -97,7 +97,8 @@ export type PanelView =
   | "oms-ems"
   | "quant-copilot"
   | "broadcast-studio"
-  | "verification-portal";
+  | "verification-portal"
+  | "wallet-gateway";
 
 export interface GlobalMarketQuote {
   symbol: string;

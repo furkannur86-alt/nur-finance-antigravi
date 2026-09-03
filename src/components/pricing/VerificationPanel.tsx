@@ -6,7 +6,7 @@ import { VerificationProductTier } from "@/types";
 import EagleCrest from "@/components/ui/EagleCrest";
 
 export default function VerificationPanel() {
-  const { verification, updateVerification, addNotification } = useIDEStore();
+  const { verification, updateVerification, addNotification, setActiveView } = useIDEStore();
 
   const [selectedTier, setSelectedTier] = useState<VerificationProductTier>(verification.tier || "NUR_FINANCE_R");
   const [reutersMonths, setReutersMonths] = useState(verification.reutersUsageMonths || 14);
@@ -283,6 +283,28 @@ export default function VerificationPanel() {
               {isVerifying ? "VERIFYING CREDENTIALS & INVITES..." : `AUTHENTICATE FOR ${selectedTier.replace("_", " ")}`}
             </button>
           </form>
+
+          {/* Anonymous Web3 Settlement & Wallet Academy Bridge */}
+          <div className="p-4 rounded-lg border bg-emerald-950/20 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="text-xs font-bold text-emerald-400 flex items-center gap-2">
+                <span>&#128274; Anonymous Digital Wallet Settlement & Client Academy</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                  ZERO PII REQUIRED
+                </span>
+              </div>
+              <p className="text-[11px] text-[var(--ag-muted)]">
+                Direct on-chain USDT/USDC multi-chain settlement (Ethereum, Polygon, Arbitrum, TRON, BTC) with full step-by-step wallet creation & funding guides.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveView("wallet-gateway")}
+              className="px-4 py-2 rounded text-xs font-bold bg-emerald-400 hover:bg-emerald-300 text-black shrink-0 transition-colors"
+            >
+              Open Web3 Wallet Gateway &rarr;
+            </button>
+          </div>
 
           {/* Transition Policy Alert */}
           <div className="p-4 rounded-lg border bg-amber-950/20 border-amber-500/30 text-xs leading-relaxed space-y-2">

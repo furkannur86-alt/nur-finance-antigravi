@@ -26,6 +26,7 @@ const views: { id: PanelView; label: string; num?: number; group: string }[] = [
   { id: "options", label: "Options & Derivatives", group: "Markets" },
 
   { id: "oms-ems", label: "OMS/EMS Trading & L2 DOM", group: "Trading" },
+  { id: "wallet-gateway", label: "Web3 Wallet & Anonymous Settlement", group: "Trading" },
   { id: "backtest", label: "Backtesting Engine", group: "Trading" },
 
   { id: "quant-copilot", label: "AI Quant Copilot & WISH", group: "Analysis" },

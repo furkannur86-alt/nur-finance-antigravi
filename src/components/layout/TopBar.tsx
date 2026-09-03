@@ -23,6 +23,7 @@ const views: ViewTab[] = [
   { id: "options", label: "Options", group: "markets" },
 
   { id: "oms-ems", label: "OMS/EMS", group: "trading" },
+  { id: "wallet-gateway", label: "Web3 Wallet", group: "trading" },
   { id: "backtest", label: "Backtest", group: "trading" },
 
   { id: "quant-copilot", label: "Quant Copilot", group: "analysis" },
