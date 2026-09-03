@@ -131,6 +131,29 @@ def _chunk_text(text: str, max_chars: int = GOOGLE_TTS_MAX_CHARS) -> list[str]:
     return sentences or [text[:max_chars]]
 
 
+def _fetch_tts_chunk(url: str, retries: int = 3) -> bytes:
+    """Fetch a single TTS audio chunk with retry logic."""
+    import time
+    last_err = None
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://translate.googleapis.com/",
+            })
+            with urllib.request.urlopen(req, context=_get_ssl_ctx(), timeout=15) as resp:
+                data = resp.read()
+                if len(data) < 100:
+                    raise ValueError(f"Audio too small ({len(data)} bytes)")
+                return data
+        except Exception as e:
+            last_err = e
+            if attempt < retries - 1:
+                time.sleep(1.0 * (attempt + 1))
+                logger.warning("TTS chunk retry %d/%d: %s", attempt + 1, retries, e)
+    raise RuntimeError(f"TTS fetch failed after {retries} attempts: {last_err}")
+
+
 def generate_speech_google(
     text: str,
     output_path: str,
@@ -146,19 +169,14 @@ def generate_speech_google(
     chunks = _chunk_text(text)
     audio_parts: list[bytes] = []
 
-    for chunk in chunks:
+    for i, chunk in enumerate(chunks):
         url = (
             f"{GOOGLE_TTS_URL}?ie=UTF-8"
             f"&q={urllib.parse.quote(chunk)}"
             f"&tl={lang}"
             f"&client=tw-ob"
         )
-        req = urllib.request.Request(url, headers={
-            "User-Agent": "Mozilla/5.0",
-            "Referer": "https://translate.googleapis.com/",
-        })
-        with urllib.request.urlopen(req, context=_get_ssl_ctx(), timeout=15) as resp:
-            audio_parts.append(resp.read())
+        audio_parts.append(_fetch_tts_chunk(url))
 
     if len(audio_parts) == 1:
         with open(output_path, "wb") as f:
@@ -258,6 +276,62 @@ async def generate_speech(
         logger.warning("edge-tts failed (%s), trying Google Neural", e)
 
     return generate_speech_auto(text, output_path, v)
+
+
+def health_check() -> dict:
+    """Run diagnostics on all TTS backends and languages."""
+    import time
+    results: dict = {"backends": {}, "languages": {}, "overall": "unknown"}
+
+    # Check espeak-ng
+    try:
+        subprocess.run(["espeak-ng", "--version"], capture_output=True, check=True)
+        results["backends"]["espeak-ng"] = "ok"
+    except Exception as e:
+        results["backends"]["espeak-ng"] = f"fail: {e}"
+
+    # Check Google Neural TTS connectivity
+    try:
+        test_url = f"{GOOGLE_TTS_URL}?ie=UTF-8&q=test&tl=en&client=tw-ob"
+        data = _fetch_tts_chunk(test_url, retries=1)
+        results["backends"]["google-neural"] = f"ok ({len(data)} bytes)"
+    except Exception as e:
+        results["backends"]["google-neural"] = f"fail: {e}"
+
+    # Check ffmpeg
+    try:
+        subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
+        results["backends"]["ffmpeg"] = "ok"
+    except Exception as e:
+        results["backends"]["ffmpeg"] = f"fail: {e}"
+
+    # Test each language
+    test_phrases = {
+        "en": "Test.", "tr": "Test.", "ar": "اختبار.", "de": "Test.",
+        "fr": "Test.", "ja": "テスト。", "zh-CN": "测试。", "ko": "테스트.",
+        "hi": "परीक्षण।", "pt": "Teste.", "es": "Prueba.",
+    }
+    for lang, phrase in test_phrases.items():
+        try:
+            url = f"{GOOGLE_TTS_URL}?ie=UTF-8&q={urllib.parse.quote(phrase)}&tl={lang}&client=tw-ob"
+            data = _fetch_tts_chunk(url, retries=1)
+            results["languages"][lang] = f"ok ({len(data)}B)"
+        except Exception as e:
+            results["languages"][lang] = f"fail: {e}"
+
+    ok_langs = sum(1 for v in results["languages"].values() if v.startswith("ok"))
+    google_ok = results["backends"].get("google-neural", "").startswith("ok")
+    espeak_ok = results["backends"].get("espeak-ng", "").startswith("ok")
+    ffmpeg_ok = results["backends"].get("ffmpeg", "").startswith("ok")
+
+    if google_ok and ffmpeg_ok and ok_langs == len(test_phrases):
+        results["overall"] = "healthy"
+    elif espeak_ok and ffmpeg_ok:
+        results["overall"] = "degraded (espeak-ng fallback only)"
+    else:
+        results["overall"] = "unhealthy"
+
+    return results
 
 
 if __name__ == "__main__":
