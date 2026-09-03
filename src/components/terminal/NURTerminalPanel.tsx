@@ -96,7 +96,7 @@ function pick<T>(arr: T[]): T {
 }
 
 function generateCommentary(): string {
-  let template = pick(AI_TEMPLATES);
+  const template = pick(AI_TEMPLATES);
   return template.replace(/\{(\w+)\}/g, (_, key) => {
     const opts = FILL[key as keyof typeof FILL];
     return opts ? pick(opts) : key;

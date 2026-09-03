@@ -64,8 +64,6 @@ export default function TopBar() {
 
   const unreadAlertsCount = notifications.filter((n) => !n.read).length;
 
-  let lastGroup = "";
-
   return (
     <div
       className="flex items-center h-10 px-3 border-b select-none"
@@ -95,9 +93,8 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-0.5 mr-4 overflow-x-auto">
-        {views.map((v) => {
-          const showDivider = v.group !== lastGroup && lastGroup !== "";
-          lastGroup = v.group;
+        {views.map((v, i) => {
+          const showDivider = i > 0 && views[i - 1].group !== v.group;
           const accent = GROUP_ACCENT[v.group];
           const isActive = activeView === v.id;
 
