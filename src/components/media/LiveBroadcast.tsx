@@ -64,6 +64,7 @@ export default function LiveBroadcast() {
   const [breakingIdx, setBreakingIdx] = useState(0);
   const [selectedChannel, setSelectedChannel] = useState("nur-global");
   const [showChannelPicker, setShowChannelPicker] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   const channel = channels.find((c) => c.id === selectedChannel) || channels[0];
   const channelHosts = hosts.filter((h) => h.channelId === selectedChannel);
@@ -120,6 +121,9 @@ export default function LiveBroadcast() {
         ref={videoRef}
         autoPlay
         loop
+        muted
+        playsInline
+        poster={`/videos/broadcasts/${selectedChannel}_poster.jpg`}
         style={{
           position: "absolute",
           inset: 0,
@@ -191,11 +195,27 @@ export default function LiveBroadcast() {
         </div>
       )}
 
-      {/* Clock strip */}
+      {/* Clock strip + volume */}
       <div style={{
         position: "absolute", top: 12, right: 16, display: "flex", gap: 16,
-        fontSize: 11, color: "#ffffff80", fontFamily: "monospace", zIndex: 10,
+        fontSize: 11, color: "#ffffff80", fontFamily: "monospace", zIndex: 10, alignItems: "center",
       }}>
+        <button
+          onClick={() => {
+            if (videoRef.current) {
+              videoRef.current.muted = !videoRef.current.muted;
+              setIsMuted(videoRef.current.muted);
+            }
+          }}
+          style={{
+            background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: 4, color: "#fff", fontSize: 14, cursor: "pointer",
+            padding: "2px 8px", lineHeight: 1,
+          }}
+          title={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? "🔇" : "🔊"}
+        </button>
         <span>LON {formatTime(currentTime, "Europe/London")}</span>
         <span>NYC {formatTime(currentTime, "America/New_York")}</span>
         <span>TYO {formatTime(currentTime, "Asia/Tokyo")}</span>

@@ -199,104 +199,111 @@ CHANNEL_SCRIPTS: dict[str, dict] = {
 }
 
 
+def _draw_studio_background(img: Image.Image, draw: ImageDraw.Draw, bc: tuple) -> None:
+    """Draw a realistic broadcast studio / office environment."""
+    import math
+
+    # Base: dark professional studio
+    for y in range(HEIGHT):
+        ratio = y / HEIGHT
+        r = int(12 + ratio * 8)
+        g = int(18 + ratio * 12)
+        b = int(32 + ratio * 15)
+        draw.line([(0, y), (WIDTH, y)], fill=(r, g, b))
+
+    # Back wall panels (office feel)
+    wall_color = (18, 28, 45)
+    panel_border = (30, 42, 60)
+    for px in range(3):
+        x0 = 50 + px * 320
+        draw.rectangle([(x0, 40), (x0 + 280, 480)], fill=wall_color, outline=panel_border, width=1)
+
+    # Left monitor — chart display
+    mon_x, mon_y = 60, 60
+    draw.rectangle([(mon_x, mon_y), (mon_x + 260, mon_y + 380)], fill=(8, 14, 25))
+    draw.rectangle([(mon_x, mon_y), (mon_x + 260, mon_y + 28)], fill=bc)
+    draw.rectangle([(mon_x + 2, mon_y + 2), (mon_x + 258, mon_y + 26)], fill=bc)
+
+    # Chart on left monitor
+    chart_y_base = mon_y + 200
+    points = []
+    for i in range(26):
+        cx = mon_x + 10 + i * 10
+        cy = chart_y_base - int(math.sin(i * 0.4) * 40 + math.cos(i * 0.2) * 25 + i * 3)
+        points.append((cx, cy))
+    if len(points) > 1:
+        for i in range(len(points) - 1):
+            draw.line([points[i], points[i + 1]], fill=bc, width=2)
+    # Fill under chart
+    if points:
+        fill_pts = points + [(points[-1][0], chart_y_base + 60), (points[0][0], chart_y_base + 60)]
+        draw.polygon(fill_pts, fill=(bc[0], bc[1], bc[2], 30) if len(bc) >= 3 else (0, 200, 160, 30))
+    # Grid lines
+    for gy in range(5):
+        gy_pos = mon_y + 50 + gy * 70
+        draw.line([(mon_x + 10, gy_pos), (mon_x + 250, gy_pos)], fill=(40, 55, 75), width=1)
+
+    # Right monitor — world map dots
+    rmon_x = 690
+    draw.rectangle([(rmon_x, mon_y), (rmon_x + 260, mon_y + 380)], fill=(8, 14, 25))
+    draw.rectangle([(rmon_x, mon_y), (rmon_x + 260, mon_y + 28)], fill=(40, 55, 75))
+    map_dots = [(730, 180), (770, 220), (810, 160), (850, 250), (890, 170), (870, 300), (760, 300), (820, 330)]
+    for dx, dy in map_dots:
+        draw.ellipse([dx - 4, dy - 4, dx + 4, dy + 4], fill=bc)
+        draw.ellipse([dx - 8, dy - 8, dx + 8, dy + 8], outline=(bc[0], bc[1], bc[2], 80))
+
+    # Desk surface
+    desk_y = 530
+    desk_grad_top = (25, 35, 50)
+    desk_grad_bot = (15, 22, 35)
+    draw.rectangle([(0, desk_y), (WIDTH, desk_y + 8)], fill=bc)
+    for dy in range(desk_y + 8, HEIGHT):
+        ratio = (dy - desk_y - 8) / (HEIGHT - desk_y - 8)
+        r = int(desk_grad_top[0] + (desk_grad_bot[0] - desk_grad_top[0]) * ratio)
+        g = int(desk_grad_top[1] + (desk_grad_bot[1] - desk_grad_top[1]) * ratio)
+        b = int(desk_grad_top[2] + (desk_grad_bot[2] - desk_grad_top[2]) * ratio)
+        draw.line([(0, dy), (WIDTH, dy)], fill=(r, g, b))
+
+    # Desk items: laptop, papers
+    draw.polygon([(100, desk_y + 20), (130, desk_y + 12), (260, desk_y + 12), (280, desk_y + 20)],
+                 fill=(40, 40, 45))
+    draw.rectangle([(135, desk_y + 14), (255, desk_y + 18)], fill=(60, 70, 85))
+
+    # Ambient lighting effects
+    for lx, ly, radius in [(WIDTH // 2, 30, 400), (100, 100, 200), (WIDTH - 100, 100, 200)]:
+        for ring in range(radius, 0, -10):
+            alpha = max(0, int(6 * (1 - ring / radius)))
+            if alpha > 0:
+                draw.ellipse([lx - ring, ly - ring, lx + ring, ly + ring],
+                             fill=(bc[0], bc[1], bc[2], alpha))
+
+
 def create_broadcast_frame(
     channel_name: str,
     host_name: str,
+    host_id: str = "",
     headline: str = "MARKETS UPDATE",
     ticker_text: str = "",
     brand_color: str = "#00d4aa",
+    portrait_dir: str = "public/assets/characters",
 ) -> Image.Image:
-    img = Image.new("RGB", (WIDTH, HEIGHT), color="#0a1628")
-    draw = ImageDraw.Draw(img)
+    """Studio background + presenter portrait only. UI overlays are handled by LiveBroadcast.tsx."""
+    img = Image.new("RGBA", (WIDTH, HEIGHT), color=(10, 22, 40, 255))
+    draw = ImageDraw.Draw(img, "RGBA")
 
-    try:
-        font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 42)
-        font_medium = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 28)
-        font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
-        font_ticker = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 22)
-        font_tiny = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 16)
-    except OSError:
-        font_large = ImageFont.load_default()
-        font_medium = font_large
-        font_small = font_large
-        font_ticker = font_large
-        font_tiny = font_large
-
-    # Studio background gradient effect
-    for y in range(HEIGHT):
-        r = int(10 + (y / HEIGHT) * 5)
-        g = int(22 + (y / HEIGHT) * 8)
-        b = int(40 + (y / HEIGHT) * -10)
-        draw.line([(0, y), (WIDTH, y)], fill=(max(0, r), max(0, g), max(0, b)))
-
-    # NUR FINANCE logo top-left
     bc = tuple(int(brand_color.lstrip("#")[i:i+2], 16) for i in (0, 2, 4))
-    draw.text((40, 30), "NUR", fill=bc, font=font_large)
-    draw.text((150, 42), "FINANCE", fill=(255, 255, 255, 180), font=font_small)
 
-    # LIVE badge
-    draw.rectangle([(310, 32), (400, 62)], fill=(239, 68, 68))
-    draw.text((322, 35), "● LIVE", fill=(255, 255, 255), font=font_small)
+    _draw_studio_background(img, draw, bc)
 
-    # Channel name
-    draw.text((40, 80), channel_name, fill=(255, 255, 255, 200), font=font_medium)
+    portrait_path = os.path.join(portrait_dir, f"{host_id}.png")
+    if host_id and os.path.exists(portrait_path):
+        portrait = Image.open(portrait_path).convert("RGBA")
+        portrait = portrait.resize((480, 480), Image.LANCZOS)
+        paste_x = (WIDTH - 480) // 2
+        paste_y = 140
+        img.paste(portrait, (paste_x, paste_y), portrait)
 
-    # Clock (UTC)
-    now = datetime.now(timezone.utc)
-    time_str = now.strftime("%H:%M UTC")
-    draw.text((WIDTH - 200, 35), time_str, fill=(255, 255, 255, 150), font=font_medium)
-
-    # Center area — headline
-    draw.text((WIDTH // 2 - 150, HEIGHT // 2 - 80), headline, fill=(255, 255, 255), font=font_large)
-
-    # Market data panel (right side)
-    panel_x = WIDTH - 320
-    panel_y = 140
-    draw.rectangle([(panel_x, panel_y), (WIDTH - 20, panel_y + 450)], fill=(10, 20, 35, 200))
-    draw.rectangle([(panel_x, panel_y), (WIDTH - 20, panel_y + 35)], fill=bc)
-    draw.text((panel_x + 15, panel_y + 5), "MARKETS", fill=(255, 255, 255), font=font_small)
-
-    markets = [
-        ("FTSE 100", "8,234", "+0.82%", True),
-        ("S&P 500", "5,567", "+0.41%", True),
-        ("NASDAQ", "17,890", "+0.63%", True),
-        ("DAX", "18,890", "+0.52%", True),
-        ("EUR/USD", "1.0892", "+0.28%", True),
-        ("Gold", "$2,418", "+1.22%", True),
-        ("Brent", "$82.40", "+0.58%", True),
-        ("Bitcoin", "$67,420", "+2.84%", True),
-        ("Nikkei", "38,420", "-1.38%", False),
-        ("VIX", "14.20", "-3.40%", False),
-    ]
-    for i, (sym, price, chg, up) in enumerate(markets):
-        y = panel_y + 45 + i * 40
-        draw.text((panel_x + 15, y), sym, fill=(255, 255, 255, 200), font=font_tiny)
-        draw.text((panel_x + 120, y), price, fill=(255, 255, 255, 150), font=font_tiny)
-        color = (0, 212, 170) if up else (239, 68, 68)
-        draw.text((panel_x + 220, y), chg, fill=color, font=font_tiny)
-
-    # Lower third
-    lt_y = HEIGHT - 160
-    draw.rectangle([(0, lt_y), (500, lt_y + 50)], fill=bc)
-    draw.text((20, lt_y + 10), host_name, fill=(255, 255, 255), font=font_medium)
-    draw.rectangle([(0, lt_y + 50), (700, lt_y + 85)], fill=(0, 0, 0, 180))
-    draw.text((20, lt_y + 55), channel_name, fill=(255, 255, 255, 200), font=font_small)
-
-    # Breaking news banner
-    bn_y = HEIGHT - 70
-    draw.rectangle([(0, bn_y), (WIDTH, bn_y + 32)], fill=(185, 28, 28))
-    draw.rectangle([(0, bn_y), (120, bn_y + 32)], fill=(255, 255, 255))
-    draw.text((12, bn_y + 5), "BREAKING", fill=(185, 28, 28), font=font_small)
-    ticker = ticker_text or "ECB holds rates at 3.75% · FTSE 100 hits intraday high · Gold rallies to $2,418"
-    draw.text((135, bn_y + 5), ticker, fill=(255, 255, 255), font=font_small)
-
-    # Bottom ticker bar
-    draw.rectangle([(0, HEIGHT - 36), (WIDTH, HEIGHT)], fill=(0, 8, 20))
-    draw.rectangle([(0, HEIGHT - 36), (160, HEIGHT)], fill=bc)
-    draw.text((12, HEIGHT - 32), "NUR FINANCE", fill=(255, 255, 255), font=font_tiny)
-    draw.text((175, HEIGHT - 32), "◆ Markets update · Stay tuned for full coverage", fill=(255, 255, 255, 200), font=font_tiny)
-
-    return img
+    return img.convert("RGB")
 
 
 def compose_video(
@@ -338,6 +345,7 @@ def compose_video(
     frame = create_broadcast_frame(
         channel_name=config["name"],
         host_name=config["host"],
+        host_id=config["host_id"],
         brand_color=brand_colors.get(channel_id, "#00d4aa"),
     )
     frame.save(frame_path, "PNG")
