@@ -19,7 +19,7 @@ import logging
 from datetime import datetime, timezone
 from PIL import Image, ImageDraw, ImageFont
 
-from core_engine.tts_engine import generate_speech_espeak, CHANNEL_VOICES
+from core_engine.tts_engine import generate_speech_auto, CHANNEL_VOICES
 
 logger = logging.getLogger("nur.composer")
 
@@ -324,7 +324,7 @@ def compose_video(
 
     # 1. Generate TTS audio
     logger.info("Generating TTS for %s...", channel_id)
-    generate_speech_espeak(
+    generate_speech_auto(
         text=config["script"],
         output_path=audio_path,
         host_id=config["host_id"],
