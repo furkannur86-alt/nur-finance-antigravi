@@ -32,6 +32,7 @@ const views: ViewTab[] = [
   { id: "news", label: "Briefs", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
   { id: "research", label: "Research", group: "nfs" },
+  { id: "live-tv", label: "NUR TV", group: "nfs" },
   { id: "media", label: "Media", group: "nfs" },
   { id: "pricing", label: "Plans", group: "nfs" },
 ];

@@ -22,6 +22,7 @@ import NewsFeedPanel from "@/components/news/NewsFeedPanel";
 import EncyclopediaPanel from "@/components/encyclopedia/EncyclopediaPanel";
 import PricingPanel from "@/components/pricing/PricingPanel";
 import MediaPanel from "@/components/media/MediaPanel";
+import LiveBroadcast from "@/components/media/LiveBroadcast";
 import OptionsPanel from "@/components/derivatives/OptionsPanel";
 import AIToolsPanel from "@/components/ai/AIToolsPanel";
 import MarketBriefsPanel from "@/components/nfs/MarketBriefsPanel";
@@ -39,7 +40,7 @@ const DEFAULT_CONSOLE_HEIGHT = 200;
 const FULLSCREEN_VIEWS = [
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
-  "media", "options", "ai-tools", "news", "alerts", "research", "terminal",
+  "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
 ];
 
 export default function Home() {
@@ -117,6 +118,8 @@ export default function Home() {
         return <PricingPanel />;
       case "media":
         return <MediaPanel />;
+      case "live-tv":
+        return <LiveBroadcast />;
       case "options":
         return <OptionsPanel />;
       case "ai-tools":
