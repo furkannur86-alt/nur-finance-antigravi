@@ -6,7 +6,7 @@ import { PanelView } from "@/types";
 interface ViewTab {
   id: PanelView;
   label: string;
-  group: "core" | "markets" | "analysis" | "nfs";
+  group: "core" | "markets" | "trading" | "analysis" | "nfs";
 }
 
 const views: ViewTab[] = [
@@ -22,38 +22,55 @@ const views: ViewTab[] = [
   { id: "news-feed", label: "LiveNews", group: "markets" },
   { id: "options", label: "Options", group: "markets" },
 
-  { id: "backtest", label: "Backtest", group: "analysis" },
-  { id: "geopolitics", label: "GeoRisk", group: "analysis" },
+  { id: "oms-ems", label: "OMS/EMS", group: "trading" },
+  { id: "backtest", label: "Backtest", group: "trading" },
+
+  { id: "quant-copilot", label: "Quant Copilot", group: "analysis" },
   { id: "macro-risk", label: "MacroRisk", group: "analysis" },
+  { id: "geopolitics", label: "GeoRisk", group: "analysis" },
   { id: "ai-tools", label: "AI Tools", group: "analysis" },
   { id: "data-ingest", label: "Ingest", group: "analysis" },
   { id: "encyclopedia", label: "Wiki", group: "analysis" },
 
   { id: "terminal", label: "NUR Terminal", group: "nfs" },
+  { id: "broadcast-studio", label: "Studio", group: "nfs" },
+  { id: "live-tv", label: "NUR TV", group: "nfs" },
+  { id: "verification-portal", label: "VIP Verify", group: "nfs" },
   { id: "news", label: "Briefs", group: "nfs" },
   { id: "alerts", label: "Alerts", group: "nfs" },
   { id: "research", label: "Research", group: "nfs" },
-  { id: "live-tv", label: "NUR TV", group: "nfs" },
-  { id: "media", label: "Media", group: "nfs" },
   { id: "pricing", label: "Plans", group: "nfs" },
 ];
 
 const GROUP_ACCENT: Record<string, string> = {
   core: "var(--ag-accent)",
   markets: "var(--ag-accent)",
+  trading: "#38bdf8",
   analysis: "var(--ag-accent)",
   nfs: "var(--ag-accent2)",
 };
 
 export default function TopBar() {
-  const { activeView, setActiveView, toggleSidebar, isRunning, activeTabId, runActiveFile } =
-    useIDEStore();
+  const {
+    activeView,
+    setActiveView,
+    toggleSidebar,
+    isRunning,
+    activeTabId,
+    runActiveFile,
+    toggleHUDDrawer,
+    notifications,
+  } = useIDEStore();
+
+  const unreadAlertsCount = notifications.filter((n) => !n.read).length;
 
   let lastGroup = "";
 
   return (
-    <div className="flex items-center h-10 px-3 border-b select-none"
-      style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}>
+    <div
+      className="flex items-center h-10 px-3 border-b select-none"
+      style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}
+    >
       <button onClick={toggleSidebar} className="mr-3 p-1 rounded hover:bg-white/5 text-sm" title="Toggle Sidebar">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
           <rect x="2" y="3" width="12" height="1.5" rx="0.5" />
@@ -69,9 +86,11 @@ export default function TopBar() {
         <span className="text-xs" style={{ color: "var(--ag-muted)" }}>
           IDE
         </span>
-        <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded"
-          style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}>
-          v2.1
+        <span
+          className="text-[10px] ml-1 px-1.5 py-0.5 rounded font-mono font-bold"
+          style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}
+        >
+          v3.0 PRO
         </span>
       </div>
 
@@ -92,7 +111,11 @@ export default function TopBar() {
                 className="px-2 py-1 text-[11px] rounded transition-colors whitespace-nowrap"
                 style={{
                   background: isActive
-                    ? v.group === "nfs" ? "rgba(99,102,241,0.15)" : "rgba(0,212,170,0.15)"
+                    ? v.group === "nfs"
+                      ? "rgba(99,102,241,0.15)"
+                      : v.group === "trading"
+                      ? "rgba(56,189,248,0.15)"
+                      : "rgba(0,212,170,0.15)"
                     : "transparent",
                   color: isActive ? accent : "var(--ag-muted)",
                 }}
@@ -105,6 +128,22 @@ export default function TopBar() {
       </div>
 
       <div className="flex-1" />
+
+      {/* HUD Alerts Drawer Trigger */}
+      <button
+        onClick={toggleHUDDrawer}
+        className="relative p-1.5 mr-2 rounded hover:bg-white/5 text-[var(--ag-muted)] hover:text-white transition-colors flex items-center gap-1"
+        title="Toggle HUD Alert Center"
+      >
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+        </svg>
+        {unreadAlertsCount > 0 && (
+          <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-red-500 text-white animate-pulse">
+            {unreadAlertsCount}
+          </span>
+        )}
+      </button>
 
       <button
         onClick={runActiveFile}

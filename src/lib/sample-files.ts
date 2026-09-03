@@ -7,6 +7,49 @@ export const sampleFiles: FileNode[] = [
     type: "folder",
     children: [
       {
+        name: "ism_wish_rotation.py",
+        path: "/strategies/ism_wish_rotation.py",
+        type: "file",
+        language: "python",
+        content: `# NUR Finance - WISH Framework Systematic Rotation
+# James Simons / Quantitative Rigorous Engine
+# Sharpe ~0.78, t=2.73, Zero Equity Correlation
+
+import numpy as np
+
+class WISHRotationEngine:
+    def __init__(self, vix_threshold=30.0, leverage=3.5):
+        self.vix_threshold = vix_threshold
+        self.leverage = leverage
+        self.ruin_barrier = 17.0
+        
+    def evaluate_worldview(self, ism_srv: float, ism_mfg: float, michigan: float) -> str:
+        """Michigan >= 85 signals historical ~3.2% GDP expansion."""
+        composite = (ism_srv * 0.6) + (ism_mfg * 0.4)
+        if composite > 50.0 and michigan >= 85.0:
+            return "EXPANSION_LONG_BIAS"
+        elif composite < 50.0:
+            return "CONTRACTION_DEFENSIVE"
+        return "NEUTRAL"
+
+    def gatekeeper_check(self, vix: float) -> bool:
+        """VIX < 30 allows long/short stock-pooling. VIX >= 30 invokes cash or 3x contrarian long."""
+        return vix < self.vix_threshold
+
+    def calculate_kelly_size(self, mean_ret: float, variance: float) -> float:
+        """Continuous Gaussian Kelly: f* = mu / sigma^2."""
+        f_star = mean_ret / variance if variance > 0 else 1.0
+        return min(f_star, self.leverage)
+
+print(">>> [NUR Quantitative Engine] Initializing WISH Systematic Strategy...")
+print(">>> [WISH Matrix] Worldview: ISM Services (54.8), Michigan (88.4 >= 85) -> EXPANSION")
+print(">>> [Setup Gate] VIX = 17.82 (< 30) -> PASS (Trading Enabled)")
+print(">>> [Discipline] Operating Leverage: 3.5x | Kelly Sizing f* = 13.7x | Ruin Barrier = 17.0x")
+print(">>> [Execution] Signal Month X -> Entry Month X+1 Day 5 -> Exit Month X+2 Day 5")
+print(">>> [Status] Market-Neutral Pairs Active: Long [NVDA, MSFT, CAT] / Short [NEE, DUK, PLD]")
+`,
+      },
+      {
         name: "momentum.py",
         path: "/strategies/momentum.py",
         type: "file",

@@ -31,6 +31,11 @@ import RiskAlertsPanel from "@/components/nfs/RiskAlertsPanel";
 import ResearchPanel from "@/components/nfs/ResearchPanel";
 import NURTerminalPanel from "@/components/terminal/NURTerminalPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
+import OMSEMSPanel from "@/components/trading/OMSEMSPanel";
+import AIQuantCopilot from "@/components/ai/AIQuantCopilot";
+import BroadcastStudioPanel from "@/components/media/BroadcastStudioPanel";
+import VerificationPanel from "@/components/pricing/VerificationPanel";
+import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -42,7 +47,7 @@ const FULLSCREEN_VIEWS = [
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
-  "macro-risk",
+  "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
 ];
 
 export default function Home() {
@@ -58,8 +63,8 @@ export default function Home() {
     if (didInit.current) return;
     didInit.current = true;
     if (consoleMessages.length === 0) {
-      addConsoleMessage({ type: "info", text: "AntiGravi IDE v2.1 - Nur Finance Quantitative Engine" });
-      addConsoleMessage({ type: "success", text: "Engine initialized. Ready for development." });
+      addConsoleMessage({ type: "info", text: "AntiGravi IDE v3.0 PRO - Nur Finance Quantitative Engine" });
+      addConsoleMessage({ type: "success", text: "Faz 3 Engine initialized: OMS/EMS, AI Quant Copilot, HUD Alerts & Broadcast Studio active." });
     }
   }, [addConsoleMessage, consoleMessages.length]);
 
@@ -100,6 +105,14 @@ export default function Home() {
         return <ChartsPanel />;
       case "backtest":
         return <BacktestPanel />;
+      case "oms-ems":
+        return <OMSEMSPanel />;
+      case "quant-copilot":
+        return <AIQuantCopilot />;
+      case "broadcast-studio":
+        return <BroadcastStudioPanel />;
+      case "verification-portal":
+        return <VerificationPanel />;
       case "global-markets":
         return <GlobalMarketsPanel />;
       case "economic-data":
@@ -152,6 +165,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen" style={{ background: "var(--ag-bg)" }}>
       <CommandPalette />
+      <HUDNotificationSystem />
       <TopBar />
       <div className="flex flex-1 min-h-0">
         {sidebarOpen && <Sidebar />}

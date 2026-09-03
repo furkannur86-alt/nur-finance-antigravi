@@ -25,16 +25,23 @@ const views: { id: PanelView; label: string; num?: number; group: string }[] = [
   { id: "news-feed", label: "Live News Feed", num: 9, group: "Markets" },
   { id: "options", label: "Options & Derivatives", group: "Markets" },
 
-  { id: "backtest", label: "Backtesting Engine", group: "Analysis" },
+  { id: "oms-ems", label: "OMS/EMS Trading & L2 DOM", group: "Trading" },
+  { id: "backtest", label: "Backtesting Engine", group: "Trading" },
+
+  { id: "quant-copilot", label: "AI Quant Copilot & WISH", group: "Analysis" },
+  { id: "macro-risk", label: "Macro Risk & Scenarios", group: "Analysis" },
   { id: "geopolitics", label: "Geopolitical Risk", group: "Analysis" },
   { id: "ai-tools", label: "AI Analysis Tools", group: "Analysis" },
   { id: "data-ingest", label: "Data Ingestion", group: "Analysis" },
   { id: "encyclopedia", label: "Financial Encyclopedia", group: "Analysis" },
 
+  { id: "terminal", label: "NUR Terminal", group: "NFS" },
+  { id: "broadcast-studio", label: "NUR TV Broadcast Studio", group: "NFS" },
+  { id: "live-tv", label: "NUR TV Live Streams", group: "NFS" },
+  { id: "verification-portal", label: "NUR B & R VIP Verification", group: "NFS" },
   { id: "news", label: "NFS Market Briefs", group: "NFS" },
   { id: "alerts", label: "NFS Risk Alerts", group: "NFS" },
   { id: "research", label: "NFS Equity Research", group: "NFS" },
-  { id: "media", label: "NUR Media Channels", group: "NFS" },
   { id: "pricing", label: "Pricing & Plans", group: "NFS" },
 ];
 
@@ -43,7 +50,7 @@ export default function CommandPalette() {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { setActiveView, toggleSidebar, runActiveFile, clearConsole } = useIDEStore();
+  const { setActiveView, toggleSidebar, runActiveFile, clearConsole, toggleHUDDrawer } = useIDEStore();
 
   const commands: Command[] = [
     ...views.map((v) => ({
@@ -53,6 +60,13 @@ export default function CommandPalette() {
       group: v.group,
       action: () => setActiveView(v.id),
     })),
+    {
+      id: "toggle-hud",
+      label: "Toggle HUD Risk & Alert Drawer",
+      shortcut: "Ctrl+H",
+      group: "View",
+      action: () => toggleHUDDrawer(),
+    },
     {
       id: "toggle-sidebar",
       label: "Toggle Sidebar",

@@ -52,6 +52,39 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    if (type === "wish") {
+      return NextResponse.json({
+        symbol,
+        type: "wish",
+        timestamp: new Date().toISOString(),
+        worldview: {
+          ismServices: 54.8,
+          ismManufacturing: 51.2,
+          michiganConfidence: 88.4,
+          regime: "EXPANSION",
+          gdpGrowthForecast: "3.2%",
+        },
+        indicators: {
+          topGrowing: ["Technology", "Financials", "Industrials"],
+          topContracting: ["Utilities", "Real Estate", "Consumer Staples"],
+          tStat: 2.73,
+          sharpe: 0.78,
+        },
+        setup: {
+          vix: 17.82,
+          vixStatus: "PASS_BELOW_30",
+          cycleDay: 5,
+          timingSignal: "NON_LOOKAHEAD_ENTER_DAY_5",
+        },
+        discipline: {
+          gaussianKelly: 13.7,
+          targetOperatingLeverage: "3.0x - 4.0x",
+          ruinBarrier: 17.0,
+          outlierFilter: "EXCLUDE_ABOVE_50_PERCENT",
+        },
+      });
+    }
+
     return NextResponse.json({ error: `Unknown analysis type: ${type}` }, { status: 400 });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Analysis failed";
