@@ -8,43 +8,49 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { code, language } = body;
+  const { code, language, mode } = body;
   if (!code) {
     return NextResponse.json({ error: "code is required" }, { status: 400 });
   }
 
-  const lang = language || "python";
-  const startTime = Date.now();
+  const lang = language || "javascript";
 
-  if (lang === "python") {
-    const output = simulatePython(code);
-    return NextResponse.json({
-      language: lang,
-      output: output.lines,
-      errors: output.errors,
-      executionTime: Date.now() - startTime,
-      status: output.errors.length > 0 ? "error" : "success",
-    });
+  if (mode === "simulate") {
+    const startTime = Date.now();
+    if (lang === "python") {
+      const output = simulatePython(code);
+      return NextResponse.json({
+        language: lang,
+        mode: "simulate",
+        output: output.lines,
+        errors: output.errors,
+        executionTime: Date.now() - startTime,
+        status: output.errors.length > 0 ? "error" : "success",
+      });
+    }
+    if (lang === "javascript" || lang === "typescript") {
+      const output = simulateJS(code);
+      return NextResponse.json({
+        language: lang,
+        mode: "simulate",
+        output: output.lines,
+        errors: output.errors,
+        executionTime: Date.now() - startTime,
+        status: output.errors.length > 0 ? "error" : "success",
+      });
+    }
   }
 
-  if (lang === "javascript" || lang === "typescript") {
-    const output = simulateJS(code);
-    return NextResponse.json({
-      language: lang,
-      output: output.lines,
-      errors: output.errors,
-      executionTime: Date.now() - startTime,
-      status: output.errors.length > 0 ? "error" : "success",
-    });
-  }
-
-  return NextResponse.json({
-    language: lang,
-    output: [`[AntiGravi] Language "${lang}" execution simulated.`, `Code length: ${code.length} chars`],
-    errors: [],
-    executionTime: Date.now() - startTime,
-    status: "success",
-  });
+  return NextResponse.json(
+    {
+      error: "Sandbox execution is not available",
+      message:
+        "Server-side code execution is disabled in production for security. " +
+        "Use mode: \"simulate\" for output-pattern simulation, or run code in the browser console.",
+      supportedSimulation: ["javascript", "typescript", "python"],
+    },
+    { status: 501 },
+  );
 }
 
 function simulatePython(code: string): { lines: string[]; errors: string[] } {
@@ -84,14 +90,13 @@ function simulatePython(code: string): { lines: string[]; errors: string[] } {
     }
 
     if (trimmed.startsWith("raise ")) {
-      const errMsg = trimmed.substring(6);
-      errors.push(`${errMsg}`);
+      errors.push(trimmed.substring(6));
       continue;
     }
   }
 
   if (lines.length === 0 && errors.length === 0) {
-    lines.push("[AntiGravi] Code executed successfully (no output).");
+    lines.push("[AntiGravi] Code parsed successfully (no output detected).");
   }
 
   return { lines, errors };
@@ -114,7 +119,7 @@ function simulateJS(code: string): { lines: string[]; errors: string[] } {
   }
 
   if (lines.length === 0 && errors.length === 0) {
-    lines.push("[AntiGravi] Code executed successfully (no output).");
+    lines.push("[AntiGravi] Code parsed successfully (no output detected).");
   }
 
   return { lines, errors };

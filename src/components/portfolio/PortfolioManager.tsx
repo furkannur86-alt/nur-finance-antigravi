@@ -1,18 +1,21 @@
 "use client";
 
-import { useMemo } from "react";
-import { generatePortfolio } from "@/lib/data/mockMarketData";
+import { usePortfolioData } from "@/hooks/useMarketData";
+import DataSourceBadge from "@/components/ui/DataSourceBadge";
 
 export default function PortfolioManager() {
-  const portfolio = useMemo(() => generatePortfolio(), []);
+  const { portfolio, source } = usePortfolioData();
   const totalValue = portfolio.reduce((s, p) => s + p.currentPrice * p.quantity, 0);
 
   return (
     <div className="flex flex-col h-full overflow-y-auto p-3" style={{ background: "var(--ag-bg)" }}>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>
-          Portfolio Manager
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>
+            Portfolio Manager
+          </h2>
+          <DataSourceBadge source={source} />
+        </div>
         <div className="text-xs" style={{ color: "var(--ag-muted)" }}>
           Total: ${totalValue.toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </div>

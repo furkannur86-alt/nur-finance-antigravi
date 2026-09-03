@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMarketBriefs, getRiskAlerts, getResearchNotes } from "@/lib/content/nfs-content";
+import type { MarketBrief, RiskAlert, ResearchNote } from "@/lib/content/nfs-content";
+
+function withinDateRange<T extends { publishedAt: string }>(items: T[], from?: string, to?: string): T[] {
+  let result = items;
+  if (from) {
+    const fromDate = new Date(from).getTime();
+    if (!isNaN(fromDate)) result = result.filter((item) => new Date(item.publishedAt).getTime() >= fromDate);
+  }
+  if (to) {
+    const toDate = new Date(to).getTime();
+    if (!isNaN(toDate)) result = result.filter((item) => new Date(item.publishedAt).getTime() <= toDate);
+  }
+  return result;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -9,10 +23,13 @@ export async function GET(request: NextRequest) {
   const sector = searchParams.get("sector") || undefined;
   const limit = parseInt(searchParams.get("limit") || "10");
   const id = searchParams.get("id") || undefined;
+  const from = searchParams.get("from") || undefined;
+  const to = searchParams.get("to") || undefined;
 
   switch (type) {
     case "briefs": {
-      const briefs = getMarketBriefs(category, limit);
+      let briefs: MarketBrief[] = getMarketBriefs(category, limit);
+      briefs = withinDateRange(briefs, from, to);
       if (id) {
         const brief = briefs.find((b) => b.id === id);
         return brief
@@ -23,7 +40,8 @@ export async function GET(request: NextRequest) {
     }
 
     case "alerts": {
-      const alerts = getRiskAlerts(severity);
+      let alerts: RiskAlert[] = getRiskAlerts(severity);
+      alerts = withinDateRange(alerts, from, to);
       if (id) {
         const alert = alerts.find((a) => a.id === id);
         return alert
@@ -34,7 +52,8 @@ export async function GET(request: NextRequest) {
     }
 
     case "research": {
-      const notes = getResearchNotes(sector, limit);
+      let notes: ResearchNote[] = getResearchNotes(sector, limit);
+      notes = withinDateRange(notes, from, to);
       if (id) {
         const note = notes.find((n) => n.id === id);
         return note
@@ -45,9 +64,12 @@ export async function GET(request: NextRequest) {
     }
 
     case "feed": {
-      const briefs = getMarketBriefs(undefined, 5);
-      const alerts = getRiskAlerts();
-      const notes = getResearchNotes(undefined, 3);
+      let briefs: MarketBrief[] = getMarketBriefs(undefined, 5);
+      let alerts: RiskAlert[] = getRiskAlerts();
+      let notes: ResearchNote[] = getResearchNotes(undefined, 3);
+      briefs = withinDateRange(briefs, from, to);
+      alerts = withinDateRange(alerts, from, to);
+      notes = withinDateRange(notes, from, to);
       return NextResponse.json({
         type: "feed",
         briefs: briefs.map((b) => ({ id: b.id, title: b.title, summary: b.summary, category: b.category, sentiment: b.sentiment, publishedAt: b.publishedAt })),
