@@ -2,9 +2,10 @@
 NUR Finance — Text-to-Speech Engine
 
 Multi-backend TTS priority:
-  1. Google Neural TTS (via translate.googleapis.com) — natural human voice
-  2. edge-tts (Azure Neural) — high quality but requires WebSocket
-  3. espeak-ng (offline) — robotic fallback, always available
+  1. Piper TTS (offline ONNX) — highest quality, human-indistinguishable
+  2. Google Neural TTS (via translate.googleapis.com) — natural human voice
+  3. edge-tts (Azure Neural) — high quality but requires WebSocket
+  4. espeak-ng (offline) — robotic fallback, always available
 """
 
 from __future__ import annotations
@@ -23,6 +24,24 @@ logger = logging.getLogger("nur.tts")
 
 GOOGLE_TTS_URL = "https://translate.googleapis.com/translate_tts"
 GOOGLE_TTS_MAX_CHARS = 200
+
+PIPER_MODELS_DIR = os.environ.get("PIPER_MODELS_DIR", os.path.join(os.path.expanduser("~"), "piper_models"))
+
+PIPER_VOICE_MAP: dict[str, str] = {
+    "en": "en_US-lessac-medium",
+    "tr": "tr_TR-dfki-medium",
+    "ar": "ar_JO-kareem-medium",
+    "de": "de_DE-thorsten-medium",
+    "fr": "fr_FR-siwis-medium",
+    "ja": "ja_JP-kokoro-medium",
+    "zh-CN": "zh_CN-huayan-medium",
+    "ko": "ko_KR-kagamine_rin-medium",
+    "hi": "hi_IN-madhur-medium",
+    "pt": "pt_BR-faber-medium",
+    "es": "es_MX-ald-medium",
+    "ru": "ru_RU-denis-medium",
+    "en-gb": "en_GB-cori-medium",
+}
 
 _ssl_ctx: ssl.SSLContext | None = None
 
@@ -154,6 +173,61 @@ def _fetch_tts_chunk(url: str, retries: int = 3) -> bytes:
     raise RuntimeError(f"TTS fetch failed after {retries} attempts: {last_err}")
 
 
+def _find_piper_model(lang: str) -> str | None:
+    """Find a Piper ONNX model file for the given language."""
+    model_name = PIPER_VOICE_MAP.get(lang) or PIPER_VOICE_MAP.get(lang.split("-")[0])
+    if not model_name:
+        return None
+    onnx_path = os.path.join(PIPER_MODELS_DIR, f"{model_name}.onnx")
+    if os.path.exists(onnx_path):
+        return onnx_path
+    for sub in os.listdir(PIPER_MODELS_DIR) if os.path.isdir(PIPER_MODELS_DIR) else []:
+        candidate = os.path.join(PIPER_MODELS_DIR, sub, f"{model_name}.onnx")
+        if os.path.exists(candidate):
+            return candidate
+    return None
+
+
+def generate_speech_piper(
+    text: str,
+    output_path: str,
+    voice: VoiceConfig | None = None,
+    channel_id: str | None = None,
+    host_id: str | None = None,
+) -> str:
+    """Piper TTS — offline ONNX neural voice, highest quality."""
+    v = _resolve_voice(voice, channel_id, host_id)
+    lang = v.google_lang or v.language.split("-")[0]
+    model_path = _find_piper_model(lang)
+    if not model_path:
+        raise FileNotFoundError(f"No Piper model for language '{lang}' in {PIPER_MODELS_DIR}")
+
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    wav_path = output_path.rsplit(".", 1)[0] + "_piper.wav"
+
+    piper_bin = os.environ.get("PIPER_BIN", "piper")
+    cmd = [piper_bin, "--model", model_path, "--output_file", wav_path]
+    result = subprocess.run(
+        cmd, input=text, capture_output=True, text=True, timeout=60,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"Piper failed: {result.stderr.strip()}")
+    if not os.path.exists(wav_path) or os.path.getsize(wav_path) < 100:
+        raise RuntimeError("Piper produced no output")
+
+    if output_path.endswith(".mp3"):
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", wav_path, "-codec:a", "libmp3lame", "-b:a", "192k", output_path],
+            capture_output=True, check=True,
+        )
+        os.remove(wav_path)
+    else:
+        os.rename(wav_path, output_path)
+
+    logger.info("TTS saved: %s (%s via piper)", output_path, os.path.basename(model_path))
+    return output_path
+
+
 def generate_speech_google(
     text: str,
     output_path: str,
@@ -247,7 +321,12 @@ def generate_speech_auto(
     channel_id: str | None = None,
     host_id: str | None = None,
 ) -> str:
-    """Try Google Neural TTS first, fall back to espeak-ng."""
+    """Try Piper → Google Neural → espeak-ng."""
+    try:
+        return generate_speech_piper(text, output_path, voice, channel_id, host_id)
+    except Exception as e:
+        logger.info("Piper TTS unavailable (%s), trying Google Neural", e)
+
     try:
         return generate_speech_google(text, output_path, voice, channel_id, host_id)
     except Exception as e:
@@ -262,9 +341,14 @@ async def generate_speech(
     channel_id: str | None = None,
     host_id: str | None = None,
 ) -> str:
-    """Async TTS: tries edge-tts → Google Neural → espeak-ng."""
+    """Async TTS: tries Piper → edge-tts → Google Neural → espeak-ng."""
     v = _resolve_voice(voice, channel_id, host_id)
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+
+    try:
+        return generate_speech_piper(text, output_path, v)
+    except Exception:
+        pass
 
     try:
         import edge_tts
@@ -275,13 +359,39 @@ async def generate_speech(
     except Exception as e:
         logger.warning("edge-tts failed (%s), trying Google Neural", e)
 
-    return generate_speech_auto(text, output_path, v)
+    try:
+        return generate_speech_google(text, output_path, v)
+    except Exception as e:
+        logger.warning("Google TTS failed (%s), falling back to espeak-ng", e)
+        return generate_speech_espeak(text, output_path, v)
 
 
 def health_check() -> dict:
     """Run diagnostics on all TTS backends and languages."""
     import time
     results: dict = {"backends": {}, "languages": {}, "overall": "unknown"}
+
+    # Check Piper TTS
+    piper_bin = os.environ.get("PIPER_BIN", "piper")
+    try:
+        subprocess.run([piper_bin, "--version"], capture_output=True, check=True, timeout=10)
+        models_found = []
+        if os.path.isdir(PIPER_MODELS_DIR):
+            for f in os.listdir(PIPER_MODELS_DIR):
+                if f.endswith(".onnx"):
+                    models_found.append(f)
+            for sub in os.listdir(PIPER_MODELS_DIR):
+                sub_path = os.path.join(PIPER_MODELS_DIR, sub)
+                if os.path.isdir(sub_path):
+                    for f in os.listdir(sub_path):
+                        if f.endswith(".onnx"):
+                            models_found.append(f)
+        results["backends"]["piper"] = f"ok ({len(models_found)} models)"
+        results["piper_models"] = models_found
+    except FileNotFoundError:
+        results["backends"]["piper"] = "not installed"
+    except Exception as e:
+        results["backends"]["piper"] = f"fail: {e}"
 
     # Check espeak-ng
     try:
@@ -320,12 +430,15 @@ def health_check() -> dict:
             results["languages"][lang] = f"fail: {e}"
 
     ok_langs = sum(1 for v in results["languages"].values() if v.startswith("ok"))
+    piper_ok = results["backends"].get("piper", "").startswith("ok")
     google_ok = results["backends"].get("google-neural", "").startswith("ok")
     espeak_ok = results["backends"].get("espeak-ng", "").startswith("ok")
     ffmpeg_ok = results["backends"].get("ffmpeg", "").startswith("ok")
 
-    if google_ok and ffmpeg_ok and ok_langs == len(test_phrases):
-        results["overall"] = "healthy"
+    if piper_ok and ffmpeg_ok:
+        results["overall"] = "healthy (piper primary)"
+    elif google_ok and ffmpeg_ok and ok_langs == len(test_phrases):
+        results["overall"] = "healthy (google-neural primary)"
     elif espeak_ok and ffmpeg_ok:
         results["overall"] = "degraded (espeak-ng fallback only)"
     else:
