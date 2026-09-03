@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchEODHDHistory } from "@/lib/market/eodhd";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
     const type = analysisType || "technical";
 
     if (type === "technical") {
-      const prices = data?.prices || generateMockPrices(symbol);
+      const prices = data?.prices || await fetchPrices(symbol);
       const analysis = runTechnicalAnalysis(prices);
       return NextResponse.json({
         symbol,
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (type === "risk") {
-      const risk = computeRiskMetrics(data?.returns || generateMockReturns());
+      const risk = computeRiskMetrics(data?.returns || await fetchReturns(symbol));
       return NextResponse.json({
         symbol,
         type: "risk",
@@ -56,6 +57,30 @@ export async function POST(req: NextRequest) {
     const msg = err instanceof Error ? err.message : "Analysis failed";
     return NextResponse.json({ error: msg }, { status: 500 });
   }
+}
+
+async function fetchPrices(symbol: string): Promise<number[]> {
+  try {
+    const to = new Date().toISOString().split("T")[0];
+    const from = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    const history = await fetchEODHDHistory(symbol, from, to);
+    if (history.length >= 50) {
+      return history.map((d) => d.adjusted_close ?? d.close);
+    }
+  } catch {
+    // fall through to mock
+  }
+  return generateMockPrices(symbol);
+}
+
+async function fetchReturns(symbol: string): Promise<number[]> {
+  const prices = await fetchPrices(symbol);
+  if (prices.length < 2) return generateMockReturns();
+  const returns: number[] = [];
+  for (let i = 1; i < prices.length; i++) {
+    returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
+  }
+  return returns;
 }
 
 function generateMockPrices(symbol: string): number[] {

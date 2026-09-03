@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useIDEStore } from "@/stores/useIDEStore";
 
 const viewLabels: Record<string, string> = {
@@ -13,6 +14,13 @@ const viewLabels: Record<string, string> = {
   alerts: "NFS Alerts",
   research: "NFS Research",
 };
+
+const legalLinks = [
+  { href: "/impressum", label: "Impressum" },
+  { href: "/datenschutz", label: "Datenschutz" },
+  { href: "/agb", label: "AGB" },
+  { href: "/widerruf", label: "Widerruf" },
+];
 
 export default function StatusBar() {
   const { tabs, activeTabId, isRunning, activeView } = useIDEStore();
@@ -35,6 +43,18 @@ export default function StatusBar() {
       </div>
       <div className="flex-1" />
       <div className="flex items-center gap-3">
+        {legalLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            style={{ color: "var(--ag-muted)", textDecoration: "none" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ag-accent)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ag-muted)")}
+          >
+            {link.label}
+          </Link>
+        ))}
+        <span>|</span>
         {activeTab && (
           <>
             <span>{activeTab.language.toUpperCase()}</span>
