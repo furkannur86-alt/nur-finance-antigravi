@@ -24,6 +24,7 @@ const views: ViewTab[] = [
 
   { id: "backtest", label: "Backtest", group: "analysis" },
   { id: "geopolitics", label: "GeoRisk", group: "analysis" },
+  { id: "macro-risk", label: "MacroRisk", group: "analysis" },
   { id: "ai-tools", label: "AI Tools", group: "analysis" },
   { id: "data-ingest", label: "Ingest", group: "analysis" },
   { id: "encyclopedia", label: "Wiki", group: "analysis" },

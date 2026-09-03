@@ -25,6 +25,7 @@ import MediaPanel from "@/components/media/MediaPanel";
 import LiveBroadcast from "@/components/media/LiveBroadcast";
 import OptionsPanel from "@/components/derivatives/OptionsPanel";
 import AIToolsPanel from "@/components/ai/AIToolsPanel";
+import MacroRiskPanel from "@/components/macro/MacroRiskPanel";
 import MarketBriefsPanel from "@/components/nfs/MarketBriefsPanel";
 import RiskAlertsPanel from "@/components/nfs/RiskAlertsPanel";
 import ResearchPanel from "@/components/nfs/ResearchPanel";
@@ -41,6 +42,7 @@ const FULLSCREEN_VIEWS = [
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
+  "macro-risk",
 ];
 
 export default function Home() {
@@ -124,6 +126,8 @@ export default function Home() {
         return <OptionsPanel />;
       case "ai-tools":
         return <AIToolsPanel />;
+      case "macro-risk":
+        return <MacroRiskPanel />;
       case "news":
         return <MarketBriefsPanel />;
       case "alerts":

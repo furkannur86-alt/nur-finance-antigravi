@@ -70,7 +70,7 @@ export interface BacktestResult {
   kellyFraction: number;
 }
 
-export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research" | "global-markets" | "economic-data" | "data-ingest" | "geopolitics" | "fundamentals" | "screener" | "news-feed" | "encyclopedia" | "pricing" | "media" | "options" | "ai-tools" | "live-tv";
+export type PanelView = "editor" | "dashboard" | "portfolio" | "terminal" | "charts" | "backtest" | "news" | "alerts" | "research" | "global-markets" | "economic-data" | "data-ingest" | "geopolitics" | "fundamentals" | "screener" | "news-feed" | "encyclopedia" | "pricing" | "media" | "options" | "ai-tools" | "live-tv" | "macro-risk";
 
 export interface GlobalMarketQuote {
   symbol: string;

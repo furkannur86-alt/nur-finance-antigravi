@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import EagleCrest from "@/components/ui/EagleCrest";
 
 interface TickerItem {
   symbol: string;
@@ -245,11 +246,9 @@ export default function NURTerminalPanel() {
             </div>
           </div>
 
-          {/* AI Avatar */}
+          {/* AI Avatar + Eagle Crest */}
           <div className="flex items-center gap-3 px-3 py-3 border-b" style={{ borderColor: "#1e293b", background: "#0f1420" }}>
-            <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #00d4aa, #6366f1)" }}>
-              <span className="text-lg font-bold" style={{ color: "#0a0e17" }}>N</span>
-            </div>
+            <EagleCrest size={48} animate />
             <div>
               <div className="text-xs font-bold">Dr. Nur</div>
               <div className="text-[10px]" style={{ color: "#94a3b8" }}>Ph.D. Financial Economics</div>
