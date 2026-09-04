@@ -2,16 +2,24 @@
 
 **Belge No:** NUR-HOLDING-TRUST-UMAY-GUL-NUR-001  
 **Tarih / Zaman:** 2026-09-04  
-**Yegâne ve Ebedi Hak Sahibi:** Umay Gül Nur  
+**Kurucu ve Hukuki Temsilci:** Furkan Nur  
+**Birincil Mirasçı ve Ebedi Hak Sahibi:** Umay Gül Nur (D.O.B: 04.08.2017)  
+**Resmi Çatı Alan Adı (Master Domain):** `nurfinans.com`  
+**Resmi Hanedan Mührü & Slogan:** *DOMINUS ORIENTIS ET OCCIDENTIS* (Doğunun ve Batının Hâkimi)  
 **Temsil Edilen Çatı:** NUR Finance Holding (NUR Finance Technologies Inc.)  
 
 ---
 
 ## 📜 KANUNİ VE RESMİ MÜLKİYET BEYANI
 
-İşbu yazılım projesi, kaynak kodları, veri tabanı mimarileri, yapay zeka algoritmaları, ticaret ve risk motorları, patent başvuruları, marka hakları, medya yayın altyapıları, iştirak modelleri ve bu sistemin ürettiği/üreteceği **tüm maddi ve gayrimaddi servet, gelir, telif ve entelektüel hakların tamamı kayıtsız ve şartsız olarak UMAY GÜL NUR'a aittir.**
+1. **Mutlak Hak Sahipliği:**  
+   İşbu yazılım projesi, kaynak kodları, veri tabanı mimarileri, yapay zeka algoritmaları, ticaret ve risk motorları, patent başvuruları, marka hakları, medya yayın altyapıları, müşteri edinim iştirak modelleri ve bu sistemin ürettiği/üreteceği **tüm maddi ve gayrimaddi servet, gelir, telif ve entelektüel hakların tamamı kayıtsız ve şartsız olarak FURKAN NUR ve kızı UMAY GÜL NUR'a aittir.**
 
-Bu sistemin tasarımı, mimari ilkeleri, kodlama standartları ve küresel büyüme stratejisi onun geleceğini, ailesini ve finansal egemenliğini ebediyen korumak ve yüceltmek üzere inşa edilmiştir.
+2. **Gelecekteki Çocuklar ve Miras Güncelleme Klozu (Succession & Family Provision):**  
+   Furkan Nur'un hayatta olduğu müddetçe ileride başka bir çocuğu/çocukları olması durumunda; o çocuğun da gelişimi, eğitimi, refahı ve holding hak sahipliğine dahil edilmesi amacıyla işbu hukuki haklar, hisse dağılımları ve miras şartnamelerinde değişiklik, ekleme ve revizyon yapma yetkisi münhasıran Furkan Nur'a aittir.
+
+3. **Master Çatı ve İştirak Operasyonu:**  
+   Bütün holding operasyonları, kurumsal OMS/EMS motoru, TV medya ağı, 7 Büyüme Kolu ve gelecek tüm modüller **`nurfinans.com`** alan adı ve **NUR Finance** şemsiyesi altında icra edilir.
 
 ---
 
@@ -19,8 +27,8 @@ Bu sistemin tasarımı, mimari ilkeleri, kodlama standartları ve küresel büy�
 
 ```
                                   ┌────────────────────────────────────────────────────────┐
-                                  │                     UMAY GÜL NUR                       │
-                                  │         (NUR Finance Holding Tek ve Mutlak Sahibi)      │
+                                  │               FURKAN NUR & UMAY GÜL NUR                │
+                                  │      (nurfinans.com — Dominus Orientis et Occidentis)  │
                                   └───────────────────────────┬────────────────────────────┘
                                                               │
                     ┌─────────────────────────────────────────┴─────────────────────────────────────────┐
@@ -33,23 +41,24 @@ Bu sistemin tasarımı, mimari ilkeleri, kodlama standartları ve küresel büy�
      │  • NUR Finance R (Tier-R)   │                                                     └──────────────┬──────────────┘
      │  • AntiGravi Terminal v3.0  │                                                                    │
      │  • NUR TV Global Network    │                                                                    │
+     │  • nurfinans.com Master Hub │                                                                    │
      └─────────────────────────────┘                                                                    │
                                                                                                         │
-       ┌──────────────────────┬──────────────────────┬──────────────────────┬───────────────────────────┴───────────┬──────────────────────┐
-       │                      │                      │                      │                                       │                      │
-       ▼                      ▼                      ▼                      ▼                                       ▼                      ▼
-┌──────────────┐       ┌──────────────┐       ┌──────────────┐       ┌──────────────┐                        ┌──────────────┐       ┌──────────────┐
-│ TATAR FİNANS │       │   NUR GAME   │       │  NUR DATING  │       │ NUR AI STUDIO│                        │ NUR COMM PRO │       │  GHOSTVAULT  │
-│(Bahis &rarr; Quant) │       │(Kültür/Oyun) │       │(Gizli Persona│       │ (Lüks Spiker │                        │ (Bütünleşik  │       │ (Siber Güven │
-│   Dönüşüm    │       │  & Ekonomi)  │       │  & Finans)   │       │   & Medya)   │                        │  İletişim)   │       │ & Kayıp Güç) │
-└──────────────┘       └──────────────┘       └──────────────┘       └──────────────┘                        └──────────────┘       └──────────────┘
-       │                      │                      │                      │                                       │                      │
-       └──────────────────────┴──────────────────────┴──────────────────────┴───────────────────────────────────────┴──────────────────────┘
+        ┌──────────────────────┬──────────────────────┬──────────────────────┬───────────────────────────┴───────────┬──────────────────────┬──────────────────────┐
+        │                      │                      │                      │                                       │                      │                      │
+        ▼                      ▼                      ▼                      ▼                                       ▼                      ▼                      ▼
+ ┌──────────────┐       ┌──────────────┐       ┌──────────────┐       ┌──────────────┐                        ┌──────────────┐       ┌──────────────┐       ┌──────────────┐
+ │ TATAR FİNANS │       │   NUR GAME   │       │  NUR DATING  │       │ NUR AI STUDIO│                        │ NUR COMM PRO │       │  GHOSTVAULT  │       │  NUR LEGACY  │
+ │(Bahis &rarr; Quant) │       │(Kültür/Oyun) │       │(Gizli Persona│       │ (Lüks Spiker │                        │ (Bütünleşik  │       │ (Siber Güven │       │(Bekar Anneler│
+ │   Dönüşüm    │       │  & Ekonomi)  │       │  & Finans)   │       │   & Medya)   │                        │  İletişim)   │       │ & Kayıp Güç) │       │ & Çocuk CEO) │
+ └──────────────┘       └──────────────┘       └──────────────┘       └──────────────┘                        └──────────────┘       └──────────────┘       └──────────────┘
+        │                      │                      │                      │                                       │                      │                      │
+        └──────────────────────┴──────────────────────┴──────────────────────┴───────────────────────────────────────┴──────────────────────┴──────────────────────┘
                                                               │
                                                               ▼
                                                ┌─────────────────────────────┐
                                                │    GELECEK İŞTİRAK SLOTLARI │
-                                               │  • Slot 7, Slot 8, Slot 9...│
+                                               │  • Slot 8, Slot 9, Slot 10..│
                                                │  • (+ Yüzlerce Yeni Model)  │
                                                └─────────────────────────────┘
 ```

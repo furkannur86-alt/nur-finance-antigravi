@@ -2,6 +2,7 @@
 
 import { useIDEStore } from "@/stores/useIDEStore";
 import { PanelView } from "@/types";
+import EagleCrest from "@/components/ui/EagleCrest";
 
 interface ViewTab {
   id: PanelView;
@@ -10,9 +11,8 @@ interface ViewTab {
 }
 
 const views: ViewTab[] = [
-  { id: "umay-boss", label: "👑 Umay Terminal", group: "core" },
-  { id: "holding-ecosystem", label: "🏛️ 6 Büyüme Kolu", group: "core" },
-  { id: "editor", label: "Editor", group: "core" },
+  { id: "umay-boss", label: "👑 Umay Gül Nur", group: "core" },
+  { id: "holding-ecosystem", label: "🏛️ 7 Büyüme Kolu", group: "core" },
   { id: "dashboard", label: "Dashboard", group: "core" },
   { id: "portfolio", label: "Portfolio", group: "core" },
   { id: "charts", label: "Charts", group: "core" },
@@ -63,16 +63,29 @@ export default function TopBar() {
     runActiveFile,
     toggleHUDDrawer,
     notifications,
+    matrixRainOpacity,
+    cycleMatrixRainOpacity,
   } = useIDEStore();
 
   const unreadAlertsCount = notifications.filter((n) => !n.read).length;
 
+  const matrixStatusLabel =
+    matrixRainOpacity === 0
+      ? "Kapalı"
+      : matrixRainOpacity <= 0.05
+      ? "Hafif"
+      : matrixRainOpacity <= 0.08
+      ? "Rönesans"
+      : matrixRainOpacity <= 0.15
+      ? "Derin"
+      : "Yüksek";
+
   return (
     <div
-      className="flex items-center h-10 px-3 border-b select-none"
+      className="flex items-center h-10 px-3 border-b select-none shrink-0"
       style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}
     >
-      <button onClick={toggleSidebar} className="mr-3 p-1 rounded hover:bg-white/5 text-sm" title="Toggle Sidebar">
+      <button onClick={toggleSidebar} className="mr-2 p-1 rounded hover:bg-white/5 text-sm" title="Toggle Sidebar">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
           <rect x="2" y="3" width="12" height="1.5" rx="0.5" />
           <rect x="2" y="7" width="12" height="1.5" rx="0.5" />
@@ -80,22 +93,29 @@ export default function TopBar() {
         </svg>
       </button>
 
-      <div className="flex items-center gap-1 mr-4">
-        <span className="text-sm font-bold" style={{ color: "var(--ag-accent)" }}>
-          AntiGravi
-        </span>
-        <span className="text-xs" style={{ color: "var(--ag-muted)" }}>
-          IDE
-        </span>
-        <span
-          className="text-[10px] ml-1 px-1.5 py-0.5 rounded font-mono font-bold"
-          style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}
-        >
-          v3.0 PRO
-        </span>
+      {/* Brand Identity with Eagle Crest & nurfinans.com */}
+      <div className="flex items-center gap-2 mr-4 shrink-0">
+        <EagleCrest size={26} animate={true} />
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold tracking-wider text-amber-300 font-serif">
+              NUR FİNANS
+            </span>
+            <span
+              className="text-[9px] px-1.5 py-0.2 rounded font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30"
+              title="Official Master Holding Domain: nurfinans.com"
+            >
+              nurfinans.com
+            </span>
+          </div>
+          <span className="text-[8px] font-serif italic text-slate-400 tracking-wide">
+            Dominus Orientis et Occidentis
+          </span>
+        </div>
       </div>
 
-      <div className="flex items-center gap-0.5 mr-4 overflow-x-auto">
+      {/* Tabs */}
+      <div className="flex items-center gap-0.5 mr-3 overflow-x-auto no-scrollbar">
         {views.map((v, i) => {
           const showDivider = i > 0 && views[i - 1].group !== v.group;
           const accent = GROUP_ACCENT[v.group];
@@ -118,6 +138,7 @@ export default function TopBar() {
                       : "rgba(0,212,170,0.15)"
                     : "transparent",
                   color: isActive ? accent : "var(--ag-muted)",
+                  fontWeight: isActive ? 600 : 400,
                 }}
               >
                 {v.label}
@@ -129,10 +150,20 @@ export default function TopBar() {
 
       <div className="flex-1" />
 
+      {/* Matrix Waterfall Controller */}
+      <button
+        onClick={cycleMatrixRainOpacity}
+        className="px-2 py-1 mr-2 rounded text-[10px] font-mono flex items-center gap-1 bg-black/40 hover:bg-black/60 border border-white/10 text-slate-300 transition-colors shrink-0"
+        title="Finansal Matriks Şelalesi Yoğunluğunu Değiştir (Tıkla)"
+      >
+        <span className="text-emerald-400">💧 Matriks:</span>
+        <span className="font-bold text-amber-300">{matrixStatusLabel}</span>
+      </button>
+
       {/* HUD Alerts Drawer Trigger */}
       <button
         onClick={toggleHUDDrawer}
-        className="relative p-1.5 mr-2 rounded hover:bg-white/5 text-[var(--ag-muted)] hover:text-white transition-colors flex items-center gap-1"
+        className="relative p-1.5 mr-2 rounded hover:bg-white/5 text-[var(--ag-muted)] hover:text-white transition-colors flex items-center gap-1 shrink-0"
         title="Toggle HUD Alert Center"
       >
         <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
@@ -148,7 +179,7 @@ export default function TopBar() {
       <button
         onClick={runActiveFile}
         disabled={isRunning || !activeTabId}
-        className="flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-all disabled:opacity-40"
+        className="flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-all disabled:opacity-40 shrink-0"
         style={{ background: "var(--ag-accent)", color: "var(--ag-bg)" }}
       >
         {isRunning ? (
@@ -166,17 +197,18 @@ export default function TopBar() {
       </button>
 
       <kbd
-        className="ml-3 text-[9px] px-1.5 py-0.5 rounded border cursor-pointer hover:border-[var(--ag-accent)] transition-colors"
+        className="ml-2 text-[9px] px-1.5 py-0.5 rounded border cursor-pointer hover:border-[var(--ag-accent)] transition-colors shrink-0"
         style={{ borderColor: "var(--ag-border)", color: "var(--ag-muted)" }}
         title="Command Palette"
       >
         Ctrl+K
       </kbd>
 
-      <div className="ml-2 flex items-center gap-1.5">
+      <div className="ml-2 flex items-center gap-1.5 shrink-0">
         <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--ag-success)" }} />
         <span className="text-[10px]" style={{ color: "var(--ag-muted)" }}>LIVE</span>
       </div>
     </div>
   );
 }
+

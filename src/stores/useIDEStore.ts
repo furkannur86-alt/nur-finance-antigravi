@@ -155,6 +155,7 @@ interface IDEState {
   notifications: HUDNotification[];
   alertRules: AlertRule[];
   verification: VIPVerificationStatus;
+  matrixRainOpacity: number;
 
   // Actions
   openFile: (node: FileNode) => void;
@@ -169,6 +170,8 @@ interface IDEState {
   toggleHUDDrawer: () => void;
   setBreakingNewsTicker: (headline: string) => void;
   runActiveFile: () => void;
+  setMatrixRainOpacity: (opacity: number) => void;
+  cycleMatrixRainOpacity: () => void;
 
   // OMS / Trading Actions
   placeOrder: (order: Omit<SimulatedOrder, "id" | "filledQuantity" | "status" | "createdAt" | "updatedAt" | "slippageEstimated" | "feeEstimated">) => void;
@@ -195,6 +198,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   activeView: "umay-boss",
   sidebarOpen: true,
   hudDrawerOpen: false,
+  matrixRainOpacity: 0.075,
   breakingNewsTicker: "NUR TV GLOBAL: U.S. ISM Services PMI reaches 54.8; Quant Rotation active across Tech and Financials.",
   orders: INITIAL_ORDERS,
   positions: INITIAL_POSITIONS,
@@ -215,6 +219,15 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     emailConfirmed: false,
     documentUploaded: false,
     overallStatus: "NOT_STARTED",
+  },
+
+  setMatrixRainOpacity: (opacity) => set({ matrixRainOpacity: opacity }),
+  cycleMatrixRainOpacity: () => {
+    const levels = [0.075, 0.14, 0.22, 0.0, 0.04];
+    const curr = get().matrixRainOpacity;
+    const idx = levels.indexOf(curr);
+    const next = idx === -1 || idx === levels.length - 1 ? levels[0] : levels[idx + 1];
+    set({ matrixRainOpacity: next });
   },
 
   openFile: (node) => {

@@ -58,7 +58,7 @@ const FULLSCREEN_VIEWS = [
 ];
 
 export default function Home() {
-  const { activeView, sidebarOpen, addConsoleMessage, consoleMessages } = useIDEStore();
+  const { activeView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity } = useIDEStore();
   const didInit = useRef(false);
   const [consoleHeight, setConsoleHeight] = useState(DEFAULT_CONSOLE_HEIGHT);
   const [consoleCollapsed, setConsoleCollapsed] = useState(false);
@@ -177,7 +177,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen relative overflow-hidden" style={{ background: "var(--ag-bg)" }}>
-      <FinancialMatrixRain opacity={0.07} />
+      {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
       <CommandPalette />
       <HUDNotificationSystem />
       <TopBar />
