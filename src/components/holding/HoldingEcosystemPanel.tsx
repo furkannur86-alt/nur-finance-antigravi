@@ -248,26 +248,68 @@ export default function HoldingEcosystemPanel() {
               ))}
             </div>
 
-            {/* Direct Quick Launch Bridge */}
-            <div className="p-5 rounded-lg border bg-gradient-to-r from-emerald-950/30 to-cyan-950/30 border-[var(--ag-accent)]/30 flex items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="text-sm font-bold text-[var(--ag-accent)] flex items-center gap-2">
-                  <span>🚀 NUR Finance AntiGravi Terminal & Kuantitatif Yönetim</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
-                    CANLI & OPERASYONEL
-                  </span>
+            {/* Selected Pillar Interactive Launcher */}
+            {selectedPillar.id === "tatar-finans" ? (
+              <div className="p-5 rounded-lg border bg-gradient-to-r from-red-950/40 via-amber-950/20 to-black border-red-500/40 flex items-center justify-between gap-4 shadow-lg shadow-red-500/10">
+                <div className="space-y-1">
+                  <div className="text-sm font-bold text-red-400 flex items-center gap-2">
+                    <span>🎲 Tatar Finans — Küresel Risk, Casino & Borsa Dönüşüm Arenası</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-mono font-bold">
+                      100% İÇ KASA MUTABAKATI
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--ag-muted)]">
+                    Crash, Rulet, 21, Plinko ve Bahis motoru. Kasa kazancı borsa portföyüne aktarılır, kullanıcılar +EV borsa hisselerine yönlendirilir.
+                  </p>
                 </div>
-                <p className="text-xs text-[var(--ag-muted)]">
-                  OMS/EMS L2 DOM Merdiveni, AI Quant Copilot (WISH), Canlı HUD Risk Çekmecesi ve Anonim Web3 Cüzdan Geçidi aktif.
-                </p>
+                <button
+                  onClick={() => setActiveView("tatar-finans")}
+                  className="px-5 py-2.5 rounded text-xs font-bold bg-red-600 hover:bg-red-500 text-white shrink-0 transition-all shadow-md shadow-red-600/30"
+                >
+                  Tatar Arenasını Aç &rarr;
+                </button>
               </div>
-              <button
-                onClick={() => setActiveView("oms-ems")}
-                className="px-5 py-2.5 rounded text-xs font-bold bg-[var(--ag-accent)] hover:bg-[var(--ag-accent)]/80 text-black shrink-0 transition-all shadow-md shadow-[rgba(0,212,170,0.2)]"
-              >
-                Kurumsal Terminale Geç &rarr;
-              </button>
-            </div>
+            ) : selectedPillar.id === "nur-ai-studio" ? (
+              <div className="p-5 rounded-lg border bg-gradient-to-r from-cyan-950/40 to-black border-cyan-500/40 flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="text-sm font-bold text-cyan-400 flex items-center gap-2">
+                    <span>🎬 NUR AI Studio — Lüks Wall Street Haber Spikeri & Ses Mastering</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+                      GÜNDE 3-5 FREE VİDEO
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--ag-muted)]">
+                    Kullanıcılar videolarını yükler, lüks ofis spikeri haber videosuna dönüştürür ve işlerini büyütür.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveView("broadcast-studio")}
+                  className="px-5 py-2.5 rounded text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-black shrink-0 transition-all"
+                >
+                  AI Studio'yu Aç &rarr;
+                </button>
+              </div>
+            ) : (
+              <div className="p-5 rounded-lg border bg-gradient-to-r from-emerald-950/30 to-cyan-950/30 border-[var(--ag-accent)]/30 flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="text-sm font-bold text-[var(--ag-accent)] flex items-center gap-2">
+                    <span>🚀 NUR Finance AntiGravi Terminal & Kuantitatif Yönetim</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                      CANLI & OPERASYONEL
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--ag-muted)]">
+                    OMS/EMS L2 DOM Merdiveni, AI Quant Copilot (WISH), Canlı HUD Risk Çekmecesi ve Anonim Web3 Cüzdan Geçidi aktif.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveView("oms-ems")}
+                  className="px-5 py-2.5 rounded text-xs font-bold bg-[var(--ag-accent)] hover:bg-[var(--ag-accent)]/80 text-black shrink-0 transition-all shadow-md shadow-[rgba(0,212,170,0.2)]"
+                >
+                  Kurumsal Terminale Geç &rarr;
+                </button>
+              </div>
+            )}
           </div>
         )}
 

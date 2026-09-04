@@ -39,6 +39,7 @@ import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
 import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
 import HoldingEcosystemPanel from "@/components/holding/HoldingEcosystemPanel";
 import UmayBossTerminal from "@/components/umay/UmayBossTerminal";
+import TatarFinansPanel from "@/components/tatar/TatarFinansPanel";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -50,6 +51,7 @@ const DEFAULT_CONSOLE_HEIGHT = 200;
 const FULLSCREEN_VIEWS = [
   "umay-boss",
   "holding-ecosystem",
+  "tatar-finans",
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
@@ -108,6 +110,8 @@ export default function Home() {
         return <UmayBossTerminal />;
       case "holding-ecosystem":
         return <HoldingEcosystemPanel />;
+      case "tatar-finans":
+        return <TatarFinansPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":

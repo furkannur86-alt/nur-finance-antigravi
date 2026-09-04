@@ -100,6 +100,7 @@ export type PanelView =
   | "verification-portal"
   | "wallet-gateway"
   | "holding-ecosystem"
+  | "tatar-finans"
   | "umay-boss";
 
 export interface GlobalMarketQuote {
