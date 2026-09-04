@@ -1,0 +1,18 @@
+services:
+  nur-finance:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nur-finance-2126
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - YOUTUBE_STREAM_KEY=${YOUTUBE_STREAM_KEY:-nur-stream-key-2126}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/market-data"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

@@ -36,9 +36,9 @@ const ALL_VIEWS: ViewTab[] = [
   { id: "wallet-gateway", label: "Web3 Wallet", group: "trading" },
   { id: "backtest", label: "Backtest", group: "trading" },
 
-  { id: "quant-copilot", label: "Quant Copilot", group: "analysis" },
+  { id: "quant-copilot", label: "Quant Strategist", group: "analysis" },
   { id: "macro-risk", label: "MacroRisk", group: "analysis" },
-  { id: "ai-tools", label: "AI Tools", group: "analysis" },
+  { id: "ai-tools", label: "Quant Models", group: "analysis" },
   { id: "data-ingest", label: "Ingest", group: "analysis" },
   { id: "encyclopedia", label: "Wiki", group: "analysis" },
 

@@ -32,7 +32,7 @@ export const BROADCAST_LANGUAGES: LanguageBroadcastProfile[] = [
     anchorAvatar: "/images/studio/anchor-female.jpg",
     scripts: {
       opening: `İyi günler sayın seyirciler. Nur Finans Küresel Piyasa Masası'ndan canlı yayınımız başlıyor. Ben Elif Nur. Bugün dünya borsalarında teknoloji hisselerinin öncülüğünde güçlü bir yükseliş dalgası izleniyor. BIST-100 endeksi ve Türkiye Cumhuriyet Merkez Bankası para politikası kararları masamızın ana gündem maddesi.`,
-      macro: `Makroekonomik cephede küresel hizmet sektörü aktivite endeksi elli dört virgül sekiz seviyesine yükselerek güçlü büyümeyi teyit etti. Enflasyon beklentilerindeki ılımlı seyir, merkez bankalarının faiz indirim döngüsünü destekliyor. Hürmüz Boğazı ve Kızıldeniz tanker hatlarında emtia lojistiği algoritmalarımız tarafından anlık olarak taranmaktadır.`,
+      macro: `Makroekonomik cephede küresel hizmet sektörü aktivite endeksi elli dört virgül sekiz seviyesine yükselerek güçlü büyümeyi teyit etti. Enflasyon beklentilerindeki ılımlı seyir, merkez bankalarının faiz indirim döngüsünü destekliyor. Hürmüz Boğazı ve Kızıldeniz tanker hatlarında emtia lojistiği analistlerimiz tarafından anlık olarak taranmaktadır.`,
       quant: `Kantitatif modellerimiz teknoloji ve finansal hizmetler sektörlerinde pozitif momentum sinyalleri üretiyor. Risk motorumuz VIX korku endeksinin on yedi seviyesinin altında dengelendiğini ve piyasa nötr arbitraj stratejilerimizin yıllık yüzde otuz sekiz getiri oranını koruduğunu gösteriyor.`,
       breaking: `SON DAKİKA GELİŞMESİ: Küresel enerji koridorlarında ham petrol arz güvenliği teyit edildi. Brent petrol seksen iki dolar bandında dengelenirken vadeli piyasalarda likidite akışı hızlandı.`,
       closing: `Nur Finans canlı bültenimizin sonuna geldik. Kesintisiz veri akışı ve algoritmik emir yönlendirmeleri için Nur Terminal ekranlarını takip etmeyi sürdürün. Hepinize bol kazançlı ve disiplinli bir seans dilerim.`,
@@ -41,7 +41,7 @@ export const BROADCAST_LANGUAGES: LanguageBroadcastProfile[] = [
       "BIST 100 Endeksi teknoloji ve sanayi hisseleri öncülüğünde güç kazanıyor",
       "TCMB Para Politikası Kurulu piyasa likidite dengesini korumaya devam ediyor",
       "Brent Petrol 82.40 Dolar seviyesinde dengelenirken tanker rotaları izleniyor",
-      "S&P 500 ve Nasdaq vadeli kontratlarında yapay zeka rallisi sürüyor",
+      "S&P 500 ve Nasdaq vadeli kontratlarında teknoloji ve yarı iletken rallisi sürüyor",
       "Altın ons fiyatı 2,418 Dolar ile güvenli liman talebini muhafaza ediyor",
     ],
   },

@@ -18,11 +18,11 @@ interface StockAlternative {
 const STOCK_ALTERNATIVES: StockAlternative[] = [
   {
     symbol: "NVDA",
-    name: "NVIDIA Corp (Yapay Zeka Çekirdeği)",
+    name: "NVIDIA Corp (Küresel Çip & Hesaplama Gücü)",
     historical6mReturn: "+84.2%",
     expectedAnnualYield: "+38.5%",
     riskProfile: "BÜYÜME",
-    description: "Kumar yerine AI devrimine ortak olun. 6 ayda parayı neredeyse ikiye katlama potansiyeli.",
+    description: "Kumar yerine teknoloji ve yarı iletken devrimine ortak olun. 6 ayda sermaye büyüme potansiyeli.",
   },
   {
     symbol: "SPY",

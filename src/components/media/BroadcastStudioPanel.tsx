@@ -267,7 +267,7 @@ export default function BroadcastStudioPanel() {
             {isVoiceSpeaking && (
               <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-300 text-xs font-mono font-bold flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>YAPAY ZEKA SPİKER KONUŞUYOR...</span>
+                <span>CANLI SPİKER YAYINDA...</span>
               </div>
             )}
           </div>
@@ -403,7 +403,7 @@ export default function BroadcastStudioPanel() {
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Ses Motoru:</span>
-              <span className="text-emerald-400 font-bold">Doğal Dil Sentezi</span>
+              <span className="text-emerald-400 font-bold">Stüdyo Canlı Ses Hattı</span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Yayın Durumu:</span>
@@ -453,7 +453,7 @@ export default function BroadcastStudioPanel() {
               </div>
 
               <div className="p-3 rounded-lg bg-red-950/30 border border-red-500/30 text-[11px] text-slate-300 leading-relaxed">
-                OBS veya harici yayın yazılımınıza bu bilgileri girerek YouTube üzerinde 7/24 kesintisiz Nur Finans yapay zeka haber bültenini yayınlayabilirsiniz.
+                OBS veya harici yayın yazılımınıza bu bilgileri girerek YouTube üzerinde 7/24 kesintisiz Nur Finans küresel piyasa bültenini yayınlayabilirsiniz.
               </div>
             </div>
 

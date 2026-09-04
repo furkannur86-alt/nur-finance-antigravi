@@ -197,11 +197,11 @@ export default function LiveBroadcast() {
           <div className="p-3 rounded-b-lg rounded-r-lg bg-black/80 backdrop-blur border border-amber-500/40 text-xs font-mono text-slate-200 max-w-sm space-y-1">
             <div className="text-amber-300 font-bold">NUR FİNANS KÜRESEL ANALİZ MASASI</div>
             <div className="text-[11px] text-slate-400">
-              Yapay Zeka Destekli 7/24 Gerçek Zamanlı Kantitatif Bülten &bull; {selectedLang.city}
+              Kurumsal 7/24 Kesintisiz Kantitatif Bülten &bull; {selectedLang.city}
             </div>
             {isSpeaking && (
               <div className="text-emerald-400 text-[10px] font-bold animate-pulse">
-                ● DOĞAL DİL SPİKER SESİ AKTİF...
+                ● CANLI SPİKER SESİ AKTİF...
               </div>
             )}
           </div>

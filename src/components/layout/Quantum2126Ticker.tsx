@@ -39,7 +39,7 @@ export default function Quantum2126Ticker() {
           <span className="text-white font-medium">⚡ {breakingNewsTicker}</span>
           <span className="text-amber-300">🛢️ BRENT CRUDE OIL: $78.40 ▲ +1.8% (Hürmüz Boğazı Tanker Trafiği İzleniyor)</span>
           <span className="text-emerald-400">📈 S&P 500 QUANTUM ARB: 5,742.8 ▲ +0.85%</span>
-          <span className="text-purple-300">🧠 WISH AI COPILOT: Sharpe 3.42 &bull; 100% Otonom Emtia ve Hisse Optimizasyonu</span>
+          <span className="text-purple-300">📊 QUANT ROTATION DESK: Sharpe 3.42 &bull; 100% Piyasa Nötr Emtia ve Hisse Arbitrajı</span>
           <span className="text-cyan-300">🌐 NUR EARTH 3D: Canlı Uçuş ve Petrol Tanker Radarı Aktif</span>
         </div>
       </div>
