@@ -216,10 +216,17 @@ export default function EagleCrest({ size = 48, animate = true, className = "" }
   }, [size, animate]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={className}
-      style={{ width: size, height: size }}
-    />
+    <div
+      className={`relative inline-flex items-center justify-center group ${className}`}
+      title="DOMINUS ORIENTIS ET OCCIDENTIS (Doğunun ve Batının Hâkimi) — NUR Finance"
+    >
+      <canvas
+        ref={canvasRef}
+        style={{ width: size, height: size }}
+      />
+      <div className="absolute -bottom-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-[8px] font-mono font-bold tracking-widest text-amber-300 whitespace-nowrap bg-black/80 px-1 rounded border border-amber-500/30">
+        DOMINUS ORIENTIS ET OCCIDENTIS
+      </div>
+    </div>
   );
 }

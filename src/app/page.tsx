@@ -39,6 +39,7 @@ import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
 import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
 import HoldingEcosystemPanel from "@/components/holding/HoldingEcosystemPanel";
 import UmayBossTerminal from "@/components/umay/UmayBossTerminal";
+import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -175,7 +176,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen" style={{ background: "var(--ag-bg)" }}>
+    <div className="flex flex-col h-screen relative overflow-hidden" style={{ background: "var(--ag-bg)" }}>
+      <FinancialMatrixRain opacity={0.07} />
       <CommandPalette />
       <HUDNotificationSystem />
       <TopBar />
