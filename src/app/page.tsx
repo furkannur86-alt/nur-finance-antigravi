@@ -31,6 +31,18 @@ import RiskAlertsPanel from "@/components/nfs/RiskAlertsPanel";
 import ResearchPanel from "@/components/nfs/ResearchPanel";
 import NURTerminalPanel from "@/components/terminal/NURTerminalPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
+import OMSEMSPanel from "@/components/trading/OMSEMSPanel";
+import AIQuantCopilot from "@/components/ai/AIQuantCopilot";
+import BroadcastStudioPanel from "@/components/media/BroadcastStudioPanel";
+import VerificationPanel from "@/components/pricing/VerificationPanel";
+import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
+import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
+import HoldingEcosystemPanel from "@/components/holding/HoldingEcosystemPanel";
+import UmayBossTerminal from "@/components/umay/UmayBossTerminal";
+import TatarFinansPanel from "@/components/tatar/TatarFinansPanel";
+import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
+import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
+import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -39,14 +51,18 @@ const MAX_CONSOLE_HEIGHT = 500;
 const DEFAULT_CONSOLE_HEIGHT = 200;
 
 const FULLSCREEN_VIEWS = [
+  "umay-boss",
+  "holding-ecosystem",
+  "tatar-finans",
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
-  "macro-risk",
+  "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
+  "wallet-gateway",
 ];
 
 export default function Home() {
-  const { activeView, sidebarOpen, addConsoleMessage, consoleMessages } = useIDEStore();
+  const { activeView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity } = useIDEStore();
   const didInit = useRef(false);
   const [consoleHeight, setConsoleHeight] = useState(DEFAULT_CONSOLE_HEIGHT);
   const [consoleCollapsed, setConsoleCollapsed] = useState(false);
@@ -58,8 +74,8 @@ export default function Home() {
     if (didInit.current) return;
     didInit.current = true;
     if (consoleMessages.length === 0) {
-      addConsoleMessage({ type: "info", text: "AntiGravi IDE v2.1 - Nur Finance Quantitative Engine" });
-      addConsoleMessage({ type: "success", text: "Engine initialized. Ready for development." });
+      addConsoleMessage({ type: "info", text: "AntiGravi IDE v3.0 PRO - Nur Finance Quantitative Engine" });
+      addConsoleMessage({ type: "success", text: "Faz 3 Engine initialized: OMS/EMS, AI Quant Copilot, HUD Alerts & Broadcast Studio active." });
     }
   }, [addConsoleMessage, consoleMessages.length]);
 
@@ -92,6 +108,12 @@ export default function Home() {
 
   const renderMainContent = () => {
     switch (activeView) {
+      case "umay-boss":
+        return <UmayBossTerminal />;
+      case "holding-ecosystem":
+        return <HoldingEcosystemPanel />;
+      case "tatar-finans":
+        return <TatarFinansPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":
@@ -100,6 +122,16 @@ export default function Home() {
         return <ChartsPanel />;
       case "backtest":
         return <BacktestPanel />;
+      case "oms-ems":
+        return <OMSEMSPanel />;
+      case "quant-copilot":
+        return <AIQuantCopilot />;
+      case "broadcast-studio":
+        return <BroadcastStudioPanel />;
+      case "verification-portal":
+        return <VerificationPanel />;
+      case "wallet-gateway":
+        return <DigitalWalletGateway />;
       case "global-markets":
         return <GlobalMarketsPanel />;
       case "economic-data":
@@ -150,8 +182,12 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen" style={{ background: "var(--ag-bg)" }}>
+    <div className="flex flex-col h-screen relative overflow-hidden" style={{ background: "var(--ag-bg)" }}>
+      {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
       <CommandPalette />
+      <HUDNotificationSystem />
+      <SovereignAuthModal />
+      <Quantum2126Ticker />
       <TopBar />
       <div className="flex flex-1 min-h-0">
         {sidebarOpen && <Sidebar />}
