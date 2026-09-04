@@ -1,33 +1,36 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useIDEStore } from "@/stores/useIDEStore";
 import EagleCrest from "@/components/ui/EagleCrest";
 import AudioSpectrumVisualizer from "@/components/ui/AudioSpectrumVisualizer";
+import {
+  BROADCAST_LANGUAGES,
+  LanguageBroadcastProfile,
+  hdVoiceEngine,
+} from "@/lib/broadcast/multilingual-broadcast";
+import { cyberSound } from "@/lib/audio/sound-synth";
 
-const CHANNELS = [
-  { id: "nur-turkey", name: "NUR Turkey (TR)", anchor: "Elif Nur & Emre Kaya", lang: "Turkish", topic: "BIST-100 & CBRT Policy" },
-  { id: "nur-usa", name: "NUR USA (EN)", anchor: "Sarah Jenkins & Mark Vance", lang: "English", topic: "Wall St, Fed & ISM Rotation" },
-  { id: "nur-deutsch", name: "NUR Deutschland (DE)", anchor: "Hanna Nur & Klaus Weber", lang: "German", topic: "DAX 40 & ECB Liquidity" },
-  { id: "nur-france", name: "NUR France (FR)", anchor: "Camille Dubois & Luc Moreau", lang: "French", topic: "CAC 40 & Eurozone Bonds" },
-  { id: "nur-global", name: "NUR Global Macro (EN)", anchor: "Alexander Croft", lang: "English", topic: "Cross-Asset Geopolitics & ACLED" },
-  { id: "nur-japan", name: "NUR Japan (JA)", anchor: "Misaki Tanaka", lang: "Japanese", topic: "Nikkei 225 & BOJ Yield Curve" },
-  { id: "nur-china", name: "NUR China (ZH)", anchor: "Yuhan Chen", lang: "Mandarin", topic: "CSI 300 & PBOC Monetary Easing" },
-  { id: "nur-brazil", name: "NUR Brasil (PT)", anchor: "Valentina Silva", lang: "Portuguese", topic: "Ibovespa & Commodities" },
-  { id: "nur-india", name: "NUR India (HI)", anchor: "Priya Sharma", lang: "Hindi/English", topic: "NIFTY 50 & Tech Growth" },
-  { id: "nur-arabic", name: "NUR Middle East (AR)", anchor: "Zayd Al-Mansoor", lang: "Arabic", topic: "MENA Energy & Sovereign Wealth" },
-  { id: "nur-korea", name: "NUR Korea (KO)", anchor: "Soyeon Park", lang: "Korean", topic: "KOSPI & Semiconductor Cycle" },
-  { id: "nur-latam", name: "NUR Latin America (ES)", anchor: "Mateo Rodriguez", lang: "Spanish", topic: "LatAm FX & Copper / Lithium" },
+const STUDIO_BACKGROUNDS = [
+  { id: "anchor-female", name: "Elit Kadın Spiker (Stüdyo A)", path: "/images/studio/anchor-female.jpg" },
+  { id: "anchor-male", name: "Kıdemli Stratejist (Stüdyo B)", path: "/images/studio/anchor-male.jpg" },
+  { id: "executive-office", name: "Yönetici Ofisi & Masası (Gökdelen)", path: "/images/studio/executive-office.jpg" },
 ];
 
 export default function BroadcastStudioPanel() {
   const { breakingNewsTicker, setBreakingNewsTicker, addNotification } = useIDEStore();
 
-  const [selectedChannel, setSelectedChannel] = useState(CHANNELS[0]);
-  const [teleprompterSpeed, setTeleprompterSpeed] = useState(3);
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
+  const [selectedStudio, setSelectedStudio] = useState(STUDIO_BACKGROUNDS[0]);
+  const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");
+  const [teleprompterSpeed, setTeleprompterSpeed] = useState(2);
   const [isPrompting, setIsPrompting] = useState(true);
   const [customHeadline, setCustomHeadline] = useState("");
-  const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "closing">("macro");
+  const [isLiveBroadcasting, setIsLiveBroadcasting] = useState(false);
+  const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
+  const [youtubeStreamKey, setYoutubeStreamKey] = useState("nur-live-stream-key-2126-xyz");
+  const [showYoutubeModal, setShowYoutubeModal] = useState(false);
 
   const prompterRef = useRef<HTMLDivElement>(null);
 
@@ -48,204 +51,429 @@ export default function BroadcastStudioPanel() {
   const handleInjectBanner = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customHeadline.trim()) return;
-    const fullBanner = `[${selectedChannel.name.toUpperCase()}] BREAKING: ${customHeadline.trim()}`;
+    const fullBanner = `[${selectedLang.name.toUpperCase()} TV] SON DAKİKA: ${customHeadline.trim()}`;
     setBreakingNewsTicker(fullBanner);
     addNotification({
-      title: "Breaking News Injected",
-      message: `Studio banner broadcasted: "${customHeadline}"`,
+      title: "Canlı Yayın Bandı Güncellendi",
+      message: `Son dakika haberi tüm terminallere basıldı: "${customHeadline}"`,
       severity: "INFO",
       category: "NUR_TV",
     });
     setCustomHeadline("");
   };
 
-  const scripts = {
-    opening: `Good morning and welcome to ${selectedChannel.name}. I am ${selectedChannel.anchor}, broadcasting live from the NUR Finance Digital Newsroom.\n\nGlobal quantitative indicators are highlighting significant volatility dispersion across major market centers. Let us examine the latest ISM sector composite data.`,
-    macro: `In today's macroeconomic landscape, the ISM Services index printed at 54.8, confirming sustained momentum in business activity. Michigan Consumer Sentiment holds firmly above the 85 threshold, indicating robust forward GDP trajectory.\n\nOur cross-asset risk engine indicates low systemic contagion risk with the VIX maintaining its safe corridor under 30.`,
-    quant: `From our proprietary long/short sector rotation model: Technology and Financial sectors lead with composite scores exceeding +1.0. Defensive proxies, including Utilities and Real Estate, lag at -1.0.\n\nThe system remains market-neutral with an expected Sharpe ratio of 0.78 and 3.5x continuous Kelly leverage sizing.`,
-    closing: `That concludes our quantitative market briefing for ${selectedChannel.name}. For continuous updates and live order routing, consult the NUR Terminal.\n\nI am ${selectedChannel.anchor}. Stay disciplined, stay quantitative.`,
+  const currentScript = selectedLang.scripts[activeSegment];
+
+  const handleSpeakScript = () => {
+    cyberSound.playClick();
+    if (isVoiceSpeaking) {
+      hdVoiceEngine.stop();
+      setIsVoiceSpeaking(false);
+      return;
+    }
+
+    hdVoiceEngine.speak(
+      currentScript,
+      selectedLang.langCode,
+      () => setIsVoiceSpeaking(true),
+      () => setIsVoiceSpeaking(false),
+      () => setIsVoiceSpeaking(false)
+    );
+  };
+
+  const toggleLiveBroadcast = () => {
+    cyberSound.playClick();
+    if (!isLiveBroadcasting) {
+      setIsLiveBroadcasting(true);
+      setIsPrompting(true);
+      handleSpeakScript();
+      addNotification({
+        title: "🔴 YouTube & NUR TV Canlı Yayını Başlatıldı",
+        message: `${selectedLang.nativeName} dilinde canlı kuantum bülteni yayına girdi.`,
+        severity: "SUCCESS",
+        category: "NUR_TV",
+      });
+    } else {
+      setIsLiveBroadcasting(false);
+      hdVoiceEngine.stop();
+      setIsVoiceSpeaking(false);
+    }
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: "var(--ag-bg)", color: "var(--ag-text)" }}>
+    <div className="flex flex-col h-full overflow-hidden select-none" style={{ background: "var(--ag-bg)", color: "var(--ag-text)" }}>
       {/* Studio Header */}
       <div
-        className="flex items-center justify-between px-4 py-2.5 border-b shrink-0 select-none"
+        className="flex items-center justify-between px-4 py-2 border-b shrink-0"
         style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}
       >
         <div className="flex items-center gap-3">
-          <EagleCrest size={28} />
+          <EagleCrest size={28} animate={isLiveBroadcasting} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-[var(--ag-accent)]">NUR TV Interactive Broadcast Studio</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold bg-red-500/20 text-red-400 animate-pulse">
-                LIVE ON-AIR &bull; 12 CHANNELS
-              </span>
+              <span className="text-sm font-bold text-amber-300 font-serif">NUR TV 2126 Stüdyo & YouTube Yayın Merkezi</span>
+              {isLiveBroadcasting ? (
+                <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-red-600 text-white animate-pulse">
+                  ● CANLI YAYINDA (ON-AIR)
+                </span>
+              ) : (
+                <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-slate-800 text-slate-400">
+                  BEKLEMEDE (STANDBY)
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-[var(--ag-muted)]">
-              Automated AI Teleprompter &bull; Breaking Banner Injector &bull; Real-time Audio Spectrum
+              Gerçek İnsan Spikerler &bull; Doğal Ana Dil Sentezi &bull; YouTube RTMP Entegrasyonu
             </p>
           </div>
         </div>
 
-        {/* Global Breaking News Ticker in Header */}
-        <div className="max-w-md truncate text-xs font-mono px-3 py-1 rounded bg-black/40 border border-red-500/30 text-red-300">
-          <span className="font-bold text-red-400 mr-2">&bull; TICKER:</span>
-          {breakingNewsTicker}
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowYoutubeModal(true)}
+            className="px-3 py-1.5 rounded text-xs font-mono font-bold bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 transition-colors flex items-center gap-1.5"
+          >
+            <span>📺 YouTube RTMP Ayarları</span>
+          </button>
+
+          <button
+            onClick={toggleLiveBroadcast}
+            className={`px-4 py-1.5 rounded text-xs font-mono font-bold tracking-wider transition-all shadow-lg flex items-center gap-2 ${
+              isLiveBroadcasting
+                ? "bg-red-600 hover:bg-red-700 text-white shadow-red-600/30"
+                : "bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-black shadow-cyan-500/20"
+            }`}
+          >
+            {isLiveBroadcasting ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                <span>YAYINI DURDUR</span>
+              </>
+            ) : (
+              <>
+                <span>🔴 CANLI YAYINI BAŞLAT</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 
       {/* Main Grid */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* Left Column: 12 Channel Selector */}
+        {/* Left Column: Language & Studio Switcher */}
         <div
-          className="w-72 flex flex-col border-r overflow-y-auto p-3"
+          className="w-64 flex flex-col border-r overflow-y-auto p-3 gap-4 shrink-0"
           style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}
         >
-          <div className="text-[10px] font-semibold text-[var(--ag-muted)] uppercase mb-2">
-            Global Channels ({CHANNELS.length})
+          {/* Language Selector */}
+          <div>
+            <div className="text-[10px] font-bold text-cyan-400 font-mono uppercase tracking-wider mb-2">
+              Yayın Dili ({BROADCAST_LANGUAGES.length})
+            </div>
+            <div className="space-y-1">
+              {BROADCAST_LANGUAGES.map((lang) => (
+                <button
+                  key={lang.id}
+                  onClick={() => {
+                    cyberSound.playClick();
+                    setSelectedLang(lang);
+                    if (isVoiceSpeaking) hdVoiceEngine.stop();
+                  }}
+                  className={`w-full text-left p-2 rounded-lg border transition-all flex items-center justify-between ${
+                    selectedLang.id === lang.id
+                      ? "bg-cyan-500/20 border-cyan-400 text-white font-bold"
+                      : "border-transparent bg-black/20 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{lang.flag}</span>
+                    <div>
+                      <div className="text-xs">{lang.nativeName}</div>
+                      <div className="text-[9px] text-slate-500">{lang.city}</div>
+                    </div>
+                  </div>
+                  {selectedLang.id === lang.id && (
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="space-y-1.5">
-            {CHANNELS.map((ch) => (
-              <button
-                key={ch.id}
-                onClick={() => setSelectedChannel(ch)}
-                className={`w-full text-left p-2.5 rounded border transition-all ${
-                  selectedChannel.id === ch.id
-                    ? "bg-[rgba(0,212,170,0.15)] border-[var(--ag-accent)] text-white"
-                    : "border-[var(--ag-border)] bg-black/20 text-[var(--ag-muted)] hover:text-white"
-                }`}
-              >
-                <div className="flex justify-between items-center text-xs font-bold">
-                  <span>{ch.name}</span>
-                  <span className="text-[9px] font-mono text-[var(--ag-accent)]">{ch.lang}</span>
-                </div>
-                <div className="text-[11px] text-[var(--ag-text)] mt-1 truncate">Host: {ch.anchor}</div>
-                <div className="text-[10px] text-[var(--ag-muted)] mt-0.5 truncate">{ch.topic}</div>
-              </button>
-            ))}
+
+          {/* Studio Camera Switcher */}
+          <div>
+            <div className="text-[10px] font-bold text-amber-400 font-mono uppercase tracking-wider mb-2">
+              Stüdyo & Kamera Açısı
+            </div>
+            <div className="space-y-1.5">
+              {STUDIO_BACKGROUNDS.map((bg) => (
+                <button
+                  key={bg.id}
+                  onClick={() => {
+                    cyberSound.playClick();
+                    setSelectedStudio(bg);
+                  }}
+                  className={`w-full text-left p-2 rounded-lg border transition-all ${
+                    selectedStudio.id === bg.id
+                      ? "bg-amber-500/20 border-amber-400 text-white font-bold"
+                      : "border-transparent bg-black/20 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <div className="text-xs">{bg.name}</div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Center: Live Studio Teleprompter */}
+        {/* Center: Live Studio Video Stage & Teleprompter */}
         <div className="flex-1 flex flex-col min-w-0 border-r" style={{ borderColor: "var(--ag-border)" }}>
-          {/* Segment Selector & Controls */}
+          {/* Video Preview Box */}
+          <div className="relative aspect-video w-full max-h-[46%] bg-black overflow-hidden border-b shrink-0 flex items-center justify-center" style={{ borderColor: "var(--ag-border)" }}>
+            <Image
+              src={selectedStudio.path}
+              alt={selectedStudio.name}
+              fill
+              className="object-cover"
+              priority
+            />
+
+            {/* Overlaid TV Broadcast HUD */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
+
+            {/* Live Badge */}
+            <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
+              <span className="px-2.5 py-0.5 rounded bg-red-600 text-white font-bold text-xs flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span>NUR TV LIVE</span>
+              </span>
+              <span className="px-2 py-0.5 rounded bg-black/60 backdrop-blur text-cyan-300 text-[10px] font-mono border border-cyan-500/30">
+                {selectedLang.flag} {selectedLang.nativeName}
+              </span>
+            </div>
+
+            {/* Lower Third Anchor Name */}
+            <div className="absolute bottom-3 left-3 z-10">
+              <div className="bg-amber-500 text-black font-bold px-3 py-1 text-xs uppercase tracking-wider inline-block rounded-t">
+                {selectedLang.defaultAnchorName}
+              </div>
+              <div className="bg-black/80 backdrop-blur border border-amber-500/40 text-white px-3 py-1 text-[11px] font-mono rounded-b rounded-r">
+                Nur Finans Küresel Baş Analisti &bull; {selectedLang.city}
+              </div>
+            </div>
+
+            {/* Voice Audio Playing Badge */}
+            {isVoiceSpeaking && (
+              <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-300 text-xs font-mono font-bold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span>YAPAY ZEKA SPİKER KONUŞUYOR...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Teleprompter Segment Header & Controls */}
           <div
-            className="flex items-center justify-between px-4 py-2 border-b select-none"
+            className="flex items-center justify-between px-4 py-2 border-b select-none shrink-0"
             style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}
           >
-            <div className="flex items-center gap-1.5">
-              {(["opening", "macro", "quant", "closing"] as const).map((seg) => (
+            <div className="flex items-center gap-1">
+              {(
+                [
+                  { id: "opening", label: "Giriş" },
+                  { id: "macro", label: "Makro" },
+                  { id: "quant", label: "Kantitatif" },
+                  { id: "breaking", label: "Son Dakika" },
+                  { id: "closing", label: "Kapanış" },
+                ] as const
+              ).map((seg) => (
                 <button
-                  key={seg}
-                  onClick={() => setActiveSegment(seg)}
+                  key={seg.id}
+                  onClick={() => {
+                    cyberSound.playClick();
+                    setActiveSegment(seg.id);
+                  }}
                   className={`px-3 py-1 text-xs rounded uppercase font-bold transition-colors ${
-                    activeSegment === seg
-                      ? "bg-[var(--ag-accent)] text-black"
-                      : "text-[var(--ag-muted)] hover:text-white bg-white/5"
+                    activeSegment === seg.id
+                      ? "bg-cyan-500 text-black"
+                      : "text-slate-400 hover:text-white bg-white/5"
                   }`}
                 >
-                  {seg}
+                  {seg.label}
                 </button>
               ))}
             </div>
 
             <div className="flex items-center gap-2 text-xs">
               <button
+                onClick={handleSpeakScript}
+                className={`px-3 py-1 rounded font-bold font-mono text-[11px] flex items-center gap-1.5 ${
+                  isVoiceSpeaking
+                    ? "bg-red-500/30 text-red-300 border border-red-500"
+                    : "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30"
+                }`}
+              >
+                {isVoiceSpeaking ? "⏹️ SESİ DURDUR" : "🔊 SESİ DİNLE / TEST ET"}
+              </button>
+
+              <button
                 onClick={() => setIsPrompting(!isPrompting)}
-                className={`px-3 py-1 rounded font-bold font-mono text-[11px] ${
+                className={`px-2.5 py-1 rounded font-bold font-mono text-[11px] ${
                   isPrompting ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"
                 }`}
               >
-                {isPrompting ? "PAUSE PROMPTER" : "RESUME PROMPTER"}
+                {isPrompting ? "DURAKLAT" : "KAYDIR"}
               </button>
+
               <div className="flex items-center gap-1 text-[var(--ag-muted)]">
-                <span>Speed:</span>
+                <span className="text-[10px]">Hız:</span>
                 <input
                   type="range"
                   min={1}
-                  max={8}
+                  max={6}
                   value={teleprompterSpeed}
                   onChange={(e) => setTeleprompterSpeed(parseInt(e.target.value))}
-                  className="w-16 accent-[var(--ag-accent)] cursor-pointer"
+                  className="w-14 accent-cyan-400 cursor-pointer"
                 />
               </div>
             </div>
           </div>
 
-          {/* Teleprompter Display */}
+          {/* Teleprompter Text Display */}
           <div
             ref={prompterRef}
-            className="flex-1 overflow-y-auto p-6 font-mono text-base leading-loose bg-black/60 text-emerald-300"
+            className="flex-1 overflow-y-auto p-6 font-mono text-base leading-loose bg-black/60 text-emerald-300 select-text"
             style={{ scrollBehavior: "smooth" }}
           >
-            <div className="max-w-2xl mx-auto whitespace-pre-line py-8">
-              {scripts[activeSegment]}
+            <div className="max-w-2xl mx-auto whitespace-pre-line py-4">
+              {currentScript}
             </div>
           </div>
         </div>
 
-        {/* Right Column: Studio Controls, Banner Injector & Audio Spectrum */}
+        {/* Right Column: Audio Spectrum, Breaking Injector & YouTube Specs */}
         <div
-          className="w-80 flex flex-col overflow-y-auto p-4 gap-4"
+          className="w-80 flex flex-col overflow-y-auto p-4 gap-4 shrink-0"
           style={{ background: "var(--ag-surface)" }}
         >
           {/* Audio Spectrum Visualizer */}
           <div>
-            <div className="text-[10px] font-semibold text-[var(--ag-muted)] uppercase mb-1.5 flex justify-between">
-              <span>On-Air Audio Spectrum</span>
-              <span className="text-[var(--ag-accent)] font-mono font-bold">48.0 kHz</span>
+            <div className="text-[10px] font-bold text-cyan-400 font-mono uppercase mb-1.5 flex justify-between">
+              <span>Canlı Ses Spektrumu</span>
+              <span className="text-emerald-400 font-mono">48.0 kHz HD</span>
             </div>
-            <AudioSpectrumVisualizer height={54} isPlaying={true} />
+            <AudioSpectrumVisualizer height={54} isPlaying={isVoiceSpeaking || isLiveBroadcasting} />
           </div>
 
           {/* Breaking News Injector Form */}
-          <div className="p-3.5 rounded border bg-black/30" style={{ borderColor: "var(--ag-border)" }}>
-            <div className="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-red-500" />
-              <span>Broadcast Breaking Banner</span>
+          <div className="p-3.5 rounded-xl border bg-black/40 space-y-2.5" style={{ borderColor: "var(--ag-border)" }}>
+            <div className="text-xs font-bold text-white flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span>Canlı Alt Bant Yazısı Gönder</span>
             </div>
             <form onSubmit={handleInjectBanner} className="space-y-2">
               <textarea
-                rows={3}
+                rows={2}
                 value={customHeadline}
                 onChange={(e) => setCustomHeadline(e.target.value)}
-                placeholder="Enter urgent headline to broadcast live to all global terminals..."
-                className="w-full p-2.5 rounded text-xs bg-black/50 border text-white font-mono focus:outline-none focus:border-red-500"
+                placeholder="Canlı yayına anlık son dakika bülteni yazın..."
+                className="w-full p-2 rounded-lg text-xs bg-black/60 border text-white font-mono focus:outline-none focus:border-red-500"
                 style={{ borderColor: "var(--ag-border)" }}
               />
               <button
                 type="submit"
                 disabled={!customHeadline.trim()}
-                className="w-full py-2 rounded text-xs font-bold bg-red-600 hover:bg-red-700 text-white uppercase tracking-wider transition-colors disabled:opacity-40"
+                className="w-full py-2 rounded-lg text-xs font-bold bg-red-600 hover:bg-red-700 text-white uppercase tracking-wider transition-colors disabled:opacity-40"
               >
-                INJECT ON-AIR BANNER
+                BANTI YAYINA VER
               </button>
             </form>
           </div>
 
-          {/* Channel Metadata Box */}
-          <div className="p-3.5 rounded border bg-black/20 text-xs font-mono space-y-1.5" style={{ borderColor: "var(--ag-border)" }}>
-            <div className="text-[10px] text-[var(--ag-muted)] uppercase font-sans">Active Stream Specs</div>
+          {/* YouTube Streaming Broadcast Specs */}
+          <div className="p-3.5 rounded-xl border bg-black/30 text-xs font-mono space-y-2" style={{ borderColor: "var(--ag-border)" }}>
+            <div className="text-[10px] text-amber-300 font-bold uppercase">Yayın & Kodlayıcı Telemetrisi</div>
             <div className="flex justify-between">
-              <span className="text-[var(--ag-muted)]">Encoding:</span>
-              <span className="text-white font-bold">H.264 / AAC (1080p60)</span>
+              <span className="text-slate-400">Protokol:</span>
+              <span className="text-white font-bold">RTMP / WebRTC</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--ag-muted)]">TTS Engine:</span>
-              <span className="text-[var(--ag-accent)] font-bold">Piper &bull; Studio HD</span>
+              <span className="text-slate-400">Çözünürlük:</span>
+              <span className="text-cyan-300 font-bold">1080p60 (4K Hazır)</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--ag-muted)]">Bitrate:</span>
-              <span className="text-white">6,500 kbps</span>
+              <span className="text-slate-400">Ses Motoru:</span>
+              <span className="text-emerald-400 font-bold">Doğal Dil Sentezi</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--ag-muted)]">Latency:</span>
-              <span className="text-emerald-400">142 ms</span>
+              <span className="text-slate-400">Yayın Durumu:</span>
+              <span className={isLiveBroadcasting ? "text-red-400 font-bold" : "text-slate-500"}>
+                {isLiveBroadcasting ? "🔴 CANLI AKTİF" : "⚪ STANDBY"}
+              </span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* YouTube Stream Settings Modal */}
+      {showYoutubeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="w-full max-w-md p-6 rounded-2xl border border-red-500/40 bg-slate-950 text-white space-y-4">
+            <div className="flex justify-between items-center border-b border-white/10 pb-3">
+              <h3 className="text-sm font-bold text-red-400 flex items-center gap-2">
+                <span>📺 YouTube Live RTMP Ayarları</span>
+              </h3>
+              <button
+                onClick={() => setShowYoutubeModal(false)}
+                className="text-xs text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-slate-400 block mb-1">Sunucu URL (RTMP Server):</label>
+                <input
+                  type="text"
+                  readOnly
+                  value="rtmp://a.rtmp.youtube.com/live2"
+                  className="w-full p-2.5 rounded-lg bg-black/60 border border-white/20 font-mono text-cyan-300 select-all"
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400 block mb-1">Yayın Anahtarı (Stream Key):</label>
+                <input
+                  type="password"
+                  value={youtubeStreamKey}
+                  onChange={(e) => setYoutubeStreamKey(e.target.value)}
+                  className="w-full p-2.5 rounded-lg bg-black/60 border border-white/20 font-mono text-white"
+                />
+              </div>
+
+              <div className="p-3 rounded-lg bg-red-950/30 border border-red-500/30 text-[11px] text-slate-300 leading-relaxed">
+                OBS veya harici yayın yazılımınıza bu bilgileri girerek YouTube üzerinde 7/24 kesintisiz Nur Finans yapay zeka haber bültenini yayınlayabilirsiniz.
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowYoutubeModal(false);
+                addNotification({
+                  title: "YouTube Ayarları Kaydedildi",
+                  message: "Canlı yayın parametreleri güncellendi.",
+                  severity: "SUCCESS",
+                  category: "NUR_TV",
+                });
+              }}
+              className="w-full py-2.5 rounded-xl font-bold bg-red-600 hover:bg-red-500 text-white text-xs font-mono transition-colors"
+            >
+              KAYDET VE KAPAT
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
