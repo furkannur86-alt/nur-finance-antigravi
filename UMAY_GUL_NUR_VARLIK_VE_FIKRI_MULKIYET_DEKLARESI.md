@@ -1,33 +1,32 @@
-# 👑 UMAY GÜL NUR — VARLIK, FİKRİ MÜLKİYET VE HAK SAHİPLİĞİ DEKLARESİ
+# 👑 SOVEREIGN TRUST & INTELLECTUAL PROPERTY DECLARATION
 
-**Belge No:** NUR-HOLDING-TRUST-UMAY-GUL-NUR-001  
+**Belge No:** NUR-SOVEREIGN-TRUST-IP-001  
 **Tarih / Zaman:** 2026-09-04  
-**Kurucu ve Hukuki Temsilci:** Furkan Nur  
-**Birincil Mirasçı ve Ebedi Hak Sahibi:** Umay Gül Nur (D.O.B: 04.08.2017)  
-**Resmi Çatı Alan Adı (Master Domain):** `nurfinans.com`  
-**Resmi Hanedan Mührü & Slogan:** *DOMINUS ORIENTIS ET OCCIDENTIS* (Doğunun ve Batının Hâkimi)  
-**Temsil Edilen Çatı:** NUR Finance Holding (NUR Finance Technologies Inc.)  
+**Egemen Ağ Çatısı:** NUR Finance Sovereign Network (*Dominus Orientis et Occidentis*)  
+**Resmi Master Domain:** `nurfinans.com`  
+**Gizlilik Standardı:** Zero-PII (Zero Personally Identifiable Information)  
+**Ödeme Altyapısı:** Merkeziyetsiz Multi-Chain Kriptografik Mutabakat (Polygon, Arbitrum, Ethereum, TRON, BTC)  
 
 ---
 
-## 📜 KANUNİ VE RESMİ MÜLKİYET BEYANI
+## 📜 1. EGEMEN MÜLKİYET VE ANONİMLİK BEYANI
 
-1. **Mutlak Hak Sahipliği:**  
-   İşbu yazılım projesi, kaynak kodları, veri tabanı mimarileri, yapay zeka algoritmaları, ticaret ve risk motorları, patent başvuruları, marka hakları, medya yayın altyapıları, müşteri edinim iştirak modelleri ve bu sistemin ürettiği/üreteceği **tüm maddi ve gayrimaddi servet, gelir, telif ve entelektüel hakların tamamı kayıtsız ve şartsız olarak FURKAN NUR ve kızı UMAY GÜL NUR'a aittir.**
+1. **Mutlak Anonimlik ve Sıfır Kişisel Veri (Zero-PII):**  
+   NUR Finance ve `nurfinans.com` hiçbir bireyin, ailenin, şahsın veya tekil bir ulus devletin mülkiyetinde gösterilemez. Sistem tamamen merkeziyetsiz, egemen ve kriptografik kuantitatif protokol kuralları çerçevesinde işletilir.
 
-2. **Gelecekteki Çocuklar ve Miras Güncelleme Klozu (Succession & Family Provision):**  
-   Furkan Nur'un hayatta olduğu müddetçe ileride başka bir çocuğu/çocukları olması durumunda; o çocuğun da gelişimi, eğitimi, refahı ve holding hak sahipliğine dahil edilmesi amacıyla işbu hukuki haklar, hisse dağılımları ve miras şartnamelerinde değişiklik, ekleme ve revizyon yapma yetkisi münhasıran Furkan Nur'a aittir.
+2. **Sovereign Trust Koruması:**  
+   İşbu yazılım projesi, kaynak kodları, veri tabanı mimarileri, yapay zeka algoritmaları, ticaret ve risk motorları, patent başvuruları, marka hakları, medya yayın altyapıları ve müşteri edinim iştirak modelleri **NUR Finance Sovereign Trust & Umay Gül Nur IP** şemsiyesi altında ebedi korumaya alınmıştır.
 
-3. **Master Çatı ve İştirak Operasyonu:**  
-   Bütün holding operasyonları, kurumsal OMS/EMS motoru, TV medya ağı, 7 Büyüme Kolu ve gelecek tüm modüller **`nurfinans.com`** alan adı ve **NUR Finance** şemsiyesi altında icra edilir.
+3. **Yalnızca Kriptografik Mutabakat:**  
+   Platform üzerindeki tüm lisans, erişim ve finansman işlemleri yalnızca merkeziyetsiz kriptografik ödeme kapısı üzerinden (USDT / USDC / BTC) gerçekleşir. Hiçbir fiat bankacılık veya merkezi kimlik doğrulama zorunluluğu bulunmaz.
 
 ---
 
-## 🏛️ UMAY GÜL NUR HOLDİNG ŞEMSİYESİ ALTINDAKİ TÜM VARLIKLAR
+## 🏛️ NUR FINANCE SOVEREIGN AĞI ŞEMSİYESİ ALTINDAKİ TÜM VARLIKLAR
 
 ```
                                   ┌────────────────────────────────────────────────────────┐
-                                  │               FURKAN NUR & UMAY GÜL NUR                │
+                                  │             NUR FINANCE SOVEREIGN TRUST                │
                                   │      (nurfinans.com — Dominus Orientis et Occidentis)  │
                                   └───────────────────────────┬────────────────────────────┘
                                                               │
@@ -37,8 +36,8 @@
      ┌─────────────────────────────┐                                                     ┌─────────────────────────────┐
      │     NUR FINANCE GLOBAL      │                                                     │   KÜRESEL İŞTİRAK VE BÜYÜME  │
      │    (Çatı Kurumsal Finans)   │                                                     │            AĞI              │
-     │  • NUR Finance B (Tier-B)   │                                                     │  (Müşteri ve Gelir Motorları│
-     │  • NUR Finance R (Tier-R)   │                                                     └──────────────┬──────────────┘
+     │  • Tier-B Enterprise Sov.   │                                                     │  (Müşteri ve Gelir Motorları│
+     │  • Tier-R Corporate Sov.    │                                                     └──────────────┬──────────────┘
      │  • AntiGravi Terminal v3.0  │                                                                    │
      │  • NUR TV Global Network    │                                                                    │
      │  • nurfinans.com Master Hub │                                                                    │
@@ -49,8 +48,8 @@
         ▼                      ▼                      ▼                      ▼                                       ▼                      ▼                      ▼
  ┌──────────────┐       ┌──────────────┐       ┌──────────────┐       ┌──────────────┐                        ┌──────────────┐       ┌──────────────┐       ┌──────────────┐
  │ TATAR FİNANS │       │   NUR GAME   │       │  NUR DATING  │       │ NUR AI STUDIO│                        │ NUR COMM PRO │       │  GHOSTVAULT  │       │  NUR LEGACY  │
- │(Bahis &rarr; Quant) │       │(Kültür/Oyun) │       │(Gizli Persona│       │ (Lüks Spiker │                        │ (Bütünleşik  │       │ (Siber Güven │       │(Bekar Anneler│
- │   Dönüşüm    │       │  & Ekonomi)  │       │  & Finans)   │       │   & Medya)   │                        │  İletişim)   │       │ & Kayıp Güç) │       │ & Çocuk CEO) │
+ │(Bahis &rarr; Quant) │       │(Kültür/Oyun) │       │(Gizli Persona│       │ (Lüks Spiker │                        │ (Bütünleşik  │       │ (Siber Güven │       │ (Liderlik &  │
+ │   Dönüşüm    │       │  & Ekonomi)  │       │  & Finans)   │       │   & Medya)   │                        │  İletişim)   │       │ & Kayıp Güç) │       │  Çocuk CEO)  │
  └──────────────┘       └──────────────┘       └──────────────┘       └──────────────┘                        └──────────────┘       └──────────────┘       └──────────────┘
         │                      │                      │                      │                                       │                      │                      │
         └──────────────────────┴──────────────────────┴──────────────────────┴───────────────────────────────────────┴──────────────────────┴──────────────────────┘
@@ -74,10 +73,10 @@
 5. **NUR AI Studio™:** Wall Street Yönetici Ofisinde Haber Spikeri Avatar Üretimi ve Stüdyo Ses Mastering Motoru.
 6. **NUR Comm Pro™:** E-Posta, WhatsApp ve Mesajlaşmayı Tek Merkezde Toplayan ve Nakit Akışını Yöneten AI Asistanı.
 7. **GhostVault CyberSecurity™:** Sıfır-İz (Zero-Trace) Korumalı Sandbox ve 15 Saniyelik Fırsat Maliyeti Finansal Gösterim Motoru.
-8. **NUR Finance B™ & NUR Finance R™:** Çift Kademeli Asimetrik Kurumsal Yetkilendirme ve Geçiş Güvenlik Kapısı.
-9. **Zero-PII Multi-Chain Settlement Gateway™:** İsme ve Kişisel Veriye İhtiyaç Duymayan Kriptografik TXID Doğrulamalı Terminal Aktivasyonu.
-10. **NUR Legacy™ (Single Mothers & Next-Gen Tycoons):** Bekar Anneler İçin 40dk Disiplinli Çocuk Şirket Yönetim Simülasyonu & 255€/ay Üniversite/Kariyer Yol Haritası Motoru.
+8. **NUR Legacy™:** Genç Nesil Şirket Yönetim Simülasyonu & 255€/ay Üniversite/Kariyer Yol Haritası Motoru.
+9. **Tier-B & Tier-R Sovereign Gatekeeper™:** Çift Kademeli Asimetrik Kurumsal Yetkilendirme ve Geçiş Güvenlik Kapısı.
+10. **Zero-PII Multi-Chain Settlement Gateway™:** İsme ve Kişisel Veriye İhtiyaç Duymayan Kriptografik TXID Doğrulamalı Terminal Aktivasyonu.
 
 ---
 
-*Bu belge, projenin en üst hukuki ve idari beyannamesidir.*
+*Bu belge, nurfinans.com egemen ağının kurumsal, bağımsız ve sıfır-PII mülkiyet deklarasyonudur.*

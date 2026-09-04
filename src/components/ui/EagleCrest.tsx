@@ -347,15 +347,15 @@ export default function EagleCrest({
 
               <div className="grid grid-cols-2 gap-3 text-[11px]">
                 <div className="p-2.5 rounded bg-black/40 border border-white/10 space-y-1">
-                  <span className="font-bold text-cyan-300">👑 Yegane Hak Sahipleri</span>
+                  <span className="font-bold text-cyan-300">👑 Egemen Kuantitatif Mimari</span>
                   <p className="text-[10px] text-slate-400">
-                    Furkan Nur (Kurucu & Vasi) ve Umay Gül Nur (04.08.2017) mülkiyetindedir. İleride doğacak çocuklar için eşit hak klozları saklıdır.
+                    Merkeziyetsiz, bağımsız ve sınır ötesi kuantitatif işlem protokolü. Sıfır PII (Kişisel Verisiz) ve kriptografik mutlak egemenlik standardı.
                   </p>
                 </div>
                 <div className="p-2.5 rounded bg-black/40 border border-white/10 space-y-1">
                   <span className="font-bold text-emerald-300">🌐 Master Çatı Domain</span>
                   <p className="text-[10px] text-slate-400">
-                    nurfinans.com üzerinden tüm iştirakler, OMS/EMS işlem motoru ve 7 Büyüme Kolu yönetilir.
+                    nurfinans.com üzerinden tüm iştirakler, OMS/EMS işlem motoru ve 7 Büyüme Kolu otonom olarak yönetilir.
                   </p>
                 </div>
               </div>

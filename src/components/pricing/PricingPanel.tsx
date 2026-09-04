@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useIDEStore } from "@/stores/useIDEStore";
+import EagleCrest from "@/components/ui/EagleCrest";
 
 type Tab = "platform" | "terminals" | "managed";
 
@@ -108,17 +110,26 @@ const managedTiers = [
 
 export default function PricingPanel() {
   const [tab, setTab] = useState<Tab>("platform");
+  const { setActiveView } = useIDEStore();
 
   return (
     <div className="h-full overflow-y-auto" style={{ background: "var(--ag-bg)" }}>
       <div className="max-w-6xl mx-auto p-6">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--ag-text)" }}>
-            Nur Finance Plans
-          </h1>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <EagleCrest size={28} />
+            <h1 className="text-2xl font-bold" style={{ color: "var(--ag-text)" }}>
+              Nur Finance Sovereign Plans
+            </h1>
+          </div>
           <p className="text-sm max-w-xl mx-auto" style={{ color: "var(--ag-muted)" }}>
-            From free market data to the most powerful financial terminals on the planet.
+            Autonomous quantitative computing architecture. Cryptographic settlement via decentralized multi-chain gateway on <code>nurfinans.com</code>.
           </p>
+
+          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-[11px] text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span><strong>Zero-PII Standard:</strong> Multi-Chain Crypto Settlement (USDT / USDC on Polygon, Arbitrum, Ethereum, TRON, BTC)</span>
+          </div>
         </div>
 
         {/* Tab switcher */}
@@ -184,6 +195,7 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
+                  onClick={() => setActiveView("wallet-gateway")}
                   className="w-full py-2 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
                   style={{
                     background: tier.highlight ? tier.color : "transparent",
@@ -191,7 +203,7 @@ export default function PricingPanel() {
                     border: tier.highlight ? "none" : `1px solid ${tier.color}`,
                   }}
                 >
-                  {tier.price === "Free" ? "Get Started" : "Subscribe"}
+                  {tier.price === "Free" ? "Get Started" : "Subscribe via Crypto"}
                 </button>
               </div>
             ))}
@@ -262,6 +274,7 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
+                  onClick={() => setActiveView("verification-portal")}
                   className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
                   style={{ background: "#3b82f6", color: "#fff" }}
                 >
@@ -338,6 +351,7 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
+                  onClick={() => setActiveView("verification-portal")}
                   className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
                   style={{ background: "#f59e0b", color: "#000" }}
                 >
@@ -443,10 +457,11 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
+                  onClick={() => setActiveView("wallet-gateway")}
                   className="w-full py-2 rounded-lg text-xs font-semibold border transition-all hover:opacity-90"
                   style={{ borderColor: "var(--ag-accent)", color: "var(--ag-accent)" }}
                 >
-                  Start Investing
+                  Start Investing via Crypto
                 </button>
               </div>
             ))}

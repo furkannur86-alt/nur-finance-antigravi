@@ -19,7 +19,7 @@ interface StaffMember {
 
 interface AIChatMessage {
   id: string;
-  sender: "UMAY" | "ANTIGRAVITY" | "BABA" | "STAFF";
+  sender: "UMAY" | "ANTIGRAVITY" | "STAFF";
   text: string;
   timestamp: string;
   rewardEUR?: number;
@@ -61,12 +61,12 @@ const INITIAL_STAFF: StaffMember[] = [
   {
     id: "st-3",
     name: "Zeynep Kaya",
-    role: "İstanbul Ofis Asistanı & Koordinatör",
+    role: "İstanbul Ofis Koordinatörü",
     location: "İstanbul 🇹🇷",
     salaryEUR: 3500,
     status: "ONLINE",
     avatar: "👩‍💼",
-    dailyReport: "Umay Patronum, sabah kahvemi döktüğüm için raporu 10 dakika geciktirdim, çok özür dilerim ama piyasa verilerimiz kusursuz hazır!",
+    dailyReport: "Umay Hanım, piyasa verileri ve risk tablolarımız kusursuz şekilde hazırlandı!",
   },
   {
     id: "st-4",
@@ -133,14 +133,14 @@ export default function UmayBossTerminal() {
   const [chatMessages, setChatMessages] = useState<AIChatMessage[]>([
     {
       id: "msg-1",
-      sender: "BABA",
-      text: "Canım kızım Umay Gül Nur, ben tüm şirketi sana devredip emekliye ayrıldım. Kasana 100.000 € bıraktım. Antigravity AI ve New York'tan Tokyo'ya tüm çalışanlarımız senin emrinde!",
+      sender: "ANTIGRAVITY",
+      text: "Saygılar Patron Umay Gül Nur! 100.000 € başlangıç hazine fonunuz, Antigravity AI kuantitatif çekirdeği ve New York'tan Singapur'a tüm dünya ofislerimiz emirlerinizdedir.",
       timestamp: "09:00",
     },
     {
       id: "msg-2",
       sender: "ANTIGRAVITY",
-      text: "Saygılar Patron Umay Gül Nur! Fatih Sultan Mehmet Han 12 yaşında tahta çıkıp cihan fatihi olmuştu. Siz de 9 yaşınızda bu holdingin başındasınız ve satrançtaki stratejik aklınızla bu şirketi babanızdan çok daha büyük zirvelere taşıyacaksınız. Tüm dünya ofislerimiz emirlerinizi bekliyor!",
+      text: "Fatih Sultan Mehmet Han 12 yaşında tahta çıkıp cihan fatihi olmuştu. Siz de 9 yaşınızda bu holdingin başındasınız ve satrançtaki stratejik aklınızla bu şirketi zirvelere taşıyacaksınız. Tüm dünya ofislerimiz talimatlarınızı bekliyor!",
       timestamp: "09:01",
     },
   ]);
@@ -241,7 +241,7 @@ export default function UmayBossTerminal() {
     });
   };
 
-  // Safe Withdrawal Engine with Father Guardrail
+  // Safe Withdrawal Engine with Multi-Sig Protocol
   const handleWithdrawal = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(withdrawAmount);
@@ -249,10 +249,10 @@ export default function UmayBossTerminal() {
 
     if (amount > 10000 || amount > treasuryCash) {
       setParentApprovalRequired(true);
-      setWithdrawNotice(`⚠️ GÜVENLİK KORUMASI: ${amount.toLocaleString()} € tutarındaki büyük çekim talebi Babanın onay ekranına iletildi. Baban onayladığı anda banka kartına/ATM'ye aktarılacak.`);
+      setWithdrawNotice(`⚠️ GÜVENLİK PROTOKOLÜ: ${amount.toLocaleString()} € tutarındaki büyük çekim talebi Kuantitatif Güvenlik Konsensüsüne iletildi. Onaylandığı anda Black Banka Kartına aktarılacak.`);
       addNotification({
-        title: "Ebeveyn Onayı Bekleniyor",
-        message: `Umay'ın ${amount.toLocaleString()} € çekim talebi ebeveyn onayına gönderildi.`,
+        title: "Güvenlik Konsensüsü Devrede",
+        message: `Umay'ın ${amount.toLocaleString()} € çekim talebi çoklu imza (Multi-Sig) protokolüne iletildi.`,
         severity: "CRITICAL",
         category: "COMPLIANCE",
       });
@@ -285,14 +285,14 @@ export default function UmayBossTerminal() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-emerald-300 to-cyan-300">
-                UMAY GÜL NUR — HOLDİNG PATRONU & CEO TERMİNALİ
+                UMAY GÜL NUR — EGEMEN KUANTİTATİF BAŞKAN TERMİNALİ
               </span>
               <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                DOĞUM: 04.08.2017 &bull; YEGÂNE PATRON
+                DOĞUM: 04.08.2017 &bull; YEGÂNE BAŞKAN
               </span>
             </div>
             <p className="text-[11px] text-slate-300">
-              Baban Emekli Oldu &bull; 100.000 € Hazine, Antigravity AI ve Dünya Ofisleri Hizmetinde
+              nurfinans.com &bull; 100.000 € Hazine Fonu, Antigravity AI ve Global Masalar Hizmetinizde
             </p>
           </div>
         </div>
@@ -410,14 +410,12 @@ export default function UmayBossTerminal() {
                     className={`p-3.5 rounded-xl text-xs leading-relaxed max-w-[85%] ${
                       msg.sender === "UMAY"
                         ? "ml-auto bg-[var(--ag-accent)] text-black font-semibold rounded-br-none"
-                        : msg.sender === "BABA"
-                        ? "bg-amber-950/40 border border-amber-500/40 text-amber-200"
                         : "bg-white/10 border border-white/10 text-slate-200 rounded-bl-none"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1 opacity-75 font-mono text-[10px]">
                       <span>
-                        {msg.sender === "UMAY" ? "👑 Patron Umay Gül Nur" : msg.sender === "BABA" ? "💌 Emekli Baba" : "🤖 Antigravity AI (Genel Müdürün)"}
+                        {msg.sender === "UMAY" ? "👑 Patron Umay Gül Nur" : "🤖 Antigravity AI (Kuantitatif Direktör)"}
                       </span>
                       <span>{msg.timestamp}</span>
                     </div>
@@ -528,7 +526,7 @@ export default function UmayBossTerminal() {
                     Fatih Sultan Mehmet Han: 12 Yaşında Tahta Çıkan Cihan Fatihi
                   </h3>
                   <p className="text-xs text-slate-200 leading-relaxed">
-                    Umay Hanım, Fatih Sultan Mehmet Han tahta ilk oturduğunda sadece 12 yaşındaydı. Çevresindekiler onun genç olduğunu söylerken o, tarihin en büyük vizyonuyla İstanbul&apos;u fethetmeyi aklına koydu ve çağ açıp çağ kapattı. Siz de bugün 9 yaşındasınız ve bu holdingin başındasınız. Babanızdan aldığınız bu sermayeyi satrançtaki gibi stratejik hamlelerle yönetecek güçtesiniz!
+                    Umay Hanım, Fatih Sultan Mehmet Han tahta ilk oturduğunda sadece 12 yaşındaydı. Çevresindekiler onun genç olduğunu söylerken o, tarihin en büyük vizyonuyla İstanbul&apos;u fethetmeyi aklına koydu ve çağ açıp çağ kapattı. Siz de bugün 9 yaşındasınız ve bu holdingin başındasınız. Bu sermayeyi satrançtaki gibi stratejik hamlelerle yönetecek dehadadasınız!
                   </p>
                 </div>
               </div>
@@ -561,7 +559,7 @@ export default function UmayBossTerminal() {
                 <span className="text-3xl">🌍</span>
                 <div>
                   <h3 className="text-base font-bold text-white">Yabancı Dil Pratik Odası (New York & Frankfurt)</h3>
-                  <p className="text-xs text-slate-400">Dedesi ve Antigravity ile her gün 30 dakika İngilizce ve Almanca konuşma odası.</p>
+                  <p className="text-xs text-slate-400">Antigravity AI ve küresel direktörlerle her gün 30 dakika İngilizce ve Almanca liderlik pratik odası.</p>
                 </div>
               </div>
               <div className="py-4">
@@ -613,7 +611,7 @@ export default function UmayBossTerminal() {
                     className="w-full px-3 py-2.5 rounded bg-white/5 border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-emerald-400"
                   />
                   <span className="text-[10px] text-slate-400 mt-1 block">
-                    Küçük harçlıklar anında karta yüklenir. 10.000 € üzeri çekimler Babanın onayına gider.
+                    Küçük harçlıklar anında karta yüklenir. 10.000 € üzeri çekimler çoklu imza (Multi-Sig) güvenlik protokolüne gider.
                   </span>
                 </div>
 

@@ -18,7 +18,7 @@ export default function VerificationPanel() {
 
   const isReutersEligible = reutersMonths >= 12;
   const isBloombergHistoryEligible = bloombergMonths >= 12;
-  const isInviteCodeValid = inviteCode.trim().toUpperCase() === "NUR-VIP-2026" || inviteCode.trim().toUpperCase() === "SIMONS-FOUNDER";
+  const isInviteCodeValid = inviteCode.trim().toUpperCase() === "NUR-VIP-2026" || inviteCode.trim().toUpperCase() === "NUR-SOVEREIGN-KEY";
 
   const handleVerifySubmission = (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,12 +229,12 @@ export default function VerificationPanel() {
                     type="text"
                     value={inviteCode}
                     onChange={(e) => setInviteCode(e.target.value)}
-                    placeholder="e.g. NUR-VIP-2026 or SIMONS-FOUNDER"
+                    placeholder="e.g. NUR-VIP-2026 or NUR-SOVEREIGN-KEY"
                     className="w-full p-2 rounded text-xs bg-black/50 border text-white font-mono focus:outline-none focus:border-indigo-400"
                     style={{ borderColor: "var(--ag-border)" }}
                   />
                   <span className="text-[10px] text-[var(--ag-muted)] mt-1 block">
-                    Demo bypass codes: <code className="text-white">NUR-VIP-2026</code> or <code className="text-white">SIMONS-FOUNDER</code>
+                    Demo bypass codes: <code className="text-white">NUR-VIP-2026</code> or <code className="text-white">NUR-SOVEREIGN-KEY</code>
                   </span>
                 </div>
 
