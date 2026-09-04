@@ -1,0 +1,2151 @@
+<title>Nur Finance Terminal</title>
+<!-- NUR Finance Terminal v3.1 — Bloomberg 2027 / Reuters Eikon 2027 Authenticity Overhaul -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #000;
+    color: #e8e8e8;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.35;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: default;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .root {
+    display: grid;
+    grid-template-rows: 26px 1fr 24px 34px;
+    height: 100vh;
+  }
+
+  /* ── Top bar — Bloomberg style ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    padding: 0 8px;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .root.mode-bb .top-bar {
+    background: #1a1a4e;
+  }
+  .root.mode-ek .top-bar {
+    background: #003366;
+  }
+  .tb-brand {
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-right: 8px;
+    font-size: 11px;
+  }
+  .root.mode-bb .tb-brand { color: #ff8c00; }
+  .root.mode-ek .tb-brand { color: #fff; }
+  .tb-sep { color: #555; }
+  .tb-sec {
+    font-weight: 600;
+  }
+  .root.mode-bb .tb-sec { color: #ff8c00; }
+  .root.mode-ek .tb-sec { color: #60a5fa; }
+  .tb-ctx { color: #888; font-size: 10px; }
+  .tb-page {
+    font-weight: 700;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .root.mode-bb .tb-page {
+    color: #000;
+    background: #ff8c00;
+  }
+  .root.mode-bb .tb-page:hover { background: #ffaa33; }
+  .root.mode-ek .tb-page {
+    color: #fff;
+    background: #0066cc;
+  }
+  .root.mode-ek .tb-page:hover { background: #3388dd; }
+  .tb-right {
+    margin-left: auto;
+    display: flex;
+    gap: 12px;
+    color: #888;
+    align-items: center;
+    font-size: 10px;
+  }
+  .tb-live {
+    color: #22c55e;
+    font-weight: 600;
+  }
+  .tb-footer-brand {
+    color: #666;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Main output area ── */
+  .output-area {
+    overflow-y: auto;
+    padding: 6px 10px;
+    background: #0a0a0a;
+    scrollbar-width: thin;
+    scrollbar-color: #333 #0a0a0a;
+  }
+  .output-area::-webkit-scrollbar { width: 6px; }
+  .output-area::-webkit-scrollbar-track { background: #0a0a0a; }
+  .output-area::-webkit-scrollbar-thumb { background: #333; }
+
+  .line { white-space: pre; min-height: 18px; }
+  .c-amber { color: #ff8c00; }
+  .c-yellow { color: #ffcc00; }
+  .c-green { color: #22c55e; }
+  .c-red { color: #ef4444; }
+  .c-teal { color: #00d4aa; }
+  .c-blue { color: #60a5fa; }
+  .c-white { color: #e8e8e8; }
+  .c-gray { color: #666; }
+  .c-magenta { color: #e879f9; }
+  .c-cyan { color: #22d3ee; }
+  .c-bold { font-weight: 700; }
+  .c-dim { color: #444; }
+  .c-header { font-weight: 700; display: inline; padding: 0 2px; }
+  .root.mode-bb .c-header { color: #ff8c00; background: #1a1a00; }
+  .root.mode-ek .c-header { color: #60a5fa; background: #001428; }
+  .c-highlight { background: #1a2e1a; }
+  .c-accent {}
+  .root.mode-bb .c-accent { color: #ff8c00; }
+  .root.mode-ek .c-accent { color: #3b82f6; }
+
+  /* ── Command input bar ── */
+  .cmd-bar {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    padding: 0 8px;
+  }
+  .root.mode-bb .cmd-bar { background: #0c0c00; }
+  .root.mode-ek .cmd-bar { background: #000a14; }
+  .cmd-prompt {
+    font-weight: 700;
+    font-size: 12px;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+  .root.mode-bb .cmd-prompt { color: #ff8c00; }
+  .root.mode-ek .cmd-prompt { color: #3b82f6; }
+  .cmd-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #e8e8e8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    text-transform: uppercase;
+  }
+  .root.mode-bb .cmd-input { caret-color: #ff8c00; }
+  .root.mode-ek .cmd-input { caret-color: #3b82f6; }
+  .cmd-input::placeholder { color: #444; text-transform: none; }
+  .cmd-go {
+    font-weight: 700;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: none;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+    margin-left: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .root.mode-bb .cmd-go {
+    background: #22c55e;
+    color: #000;
+  }
+  .root.mode-bb .cmd-go:hover { background: #4ade80; }
+  .root.mode-ek .cmd-go {
+    background: #0066cc;
+    color: #fff;
+  }
+  .root.mode-ek .cmd-go:hover { background: #3388dd; }
+
+  /* ── Function keys — Bloomberg authentic ── */
+  .fkeys {
+    display: flex;
+    align-items: stretch;
+    border-top: 1px solid #333;
+    padding: 3px 4px;
+    gap: 2px;
+  }
+  .root.mode-bb .fkeys { background: #0a0a00; }
+  .root.mode-ek .fkeys { background: #000810; }
+  .fkey {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 0 6px;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: background 0.08s;
+    flex: 1;
+    max-width: 85px;
+    text-align: center;
+    border: 1px solid;
+  }
+  /* BB fkeys: yellow sector keys */
+  .root.mode-bb .fkey {
+    background: #2a2a00;
+    border-color: #444400;
+    color: #ffcc00;
+  }
+  .root.mode-bb .fkey:hover { background: #3a3a00; }
+  .root.mode-bb .fkey:active { background: #ffcc00; color: #000; }
+  /* BB green fkeys (EQUITY, GO) */
+  .root.mode-bb .fkey-green {
+    background: #002a00;
+    border-color: #004400;
+    color: #22c55e;
+  }
+  .root.mode-bb .fkey-green:hover { background: #003a00; }
+  .root.mode-bb .fkey-green:active { background: #22c55e; color: #000; }
+  /* BB red fkeys */
+  .root.mode-bb .fkey-red {
+    background: #2a0000;
+    border-color: #440000;
+    color: #ef4444;
+  }
+  .root.mode-bb .fkey-red:hover { background: #3a0000; }
+  /* EK fkeys: blue/teal */
+  .root.mode-ek .fkey {
+    background: #001428;
+    border-color: #003366;
+    color: #60a5fa;
+  }
+  .root.mode-ek .fkey:hover { background: #001e3c; }
+  .root.mode-ek .fkey:active { background: #3b82f6; color: #000; }
+  .root.mode-ek .fkey-green {
+    background: #002a14;
+    border-color: #004422;
+    color: #22c55e;
+  }
+  .root.mode-ek .fkey-green:hover { background: #003a1e; }
+  .root.mode-ek .fkey-red {
+    background: #280014;
+    border-color: #440022;
+    color: #ef4444;
+  }
+  .fkey-label {
+    font-size: 7px;
+    color: #555;
+    margin-right: 3px;
+  }
+  .fkey-spacer { flex: 0 0 8px; }
+
+  /* ── Boot ── */
+  .boot {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    z-index: 100;
+    overflow: hidden;
+    transition: opacity 0.4s;
+  }
+  .boot.done { opacity: 0; pointer-events: none; }
+  .boot-text {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ── Mode Selector ── */
+  .mode-select {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    transition: opacity 0.3s;
+  }
+  .mode-select.done { opacity: 0; pointer-events: none; }
+  .mode-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff8c00;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+  .mode-subtitle {
+    color: #666;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .mode-subtitle2 {
+    color: #444;
+    font-size: 9px;
+    margin-bottom: 36px;
+    letter-spacing: 0.5px;
+  }
+  .mode-cards {
+    display: flex;
+    gap: 24px;
+  }
+  .mode-card {
+    width: 280px;
+    border: 2px solid #333;
+    border-radius: 2px;
+    padding: 24px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .mode-card:hover { transform: translateY(-2px); }
+  .mode-card.card-bb { background: #0c0a00; }
+  .mode-card.card-bb:hover { border-color: #ff8c00; background: #141000; }
+  .mode-card.card-ek { background: #000812; }
+  .mode-card.card-ek:hover { border-color: #0066cc; background: #001024; }
+  .mode-card-brand {
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .mode-card-icon {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .mode-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .mode-card-desc {
+    font-size: 10px;
+    color: #888;
+    line-height: 1.5;
+  }
+  .mode-card-example {
+    margin-top: 14px;
+    font-size: 10px;
+    color: #555;
+    padding: 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 2px;
+    text-align: left;
+  }
+
+  /* ── Canvas containers ── */
+  .canvas-wrap {
+    margin: 4px 8px;
+    border: 1px solid #1a1a2e;
+    border-radius: 2px;
+    overflow: hidden;
+    background: #050510;
+    position: relative;
+  }
+  .canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .hmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 3px;
+    padding: 6px 8px;
+  }
+  .hmap-cell {
+    padding: 10px 8px;
+    border-radius: 2px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    cursor: default;
+    transition: opacity 0.1s;
+    position: relative;
+  }
+  .hmap-cell:hover { opacity: 0.85; }
+  .hmap-cell .hm-sym { font-weight: 700; font-size: 12px; }
+  .hmap-cell .hm-px { font-size: 10px; opacity: 0.9; }
+  .hmap-cell .hm-chg { font-weight: 700; font-size: 13px; }
+  .geo-hmap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 6px 8px;
+  }
+  .geo-cell {
+    padding: 12px 10px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    cursor: default;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .geo-cell .geo-name { font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+  .geo-cell .geo-risk { font-weight: 700; font-size: 18px; }
+  .geo-cell .geo-bar { height: 4px; border-radius: 2px; margin-top: 6px; }
+
+  button:focus-visible { outline: 1px solid #ff8c00; outline-offset: 1px; }
+  @media (prefers-reduced-motion: reduce) {
+    .boot { transition: none; }
+    .mode-select { transition: none; }
+    .mode-card { transition: none; }
+  }
+</style>
+
+<!-- Mode Selection Screen -->
+<div class="mode-select" id="mode-select">
+  <div class="mode-title">NUR FINANCE</div>
+  <div class="mode-subtitle">PROFESSIONAL TERMINAL</div>
+  <div class="mode-subtitle2">Select your preferred command language</div>
+  <div class="mode-cards">
+    <div class="mode-card card-bb" id="pick-bb" tabindex="0" role="button" aria-label="Bloomberg mode">
+      <div class="mode-card-brand" style="color:#888">BLOOMBERG PROFESSIONAL<sup>&#174;</sup></div>
+      <div class="mode-card-icon" style="color:#ff8c00">BB</div>
+      <div class="mode-card-name" style="color:#ff8c00">Bloomberg Terminal</div>
+      <div class="mode-card-desc">Bloomberg Professional command syntax<br>Industry standard for buy-side &amp; sell-side</div>
+      <div class="mode-card-example">
+        <span style="color:#ff8c00">AAPL US &lt;Equity&gt;</span> <span style="color:#555">&lt;GO&gt;</span><br>
+        <span style="color:#ff8c00">DES</span> description &nbsp; <span style="color:#ff8c00">GP</span> graph<br>
+        <span style="color:#ff8c00">TOP</span> news &nbsp; <span style="color:#ff8c00">WEI</span> indices
+      </div>
+    </div>
+    <div class="mode-card card-ek" id="pick-ek" tabindex="0" role="button" aria-label="Reuters Eikon mode">
+      <div class="mode-card-brand" style="color:#888">LSEG / REFINITIV</div>
+      <div class="mode-card-icon" style="color:#0066cc">EK</div>
+      <div class="mode-card-name" style="color:#3b82f6">Reuters Eikon</div>
+      <div class="mode-card-desc">Refinitiv Workspace / LSEG command syntax<br>Used by global banks &amp; sell-side desks</div>
+      <div class="mode-card-example">
+        <span style="color:#3b82f6">AAPL.O</span> <span style="color:#555">&#x23CE; Enter</span><br>
+        <span style="color:#3b82f6">QUOT</span> quote &nbsp; <span style="color:#3b82f6">GRAPH</span> chart<br>
+        <span style="color:#3b82f6">NEWS</span> headlines &nbsp; <span style="color:#3b82f6">INDX</span> indices
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="boot" id="boot" style="display:none">
+  <div class="boot-text" id="boot-text"></div>
+</div>
+
+<div class="root mode-bb" id="app" style="display:none">
+  <div class="top-bar">
+    <span class="tb-brand" id="tb-brand">BLOOMBERG PROFESSIONAL</span>
+    <span class="tb-sep">|</span>
+    <span class="tb-sec" id="tb-sec">COMMAND LINE</span>
+    <span class="tb-sep" id="tb-sep2">|</span>
+    <span class="tb-ctx" id="tb-ctx"></span>
+    <div class="tb-right">
+      <span class="tb-page" id="tb-mode" title="Click to switch mode">BB</span>
+      <span class="tb-live">&#9679; LIVE</span>
+      <span id="tb-time"></span>
+      <span class="tb-footer-brand" id="tb-footer">BLOOMBERG L.P.</span>
+    </div>
+  </div>
+
+  <div class="output-area" id="output"></div>
+
+  <div class="cmd-bar">
+    <span class="cmd-prompt" id="prompt">1&gt;</span>
+    <input class="cmd-input" id="cmd" placeholder="" autocomplete="off" spellcheck="false" />
+    <button class="cmd-go" id="go-btn">&lt;GO&gt;</button>
+  </div>
+
+  <div class="fkeys" id="fkeys"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// NUR FINANCE TERMINAL — Authentic Bloomberg & Eikon
+// + NUR Financial Language Extensions
+// ═══════════════════════════════════════════════════
+
+const MODES = {
+  BB: {
+    label: 'Bloomberg',
+    long: 'BLOOMBERG PROFESSIONAL',
+    short: 'BB',
+    promptColor: '#ff8c00',
+    brand: 'BLOOMBERG PROFESSIONAL',
+    footer: 'BLOOMBERG L.P.',
+    promptText: '1>',
+    goLabel: '<GO>',
+    accentClass: 'c-amber',
+    secFormat: (sym) => sym + ' US Equity',
+    secLabel: (sym) => sym + ' US <Equity>',
+    fkeys: [
+      { f:'F1',  cmd:'GOVT',   cls:'' },
+      { f:'F2',  cmd:'CORP',   cls:'' },
+      { f:'F3',  cmd:'MTGE',   cls:'' },
+      { f:'F4',  cmd:'M-MKT',  cls:'' },
+      { f:'F5',  cmd:'MUNI',   cls:'' },
+      { f:'F6',  cmd:'PFD',    cls:'' },
+      { f:'F7',  cmd:'EQUITY', cls:'fkey-green' },
+      { f:'F8',  cmd:'CMDTY',  cls:'' },
+      { f:'F9',  cmd:'INDEX',  cls:'' },
+      { f:'F10', cmd:'CRNCY',  cls:'' },
+      null,
+      { f:'F11', cmd:'MENU',   cls:'fkey-green' },
+      { f:'F12', cmd:'HELP',   cls:'fkey-red' },
+    ],
+    placeholder: 'AAPL US Equity <GO>',
+    cmds: {
+      des:'DES', gp:'GP', fa:'FA', anr:'ANR', hp:'HP', bq:'BQ',
+      top:'TOP', wei:'WEI', most:'MOST', port:'PORT', fxip:'FXIP',
+      eco:'ECO', secf:'SECF', equity:'EQUITY', help:'HELP',
+      curncy:'CRNCY', index:'INDEX', menu:'MENU', cls:'CLS',
+      bmap:'BMAP', cris:'CRIS', live:'LIVE', hmap:'HMAP',
+      nrsk:'NRSK', ncri:'NCRI', nnuc:'NNUC',
+    },
+  },
+  EK: {
+    label: 'Reuters Eikon',
+    long: 'LSEG WORKSPACE',
+    short: 'EK',
+    promptColor: '#3b82f6',
+    brand: 'LSEG WORKSPACE',
+    footer: 'LSEG / REFINITIV',
+    promptText: '>>',
+    goLabel: 'Enter',
+    accentClass: 'c-blue',
+    secFormat: (sym) => sym + '.O',
+    secLabel: (sym) => sym + '.O',
+    fkeys: [
+      { f:'F1',  cmd:'GOVT',    cls:'' },
+      { f:'F2',  cmd:'CORP',    cls:'' },
+      { f:'F3',  cmd:'MBS',     cls:'' },
+      { f:'F4',  cmd:'MM',      cls:'' },
+      { f:'F5',  cmd:'MUNI',    cls:'' },
+      { f:'F6',  cmd:'PFD',     cls:'' },
+      { f:'F7',  cmd:'EQ',      cls:'fkey-green' },
+      { f:'F8',  cmd:'COM',     cls:'' },
+      { f:'F9',  cmd:'INDX',    cls:'' },
+      { f:'F10', cmd:'FX',      cls:'' },
+      null,
+      { f:'F11', cmd:'APPS',    cls:'fkey-green' },
+      { f:'F12', cmd:'HELP',    cls:'fkey-red' },
+    ],
+    placeholder: 'AAPL.O &#x23CE;',
+    cmds: {
+      des:'QUOT', gp:'GRAPH', fa:'FA', anr:'REC', hp:'HPD', bq:'Q',
+      top:'NEWS', wei:'INDX', most:'ACT', port:'PORT', fxip:'FXALL',
+      eco:'ECODAY', secf:'SEARCH', equity:'EQ', help:'HELP',
+      curncy:'FX', index:'INDX', menu:'APPS', cls:'CLS',
+      bmap:'GEOP', cris:'CONFLICT', live:'LIVE', hmap:'SMAP',
+      nrsk:'NRSK', ncri:'NCRI', nnuc:'NNUC',
+    },
+  },
+};
+
+const EIKON_MAP = {
+  'QUOT':'des', 'GRAPH':'gp', 'G':'gp', 'FA':'fa', 'REC':'anr',
+  'HPD':'hp', 'Q':'bq', 'NEWS':'top', 'N':'top', 'INDX':'wei',
+  'ACT':'act', 'MOVERS':'act', 'PORT':'port', 'PORTFOLIO':'port',
+  'FXALL':'fxip', 'FX':'fxip', 'ECODAY':'eco', 'SEARCH':'secf',
+  'EQ':'equity', 'HELP':'help', 'APPS':'help', 'CLS':'cls', 'CLEAR':'cls',
+  'MBS':'stub', 'MM':'stub', 'COM':'stub', 'MUNI':'stub', 'PFD':'stub', 'GOVT':'stub', 'CORP':'stub',
+  'GEOP':'bmap', 'CONFLICT':'cris', 'LIVE':'live',
+  'SMAP':'hmap', 'HEAT':'hmap',
+  'NRSK':'nrsk', 'NCRI':'ncri', 'NNUC':'nnuc',
+};
+
+const BLOOMBERG_MAP = {
+  'DES':'des', 'GP':'gp', 'FA':'fa', 'ANR':'anr', 'HP':'hp', 'BQ':'bq',
+  'TOP':'top', 'NEWS':'top', 'WEI':'wei', 'MOST':'act', 'MOVERS':'act', 'MOVE':'act',
+  'PORT':'port', 'PORTFOLIO':'port', 'FXIP':'fxip', 'FX':'fxip',
+  'ECO':'eco', 'HELP':'help', 'MENU':'help', 'EQUITY':'equity',
+  'CRNCY':'fxip', 'CURRENCY':'fxip', 'INDEX':'wei',
+  'CLS':'cls', 'CLEAR':'cls',
+  'GOVT':'stub', 'CORP':'stub', 'MTGE':'stub', 'M-MKT':'stub', 'MUNI':'stub',
+  'PFD':'stub', 'CMDTY':'stub',
+  'BMAP':'bmap', 'CRIS':'cris', 'LIVE':'live',
+  'HMAP':'hmap', 'HEAT':'hmap',
+  'NRSK':'nrsk', 'NCRI':'ncri', 'NNUC':'nnuc',
+};
+
+const RIC_MAP = {
+  'AAPL.O':'AAPL US EQUITY', 'MSFT.O':'MSFT US EQUITY', 'NVDA.O':'NVDA US EQUITY',
+  'GOOGL.O':'GOOGL US EQUITY', 'AMZN.O':'AMZN US EQUITY', 'TSLA.O':'TSLA US EQUITY',
+  'META.O':'META US EQUITY', 'JPM.N':'JPM US EQUITY',
+  'BTC=':'BTC CURNCY', 'ETH=':'ETH CURNCY',
+};
+
+const KEY_TO_RIC = {};
+for (const [ric, key] of Object.entries(RIC_MAP)) KEY_TO_RIC[key] = ric;
+
+let MODE = 'BB';
+let currentSec = null;
+let cmdHistory = [];
+let histIdx = -1;
+let pageNum = 1;
+
+const DB = {
+  securities: {
+    'AAPL US EQUITY':   { name:'Apple Inc', px:198.45, chg:2.34, pct:1.19, open:196.80, hi:199.12, lo:195.90, vol:54200000, mktcap:'3.08T', pe:31.2, div:0.96, beta:1.28, sector:'Technology', industry:'Consumer Electronics', exch:'NASDAQ', ccy:'USD', shares:'15.5B', yr_hi:199.62, yr_lo:164.08, eps:6.42, rating:'Outperform', ric:'AAPL.O' },
+    'MSFT US EQUITY':   { name:'Microsoft Corp', px:425.80, chg:-3.12, pct:-0.73, open:428.50, hi:429.90, lo:424.10, vol:22100000, mktcap:'3.16T', pe:37.8, div:3.00, beta:0.89, sector:'Technology', industry:'Software', exch:'NASDAQ', ccy:'USD', shares:'7.43B', yr_hi:430.82, yr_lo:309.45, eps:11.29, rating:'Buy', ric:'MSFT.O' },
+    'NVDA US EQUITY':   { name:'NVIDIA Corp', px:875.30, chg:18.76, pct:2.19, open:860.00, hi:882.50, lo:856.20, vol:41500000, mktcap:'2.16T', pe:72.4, div:0.16, beta:1.72, sector:'Technology', industry:'Semiconductors', exch:'NASDAQ', ccy:'USD', shares:'2.47B', yr_hi:974.00, yr_lo:392.30, eps:12.06, rating:'Strong Buy', ric:'NVDA.O' },
+    'GOOGL US EQUITY':  { name:'Alphabet Inc', px:176.92, chg:1.08, pct:0.61, open:175.50, hi:177.80, lo:174.90, vol:18700000, mktcap:'2.18T', pe:25.6, div:0.80, beta:1.06, sector:'Technology', industry:'Internet Services', exch:'NASDAQ', ccy:'USD', shares:'12.3B', yr_hi:180.40, yr_lo:120.21, eps:6.91, rating:'Buy', ric:'GOOGL.O' },
+    'AMZN US EQUITY':   { name:'Amazon.com Inc', px:185.67, chg:-0.93, pct:-0.50, open:186.20, hi:187.40, lo:184.50, vol:31200000, mktcap:'1.93T', pe:61.2, div:0, beta:1.15, sector:'Consumer Discretionary', industry:'E-Commerce', exch:'NASDAQ', ccy:'USD', shares:'10.4B', yr_hi:189.77, yr_lo:118.35, eps:3.03, rating:'Outperform', ric:'AMZN.O' },
+    'TSLA US EQUITY':   { name:'Tesla Inc', px:248.15, chg:5.43, pct:2.24, open:243.50, hi:250.80, lo:241.20, vol:62800000, mktcap:'790B', pe:78.5, div:0, beta:2.08, sector:'Consumer Discretionary', industry:'Auto Manufacturers', exch:'NASDAQ', ccy:'USD', shares:'3.18B', yr_hi:299.29, yr_lo:138.80, eps:3.16, rating:'Hold', ric:'TSLA.O' },
+    'META US EQUITY':   { name:'Meta Platforms', px:505.20, chg:-1.87, pct:-0.37, open:507.00, hi:510.30, lo:503.10, vol:14500000, mktcap:'1.29T', pe:27.4, div:2.00, beta:1.24, sector:'Technology', industry:'Internet Media', exch:'NASDAQ', ccy:'USD', shares:'2.55B', yr_hi:542.81, yr_lo:279.40, eps:18.43, rating:'Buy', ric:'META.O' },
+    'JPM US EQUITY':    { name:'JPMorgan Chase', px:198.34, chg:0.76, pct:0.38, open:197.80, hi:199.50, lo:196.90, vol:8900000, mktcap:'571B', pe:11.8, div:4.60, beta:1.08, sector:'Financials', industry:'Banks', exch:'NYSE', ccy:'USD', shares:'2.88B', yr_hi:200.94, yr_lo:135.19, eps:16.81, rating:'Buy', ric:'JPM.N' },
+    'BTC CURNCY':       { name:'Bitcoin', px:67482.30, chg:1248.50, pct:1.88, open:66500, hi:68200, lo:65800, vol:28400000000, mktcap:'1.32T', sector:'Digital Assets', ric:'BTC=' },
+    'ETH CURNCY':       { name:'Ethereum', px:3481.75, chg:-42.30, pct:-1.20, open:3520, hi:3550, lo:3440, vol:12100000000, mktcap:'418B', sector:'Digital Assets', ric:'ETH=' },
+  },
+  indices: {
+    'SPX':  { name:'S&P 500',     px:5248.49, chg:22.07, pct:0.42, ric:'.SPX' },
+    'INDU': { name:'Dow Jones',   px:39150.33, chg:-48.20, pct:-0.12, ric:'.DJI' },
+    'CCMP': { name:'Nasdaq Comp', px:16742.39, chg:108.91, pct:0.65, ric:'.IXIC' },
+    'NDX':  { name:'Nasdaq 100',  px:18432.10, chg:87.35, pct:0.48, ric:'.NDX' },
+    'RTY':  { name:'Russell 2000',px:2065.28, chg:12.43, pct:0.61, ric:'.RUT' },
+    'UKX':  { name:'FTSE 100',    px:8205.11, chg:-15.40, pct:-0.19, ric:'.FTSE' },
+    'DAX':  { name:'DAX',         px:18384.35, chg:72.18, pct:0.39, ric:'.GDAXI' },
+    'NKY':  { name:'Nikkei 225',  px:38274.05, chg:187.90, pct:0.49, ric:'.N225' },
+    'HSI':  { name:'Hang Seng',   px:18475.92, chg:-142.30, pct:-0.76, ric:'.HSI' },
+    'SHCOMP':{ name:'Shanghai Comp',px:3088.64, chg:8.72, pct:0.28, ric:'.SSEC' },
+    'XU100':{ name:'BIST 100',    px:10245.87, chg:124.50, pct:1.23, ric:'.XU100' },
+  },
+  fx: {
+    'EUR/USD': { px:1.0847, chg:0.0012, ric:'EUR=' },
+    'GBP/USD': { px:1.2715, chg:-0.0023, ric:'GBP=' },
+    'USD/JPY': { px:154.32, chg:0.45, ric:'JPY=' },
+    'USD/TRY': { px:32.4850, chg:0.073, ric:'TRY=' },
+    'USD/CHF': { px:0.8812, chg:-0.0008, ric:'CHF=' },
+    'AUD/USD': { px:0.6534, chg:0.0018, ric:'AUD=' },
+  },
+  geopolitical: {
+    defcon: 3,
+    globalRiskIndex: 72.4,
+    riskTrend: +2.1,
+    nuclearThreatLevel: 'ELEVATED',
+    lastUpdate: '2026-08-29 14:35 UTC',
+    regions: [
+      { region:'Eastern Europe',   risk:89, status:'CRITICAL',  conflicts:3, fatalities:'142K+', trend:'+4.2', nuclear: true },
+      { region:'Middle East',      risk:82, status:'CRITICAL',  conflicts:5, fatalities:'98K+',  trend:'+1.8', nuclear: false },
+      { region:'East Asia',        risk:68, status:'HIGH',      conflicts:1, fatalities:'—',     trend:'+6.5', nuclear: true },
+      { region:'Sub-Saharan Africa',risk:74, status:'HIGH',     conflicts:12,fatalities:'67K+',  trend:'-2.1', nuclear: false },
+      { region:'South Asia',       risk:58, status:'ELEVATED',  conflicts:2, fatalities:'12K+',  trend:'-0.5', nuclear: true },
+      { region:'Latin America',    risk:45, status:'MODERATE',  conflicts:3, fatalities:'8K+',   trend:'+0.3', nuclear: false },
+      { region:'Southeast Asia',   risk:38, status:'MODERATE',  conflicts:1, fatalities:'2K+',   trend:'-1.2', nuclear: false },
+      { region:'Western Europe',   risk:22, status:'LOW',       conflicts:0, fatalities:'—',     trend:'+0.8', nuclear: false },
+      { region:'North America',    risk:18, status:'LOW',       conflicts:0, fatalities:'—',     trend:'+0.2', nuclear: false },
+    ],
+    conflicts: [
+      { name:'Russia-Ukraine War',       type:'Interstate',   start:'2022-02-24', parties:'RUS vs UKR/NATO', fatalities:'~350,000', status:'ACTIVE — HIGH INTENSITY', region:'Eastern Europe', nuclear:'RISK PRESENT' },
+      { name:'Israel-Palestine',         type:'Asymmetric',   start:'2023-10-07', parties:'ISR vs Hamas/PIJ', fatalities:'~145,000', status:'ACTIVE — HIGH INTENSITY', region:'Middle East', nuclear:'LOW' },
+      { name:'Sudan Civil War',          type:'Civil War',    start:'2023-04-15', parties:'SAF vs RSF', fatalities:'~50,000', status:'ACTIVE — HIGH INTENSITY', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'Myanmar Civil War',        type:'Civil War',    start:'2021-02-01', parties:'Junta vs NUG/EAO', fatalities:'~35,000', status:'ACTIVE — MEDIUM', region:'Southeast Asia', nuclear:'NONE' },
+      { name:'Ethiopia (Amhara/Oromia)', type:'Internal',     start:'2023-08-01', parties:'ENDF vs Fano/OLA', fatalities:'~15,000', status:'ACTIVE — MEDIUM', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'Taiwan Strait Tensions',   type:'Standoff',     start:'2022-08-01', parties:'PRC vs ROC/US', fatalities:'—', status:'TENSE — ESCALATION RISK', region:'East Asia', nuclear:'RISK PRESENT' },
+      { name:'DR Congo (M23)',           type:'Insurgency',   start:'2022-03-01', parties:'FARDC vs M23/Rwanda', fatalities:'~12,000', status:'ACTIVE — MEDIUM', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'India-Pakistan (LoC)',     type:'Standoff',     start:'1947-01-01', parties:'IND vs PAK', fatalities:'Periodic', status:'TENSE — MONITORED', region:'South Asia', nuclear:'RISK PRESENT' },
+      { name:'Yemen (Houthi)',           type:'Civil/Proxy',  start:'2014-09-01', parties:'Saudi/UAE vs Houthis', fatalities:'~150,000', status:'LOW INTENSITY', region:'Middle East', nuclear:'NONE' },
+      { name:'Sahel (Mali/Burkina/Niger)',type:'Insurgency',  start:'2012-01-01', parties:'Juntas vs JNIM/ISGS', fatalities:'~30,000', status:'ACTIVE — MEDIUM', region:'Sub-Saharan Africa', nuclear:'NONE' },
+      { name:'Colombia (ELN/FARC-EP)',   type:'Insurgency',   start:'1964-01-01', parties:'GOV vs ELN/dissidents', fatalities:'Ongoing', status:'LOW INTENSITY', region:'Latin America', nuclear:'NONE' },
+      { name:'North Korea Provocations', type:'Standoff',     start:'1953-07-27', parties:'DPRK vs ROK/US/JPN', fatalities:'—', status:'TENSE — NUCLEAR CAPABLE', region:'East Asia', nuclear:'CRITICAL' },
+    ],
+    nuclearStates: [
+      { state:'Russia',   warheads:5580, deployed:1710, status:'LAUNCH-READY', posture:'High Alert', doctrine:'First-use reserved' },
+      { state:'USA',      warheads:5044, deployed:1670, status:'LAUNCH-READY', posture:'High Alert', doctrine:'Calculated ambiguity' },
+      { state:'China',    warheads:500,  deployed:0,    status:'STOCKPILE',    posture:'Expanding', doctrine:'No-first-use declared' },
+      { state:'France',   warheads:290,  deployed:280,  status:'LAUNCH-READY', posture:'Stable', doctrine:'Vital interests' },
+      { state:'UK',       warheads:225,  deployed:120,  status:'LAUNCH-READY', posture:'Stable', doctrine:'Extreme self-defence' },
+      { state:'Pakistan', warheads:170,  deployed:'?',  status:'STOCKPILE',    posture:'Expanding', doctrine:'First-use reserved' },
+      { state:'India',    warheads:172,  deployed:'?',  status:'STOCKPILE',    posture:'Expanding', doctrine:'No-first-use declared' },
+      { state:'Israel',   warheads:90,   deployed:'?',  status:'UNDECLARED',   posture:'Opaque', doctrine:'Ambiguity policy' },
+      { state:'N. Korea', warheads:50,   deployed:'?',  status:'EXPANDING',    posture:'Aggressive', doctrine:'Pre-emptive declared' },
+    ],
+  },
+  eodhd: {
+    apiKey: '6a632b4208f659.13200749',
+    baseUrl: 'https://eodhd.com/api',
+  },
+};
+
+// ── Output helpers ──
+const out = document.getElementById('output');
+
+function accent() { return MODE === 'BB' ? 'c-amber' : 'c-blue'; }
+function accentHex() { return MODE === 'BB' ? '#ff8c00' : '#3b82f6'; }
+function headerBg() { return MODE === 'BB' ? '#1a1a00' : '#001428'; }
+
+function print(text, cls='') {
+  const d = document.createElement('div');
+  d.className = 'line';
+  if (cls) d.innerHTML = text; else d.textContent = text;
+  out.appendChild(d);
+  out.scrollTop = out.scrollHeight;
+}
+
+function printHTML(html) {
+  const d = document.createElement('div');
+  d.className = 'line';
+  d.innerHTML = html;
+  out.appendChild(d);
+  out.scrollTop = out.scrollHeight;
+}
+
+function cls() { out.innerHTML = ''; pageNum = 1; }
+
+function pad(s, n, right) {
+  s = String(s);
+  if (right) return s.length >= n ? s : ' '.repeat(n - s.length) + s;
+  return s.length >= n ? s : s + ' '.repeat(n - s.length);
+}
+
+function fmtPx(p, dec=2) {
+  if (p >= 10000) return p.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  return p.toFixed(dec);
+}
+
+function chgColor(v) { return v > 0 ? 'c-green' : v < 0 ? 'c-red' : 'c-white'; }
+function chgSign(v) { return v > 0 ? '+' : ''; }
+
+function secDisplay(key) {
+  if (MODE === 'EK') return KEY_TO_RIC[key] || key;
+  return key;
+}
+
+function secDisplayFancy(key) {
+  if (MODE === 'EK') return KEY_TO_RIC[key] || key;
+  const parts = key.split(' ');
+  if (parts.length >= 3) return parts[0] + ' ' + parts[1] + ' <' + parts[2] + '>';
+  return key;
+}
+
+function setContext(secKey, label) {
+  currentSec = secKey;
+  document.getElementById('tb-sec').textContent = label || (secKey ? secDisplay(secKey) : 'COMMAND LINE');
+}
+
+function cmdName(fn) { return MODES[MODE].cmds[fn] || fn.toUpperCase(); }
+
+function pageHeader(title, rightLabel) {
+  const a = accent();
+  const pg = pageNum + '>';
+  const m = MODES[MODE];
+  printHTML(`<span class="${a} c-bold">  ${title}${' '.repeat(Math.max(2, 60 - title.length - rightLabel.length))}${rightLabel}</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+}
+
+function pageFooter(extra) {
+  const m = MODES[MODE];
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  if (extra) printHTML(`  <span class="c-gray">${extra}</span>`);
+  printHTML(`  <span class="c-dim">${m.footer} — ${new Date().toLocaleTimeString('en-US',{hour12:false})} EST</span>`);
+}
+
+// ── Screens ──
+
+function screenDES(key) {
+  const s = DB.securities[key];
+  if (!s) { print('Security not found.'); return; }
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key));
+  cls();
+  const title = MODE === 'EK' ? 'QUOTE OVERVIEW' : 'DESCRIPTION';
+  pageHeader(title, disp);
+  printHTML(`  <span class="c-white c-bold">${s.name}</span>`);
+  if (MODE === 'EK') {
+    printHTML(`  <span class="c-gray">RIC: ${s.ric||secDisplay(key)}    Exchange: ${s.exch||'N/A'}    Currency: ${s.ccy||'N/A'}</span>`);
+  } else {
+    printHTML(`  <span class="c-gray">Exchange: ${s.exch||'N/A'}    Currency: ${s.ccy||'N/A'}    Sector: ${s.sector||'N/A'}</span>`);
+  }
+  printHTML(`  <span class="c-gray">${MODE==='EK'?'Sector':'Industry'}: ${MODE==='EK'?s.sector:s.industry||'N/A'}</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">PRICE DATA</span>`);
+  printHTML(`  Last Price      <span class="c-teal c-bold">${fmtPx(s.px)}</span>     Change   <span class="${chgColor(s.chg)}">${chgSign(s.chg)}${s.chg.toFixed(2)} (${chgSign(s.pct)}${s.pct.toFixed(2)}%)</span>`);
+  printHTML(`  Open             ${fmtPx(s.open)}     High     ${fmtPx(s.hi)}`);
+  printHTML(`  Low              ${fmtPx(s.lo)}       Volume   ${(s.vol/1e6).toFixed(1)}M`);
+  printHTML(`  52-Wk High       ${fmtPx(s.yr_hi||0)}     52-Wk Low  ${fmtPx(s.yr_lo||0)}`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">FUNDAMENTALS</span>`);
+  printHTML(`  Market Cap       <span class="c-white">${s.mktcap||'N/A'}</span>       P/E Ratio    <span class="c-white">${s.pe||'N/A'}</span>`);
+  printHTML(`  EPS              <span class="c-white">${s.eps||'N/A'}</span>         Dividend     <span class="c-white">${s.div||'0.00'}</span>`);
+  printHTML(`  Beta             <span class="c-white">${s.beta||'N/A'}</span>         Shares Out   <span class="c-white">${s.shares||'N/A'}</span>`);
+  printHTML(`  Analyst Rating   <span class="c-teal c-bold">${s.rating||'N/A'}</span>`);
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+
+  printHTML(`  <span class="${accent()} c-bold">30-DAY PRICE TREND</span>`);
+  const miniWrap = document.createElement('div');
+  miniWrap.className = 'canvas-wrap';
+  miniWrap.style.maxWidth = '500px';
+  const miniCvs = document.createElement('canvas');
+  miniCvs.width = 500; miniCvs.height = 120;
+  miniWrap.appendChild(miniCvs);
+  out.appendChild(miniWrap);
+  out.scrollTop = out.scrollHeight;
+
+  const mctx = miniCvs.getContext('2d');
+  mctx.fillStyle = '#050510';
+  mctx.fillRect(0, 0, 500, 120);
+
+  const miniPts = 30;
+  const miniData = [];
+  let mp = s.px * (0.95 + Math.random()*0.04);
+  for (let i = 0; i < miniPts; i++) {
+    mp += (Math.random()-0.47) * s.px * 0.012;
+    miniData.push(mp);
+  }
+  miniData[miniPts-1] = s.px;
+  const mmn = Math.min(...miniData), mmx = Math.max(...miniData);
+  const mrange = mmx - mmn || 1;
+  const mPadL = 55, mPadR = 10, mPadT = 10, mPadB = 18;
+  const mW = 500 - mPadL - mPadR;
+  const mH = 120 - mPadT - mPadB;
+
+  mctx.strokeStyle = '#1a1a2e';
+  mctx.lineWidth = 0.5;
+  for (let i = 0; i <= 3; i++) {
+    const y = mPadT + (i / 3) * mH;
+    mctx.beginPath(); mctx.moveTo(mPadL, y); mctx.lineTo(500 - mPadR, y); mctx.stroke();
+    const val = mmx - (i / 3) * mrange;
+    mctx.fillStyle = '#555';
+    mctx.font = '9px JetBrains Mono';
+    mctx.textAlign = 'right';
+    mctx.fillText(fmtPx(val), mPadL - 4, y + 3);
+  }
+
+  const trendUp = s.chg >= 0;
+  const mGrad = mctx.createLinearGradient(0, mPadT, 0, mPadT + mH);
+  mGrad.addColorStop(0, trendUp ? 'rgba(0,212,170,0.3)' : 'rgba(239,68,68,0.3)');
+  mGrad.addColorStop(1, trendUp ? 'rgba(0,212,170,0.02)' : 'rgba(239,68,68,0.02)');
+  mctx.fillStyle = mGrad;
+  mctx.beginPath();
+  for (let i = 0; i < miniPts; i++) {
+    const x = mPadL + (i / (miniPts-1)) * mW;
+    const y = mPadT + (1 - (miniData[i] - mmn) / mrange) * mH;
+    i === 0 ? mctx.moveTo(x, y) : mctx.lineTo(x, y);
+  }
+  mctx.lineTo(mPadL + mW, mPadT + mH);
+  mctx.lineTo(mPadL, mPadT + mH);
+  mctx.closePath();
+  mctx.fill();
+
+  mctx.strokeStyle = trendUp ? '#00d4aa' : '#ef4444';
+  mctx.lineWidth = 2;
+  mctx.beginPath();
+  for (let i = 0; i < miniPts; i++) {
+    const x = mPadL + (i / (miniPts-1)) * mW;
+    const y = mPadT + (1 - (miniData[i] - mmn) / mrange) * mH;
+    i === 0 ? mctx.moveTo(x, y) : mctx.lineTo(x, y);
+  }
+  mctx.stroke();
+
+  const endX = mPadL + mW;
+  const endY = mPadT + (1 - (s.px - mmn) / mrange) * mH;
+  mctx.fillStyle = trendUp ? '#00d4aa' : '#ef4444';
+  mctx.beginPath();
+  mctx.arc(endX, endY, 3, 0, Math.PI * 2);
+  mctx.fill();
+  mctx.fillStyle = trendUp ? '#00d4aa' : '#ef4444';
+  mctx.font = 'bold 11px JetBrains Mono';
+  mctx.textAlign = 'left';
+  mctx.fillText(fmtPx(s.px), endX - 50, endY - 8);
+  mctx.fillStyle = '#444';
+  mctx.font = '8px JetBrains Mono';
+  mctx.textAlign = 'center';
+  mctx.fillText('30D ago', mPadL + 10, 120 - 4);
+  mctx.fillText('15D', mPadL + mW/2, 120 - 4);
+  mctx.fillText('Today', mPadL + mW - 10, 120 - 4);
+
+  const gpCmd = cmdName('gp'), faCmd = cmdName('fa'), anrCmd = cmdName('anr');
+  pageFooter(`Type ${gpCmd} for chart, ${faCmd} for financials, ${anrCmd} for analyst recs`);
+}
+
+function screenGP(key) {
+  const s = DB.securities[key];
+  if (!s) { print('Security not found.'); return; }
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key) + ' ' + cmdName('gp'));
+  cls();
+  const label = MODE === 'EK' ? 'GRAPH' : 'PRICE GRAPH';
+  pageHeader(label + '  (90 Day)', disp);
+
+  const days = 90;
+  const ohlc = [];
+  let p = s.px * (0.85 + Math.random()*0.1);
+  for (let i = 0; i < days; i++) {
+    const o = p;
+    const move = (Math.random()-0.47) * s.px * 0.02;
+    const c = o + move;
+    const h = Math.max(o,c) + Math.random()*s.px*0.008;
+    const l = Math.min(o,c) - Math.random()*s.px*0.008;
+    ohlc.push({o,h,l,c});
+    p = c;
+  }
+  ohlc[days-1].c = s.px;
+
+  const allPx = ohlc.flatMap(d => [d.h, d.l]);
+  const mn = Math.min(...allPx);
+  const mx = Math.max(...allPx);
+  const range = mx - mn || 1;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'canvas-wrap';
+  const cvs = document.createElement('canvas');
+  const W = 760, H = 320;
+  cvs.width = W; cvs.height = H;
+  wrap.appendChild(cvs);
+  out.appendChild(wrap);
+  out.scrollTop = out.scrollHeight;
+
+  const ctx = cvs.getContext('2d');
+  const padL = 70, padR = 16, padT = 20, padB = 30;
+  const cw = W - padL - padR;
+  const ch = H - padT - padB;
+  const toX = (i) => padL + (i / (days-1)) * cw;
+  const toY = (v) => padT + (1 - (v - mn) / range) * ch;
+
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 0.5;
+  const gridSteps = 6;
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = padT + (i / gridSteps) * ch;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    const val = mx - (i / gridSteps) * range;
+    ctx.fillStyle = '#666';
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtPx(val), padL - 6, y + 3);
+  }
+
+  ctx.fillStyle = '#555';
+  ctx.textAlign = 'center';
+  ctx.font = '9px JetBrains Mono, monospace';
+  const xlabels = ['90D','75D','60D','45D','30D','15D','Today'];
+  for (let i = 0; i < xlabels.length; i++) {
+    const x = padL + (i / (xlabels.length-1)) * cw;
+    ctx.fillText(xlabels[i], x, H - 8);
+  }
+
+  ctx.strokeStyle = 'rgba(255,140,0,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  for (let i = 19; i < days; i++) {
+    const avg = ohlc.slice(i-19, i+1).reduce((a,d)=>a+d.c,0) / 20;
+    const x = toX(i), y = toY(avg);
+    i === 19 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + ch);
+  grad.addColorStop(0, 'rgba(0,212,170,0.25)');
+  grad.addColorStop(1, 'rgba(0,212,170,0.01)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(ohlc[0].c));
+  for (let i = 1; i < days; i++) ctx.lineTo(toX(i), toY(ohlc[i].c));
+  ctx.lineTo(toX(days-1), padT + ch);
+  ctx.lineTo(toX(0), padT + ch);
+  ctx.closePath();
+  ctx.fill();
+
+  const barW = Math.max(2, cw / days * 0.6);
+  for (let i = 0; i < days; i++) {
+    const d = ohlc[i];
+    const x = toX(i);
+    const bull = d.c >= d.o;
+    ctx.strokeStyle = bull ? '#22c55e' : '#ef4444';
+    ctx.fillStyle = bull ? '#22c55e' : '#ef4444';
+    ctx.beginPath();
+    ctx.moveTo(x, toY(d.h));
+    ctx.lineTo(x, toY(d.l));
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    const top = toY(Math.max(d.o, d.c));
+    const bot = toY(Math.min(d.o, d.c));
+    const bodyH = Math.max(1, bot - top);
+    ctx.fillRect(x - barW/2, top, barW, bodyH);
+  }
+
+  const lastY = toY(s.px);
+  ctx.strokeStyle = accentHex();
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(padL, lastY); ctx.lineTo(W - padR, lastY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = accentHex();
+  ctx.fillRect(W - padR, lastY - 8, padR, 16);
+  ctx.fillStyle = '#000';
+  ctx.font = 'bold 8px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.fillText(fmtPx(s.px,0), W - padR + 2, lastY + 3);
+
+  const maxVol = Math.max(...ohlc.map((_,i) => (s.vol * (0.5 + Math.random()*0.8))));
+  for (let i = 0; i < days; i++) {
+    const vol = s.vol * (0.5 + Math.random()*0.8);
+    const vh = (vol / maxVol) * 30;
+    const bull = ohlc[i].c >= ohlc[i].o;
+    ctx.fillStyle = bull ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)';
+    ctx.fillRect(toX(i) - barW/2, padT + ch - vh, barW, vh);
+  }
+
+  ctx.fillStyle = '#666';
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.fillText('MA(20)', padL + 4, padT + 12);
+  ctx.strokeStyle = 'rgba(255,140,0,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(padL + 42, padT + 10); ctx.lineTo(padL + 70, padT + 10); ctx.stroke();
+  ctx.setLineDash([]);
+
+  printHTML(`  Last: <span class="c-teal c-bold">${fmtPx(s.px)}</span>  Chg: <span class="${chgColor(s.chg)}">${chgSign(s.chg)}${s.chg.toFixed(2)}</span>  High: ${fmtPx(s.yr_hi||s.px)}  Low: ${fmtPx(s.yr_lo||s.px*0.8)}`);
+  pageFooter('90D OHLC  |  Orange dash: 20d MA  |  Green area: close trend');
+}
+
+function screenFA(key) {
+  const s = DB.securities[key];
+  if (!s) { print('Security not found.'); return; }
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key) + ' ' + cmdName('fa'));
+  cls();
+  pageHeader('FINANCIAL ANALYSIS', disp);
+  printHTML(`  <span class="c-white c-bold">${s.name}</span>    <span class="c-gray">${s.sector||''} / ${s.industry||''}</span>`);
+  print('');
+  printHTML(`  <span class="${accent()} c-bold">INCOME STATEMENT (Annual, USD Millions)</span>`);
+  printHTML(`  <span class="c-yellow">${pad('',20)}${pad('FY2024',14,true)}${pad('FY2023',14,true)}${pad('FY2022',14,true)}</span>`);
+  const rev = (s.px * 1.5).toFixed(0);
+  printHTML(`  ${pad('Revenue',20)}<span class="c-white">${pad(rev+',000',14,true)}${pad((rev*0.92).toFixed(0)+',000',14,true)}${pad((rev*0.84).toFixed(0)+',000',14,true)}</span>`);
+  printHTML(`  ${pad('Gross Profit',20)}<span class="c-white">${pad((rev*0.43).toFixed(0)+',000',14,true)}${pad((rev*0.41).toFixed(0)+',000',14,true)}${pad((rev*0.39).toFixed(0)+',000',14,true)}</span>`);
+  printHTML(`  ${pad('Operating Income',20)}<span class="c-white">${pad((rev*0.30).toFixed(0)+',000',14,true)}${pad((rev*0.28).toFixed(0)+',000',14,true)}${pad((rev*0.25).toFixed(0)+',000',14,true)}</span>`);
+  printHTML(`  ${pad('Net Income',20)}<span class="c-teal">${pad((rev*0.25).toFixed(0)+',000',14,true)}${pad((rev*0.23).toFixed(0)+',000',14,true)}${pad((rev*0.20).toFixed(0)+',000',14,true)}</span>`);
+  printHTML(`  ${pad('EPS',20)}<span class="c-teal">${pad(s.eps||'N/A',14,true)}${pad(((s.eps||5)*0.9).toFixed(2),14,true)}${pad(((s.eps||5)*0.78).toFixed(2),14,true)}</span>`);
+  print('');
+  printHTML(`  <span class="${accent()} c-bold">KEY RATIOS</span>`);
+  printHTML(`  P/E Ratio        <span class="c-white">${s.pe||'N/A'}</span>`);
+  printHTML(`  Price/Sales      <span class="c-white">${((s.pe||30)*0.3).toFixed(1)}</span>`);
+  printHTML(`  Price/Book       <span class="c-white">${((s.pe||30)*0.5).toFixed(1)}</span>`);
+  printHTML(`  ROE              <span class="c-teal">${(25 + Math.random()*30).toFixed(1)}%</span>`);
+  printHTML(`  Debt/Equity      <span class="c-white">${(0.3 + Math.random()*1.2).toFixed(2)}</span>`);
+  printHTML(`  Profit Margin    <span class="c-teal">${(15 + Math.random()*20).toFixed(1)}%</span>`);
+  pageFooter();
+}
+
+function screenANR(key) {
+  const s = DB.securities[key];
+  if (!s) { print('Security not found.'); return; }
+  const disp = secDisplayFancy(key);
+  const title = MODE === 'EK' ? 'RECOMMENDATIONS' : 'ANALYST RECOMMENDATIONS';
+  setContext(key, secDisplay(key) + ' ' + cmdName('anr'));
+  cls();
+  pageHeader(title, disp);
+  printHTML(`  <span class="c-white c-bold">${s.name}</span>    Consensus: <span class="c-teal c-bold">${s.rating||'N/A'}</span>`);
+  print('');
+  const analysts = [
+    ['Goldman Sachs','Buy','215.00'], ['Morgan Stanley','Overweight','210.00'],
+    ['JP Morgan','Outperform','208.00'], ['Bank of America','Buy','212.00'],
+    ['Citigroup','Neutral','195.00'], ['UBS','Buy','220.00'],
+    ['Deutsche Bank','Hold','190.00'], ['Barclays','Overweight','205.00'],
+    ['Wells Fargo','Overweight','210.00'], ['RBC Capital','Outperform','215.00'],
+  ];
+  printHTML(`  <span class="c-yellow">${pad('FIRM',22)}${pad('RATING',16)}${pad('TARGET',12,true)}${pad('UPSIDE',12,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(62)}</span>`);
+  for (const [firm, rating, target] of analysts) {
+    const upside = ((parseFloat(target) - s.px) / s.px * 100).toFixed(1);
+    const rc = rating.includes('Buy') || rating.includes('Over') || rating.includes('Outperf') ? 'c-green' : rating === 'Hold' || rating === 'Neutral' ? 'c-yellow' : 'c-red';
+    printHTML(`  ${pad(firm,22)}<span class="${rc}">${pad(rating,16)}</span><span class="c-white">${pad('$'+target,12,true)}</span><span class="${parseFloat(upside)>=0?'c-green':'c-red'}">${pad(chgSign(parseFloat(upside))+upside+'%',12,true)}</span>`);
+  }
+  print('');
+  printHTML(`  <span class="c-gray">Buy: 7  |  Hold: 2  |  Sell: 1  |  Avg Target: $${(208).toFixed(2)}</span>`);
+  pageFooter();
+}
+
+function screenTOP() {
+  setContext(null, MODE === 'EK' ? 'NEWS MONITOR' : 'TOP NEWS');
+  cls();
+  const header = MODE === 'EK' ? 'NEWS MONITOR' : 'TOP NEWS';
+  const tag = MODE === 'EK' ? 'REFINITIV WIRE' : 'BLOOMBERG WIRE';
+  pageHeader(header, tag);
+  const stories = [
+    ['14:35','URGENT','Federal Reserve signals potential rate cut in September — yields drop 8bps','c-red'],
+    ['14:22','EARNINGS','NVDA beats Q3: revenue $35.1B vs $33.2B est, Data Center +154% YoY','c-yellow'],
+    ['14:10','ECONOMY','US NFP: 187K vs 170K forecast — unemployment steady at 3.8%','c-blue'],
+    ['13:55','MARKETS','Bitcoin ETF daily inflows $892M — largest since launch','c-magenta'],
+    ['13:40','EARNINGS','AAPL Services revenue ATH $24.2B — installed base exceeds 2.2B','c-yellow'],
+    ['13:28','ECONOMY','ECB Lagarde: inflation path confirms June projection — EUR rises','c-blue'],
+    ['13:15','REGULATION','SEC approves new market structure rules — tick sizes change Q1 2025','c-red'],
+    ['13:02','CRYPTO','Solana TVL crosses $8B — DEX volume surpasses $3.2B daily','c-magenta'],
+    ['12:48','EARNINGS','MSFT Azure growth accelerates to 31% — AI at $2.4B run rate','c-yellow'],
+    ['12:35','ECONOMY','China PMI 51.2 — manufacturing expands first time in 6 months','c-blue'],
+    ['12:20','M&A','Broadcom to acquire VMware for $61B — largest tech deal of 2024','c-cyan'],
+    ['12:05','COMMODITIES','Gold breaks $2,350 on haven demand — crude slips on OPEC+ talk','c-teal'],
+  ];
+  for (const [time, tag2, headline, tc] of stories) {
+    printHTML(`  <span class="c-gray">${time}</span>  <span class="${tc} c-bold">${pad(tag2,12)}</span> <span class="c-white">${headline}</span>`);
+  }
+  pageFooter();
+}
+
+function screenWEI() {
+  const title = MODE === 'EK' ? 'INDEX MONITOR' : 'WORLD EQUITY INDICES';
+  const cmd = cmdName('wei');
+  setContext(null, title);
+  cls();
+  pageHeader(title, cmd);
+  const idxCol = MODE === 'EK' ? 'RIC' : 'INDEX';
+  printHTML(`  <span class="c-yellow">${pad(idxCol,14)}${pad('NAME',20)}${pad('LAST',14,true)}${pad('CHG',10,true)}${pad('%CHG',10,true)}  30D</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  for (const [k,v] of Object.entries(DB.indices)) {
+    const cc = chgColor(v.chg);
+    const label = MODE === 'EK' ? v.ric : k;
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `  ${pad(label,14)}<span class="c-gray">${pad(v.name,20)}</span><span class="c-white">${pad(fmtPx(v.px),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span>  `;
+    out.appendChild(row);
+    const sparkData = [];
+    let sp = v.px * (0.97 + Math.random()*0.02);
+    for (let i = 0; i < 30; i++) { sp += (Math.random()-0.48) * v.px * 0.005; sparkData.push(sp); }
+    sparkData[29] = v.px;
+    drawSparkline(row, sparkData, v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)', 80, 16);
+  }
+  out.scrollTop = out.scrollHeight;
+  pageFooter();
+}
+
+function screenMOST() {
+  const title = MODE === 'EK' ? 'ACTIVE SECURITIES' : 'MOST ACTIVE — US EQUITIES';
+  const cmd = cmdName('most');
+  setContext(null, title);
+  cls();
+  pageHeader(title, cmd);
+  const symCol = MODE === 'EK' ? 'RIC' : 'SYMBOL';
+  printHTML(`  <span class="c-yellow">${pad('#',4)}${pad(symCol,14)}${pad('NAME',22)}${pad('LAST',12,true)}${pad('CHG%',10,true)}${pad('VOLUME',12,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  const sorted = Object.entries(DB.securities).filter(([k])=>k.includes('EQUITY')).sort((a,b)=>b[1].vol-a[1].vol);
+  sorted.forEach(([k,v], i) => {
+    const cc = chgColor(v.pct);
+    const sym = MODE === 'EK' ? (v.ric||k.split(' ')[0]) : k.split(' ')[0];
+    printHTML(`  ${pad(i+1,4)}<span class="c-teal">${pad(sym,14)}</span>${pad(v.name,22)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${cc}">${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span><span class="c-gray">${pad((v.vol/1e6).toFixed(1)+'M',12,true)}</span>`);
+  });
+  pageFooter();
+}
+
+function screenFXIP() {
+  const title = MODE === 'EK' ? 'FX MONITOR' : 'FX INFORMATION PORTAL';
+  const cmd = cmdName('fxip');
+  setContext(null, title);
+  cls();
+  pageHeader(title, cmd);
+  const pairCol = MODE === 'EK' ? 'RIC' : 'PAIR';
+  printHTML(`  <span class="c-yellow">${pad(pairCol,14)}${pad('BID',14,true)}${pad('ASK',14,true)}${pad('CHG',12,true)}${pad('TIME',12,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(66)}</span>`);
+  for (const [pair, v] of Object.entries(DB.fx)) {
+    const spread = v.px < 10 ? 0.0003 : 0.05;
+    const cc = chgColor(v.chg);
+    const label = MODE === 'EK' ? v.ric : pair;
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `  <span class="c-teal">${pad(label,14)}</span><span class="c-white">${pad(v.px.toFixed(4),14,true)}</span><span class="c-white">${pad((v.px+spread).toFixed(4),14,true)}</span><span class="${cc}">${pad(chgSign(v.chg)+v.chg.toFixed(4),12,true)}</span><span class="c-gray">${pad('LIVE',12,true)}</span>  `;
+    out.appendChild(row);
+    const fxData = [];
+    let fp = v.px * (0.998 + Math.random()*0.002);
+    for (let i = 0; i < 24; i++) { fp += (Math.random()-0.49) * v.px * 0.001; fxData.push(fp); }
+    fxData[23] = v.px;
+    drawSparkline(row, fxData, v.chg >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)', 70, 14);
+  }
+  out.scrollTop = out.scrollHeight;
+  pageFooter();
+}
+
+function screenPORT() {
+  setContext(null, 'PORTFOLIO');
+  cls();
+  pageHeader('PORTFOLIO ANALYTICS', 'PORT');
+  const positions = [
+    { sym:'AAPL', qty:250, avg:185.20 }, { sym:'NVDA', qty:100, avg:720.50 },
+    { sym:'MSFT', qty:150, avg:380.40 }, { sym:'GOOGL', qty:200, avg:155.30 },
+    { sym:'TSLA', qty:75, avg:220.80 }, { sym:'META', qty:120, avg:460.10 },
+    { sym:'JPM', qty:180, avg:175.60 },
+  ];
+  const symCol = MODE === 'EK' ? 'RIC' : 'SYM';
+  printHTML(`  <span class="c-yellow">${pad(symCol,10)}${pad('QTY',8,true)}${pad('AVG PX',12,true)}${pad('MKT PX',12,true)}${pad('MKT VAL',14,true)}${pad('P&L',10,true)}${pad('P&L%',8,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  let totalVal = 0, totalCost = 0;
+  for (const p of positions) {
+    const secKey = p.sym + ' US EQUITY';
+    const s = DB.securities[secKey];
+    if (!s) continue;
+    const mktVal = p.qty * s.px;
+    const cost = p.qty * p.avg;
+    const pnl = mktVal - cost;
+    const pnlPct = (pnl / cost) * 100;
+    totalVal += mktVal;
+    totalCost += cost;
+    const symLabel = MODE === 'EK' ? (s.ric||p.sym) : p.sym;
+    printHTML(`  <span class="c-teal">${pad(symLabel,10)}</span><span class="c-white">${pad(p.qty,8,true)}${pad(fmtPx(p.avg),12,true)}${pad(fmtPx(s.px),12,true)}${pad('$'+(mktVal/1000).toFixed(1)+'K',14,true)}</span><span class="${chgColor(pnl)}">${pad(chgSign(pnl)+'$'+(Math.abs(pnl)/1000).toFixed(1)+'K',10,true)}${pad(chgSign(pnlPct)+pnlPct.toFixed(1)+'%',8,true)}</span>`);
+  }
+  const totalPnl = totalVal - totalCost;
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">${pad('TOTAL',10)}</span>${' '.repeat(32)}<span class="c-white c-bold">${pad('$'+(totalVal/1000).toFixed(1)+'K',14,true)}</span><span class="${chgColor(totalPnl)} c-bold">${pad(chgSign(totalPnl)+'$'+(Math.abs(totalPnl)/1000).toFixed(1)+'K',10,true)}${pad(chgSign(totalPnl/totalCost*100)+(totalPnl/totalCost*100).toFixed(1)+'%',8,true)}</span>`);
+
+  print('');
+  printHTML(`  <span class="${accent()} c-bold">ALLOCATION</span>`);
+  const donutWrap = document.createElement('div');
+  donutWrap.className = 'canvas-wrap';
+  donutWrap.style.maxWidth = '500px';
+  const donutCvs = document.createElement('canvas');
+  donutCvs.width = 500; donutCvs.height = 220;
+  donutWrap.appendChild(donutCvs);
+  out.appendChild(donutWrap);
+  out.scrollTop = out.scrollHeight;
+
+  const dctx = donutCvs.getContext('2d');
+  dctx.fillStyle = '#050510';
+  dctx.fillRect(0, 0, 500, 220);
+
+  const colors = ['#00d4aa','#3b82f6','#ff8c00','#e879f9','#22c55e','#ef4444','#ffcc00'];
+  const cx = 110, cy = 110, r1 = 80, r2 = 50;
+  let startAngle = -Math.PI / 2;
+  const slices = [];
+  for (let i = 0; i < positions.length; i++) {
+    const p = positions[i];
+    const s = DB.securities[p.sym + ' US EQUITY'];
+    if (!s) continue;
+    const val = p.qty * s.px;
+    slices.push({ sym: p.sym, val, color: colors[i % colors.length] });
+  }
+  for (const sl of slices) {
+    const angle = (sl.val / totalVal) * Math.PI * 2;
+    dctx.fillStyle = sl.color;
+    dctx.beginPath();
+    dctx.moveTo(cx + Math.cos(startAngle) * r2, cy + Math.sin(startAngle) * r2);
+    dctx.arc(cx, cy, r1, startAngle, startAngle + angle);
+    dctx.arc(cx, cy, r2, startAngle + angle, startAngle, true);
+    dctx.closePath();
+    dctx.fill();
+    startAngle += angle;
+  }
+  dctx.fillStyle = '#050510';
+  dctx.beginPath();
+  dctx.arc(cx, cy, r2 - 1, 0, Math.PI * 2);
+  dctx.fill();
+  dctx.fillStyle = '#e8e8e8';
+  dctx.font = 'bold 14px JetBrains Mono';
+  dctx.textAlign = 'center';
+  dctx.fillText('$' + (totalVal/1000).toFixed(0) + 'K', cx, cy - 4);
+  dctx.fillStyle = '#888';
+  dctx.font = '9px JetBrains Mono';
+  dctx.fillText('TOTAL VALUE', cx, cy + 12);
+
+  let ly = 20;
+  for (const sl of slices) {
+    const pct = (sl.val / totalVal * 100).toFixed(1);
+    dctx.fillStyle = sl.color;
+    dctx.fillRect(240, ly, 12, 12);
+    dctx.fillStyle = '#e8e8e8';
+    dctx.font = '11px JetBrains Mono';
+    dctx.textAlign = 'left';
+    dctx.fillText(`${sl.sym}  ${pct}%  $${(sl.val/1000).toFixed(1)}K`, 260, ly + 10);
+    ly += 22;
+  }
+
+  dctx.fillStyle = '#666';
+  dctx.font = '9px JetBrains Mono';
+  dctx.fillText('P&L BY POSITION', 240, ly + 16);
+  ly += 26;
+  for (let i = 0; i < positions.length; i++) {
+    const p = positions[i];
+    const s = DB.securities[p.sym + ' US EQUITY'];
+    if (!s) continue;
+    const pnl = (s.px - p.avg) * p.qty;
+    const maxPnl = 25000;
+    const barW = Math.abs(pnl) / maxPnl * 120;
+    const barColor = pnl >= 0 ? '#22c55e' : '#ef4444';
+    dctx.fillStyle = barColor;
+    if (pnl >= 0) { dctx.fillRect(300, ly, barW, 10); }
+    else { dctx.fillRect(300 - barW, ly, barW, 10); }
+    dctx.fillStyle = '#888';
+    dctx.font = '9px JetBrains Mono';
+    dctx.textAlign = 'left';
+    dctx.fillText(p.sym, 240, ly + 9);
+    ly += 16;
+  }
+  pageFooter();
+}
+
+function screenECO() {
+  const cmd = cmdName('eco');
+  setContext(null, 'ECONOMIC CALENDAR');
+  cls();
+  pageHeader('ECONOMIC CALENDAR', cmd);
+  const events = [
+    ['08:30','US','Non-Farm Payrolls','187K','170K','175K','c-green'],
+    ['08:30','US','Unemployment Rate','3.8%','3.8%','3.8%','c-white'],
+    ['10:00','US','ISM Manufacturing','49.1','48.5','48.7','c-green'],
+    ['10:00','US','Consumer Sentiment','67.4','66.0','65.8','c-green'],
+    ['14:00','US','FOMC Minutes','—','—','—','c-yellow'],
+    ['03:00','DE','German CPI YoY','2.4%','2.5%','2.5%','c-green'],
+    ['04:30','UK','GDP QoQ','0.6%','0.4%','0.3%','c-green'],
+    ['21:30','CN','PMI Manufacturing','51.2','50.5','50.1','c-green'],
+  ];
+  printHTML(`  <span class="c-yellow">${pad('TIME',8)}${pad('CTRY',6)}${pad('EVENT',26)}${pad('ACTUAL',10,true)}${pad('FORECAST',10,true)}${pad('PRIOR',10,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(70)}</span>`);
+  for (const [time, ctry, event, actual, forecast, prior, clsN] of events) {
+    printHTML(`  <span class="c-gray">${pad(time,8)}</span><span class="c-cyan">${pad(ctry,6)}</span>${pad(event,26)}<span class="${clsN} c-bold">${pad(actual,10,true)}</span><span class="c-gray">${pad(forecast,10,true)}${pad(prior,10,true)}</span>`);
+  }
+  pageFooter();
+}
+
+function screenHELP() {
+  setContext(null, 'HELP');
+  cls();
+  const m = MODES[MODE];
+  const a = accent();
+  pageHeader(m.long + ' — COMMAND REFERENCE', 'HELP');
+
+  if (MODE === 'BB') {
+    printHTML(`  <span class="${a} c-bold">SECURITY COMMANDS</span>  <span class="c-gray">(load security: AAPL US Equity &lt;GO&gt;)</span>`);
+    printHTML(`  <span class="c-teal">DES</span>     Description / overview of loaded security`);
+    printHTML(`  <span class="c-teal">GP</span>      Price graph (90-day OHLC)`);
+    printHTML(`  <span class="c-teal">FA</span>      Financial analysis — income statement & ratios`);
+    printHTML(`  <span class="c-teal">ANR</span>     Analyst recommendations & price targets`);
+    printHTML(`  <span class="c-teal">HP</span>      Historical prices`);
+    printHTML(`  <span class="c-teal">BQ</span>      Block quote — quick price snapshot`);
+  } else {
+    printHTML(`  <span class="${a} c-bold">SECURITY COMMANDS</span>  <span class="c-gray">(load instrument: AAPL.O)</span>`);
+    printHTML(`  <span class="c-blue">QUOT</span>    Quote overview of loaded instrument`);
+    printHTML(`  <span class="c-blue">GRAPH</span>   Price chart (90-day) — alias: G`);
+    printHTML(`  <span class="c-blue">FA</span>      Financial analysis — income statement & ratios`);
+    printHTML(`  <span class="c-blue">REC</span>     Analyst recommendations & price targets`);
+    printHTML(`  <span class="c-blue">HPD</span>     Historical price data`);
+    printHTML(`  <span class="c-blue">Q</span>       Quick quote — price snapshot`);
+  }
+  print('');
+  const cc = MODE === 'BB' ? 'c-teal' : 'c-blue';
+  printHTML(`  <span class="${a} c-bold">MARKET COMMANDS</span>`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('top'),8)}</span>${MODE==='EK'?'News monitor':'Top news headlines'}`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('wei'),8)}</span>${MODE==='EK'?'World index monitor':'World equity indices'}`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('most'),8)}</span>${MODE==='EK'?'Active securities':'Most active equities'}`);
+  printHTML(`  <span class="${cc}">${pad('PORT',8)}</span>Portfolio analytics`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('fxip'),8)}</span>FX ${MODE==='EK'?'monitor':'information portal'}`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('eco'),8)}</span>Economic calendar`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('secf'),8)}</span>${MODE==='EK'?'Instrument finder':'Security finder'}`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">VISUAL & ANALYTICS</span>`);
+  printHTML(`  <span class="${cc}">${pad(cmdName('hmap'),8)}</span>${MODE==='EK'?'Sector map':'Heat map'} — sector & stock performance`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">NUR FINANCIAL LANGUAGE (Common Commands)</span>  <span class="c-gray">Works in both BB & EK</span>`);
+  printHTML(`  <span class="c-red">${pad('NRSK',8)}</span>Geopolitical risk monitor — DEFCON, nuclear arsenal, regional risk`);
+  printHTML(`  <span class="c-red">${pad('NCRI',8)}</span>Crisis monitor — active armed conflicts (ACLED data)`);
+  printHTML(`  <span class="c-red">${pad('NNUC',8)}</span>Nuclear arsenal overview — warheads by state`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">LEGACY RISK COMMANDS</span>  <span class="c-gray">(mode-specific aliases)</span>`);
+  printHTML(`  <span class="c-red">${pad(cmdName('bmap'),8)}</span>= NRSK   <span class="c-red">${pad(cmdName('cris'),8)}</span>= NCRI`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">LIVE DATA</span>`);
+  printHTML(`  <span class="${cc}">${pad('LIVE',8)}</span>Fetch real-time prices from EODHD API`);
+  print('');
+  printHTML(`  <span class="${a} c-bold">FUNCTION KEYS</span>  <span class="c-gray">(or type the label)</span>`);
+  if (MODE === 'BB') {
+    printHTML(`  <span class="c-yellow">GOVT  CORP  MTGE  M-MKT  MUNI  PFD</span>  <span class="c-green">EQUITY</span>  <span class="c-yellow">CMDTY  INDEX  CRNCY</span>`);
+  } else {
+    printHTML(`  <span class="c-blue">GOVT  CORP  MBS  MM  MUNI  PFD</span>  <span class="c-green">EQ</span>  <span class="c-blue">COM  INDX  FX</span>`);
+    print('');
+    printHTML(`  <span class="${a} c-bold">RIC FORMAT</span>  <span class="c-gray">(Refinitiv Instrument Codes)</span>`);
+    printHTML(`  <span class="c-gray">NASDAQ: .O (AAPL.O)   NYSE: .N (JPM.N)   Crypto: = (BTC=)</span>`);
+  }
+  print('');
+  printHTML(`  <span class="${a} c-bold">SYSTEM</span>`);
+  printHTML(`  <span class="${cc}">HELP</span>    This screen`);
+  printHTML(`  <span class="${cc}">CLS</span>     Clear screen`);
+  printHTML(`  <span class="${cc}">MODE</span>    Switch to ${MODE==='BB'?'Reuters Eikon':'Bloomberg'} commands`);
+
+  printHTML(`<span class="c-dim">  ${'═'.repeat(74)}</span>`);
+  printHTML(`  <span class="c-gray">${m.footer} — Powered by Nur Finance AntiGravi Engine v3.0</span>`);
+  printHTML(`  <span class="c-gray">NUR Financial Language © 2024-2026 — Common extensions for BB & EK</span>`);
+}
+
+function screenBQ(key) {
+  const s = DB.securities[key];
+  if (!s) return;
+  const disp = secDisplayFancy(key);
+  const cc = chgColor(s.chg);
+  printHTML(`  <span class="c-teal c-bold">${disp}</span> <span class="c-gray">${s.name}</span>  <span class="c-white c-bold">${fmtPx(s.px)}</span>  <span class="${cc}">${chgSign(s.chg)}${s.chg.toFixed(2)} (${chgSign(s.pct)}${s.pct.toFixed(2)}%)</span>  <span class="c-gray">Vol: ${(s.vol/1e6).toFixed(1)}M</span>`);
+}
+
+function screenHP(key) {
+  const s = DB.securities[key];
+  if (!s) { print('Security not found.'); return; }
+  const disp = secDisplayFancy(key);
+  setContext(key, secDisplay(key) + ' ' + cmdName('hp'));
+  cls();
+  pageHeader(MODE === 'EK' ? 'HISTORICAL PRICE DATA' : 'HISTORICAL PRICES', disp);
+  printHTML(`  <span class="c-yellow">${pad('DATE',14)}${pad('OPEN',12,true)}${pad('HIGH',12,true)}${pad('LOW',12,true)}${pad('CLOSE',12,true)}${pad('VOLUME',14,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  let p = s.px;
+  const now = new Date();
+  for (let i = 0; i < 15; i++) {
+    const d = new Date(now - i * 86400000);
+    if (d.getDay() === 0 || d.getDay() === 6) continue;
+    const ds = d.toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+    const o = p + (Math.random()-0.5)*s.px*0.01;
+    const h = Math.max(p,o) + Math.random()*s.px*0.005;
+    const l = Math.min(p,o) - Math.random()*s.px*0.005;
+    const vol = (s.vol * (0.7 + Math.random()*0.6) / 1e6).toFixed(1);
+    const cc = p >= o ? 'c-green' : 'c-red';
+    printHTML(`  <span class="c-gray">${pad(ds,14)}</span><span class="c-white">${pad(fmtPx(o),12,true)}${pad(fmtPx(h),12,true)}${pad(fmtPx(l),12,true)}</span><span class="${cc}">${pad(fmtPx(p),12,true)}</span><span class="c-gray">${pad(vol+'M',14,true)}</span>`);
+    p += (Math.random()-0.48)*s.px*0.015;
+  }
+  pageFooter();
+}
+
+function screenSECF(query) {
+  setContext(null, MODE === 'EK' ? 'INSTRUMENT SEARCH' : 'SECURITY FINDER');
+  cls();
+  const title = MODE === 'EK' ? 'INSTRUMENT SEARCH' : 'SECURITY FINDER';
+  pageHeader(title, cmdName('secf'));
+  const q = (query||'').toUpperCase();
+  const results = Object.entries(DB.securities).filter(([k,v]) =>
+    k.includes(q) || v.name.toUpperCase().includes(q) || (v.ric||'').toUpperCase().includes(q)
+  );
+  if (results.length === 0) {
+    printHTML(`  <span class="c-red">No ${MODE==='EK'?'instruments':'securities'} found matching "${q}"</span>`);
+    return;
+  }
+  const symCol = MODE === 'EK' ? 'RIC' : 'SECURITY';
+  printHTML(`  <span class="c-yellow">${pad(symCol,24)}${pad('NAME',24)}${pad('LAST',12,true)}${pad('CHG%',10,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(70)}</span>`);
+  for (const [k,v] of results) {
+    const label = MODE === 'EK' ? (v.ric||k) : k;
+    printHTML(`  <span class="c-teal">${pad(label,24)}</span>${pad(v.name,24)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.pct)}">${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',10,true)}</span>`);
+  }
+  pageFooter();
+}
+
+function screenEQUITY() {
+  setContext(null, MODE === 'EK' ? 'EQUITY MONITOR' : 'EQUITY');
+  cls();
+  pageHeader('EQUITY MONITOR', cmdName('equity'));
+  const symCol = MODE === 'EK' ? 'RIC' : 'SYMBOL';
+  printHTML(`  <span class="c-yellow">${pad(symCol,12)}${pad('NAME',22)}${pad('LAST',12,true)}${pad('CHG',10,true)}${pad('%CHG',8,true)}${pad('VOLUME',10,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  for (const [k,v] of Object.entries(DB.securities)) {
+    if (!k.includes('EQUITY')) continue;
+    const sym = MODE === 'EK' ? (v.ric||k.split(' ')[0]) : k.split(' ')[0];
+    printHTML(`  <span class="c-teal">${pad(sym,12)}</span>${pad(v.name,22)}<span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.chg)}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',8,true)}</span><span class="c-gray">${pad((v.vol/1e6).toFixed(1)+'M',10,true)}</span>`);
+  }
+  pageFooter();
+}
+
+// ── NUR Financial Language: NRSK (= BMAP/GEOP) ──
+function screenNRSK() {
+  const geo = DB.geopolitical;
+  setContext(null, 'NUR RISK MONITOR');
+  cls();
+  printHTML(`<span class="c-red c-bold">  NUR RISK MONITOR — GEOPOLITICAL ASSESSMENT                      NRSK</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+
+  const defconColors = {1:'c-red',2:'c-red',3:'c-yellow',4:'c-teal',5:'c-green'};
+  const defconLabels = {1:'MAXIMUM READINESS',2:'ARMED FORCES READY',3:'INCREASE IN FORCE READINESS',4:'INCREASED INTELLIGENCE',5:'NORMAL READINESS'};
+  printHTML(`  <span class="${accent()} c-bold">GLOBAL THREAT ASSESSMENT</span>            <span class="c-gray">${geo.lastUpdate}</span>`);
+  printHTML(`  DEFCON Level        <span class="${defconColors[geo.defcon]} c-bold">██ ${geo.defcon} — ${defconLabels[geo.defcon]} ██</span>`);
+  printHTML(`  Global Risk Index   <span class="${geo.globalRiskIndex>70?'c-red':geo.globalRiskIndex>50?'c-yellow':'c-green'} c-bold">${geo.globalRiskIndex}/100</span>  <span class="${chgColor(geo.riskTrend)}">${chgSign(geo.riskTrend)}${geo.riskTrend} (30d)</span>`);
+  printHTML(`  Nuclear Threat      <span class="c-red c-bold">${geo.nuclearThreatLevel}</span>`);
+  print('');
+
+  printHTML(`  <span class="${accent()} c-bold">REGIONAL RISK INDEX</span>`);
+  printHTML(`  <span class="c-yellow">${pad('REGION',22)}${pad('RISK',6,true)}${pad('STATUS',12)}${pad('CONFLICTS',10,true)}${pad('FATALITIES',12,true)}${pad('30D',6,true)}${pad('NUC',6,true)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+  for (const r of geo.regions) {
+    const rc = r.risk>=80?'c-red':r.risk>=60?'c-yellow':r.risk>=40?'c-teal':'c-green';
+    const sc = r.status==='CRITICAL'?'c-red':r.status==='HIGH'?'c-yellow':r.status==='ELEVATED'?'c-teal':'c-green';
+    const nc = r.nuclear?'c-red':'c-gray';
+    printHTML(`  ${pad(r.region,22)}<span class="${rc} c-bold">${pad(r.risk,6,true)}</span><span class="${sc}">${pad(r.status,12)}</span><span class="c-white">${pad(r.conflicts,10,true)}</span><span class="c-gray">${pad(r.fatalities,12,true)}</span><span class="${chgColor(parseFloat(r.trend))}">${pad(r.trend,6,true)}</span><span class="${nc}">${pad(r.nuclear?'▲YES':'—',6,true)}</span>`);
+  }
+
+  print('');
+  printHTML(`  <span class="${accent()} c-bold">GEOPOLITICAL RISK HEAT MAP</span>`);
+  const geoGrid = document.createElement('div');
+  geoGrid.className = 'geo-hmap';
+  for (const r of geo.regions) {
+    const cell = document.createElement('div');
+    cell.className = 'geo-cell';
+    const t = r.risk / 100;
+    const rr = Math.round(30 + t * 210);
+    const gg = Math.round(180 - t * 150);
+    const bb = Math.round(30 + (1-t) * 40);
+    cell.style.background = `rgba(${rr},${gg},${bb},0.15)`;
+    cell.style.borderColor = `rgba(${rr},${gg},${bb},0.4)`;
+    const riskColor = r.risk >= 80 ? '#ef4444' : r.risk >= 60 ? '#ff8c00' : r.risk >= 40 ? '#ffcc00' : '#22c55e';
+
+    const gauge = document.createElement('canvas');
+    gauge.width = 120; gauge.height = 60;
+    gauge.style.cssText = 'width:120px;height:60px;display:block;margin:6px auto 0;';
+    const gctx = gauge.getContext('2d');
+    gctx.strokeStyle = '#1a1a2e';
+    gctx.lineWidth = 8;
+    gctx.beginPath();
+    gctx.arc(60, 52, 40, Math.PI, 0);
+    gctx.stroke();
+    const angle = Math.PI + (r.risk / 100) * Math.PI;
+    const arcGrad = gctx.createLinearGradient(20, 52, 100, 52);
+    arcGrad.addColorStop(0, '#22c55e');
+    arcGrad.addColorStop(0.5, '#ffcc00');
+    arcGrad.addColorStop(1, '#ef4444');
+    gctx.strokeStyle = arcGrad;
+    gctx.lineWidth = 8;
+    gctx.lineCap = 'round';
+    gctx.beginPath();
+    gctx.arc(60, 52, 40, Math.PI, angle);
+    gctx.stroke();
+    const needleAngle = Math.PI + (r.risk / 100) * Math.PI;
+    const nx = 60 + Math.cos(needleAngle) * 30;
+    const ny = 52 + Math.sin(needleAngle) * 30;
+    gctx.strokeStyle = '#fff';
+    gctx.lineWidth = 1.5;
+    gctx.beginPath();
+    gctx.moveTo(60, 52);
+    gctx.lineTo(nx, ny);
+    gctx.stroke();
+    gctx.fillStyle = '#fff';
+    gctx.beginPath();
+    gctx.arc(60, 52, 3, 0, Math.PI * 2);
+    gctx.fill();
+
+    cell.innerHTML = `
+      <div class="geo-name" style="color:${riskColor}">${r.region}</div>
+      <div class="geo-risk" style="color:${riskColor}">${r.risk}</div>
+      <div style="color:#888;font-size:9px">${r.status} · ${r.conflicts} conflicts</div>
+    `;
+    cell.appendChild(gauge);
+    const bar = document.createElement('div');
+    bar.className = 'geo-bar';
+    bar.style.background = '#1a1a2e';
+    const fill = document.createElement('div');
+    fill.style.cssText = `width:${r.risk}%;height:100%;border-radius:2px;background:${riskColor};`;
+    bar.appendChild(fill);
+    cell.appendChild(bar);
+    if (r.nuclear) {
+      const nuke = document.createElement('div');
+      nuke.style.cssText = 'color:#ef4444;font-size:9px;font-weight:700;margin-top:4px;';
+      nuke.textContent = '☢ NUCLEAR CAPABLE';
+      cell.appendChild(nuke);
+    }
+    geoGrid.appendChild(cell);
+  }
+  out.appendChild(geoGrid);
+  out.scrollTop = out.scrollHeight;
+
+  printHTML(`  <span class="${accent()} c-bold">DEFCON THREAT GAUGE</span>`);
+  const defWrap = document.createElement('div');
+  defWrap.className = 'canvas-wrap';
+  defWrap.style.maxWidth = '400px';
+  const defCvs = document.createElement('canvas');
+  defCvs.width = 400; defCvs.height = 100;
+  defWrap.appendChild(defCvs);
+  out.appendChild(defWrap);
+  out.scrollTop = out.scrollHeight;
+
+  const dctx = defCvs.getContext('2d');
+  dctx.fillStyle = '#050510';
+  dctx.fillRect(0, 0, 400, 100);
+  const defColors = ['#22c55e','#84cc16','#ffcc00','#ff8c00','#ef4444'];
+  const defLabels = ['5','4','3','2','1'];
+  for (let i = 0; i < 5; i++) {
+    const x = 30 + i * 72;
+    const active = (5 - i) <= (6 - geo.defcon);
+    dctx.fillStyle = active ? defColors[i] : '#1a1a2e';
+    dctx.fillRect(x, 20, 60, 50);
+    dctx.strokeStyle = defColors[i];
+    dctx.lineWidth = 1;
+    dctx.strokeRect(x, 20, 60, 50);
+    dctx.fillStyle = active ? '#000' : '#444';
+    dctx.font = 'bold 18px JetBrains Mono';
+    dctx.textAlign = 'center';
+    dctx.fillText(defLabels[i], x + 30, 52);
+    if ((5 - i) === geo.defcon) {
+      dctx.strokeStyle = '#fff';
+      dctx.lineWidth = 2;
+      dctx.strokeRect(x - 2, 18, 64, 54);
+      dctx.fillStyle = '#fff';
+      dctx.font = 'bold 9px JetBrains Mono';
+      dctx.fillText('▼ CURRENT', x + 30, 14);
+    }
+  }
+  dctx.fillStyle = '#666';
+  dctx.font = '9px JetBrains Mono';
+  dctx.textAlign = 'left';
+  dctx.fillText('NORMAL', 32, 88);
+  dctx.textAlign = 'right';
+  dctx.fillText('MAXIMUM', 380, 88);
+
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">Sources: ACLED, Armed Conflicts DB, SIPRI, FAS Nuclear Notebook</span>`);
+  printHTML(`  <span class="c-gray">NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
+}
+
+// ── NUR Financial Language: NCRI (= CRIS/CONFLICT) ──
+function screenNCRI() {
+  const geo = DB.geopolitical;
+  setContext(null, 'NUR CRISIS MONITOR');
+  cls();
+  printHTML(`<span class="c-red c-bold">  NUR CRISIS MONITOR — ARMED CONFLICTS                            NCRI</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">ACTIVE ARMED CONFLICTS & SECURITY CRISES</span>    <span class="c-gray">${geo.lastUpdate}</span>`);
+  print('');
+  for (let i = 0; i < geo.conflicts.length; i++) {
+    const c = geo.conflicts[i];
+    const sc = c.status.includes('HIGH')?'c-red':c.status.includes('NUCLEAR')||c.status.includes('ESCALATION')?'c-red':c.status.includes('MEDIUM')?'c-yellow':'c-teal';
+    const nc = c.nuclear==='CRITICAL'?'c-red c-bold':c.nuclear==='RISK PRESENT'?'c-yellow':'c-gray';
+    printHTML(`  <span class="c-white c-bold">${pad(i+1+'.',4)}${c.name}</span>`);
+    printHTML(`  <span class="c-gray">    Type: ${pad(c.type,14)} Parties: ${c.parties}</span>`);
+    printHTML(`  <span class="c-gray">    Since: ${c.start}     Fatalities: <span class="c-red">${c.fatalities}</span></span>`);
+    printHTML(`  <span class="c-gray">    Status: </span><span class="${sc} c-bold">${c.status}</span>`);
+    printHTML(`  <span class="c-gray">    Region: ${c.region}   Nuclear: </span><span class="${nc}">${c.nuclear}</span>`);
+    print('');
+  }
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Active conflicts tracked: ${geo.conflicts.length}</span>`);
+  printHTML(`  <span class="c-gray">  Sources: ACLED (acleddata.com), Armed Conflicts Database (armedconflicts.org)</span>`);
+  printHTML(`  <span class="c-gray">  Uppsala Conflict Data Program (UCDP), International Crisis Group (ICG)</span>`);
+  printHTML(`  <span class="c-gray">  NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
+}
+
+// ── NUR Financial Language: NNUC (Nuclear Arsenal) ──
+function screenNNUC() {
+  const geo = DB.geopolitical;
+  setContext(null, 'NUR NUCLEAR MONITOR');
+  cls();
+  printHTML(`<span class="c-red c-bold">  NUR NUCLEAR MONITOR — GLOBAL ARSENAL                            NNUC</span>`);
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">NUCLEAR ARSENAL — STATE OVERVIEW</span>       <span class="c-gray">${geo.lastUpdate}</span>`);
+  print('');
+  printHTML(`  <span class="c-yellow">${pad('STATE',12)}${pad('TOTAL',8,true)}${pad('DEPLOYED',10,true)}${pad('STATUS',16)}${pad('POSTURE',14)}${pad('DOCTRINE',22)}</span>`);
+  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
+  for (const n of geo.nuclearStates) {
+    const sc = n.posture==='High Alert'||n.posture==='Aggressive'?'c-red':n.posture==='Expanding'?'c-yellow':'c-gray';
+    printHTML(`  <span class="c-white">${pad(n.state,12)}</span><span class="c-red c-bold">${pad(n.warheads,8,true)}</span><span class="c-white">${pad(n.deployed,10,true)}</span><span class="${sc}">${pad(n.status,16)}</span><span class="c-white">${pad(n.posture,14)}</span><span class="c-gray">${pad(n.doctrine,22)}</span>`);
+  }
+  printHTML(`  <span class="c-dim">${'─'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Total estimated warheads worldwide: ~12,100</span>`);
+  printHTML(`  <span class="c-gray">  Nuclear Threat Level: <span class="c-red c-bold">${geo.nuclearThreatLevel}</span></span>`);
+  print('');
+  printHTML(`<span class="c-dim">  ${'═'.repeat(76)}</span>`);
+  printHTML(`  <span class="c-gray">  Sources: SIPRI Yearbook, FAS Nuclear Notebook, Arms Control Association</span>`);
+  printHTML(`  <span class="c-gray">  NUR Financial Language: NRSK (risk) | NCRI (conflicts) | NNUC (nuclear)</span>`);
+}
+
+// ── EODHD Live Market Data ──
+async function screenLIVE() {
+  setContext(null, 'LIVE MARKET DATA');
+  cls();
+  pageHeader('LIVE MARKET DATA — EODHD API', 'LIVE');
+  printHTML(`  <span class="c-teal">Fetching real-time data from EODHD...</span>`);
+
+  const symbols = ['AAPL.US','MSFT.US','NVDA.US','GOOGL.US','AMZN.US','TSLA.US','META.US','JPM.US'];
+  const url = `${DB.eodhd.baseUrl}/real-time/${symbols[0]}?api_token=${DB.eodhd.apiKey}&fmt=json&s=${symbols.join(',')}`;
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const data = await resp.json();
+    const items = Array.isArray(data) ? data : [data];
+    cls();
+    pageHeader('LIVE MARKET DATA — EODHD REAL-TIME', 'LIVE');
+    printHTML(`  <span class="c-green c-bold">● LIVE DATA</span>  <span class="c-gray">${new Date().toLocaleTimeString('en-US',{hour12:false})} — Source: EODHD.com API</span>`);
+    print('');
+    printHTML(`  <span class="c-yellow">${pad('SYMBOL',10)}${pad('LAST',12,true)}${pad('OPEN',12,true)}${pad('HIGH',12,true)}${pad('LOW',12,true)}${pad('VOLUME',14,true)}${pad('CHG%',8,true)}</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(74)}</span>`);
+    for (const item of items) {
+      const sym = (item.code || '').replace('.US','');
+      const close = item.close || item.previousClose || 0;
+      const prevClose = item.previousClose || close;
+      const chg = close - prevClose;
+      const pct = prevClose ? (chg / prevClose * 100) : 0;
+      const cc = chgColor(chg);
+      printHTML(`  <span class="c-teal">${pad(sym,10)}</span><span class="c-white c-bold">${pad(fmtPx(close),12,true)}</span><span class="c-white">${pad(fmtPx(item.open||0),12,true)}${pad(fmtPx(item.high||0),12,true)}${pad(fmtPx(item.low||0),12,true)}</span><span class="c-gray">${pad(item.volume?Math.round(item.volume/1e6)+'M':'—',14,true)}</span><span class="${cc}">${pad(chgSign(pct)+pct.toFixed(2)+'%',8,true)}</span>`);
+    }
+    for (const item of items) {
+      const sym = (item.code || '').replace('.US','');
+      const key = sym + ' US EQUITY';
+      if (DB.securities[key] && item.close) {
+        const prevClose = item.previousClose || DB.securities[key].px;
+        DB.securities[key].px = item.close;
+        DB.securities[key].chg = item.close - prevClose;
+        DB.securities[key].pct = prevClose ? ((item.close - prevClose) / prevClose * 100) : 0;
+        if (item.open) DB.securities[key].open = item.open;
+        if (item.high) DB.securities[key].hi = item.high;
+        if (item.low) DB.securities[key].lo = item.low;
+        if (item.volume) DB.securities[key].vol = item.volume;
+      }
+    }
+    pageFooter('Terminal prices updated with live data — EODHD.com');
+  } catch (err) {
+    cls();
+    pageHeader('LIVE MARKET DATA — EODHD API', 'LIVE');
+    printHTML(`  <span class="c-red">  API Error: ${err.message}</span>`);
+    printHTML(`  <span class="c-yellow">  Showing cached terminal data instead.</span>`);
+    print('');
+    printHTML(`  <span class="c-yellow">${pad('SYMBOL',10)}${pad('LAST',12,true)}${pad('CHG',10,true)}${pad('%CHG',8,true)}${pad('SOURCE',10)}</span>`);
+    printHTML(`  <span class="c-dim">${'─'.repeat(50)}</span>`);
+    for (const [k,v] of Object.entries(DB.securities)) {
+      if (!k.includes('EQUITY')) continue;
+      const sym = k.split(' ')[0];
+      printHTML(`  <span class="c-teal">${pad(sym,10)}</span><span class="c-white">${pad(fmtPx(v.px),12,true)}</span><span class="${chgColor(v.chg)}">${pad(chgSign(v.chg)+v.chg.toFixed(2),10,true)}${pad(chgSign(v.pct)+v.pct.toFixed(2)+'%',8,true)}</span><span class="c-gray">${pad('CACHED',10)}</span>`);
+    }
+    pageFooter('EODHD API: ' + DB.eodhd.apiKey.slice(0,8) + '...');
+  }
+}
+
+// ── Sector Heat Map ──
+function screenHMAP() {
+  const cmd = cmdName('hmap');
+  const title = MODE === 'EK' ? 'SECTOR MAP' : 'HEAT MAP — MARKET SECTORS';
+  setContext(null, title);
+  cls();
+  pageHeader(title, cmd);
+
+  const sectors = [
+    { name:'Technology', syms:['AAPL','MSFT','NVDA','GOOGL','META'], weight:38.2 },
+    { name:'Cons. Disc.', syms:['AMZN','TSLA'], weight:12.5 },
+    { name:'Financials', syms:['JPM'], weight:13.1 },
+    { name:'Healthcare', syms:[], weight:12.8, mockChg:0.45 },
+    { name:'Industrials', syms:[], weight:8.7, mockChg:-0.32 },
+    { name:'Energy', syms:[], weight:4.2, mockChg:1.15 },
+    { name:'Utilities', syms:[], weight:2.5, mockChg:0.12 },
+    { name:'Materials', syms:[], weight:2.3, mockChg:-0.78 },
+    { name:'Real Estate', syms:[], weight:2.1, mockChg:-0.55 },
+    { name:'Comm. Svcs.', syms:[], weight:2.0, mockChg:0.88 },
+    { name:'Cons. Staples', syms:[], weight:1.6, mockChg:-0.18 },
+  ];
+
+  const sectorData = sectors.map(sec => {
+    let avgChg = sec.mockChg || 0;
+    if (sec.syms.length > 0) {
+      let total = 0, cnt = 0;
+      for (const sym of sec.syms) {
+        const s = DB.securities[sym + ' US EQUITY'];
+        if (s) { total += s.pct; cnt++; }
+      }
+      if (cnt) avgChg = total / cnt;
+    }
+    return { ...sec, chg: avgChg };
+  });
+
+  const grid = document.createElement('div');
+  grid.className = 'hmap-grid';
+  for (const sd of sectorData) {
+    const cell = document.createElement('div');
+    cell.className = 'hmap-cell';
+    const intensity = Math.min(Math.abs(sd.chg) / 3, 1);
+    const r = sd.chg < 0 ? Math.round(40 + intensity * 180) : Math.round(10 + intensity * 20);
+    const g = sd.chg > 0 ? Math.round(40 + intensity * 160) : Math.round(10 + intensity * 20);
+    const b = Math.round(10 + intensity * 20);
+    cell.style.background = `rgb(${r},${g},${b})`;
+    cell.style.color = '#fff';
+    const span = sd.weight > 20 ? 2 : 1;
+    if (span > 1) cell.style.gridColumn = `span ${span}`;
+    cell.innerHTML = `
+      <div class="hm-sym">${sd.name}</div>
+      <div class="hm-chg">${sd.chg >= 0 ? '+' : ''}${sd.chg.toFixed(2)}%</div>
+      <div class="hm-px">${sd.weight}% of index</div>
+    `;
+    const spark = document.createElement('canvas');
+    spark.width = 100; spark.height = 24;
+    spark.style.cssText = 'width:100%;height:24px;margin-top:4px;';
+    const sctx = spark.getContext('2d');
+    const sparkPts = 20;
+    const sparkData = [];
+    let sp = 100;
+    for (let i = 0; i < sparkPts; i++) { sp += (Math.random()-0.48) * 3; sparkData.push(sp); }
+    sparkData[sparkPts-1] = 100 + sd.chg * 3;
+    const smn = Math.min(...sparkData), smx = Math.max(...sparkData);
+    const srange = smx - smn || 1;
+    sctx.strokeStyle = sd.chg >= 0 ? 'rgba(34,197,94,0.8)' : 'rgba(239,68,68,0.8)';
+    sctx.lineWidth = 1.5;
+    sctx.beginPath();
+    for (let i = 0; i < sparkPts; i++) {
+      const x = (i / (sparkPts-1)) * 100;
+      const y = 22 - ((sparkData[i] - smn) / srange) * 20;
+      i === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+    }
+    sctx.stroke();
+    cell.appendChild(spark);
+    grid.appendChild(cell);
+  }
+  out.appendChild(grid);
+  out.scrollTop = out.scrollHeight;
+
+  printHTML(`<span class="c-dim">  ${'─'.repeat(74)}</span>`);
+  printHTML(`  <span class="${accent()} c-bold">INDIVIDUAL STOCKS</span>`);
+  const stockGrid = document.createElement('div');
+  stockGrid.className = 'hmap-grid';
+  stockGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
+  for (const [k,v] of Object.entries(DB.securities)) {
+    if (!k.includes('EQUITY')) continue;
+    const sym = k.split(' ')[0];
+    const cell = document.createElement('div');
+    cell.className = 'hmap-cell';
+    const intensity = Math.min(Math.abs(v.pct) / 3, 1);
+    const r = v.pct < 0 ? Math.round(40 + intensity * 180) : Math.round(10 + intensity * 20);
+    const g = v.pct > 0 ? Math.round(40 + intensity * 160) : Math.round(10 + intensity * 20);
+    const b2 = Math.round(10 + intensity * 20);
+    cell.style.background = `rgb(${r},${g},${b2})`;
+    cell.style.color = '#fff';
+    cell.innerHTML = `
+      <div class="hm-sym">${sym}</div>
+      <div class="hm-chg">${v.pct >= 0 ? '+' : ''}${v.pct.toFixed(2)}%</div>
+      <div class="hm-px">${fmtPx(v.px)}</div>
+    `;
+    stockGrid.appendChild(cell);
+  }
+  out.appendChild(stockGrid);
+  out.scrollTop = out.scrollHeight;
+  pageFooter();
+}
+
+// ── Canvas sparkline helper ──
+function drawSparkline(parentEl, data, color, w, h) {
+  const cvs = document.createElement('canvas');
+  cvs.width = w; cvs.height = h;
+  cvs.style.cssText = `width:${w}px;height:${h}px;vertical-align:middle;margin-left:6px;`;
+  const ctx = cvs.getContext('2d');
+  const mn = Math.min(...data), mx = Math.max(...data);
+  const range = mx - mn || 1;
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, color.replace(')', ',0.3)').replace('rgb', 'rgba'));
+  grad.addColorStop(1, color.replace(')', ',0.02)').replace('rgb', 'rgba'));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  for (let i = 0; i < data.length; i++) {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - 2 - ((data[i] - mn) / range) * (h - 4);
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(w, h);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < data.length; i++) {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - 2 - ((data[i] - mn) / range) * (h - 4);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  const lastX = w;
+  const lastY = h - 2 - ((data[data.length-1] - mn) / range) * (h - 4);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(lastX - 1, lastY, 2, 0, Math.PI * 2);
+  ctx.fill();
+  parentEl.appendChild(cvs);
+  return cvs;
+}
+
+// ── Mode switching ──
+function switchMode(newMode) {
+  MODE = newMode;
+  const m = MODES[MODE];
+  const app = document.getElementById('app');
+  app.className = 'root mode-' + m.short.toLowerCase();
+
+  const prompt = document.getElementById('prompt');
+  prompt.textContent = m.promptText;
+
+  document.getElementById('cmd').placeholder = m.placeholder;
+
+  const badge = document.getElementById('tb-mode');
+  badge.textContent = m.short;
+
+  document.getElementById('tb-brand').textContent = m.brand;
+  document.getElementById('tb-footer').textContent = m.footer;
+
+  const goBtn = document.getElementById('go-btn');
+  goBtn.innerHTML = m.goLabel === '<GO>' ? '&lt;GO&gt;' : m.goLabel;
+
+  const fkeyBar = document.getElementById('fkeys');
+  fkeyBar.innerHTML = '';
+  for (const fk of m.fkeys) {
+    if (fk === null) {
+      const sp = document.createElement('div');
+      sp.className = 'fkey-spacer';
+      fkeyBar.appendChild(sp);
+      continue;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'fkey ' + fk.cls;
+    btn.dataset.cmd = fk.cmd;
+    btn.innerHTML = `<span class="fkey-label">${fk.f}</span>${fk.cmd}`;
+    btn.addEventListener('click', () => execCmd(fk.cmd));
+    fkeyBar.appendChild(btn);
+  }
+}
+
+// ── Command router ──
+function resolveCmd(input) {
+  if (MODE === 'BB') return BLOOMBERG_MAP[input] || null;
+  return EIKON_MAP[input] || null;
+}
+
+function resolveSecurityKey(input) {
+  if (MODE === 'BB') {
+    const secMatch = input.match(/^(\S+)\s+(US\s+)?(?:EQUITY|EQ)\s*(DES|GP|FA|ANR|HP|BQ)?$/);
+    if (secMatch) {
+      const key = secMatch[1] + ' US EQUITY';
+      const func = secMatch[3] || null;
+      if (DB.securities[key]) return { key, func };
+    }
+    const cryptoMatch = input.match(/^(BTC|ETH)\s+CURNCY\s*(DES)?$/);
+    if (cryptoMatch) {
+      const key = cryptoMatch[1] + ' CURNCY';
+      if (DB.securities[key]) return { key, func: cryptoMatch[2] || null };
+    }
+    const quickKey = input + ' US EQUITY';
+    if (DB.securities[quickKey]) return { key: quickKey, func: null };
+    return null;
+  }
+
+  const ekMatch = input.match(/^(\S+?(?:\.[A-Z]|=))\s*(QUOT|GRAPH|G|FA|REC|HPD|Q)?$/);
+  if (ekMatch) {
+    const ric = ekMatch[1];
+    const func = ekMatch[2] || null;
+    const key = RIC_MAP[ric];
+    if (key) {
+      let internalFunc = null;
+      if (func) {
+        const mapped = EIKON_MAP[func];
+        if (mapped && ['des','gp','fa','anr','hp','bq'].includes(mapped)) internalFunc = mapped;
+      }
+      return { key, func: internalFunc };
+    }
+    return null;
+  }
+
+  const quickKey = input + ' US EQUITY';
+  if (DB.securities[quickKey]) return { key: quickKey, func: null };
+  return null;
+}
+
+const SEC_FUNCS = ['des','gp','fa','anr','hp','bq'];
+
+function execCmd(raw) {
+  const input = raw.trim().toUpperCase();
+  if (!input) return;
+  pageNum++;
+
+  const m = MODES[MODE];
+  printHTML(`<span class="${accent()}">${m.promptText}</span> <span class="c-white">${raw.trim()}</span>`);
+
+  if (input === 'MODE') {
+    const newMode = MODE === 'BB' ? 'EK' : 'BB';
+    switchMode(newMode);
+    cls();
+    printHTML(`<span class="c-teal c-bold">  Command language switched to ${MODES[newMode].label}</span>`);
+    printHTML(`<span class="c-gray">  Type HELP for the ${MODES[newMode].label} command reference</span>`);
+    return;
+  }
+
+  if (input === 'CLS' || input === 'CLEAR') { cls(); return; }
+
+  if (MODE === 'BB' && input.startsWith('SECF')) { screenSECF(input.replace('SECF','').trim()); return; }
+  if (MODE === 'EK' && input.startsWith('SEARCH')) { screenSECF(input.replace('SEARCH','').trim()); return; }
+
+  const resolved = resolveCmd(input);
+  if (resolved) {
+    if (resolved === 'cls') { cls(); return; }
+    if (resolved === 'top') { screenTOP(); return; }
+    if (resolved === 'wei') { screenWEI(); return; }
+    if (resolved === 'act') { screenMOST(); return; }
+    if (resolved === 'port') { screenPORT(); return; }
+    if (resolved === 'fxip') { screenFXIP(); return; }
+    if (resolved === 'eco') { screenECO(); return; }
+    if (resolved === 'help') { screenHELP(); return; }
+    if (resolved === 'equity') { screenEQUITY(); return; }
+    if (resolved === 'secf') { screenSECF(''); return; }
+    if (resolved === 'bmap' || resolved === 'nrsk') { screenNRSK(); return; }
+    if (resolved === 'cris' || resolved === 'ncri') { screenNCRI(); return; }
+    if (resolved === 'nnuc') { screenNNUC(); return; }
+    if (resolved === 'live') { screenLIVE(); return; }
+    if (resolved === 'hmap') { screenHMAP(); return; }
+    if (resolved === 'stub') {
+      printHTML(`<span class="c-yellow">  ${input} market — coming soon. Type HELP for available commands.</span>`);
+      return;
+    }
+    if (SEC_FUNCS.includes(resolved) && currentSec) {
+      if (resolved === 'des') screenDES(currentSec);
+      else if (resolved === 'gp') screenGP(currentSec);
+      else if (resolved === 'fa') screenFA(currentSec);
+      else if (resolved === 'anr') screenANR(currentSec);
+      else if (resolved === 'hp') screenHP(currentSec);
+      else if (resolved === 'bq') screenBQ(currentSec);
+      return;
+    }
+    if (SEC_FUNCS.includes(resolved) && !currentSec) {
+      const hint = MODE === 'EK' ? 'AAPL.O' : 'AAPL US Equity';
+      printHTML(`<span class="c-red">  No security loaded. Enter a security first (e.g., ${hint})</span>`);
+      return;
+    }
+  }
+
+  const sec = resolveSecurityKey(input);
+  if (sec) {
+    currentSec = sec.key;
+    const fn = sec.func || 'des';
+    if (fn === 'des') screenDES(sec.key);
+    else if (fn === 'gp') screenGP(sec.key);
+    else if (fn === 'fa') screenFA(sec.key);
+    else if (fn === 'anr') screenANR(sec.key);
+    else if (fn === 'hp') screenHP(sec.key);
+    else if (fn === 'bq') screenBQ(sec.key);
+    return;
+  }
+
+  const hint = MODE === 'EK' ? 'AAPL.O' : 'AAPL US Equity';
+  printHTML(`<span class="c-red">  Unknown command: ${input}</span>`);
+  printHTML(`<span class="c-gray">  Type HELP for command reference, or enter a security (e.g., ${hint})</span>`);
+}
+
+// ── Input handling ──
+const cmdInput = document.getElementById('cmd');
+cmdInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = cmdInput.value;
+    if (val.trim()) {
+      cmdHistory.unshift(val);
+      if (cmdHistory.length > 50) cmdHistory.pop();
+    }
+    histIdx = -1;
+    execCmd(val);
+    cmdInput.value = '';
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (histIdx < cmdHistory.length - 1) {
+      histIdx++;
+      cmdInput.value = cmdHistory[histIdx];
+    }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (histIdx > 0) { histIdx--; cmdInput.value = cmdHistory[histIdx]; }
+    else { histIdx = -1; cmdInput.value = ''; }
+  }
+});
+
+document.getElementById('go-btn').addEventListener('click', () => {
+  const val = cmdInput.value;
+  if (val.trim()) {
+    cmdHistory.unshift(val);
+    if (cmdHistory.length > 50) cmdHistory.pop();
+  }
+  histIdx = -1;
+  execCmd(val);
+  cmdInput.value = '';
+  cmdInput.focus();
+});
+
+function tick() {
+  const now = new Date();
+  document.getElementById('tb-time').textContent =
+    now.toLocaleTimeString('en-US',{hour12:false}) + ' EST';
+}
+
+// ── Mode selection ──
+function selectMode(mode) {
+  MODE = mode;
+  document.getElementById('mode-select').classList.add('done');
+  setTimeout(() => {
+    document.getElementById('mode-select').style.display = 'none';
+    document.getElementById('boot').style.display = '';
+    bootSequence();
+  }, 300);
+}
+
+document.getElementById('pick-bb').addEventListener('click', () => selectMode('BB'));
+document.getElementById('pick-ek').addEventListener('click', () => selectMode('EK'));
+document.getElementById('pick-bb').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectMode('BB'); }});
+document.getElementById('pick-ek').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectMode('EK'); }});
+
+// ── Boot ──
+async function bootSequence() {
+  const el = document.getElementById('boot-text');
+  const m = MODES[MODE];
+  const isBB = MODE === 'BB';
+
+  const lines = [
+    { t: isBB ? 'BLOOMBERG PROFESSIONAL' : 'LSEG WORKSPACE', c: isBB ? 'c-amber c-bold' : 'c-blue c-bold', d:200 },
+    { t: isBB ? 'Bloomberg Terminal v2027.3' : 'Refinitiv Eikon v2027.2', c: isBB ? 'c-amber' : 'c-blue', d:150 },
+    { t: isBB ? '(c) 2024-2027 Bloomberg L.P. All rights reserved.' : '(c) 2024-2027 London Stock Exchange Group plc.', c:'c-gray', d:300 },
+    { t:'', d:100 },
+    { t: 'NUR Financial Language Extensions v1.0', c:'c-teal c-bold', d:200 },
+    { t: '(c) 2024-2026 Nur Finance. All rights reserved.', c:'c-gray', d:100 },
+    { t:'', d:80 },
+    { t:`Command Language: ${m.label}`, c: isBB ? 'c-amber c-bold' : 'c-blue c-bold', d:200 },
+    { t:'', d:80 },
+    { t:'Initializing system modules...', c: isBB ? 'c-amber' : 'c-blue', d:250 },
+    { t:'  Market Data Engine      [OK]', c:'c-green', d:180 },
+    { t:'  Exchange Gateways       [OK]', c:'c-green', d:180 },
+    { t:'  NYSE | NASDAQ | CME | ICE | BIST | LSE', c:'c-gray', d:120 },
+    { t:'  Quantitative Engine     [OK]', c:'c-green', d:180 },
+    { t:'  Risk Management         [OK]', c:'c-green', d:180 },
+    { t:'  Portfolio Analytics     [OK]', c:'c-green', d:180 },
+    { t: isBB ? '  Bloomberg Wire Feed     [OK]' : '  Refinitiv News Feed     [OK]', c:'c-green', d:180 },
+    { t:'  NUR Geopolitical Module [OK]', c:'c-green', d:180 },
+    { t:'  NUR Nuclear Monitor     [OK]', c:'c-green', d:180 },
+    { t:'  Encryption: TLS 1.3 / AES-256-GCM', c:'c-gray', d:120 },
+    { t:'', d:80 },
+    { t:'Loading user profile: furkan.nur', c: isBB ? 'c-amber' : 'c-blue', d:300 },
+    { t:'  License: Professional Terminal', c:'c-gray', d:100 },
+    { t:`  Mode: ${m.label}`, c:'c-gray', d:100 },
+    { t:'', d:80 },
+    { t:'All systems operational. Type HELP for commands.', c:'c-teal c-bold', d:200 },
+  ];
+
+  for (const line of lines) {
+    await new Promise(r => setTimeout(r, line.d));
+    const d = document.createElement('div');
+    d.className = 'line';
+    d.innerHTML = `<span class="${line.c||''}">${line.t}</span>`;
+    el.appendChild(d);
+  }
+
+  await new Promise(r => setTimeout(r, 600));
+  document.getElementById('boot').classList.add('done');
+  document.getElementById('app').style.display = '';
+  switchMode(MODE);
+  tick();
+  setInterval(tick, 1000);
+  cmdInput.focus();
+
+  screenTOP();
+}
+
+document.getElementById('tb-mode').addEventListener('click', () => {
+  execCmd('MODE');
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.fkey') && !e.target.closest('.tb-page') && !e.target.closest('.mode-card') && !e.target.closest('.cmd-go')) {
+    cmdInput.focus();
+  }
+});
+</script>
