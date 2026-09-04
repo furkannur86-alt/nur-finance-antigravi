@@ -67,6 +67,7 @@ Bu sistemin tasarımı, mimari ilkeleri, kodlama standartları ve küresel büy�
 7. **GhostVault CyberSecurity™:** Sıfır-İz (Zero-Trace) Korumalı Sandbox ve 15 Saniyelik Fırsat Maliyeti Finansal Gösterim Motoru.
 8. **NUR Finance B™ & NUR Finance R™:** Çift Kademeli Asimetrik Kurumsal Yetkilendirme ve Geçiş Güvenlik Kapısı.
 9. **Zero-PII Multi-Chain Settlement Gateway™:** İsme ve Kişisel Veriye İhtiyaç Duymayan Kriptografik TXID Doğrulamalı Terminal Aktivasyonu.
+10. **NUR Legacy™ (Single Mothers & Next-Gen Tycoons):** Bekar Anneler İçin 40dk Disiplinli Çocuk Şirket Yönetim Simülasyonu & 255€/ay Üniversite/Kariyer Yol Haritası Motoru.
 
 ---
 

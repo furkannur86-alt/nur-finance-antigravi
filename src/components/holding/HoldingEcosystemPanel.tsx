@@ -95,6 +95,18 @@ const CORE_PILLARS: GrowthPillar[] = [
     icon: "🛡️",
     metrics: { estLTV: "$33,000", targetReach: "1.2B+ Kullanıcı", conversionRate: "2.9%" },
   },
+  {
+    id: "nur-legacy",
+    name: "NUR Legacy (Single Mothers)",
+    badge: "SOSYAL SORUMLULUK & LİDERLİK",
+    badgeColor: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+    targetDemographic: "Dünya Çapında Çocuklarını Tek Başına Büyüten Anneler (Single Mothers)",
+    hookMechanism: "Günde 40dk Disiplinli Oyun & 'Baban sana bu şirketi miras bıraktı, artık baban biziz' hikayesi",
+    conversionFunnel: "Özel Okul/Harvard yerine 255 €/ay ile Gerçek Şirket/Holding Yönetimi & Kariyer Yol Haritası (Maden, Enerji, Finans, Teknoloji).",
+    activeStatus: "OPERATIONAL",
+    icon: "🤱",
+    metrics: { estLTV: "$36,000", targetReach: "180M+ Aile", conversionRate: "7.4%" },
+  },
 ];
 
 // Open Modular Expansion Slots (Ready for the next hundreds of client acquisition systems)
@@ -146,7 +158,7 @@ export default function HoldingEcosystemPanel() {
                 : "bg-white/5 hover:bg-white/10 text-[var(--ag-muted)]"
             }`}
           >
-            🏛️ 6 Büyüme İştiraki
+            🏛️ 7 Büyüme İştiraki
           </button>
           <button
             onClick={() => setActiveTab("tv-network")}
@@ -179,8 +191,8 @@ export default function HoldingEcosystemPanel() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="p-4 rounded-lg border bg-black/30 border-[var(--ag-border)]">
                 <div className="text-[11px] text-[var(--ag-muted)]">Toplam Potansiyel Kitle Erişimi</div>
-                <div className="text-xl font-bold font-mono text-[var(--ag-accent)] mt-1">2.6 Milyar+</div>
-                <div className="text-[10px] text-emerald-400 mt-0.5">6 Bağımsız Büyüme Motoru</div>
+                <div className="text-xl font-bold font-mono text-[var(--ag-accent)] mt-1">2.8 Milyar+</div>
+                <div className="text-[10px] text-emerald-400 mt-0.5">7 Bağımsız Büyüme Motoru</div>
               </div>
               <div className="p-4 rounded-lg border bg-black/30 border-[var(--ag-border)]">
                 <div className="text-[11px] text-[var(--ag-muted)]">NUR Finance Nihai Dönüşüm</div>
@@ -189,7 +201,7 @@ export default function HoldingEcosystemPanel() {
               </div>
               <div className="p-4 rounded-lg border bg-black/30 border-[var(--ag-border)]">
                 <div className="text-[11px] text-[var(--ag-muted)]">Fikri Mülkiyet & Patent</div>
-                <div className="text-xl font-bold font-mono text-amber-300 mt-1">9 Tescilli Buluş</div>
+                <div className="text-xl font-bold font-mono text-amber-300 mt-1">10 Tescilli Buluş</div>
                 <div className="text-[10px] text-[var(--ag-muted)] mt-0.5">PATENTS_AND_IP.md</div>
               </div>
               <div className="p-4 rounded-lg border bg-black/30 border-[var(--ag-border)]">

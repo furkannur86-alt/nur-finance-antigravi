@@ -32,6 +32,7 @@ Any unauthorized reproduction, reverse engineering, unauthorized deployment, or 
 │ IP-7 │ Zero-Trace Sandbox & Opportunity Cost Hub  │ GhostVault Cyber Security   │ Patent / Sandbox     │
 │ IP-8 │ Asymmetric Institutional Access Gatekeeper │ VerificationPanel.tsx       │ Trade Secret / Gate  │
 │ IP-9 │ Zero-PII Multi-Chain Settlement Gateway   │ DigitalWalletGateway.tsx    │ Patent / Web3 Engine │
+│ IP-10│ Single-Mother & Youth Tycoon Engine       │ NUR Legacy Sub-system       │ Patent / EdTech AI   │
 └──────┴────────────────────────────────────────────┴─────────────────────────────┴──────────────────────┘
 ```
 
@@ -103,6 +104,15 @@ Any unauthorized reproduction, reverse engineering, unauthorized deployment, or 
 
 ---
 
+### 10. IP-10: Single-Mother Social-Responsibility & Youth Tycoon Succession Engine (NUR Legacy)
+- **Inventive Step:** An AI-orchestrated inter-generational educational and enterprise simulation platform specifically tailored for single mothers raising children:
+  - **Adult-Gated 40-Minute Discipline Cap:** Hardware/browser-enforced daily playtime limit preventing screen addiction.
+  - **Inherited Enterprise Simulation:** Multi-sector company allocation (Mining, Energy, Quantitative Finance, Maritime, Tech) simulating €200K - €100M enterprise governance.
+  - **University Tuition-Disruption Model:** Comprehensive career roadmap comparing €255/mo immersive holding management against traditional €50,000/yr private schooling, detailing global corporate licensing, legal structures, and international passports.
+- **Claims:** Methods for empowering single-parent families with real-world enterprise leadership and wealth preservation capabilities under the protective umbrella of NUR Finance.
+
+---
+
 ## 🔒 LEGAL NOTICE & TRADEMARK REGISTRATIONS
 
 The following marks and trade dress are registered trademarks of **NUR Finance Holding**:
@@ -114,6 +124,7 @@ The following marks and trade dress are registered trademarks of **NUR Finance H
 - **NUR Dating™**
 - **NUR AI Studio™**
 - **NUR Comm Pro™**
+- **NUR Legacy™ (Single Mothers Tycoon Academy)**
 - **GhostVault™ & GhostGuard™**
 - **WISH Framework™ (Worldview, Indicators, Setup, Discipline)**
 
