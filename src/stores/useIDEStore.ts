@@ -192,7 +192,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   activeTabId: null,
   consoleMessages: [],
   isRunning: false,
-  activeView: "holding-ecosystem",
+  activeView: "umay-boss",
   sidebarOpen: true,
   hudDrawerOpen: false,
   breakingNewsTicker: "NUR TV GLOBAL: U.S. ISM Services PMI reaches 54.8; Quant Rotation active across Tech and Financials.",

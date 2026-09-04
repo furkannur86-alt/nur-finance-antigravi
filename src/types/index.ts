@@ -99,7 +99,8 @@ export type PanelView =
   | "broadcast-studio"
   | "verification-portal"
   | "wallet-gateway"
-  | "holding-ecosystem";
+  | "holding-ecosystem"
+  | "umay-boss";
 
 export interface GlobalMarketQuote {
   symbol: string;

@@ -10,7 +10,8 @@ interface ViewTab {
 }
 
 const views: ViewTab[] = [
-  { id: "holding-ecosystem", label: "👑 Umay Gül Nur", group: "core" },
+  { id: "umay-boss", label: "👑 Umay Terminal", group: "core" },
+  { id: "holding-ecosystem", label: "🏛️ 6 Büyüme Kolu", group: "core" },
   { id: "editor", label: "Editor", group: "core" },
   { id: "dashboard", label: "Dashboard", group: "core" },
   { id: "portfolio", label: "Portfolio", group: "core" },
