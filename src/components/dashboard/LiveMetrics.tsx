@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Stats {
   sharpeRatio: number;
@@ -17,20 +17,18 @@ interface Props {
 
 export default function LiveMetrics({ totalValue, totalPnL, totalReturn }: Props) {
   const [stats, setStats] = useState<Stats | null>(null);
-
-  const fetchStats = useCallback(async () => {
-    try {
-      const res = await fetch("/api/indicators?symbol=SPY&indicator=stats&range=1y");
-      const data = await res.json();
-      if (data.stats) setStats(data.stats);
-    } catch {
-      // keep defaults
-    }
-  }, []);
+  const didFetch = useRef(false);
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    if (didFetch.current) return;
+    didFetch.current = true;
+    let cancelled = false;
+    fetch("/api/indicators?symbol=SPY&indicator=stats&range=1y")
+      .then((r) => r.json())
+      .then((data) => { if (!cancelled && data.stats) setStats(data.stats); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const metrics = [
     {

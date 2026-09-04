@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { MarketQuote } from "@/types";
 
 export default function LiveWatchList() {
@@ -8,23 +8,23 @@ export default function LiveWatchList() {
   const [source, setSource] = useState<string>("loading");
   const [lastUpdate, setLastUpdate] = useState<string>("");
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await fetch("/api/market-data?type=quotes");
-      const data = await res.json();
-      setQuotes(data.data || []);
-      setSource(data.source || "unknown");
-      setLastUpdate(new Date().toLocaleTimeString("en-US", { hour12: false }));
-    } catch {
-      setSource("error");
-    }
-  }, []);
-
   useEffect(() => {
+    let cancelled = false;
+    function fetchData() {
+      fetch("/api/market-data?type=quotes")
+        .then((r) => r.json())
+        .then((data) => {
+          if (cancelled) return;
+          setQuotes(data.data || []);
+          setSource(data.source || "unknown");
+          setLastUpdate(new Date().toLocaleTimeString("en-US", { hour12: false }));
+        })
+        .catch(() => { if (!cancelled) setSource("error"); });
+    }
     fetchData();
     const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, [fetchData]);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, []);
 
   return (
     <div>
