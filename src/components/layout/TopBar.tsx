@@ -31,7 +31,7 @@ const views: ViewTab[] = [
 
   { id: "quant-copilot", label: "Quant Copilot", group: "analysis" },
   { id: "macro-risk", label: "MacroRisk", group: "analysis" },
-  { id: "geopolitics", label: "GeoRisk", group: "analysis" },
+  { id: "geopolitics", label: "🌐 NUR Earth 3D", group: "analysis" },
   { id: "ai-tools", label: "AI Tools", group: "analysis" },
   { id: "data-ingest", label: "Ingest", group: "analysis" },
   { id: "encyclopedia", label: "Wiki", group: "analysis" },

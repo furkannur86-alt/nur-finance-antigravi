@@ -1,6 +1,7 @@
 "use client";
-
 import { useEffect, useState, useCallback } from "react";
+import NurEarth3DGlobe from "./NurEarth3DGlobe";
+import EagleCrest from "@/components/ui/EagleCrest";
 
 interface ConflictEvent {
   id: string;
@@ -277,7 +278,7 @@ export default function GeopoliticsPanel() {
   const [data, setData] = useState<ConflictSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "events" | "assets">("overview");
+  const [activeTab, setActiveTab] = useState<"earth-3d" | "overview" | "events" | "assets">("earth-3d");
 
   const fetchData = useCallback(async () => {
     try {
@@ -310,7 +311,7 @@ export default function GeopoliticsPanel() {
       <div className="flex items-center justify-center h-full" style={{ background: "var(--ag-bg)" }}>
         <div className="text-center">
           <div className="text-2xl mb-2 animate-pulse">{"🌍"}</div>
-          <div className="text-xs" style={{ color: "var(--ag-muted)" }}>Loading conflict data...</div>
+          <div className="text-xs" style={{ color: "var(--ag-muted)" }}>NUR Earth 3D & Jeopolitik Veriler Yükleniyor...</div>
         </div>
       </div>
     );
@@ -323,7 +324,7 @@ export default function GeopoliticsPanel() {
           <div className="text-2xl mb-2">{"⚠️"}</div>
           <div className="text-xs mb-2" style={{ color: "#ef4444" }}>{error}</div>
           <button onClick={fetchData} className="text-xs px-3 py-1 rounded" style={{ background: "var(--ag-accent)", color: "var(--ag-bg)" }}>
-            Retry
+            Tekrar Dene
           </button>
         </div>
       </div>
@@ -334,34 +335,44 @@ export default function GeopoliticsPanel() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden" style={{ background: "var(--ag-bg)" }}>
+      {/* Top Bar with Sovereign Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b" style={{ borderColor: "var(--ag-border)" }}>
         <div className="flex items-center gap-3">
-          <span className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>Geopolitical Risk Monitor</span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.15)", color: "#ef4444" }}>
-            LIVE
+          <EagleCrest size={22} />
+          <span className="text-sm font-bold font-serif text-cyan-300">NUR Earth & Jeopolitik İstihbarat Radarı</span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-red-500/20 text-red-400">
+            CANLI UYDU AKIŞI
           </span>
-          <span className="text-[9px]" style={{ color: "var(--ag-muted)" }}>
-            {data.totalEvents} events
+          <span className="text-[9px] font-mono text-[var(--ag-muted)]">
+            {data.totalEvents} Aktif Olay
           </span>
         </div>
         <div className="flex items-center gap-1">
-          {(["overview", "events", "assets"] as const).map((tab) => (
+          {(
+            [
+              { id: "earth-3d" as const, label: "🌐 NUR Earth 3D (Uçak & Petrol)" },
+              { id: "overview" as const, label: "📊 Risk Özeti & Tablolar" },
+              { id: "events" as const, label: "⚔ Olay Günlüğü" },
+              { id: "assets" as const, label: "📈 Varlık Etkisi" },
+            ] as const
+          ).map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="px-2.5 py-1 text-[10px] rounded transition-colors capitalize"
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="px-2.5 py-1 text-[11px] rounded transition-colors font-medium"
               style={{
-                background: activeTab === tab ? "rgba(0,212,170,0.15)" : "transparent",
-                color: activeTab === tab ? "var(--ag-accent)" : "var(--ag-muted)",
+                background: activeTab === tab.id ? "rgba(56,189,248,0.2)" : "transparent",
+                color: activeTab === tab.id ? "#38bdf8" : "var(--ag-muted)",
+                border: activeTab === tab.id ? "1px solid rgba(56,189,248,0.4)" : "1px solid transparent",
               }}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
           <button
             onClick={fetchData}
             className="ml-2 p-1 rounded hover:bg-white/5 transition-colors"
-            title="Refresh"
+            title="Yenile"
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="var(--ag-muted)">
               <path d="M13.65 2.35A8 8 0 1 0 16 8h-2a6 6 0 1 1-1.76-4.24L10 6h6V0l-2.35 2.35z" />
@@ -370,7 +381,10 @@ export default function GeopoliticsPanel() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-hidden">
+        {activeTab === "earth-3d" && (
+          <NurEarth3DGlobe />
+        )}
         {activeTab === "overview" && (
           <div className="p-4 space-y-4">
             <div className="grid grid-cols-4 gap-3">
