@@ -98,7 +98,8 @@ export type PanelView =
   | "quant-copilot"
   | "broadcast-studio"
   | "verification-portal"
-  | "wallet-gateway";
+  | "wallet-gateway"
+  | "holding-ecosystem";
 
 export interface GlobalMarketQuote {
   symbol: string;

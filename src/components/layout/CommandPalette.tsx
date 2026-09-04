@@ -13,6 +13,7 @@ interface Command {
 }
 
 const views: { id: PanelView; label: string; num?: number; group: string }[] = [
+  { id: "holding-ecosystem", label: "👑 Umay Gül Nur Holding — 6 Growth Pillars & TV", group: "Core" },
   { id: "editor", label: "Editor", num: 1, group: "Core" },
   { id: "dashboard", label: "Dashboard", num: 2, group: "Core" },
   { id: "portfolio", label: "Portfolio", num: 3, group: "Core" },

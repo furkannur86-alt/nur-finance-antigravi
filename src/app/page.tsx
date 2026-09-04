@@ -37,6 +37,7 @@ import BroadcastStudioPanel from "@/components/media/BroadcastStudioPanel";
 import VerificationPanel from "@/components/pricing/VerificationPanel";
 import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
 import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
+import HoldingEcosystemPanel from "@/components/holding/HoldingEcosystemPanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -45,6 +46,7 @@ const MAX_CONSOLE_HEIGHT = 500;
 const DEFAULT_CONSOLE_HEIGHT = 200;
 
 const FULLSCREEN_VIEWS = [
+  "holding-ecosystem",
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
@@ -99,6 +101,8 @@ export default function Home() {
 
   const renderMainContent = () => {
     switch (activeView) {
+      case "holding-ecosystem":
+        return <HoldingEcosystemPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":
