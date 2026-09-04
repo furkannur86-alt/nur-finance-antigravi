@@ -1,18 +1,26 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useIDEStore } from "@/stores/useIDEStore";
 import { PanelView } from "@/types";
 import EagleCrest from "@/components/ui/EagleCrest";
+import { cyberSound } from "@/lib/audio/sound-synth";
 
 interface ViewTab {
   id: PanelView;
   label: string;
   group: "core" | "markets" | "trading" | "analysis" | "nfs";
+  adminOnly?: boolean;
 }
 
-const views: ViewTab[] = [
-  { id: "umay-boss", label: "👑 Umay Gül Nur", group: "core" },
-  { id: "holding-ecosystem", label: "🏛️ 7 Büyüme Kolu", group: "core" },
+const ALL_VIEWS: ViewTab[] = [
+  // Admin Only / Sovereign Gated Modules (Secret Vault Access)
+  { id: "umay-boss", label: "👑 Umay Gül Nur", group: "core", adminOnly: true },
+  { id: "holding-ecosystem", label: "🏛️ 7 Büyüme Kolu", group: "core", adminOnly: true },
+  { id: "tatar-finans", label: "🎲 Tatar Finans", group: "trading", adminOnly: true },
+
+  // Public 2126 Quantitative Core Modules
+  { id: "geopolitics", label: "🌐 NUR Earth 3D", group: "analysis" },
   { id: "dashboard", label: "Dashboard", group: "core" },
   { id: "portfolio", label: "Portfolio", group: "core" },
   { id: "charts", label: "Charts", group: "core" },
@@ -26,12 +34,10 @@ const views: ViewTab[] = [
 
   { id: "oms-ems", label: "OMS/EMS", group: "trading" },
   { id: "wallet-gateway", label: "Web3 Wallet", group: "trading" },
-  { id: "tatar-finans", label: "🎲 Tatar Finans", group: "trading" },
   { id: "backtest", label: "Backtest", group: "trading" },
 
   { id: "quant-copilot", label: "Quant Copilot", group: "analysis" },
   { id: "macro-risk", label: "MacroRisk", group: "analysis" },
-  { id: "geopolitics", label: "🌐 NUR Earth 3D", group: "analysis" },
   { id: "ai-tools", label: "AI Tools", group: "analysis" },
   { id: "data-ingest", label: "Ingest", group: "analysis" },
   { id: "encyclopedia", label: "Wiki", group: "analysis" },
@@ -50,7 +56,7 @@ const GROUP_ACCENT: Record<string, string> = {
   core: "var(--ag-accent)",
   markets: "var(--ag-accent)",
   trading: "#38bdf8",
-  analysis: "var(--ag-accent)",
+  analysis: "#00f2fe",
   nfs: "var(--ag-accent2)",
 };
 
@@ -66,7 +72,40 @@ export default function TopBar() {
     notifications,
     matrixRainOpacity,
     cycleMatrixRainOpacity,
+    isSovereignAdmin,
+    setSovereignAuthModalOpen,
   } = useIDEStore();
+
+  const crestClickCount = useRef(0);
+  const crestClickTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Global Shortcut: Ctrl + Shift + S for Sovereign Vault Auth
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === "S" || e.key === "s")) {
+        e.preventDefault();
+        setSovereignAuthModalOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setSovereignAuthModalOpen]);
+
+  const handleCrestClick = () => {
+    crestClickCount.current += 1;
+    if (crestClickTimer.current) clearTimeout(crestClickTimer.current);
+
+    if (crestClickCount.current >= 3) {
+      crestClickCount.current = 0;
+      setSovereignAuthModalOpen(true);
+    } else {
+      crestClickTimer.current = setTimeout(() => {
+        crestClickCount.current = 0;
+      }, 1200);
+    }
+  };
+
+  const visibleViews = ALL_VIEWS.filter((v) => !v.adminOnly || isSovereignAdmin);
 
   const unreadAlertsCount = notifications.filter((n) => !n.read).length;
 
@@ -94,8 +133,12 @@ export default function TopBar() {
         </svg>
       </button>
 
-      {/* Brand Identity with Eagle Crest & nurfinans.com */}
-      <div className="flex items-center gap-2 mr-4 shrink-0">
+      {/* Brand Identity with Eagle Crest & Triple-Click Secret Sovereign Trigger */}
+      <div
+        onClick={handleCrestClick}
+        className="flex items-center gap-2 mr-4 shrink-0 cursor-pointer group"
+        title="NUR Finance Sovereign Network &bull; Dominus Orientis et Occidentis (3 kez tıkla: Egemen Girişi)"
+      >
         <EagleCrest size={26} animate={true} />
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
@@ -115,10 +158,10 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs Filtered by Sovereign Authorization */}
       <div className="flex items-center gap-0.5 mr-3 overflow-x-auto no-scrollbar">
-        {views.map((v, i) => {
-          const showDivider = i > 0 && views[i - 1].group !== v.group;
+        {visibleViews.map((v, i) => {
+          const showDivider = i > 0 && visibleViews[i - 1].group !== v.group;
           const accent = GROUP_ACCENT[v.group];
           const isActive = activeView === v.id;
 
@@ -128,7 +171,10 @@ export default function TopBar() {
                 <div className="w-px h-4 mx-1" style={{ background: "var(--ag-border)" }} />
               )}
               <button
-                onClick={() => setActiveView(v.id)}
+                onClick={() => {
+                  cyberSound.playClick();
+                  setActiveView(v.id);
+                }}
                 className="px-2 py-1 text-[11px] rounded transition-colors whitespace-nowrap"
                 style={{
                   background: isActive

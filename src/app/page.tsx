@@ -40,6 +40,8 @@ import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
 import HoldingEcosystemPanel from "@/components/holding/HoldingEcosystemPanel";
 import UmayBossTerminal from "@/components/umay/UmayBossTerminal";
 import TatarFinansPanel from "@/components/tatar/TatarFinansPanel";
+import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
+import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
@@ -184,6 +186,8 @@ export default function Home() {
       {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
       <CommandPalette />
       <HUDNotificationSystem />
+      <SovereignAuthModal />
+      <Quantum2126Ticker />
       <TopBar />
       <div className="flex flex-1 min-h-0">
         {sidebarOpen && <Sidebar />}

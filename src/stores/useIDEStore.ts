@@ -156,6 +156,9 @@ interface IDEState {
   alertRules: AlertRule[];
   verification: VIPVerificationStatus;
   matrixRainOpacity: number;
+  isSovereignAdmin: boolean;
+  sovereignAuthModalOpen: boolean;
+  soundMuted: boolean;
 
   // Actions
   openFile: (node: FileNode) => void;
@@ -172,6 +175,9 @@ interface IDEState {
   runActiveFile: () => void;
   setMatrixRainOpacity: (opacity: number) => void;
   cycleMatrixRainOpacity: () => void;
+  setSovereignAdmin: (isAdmin: boolean) => void;
+  setSovereignAuthModalOpen: (open: boolean) => void;
+  toggleSoundMuted: () => void;
 
   // OMS / Trading Actions
   placeOrder: (order: Omit<SimulatedOrder, "id" | "filledQuantity" | "status" | "createdAt" | "updatedAt" | "slippageEstimated" | "feeEstimated">) => void;
@@ -195,10 +201,13 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   activeTabId: null,
   consoleMessages: [],
   isRunning: false,
-  activeView: "umay-boss",
+  activeView: "geopolitics",
   sidebarOpen: true,
   hudDrawerOpen: false,
   matrixRainOpacity: 0.075,
+  isSovereignAdmin: false,
+  sovereignAuthModalOpen: false,
+  soundMuted: false,
   breakingNewsTicker: "NUR TV GLOBAL: U.S. ISM Services PMI reaches 54.8; Quant Rotation active across Tech and Financials.",
   orders: INITIAL_ORDERS,
   positions: INITIAL_POSITIONS,
@@ -220,6 +229,10 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     documentUploaded: false,
     overallStatus: "NOT_STARTED",
   },
+
+  setSovereignAdmin: (isSovereignAdmin) => set({ isSovereignAdmin }),
+  setSovereignAuthModalOpen: (sovereignAuthModalOpen) => set({ sovereignAuthModalOpen }),
+  toggleSoundMuted: () => set((s) => ({ soundMuted: !s.soundMuted })),
 
   setMatrixRainOpacity: (opacity) => set({ matrixRainOpacity: opacity }),
   cycleMatrixRainOpacity: () => {
