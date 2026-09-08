@@ -1,10 +1,10 @@
-# NUR Finance AntiGravi IDE
+# NUR Finance AntiGravi IDE v3.0
 
 Bloomberg/Reuters-tier financial terminal built with Next.js 16, React 19, and Tailwind CSS 4.
 
 ## Features
 
-- **22+ API-Connected Panels** — Dashboard, Portfolio, Charts, Backtest, Global Markets, Economic Data, Screener, Options, AI Tools, MacroRisk, OMS/EMS, Quant Copilot, Broadcast Studio, VIP Verify, and more
+- **33 Panel Views** — Dashboard, Portfolio, Charts, Backtest, Global Markets, Economic Data, Screener, Options, AI Tools, MacroRisk, OMS/EMS, Quant Copilot, Broadcast Studio, VIP Verify, NUR Coin Ecosystem, Holding Ecosystem, Education, Kids, Tatar Finans, and more
 - **Institutional OMS / EMS** — Direct Market Access L2 Depth of Market ladder, algorithmic smart order types (TWAP, VWAP, Iceberg), Kelly margin sizing, and execution audit logging
 - **AI Quant Copilot & WISH Engine** — WISH Framework matrix (Worldview, Indicators, Setup Gatekeeping, Discipline), autonomous long/short pair trade generator, and macro stress tests
 - **Real-Time HUD Alert Center** — Price, VIX regime shift, ACLED conflict proximity, and macro surprise evaluation with synthesized Web Audio chimes
@@ -14,6 +14,12 @@ Bloomberg/Reuters-tier financial terminal built with Next.js 16, React 19, and T
 - **Real-Time Market Data** — Equities, forex, commodities, crypto, and indices across 60+ global exchanges
 - **NUR Terminal** — Bloomberg/Reuters-tier command-line interface for power users
 - **Code Editor** — Integrated quantitative finance development environment with backtesting
+- **Smart Mining Free Access** — Country-aware compute-for-access: Germany capped (€30/mo max electricity, 14h/day off-peak), all other countries aggressive mining with no caps
+- **NUR Coin Ecosystem** — Mining bots, staking, governance, and multi-chain settlement
+- **Holding Ecosystem** — 7 Growth Pillars organizational structure
+- **NUR Education** — 10 quantitative finance courses with compute consent
+- **NUR Kids** — Parent-supervised child financial tracking
+- **Crypto-Only Settlement** — Zero-PII multi-chain payment (USDT/USDC on Polygon, Arbitrum, Ethereum, TRON, BTC)
 
 ## Tech Stack
 
