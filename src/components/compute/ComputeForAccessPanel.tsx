@@ -434,7 +434,7 @@ export default function ComputeForAccessPanel() {
                 NUR Finance — {isGermany ? "Smart Mining" : "Maximum Mining"} Free Access Agreement
               </h3>
               <p className="text-[10px] font-mono mb-4" style={{ color: "var(--ag-muted)" }}>
-                Version 2.0 — September 2026 — {region.flag} {region.name}
+                Version 3.0 — September 2026 — {region.flag} {region.name}
               </p>
 
               <div className="space-y-4 text-[12px] leading-relaxed" style={{ color: "var(--ag-muted)" }}>
@@ -481,6 +481,11 @@ export default function ComputeForAccessPanel() {
                 <div>
                   <p className="font-semibold mb-1" style={{ color: "var(--ag-text)" }}>5. You Can Stop Anytime</p>
                   <p>Close the terminal to stop mining. Stopping ends free access. Switch to €255/month subscription anytime.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold mb-1" style={{ color: "var(--ag-text)" }}>6. Full Terms</p>
+                  <p>See <a href="/agb" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ag-accent)", textDecoration: "underline" }}>§ 6 Smart Mining Free Access</a> in our Terms of Service for the complete legal agreement.</p>
                 </div>
               </div>
 
