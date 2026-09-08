@@ -14,7 +14,8 @@ interface Command {
 
 const views: { id: PanelView; label: string; num?: number; group: string }[] = [
   { id: "umay-boss", label: "👑 Umay Gül Nur Patron Terminali (100.000 €)", group: "Core" },
-  { id: "holding-ecosystem", label: "🏛️ Umay Gül Nur Holding — 6 Büyüme Kolu & TV", group: "Core" },
+  { id: "holding-ecosystem", label: "🏛️ Umay Gül Nur Holding — 7 Büyüme Kolu", group: "Core" },
+  { id: "tatar-finans", label: "🛡️ Tatar Finans", group: "Core" },
   { id: "editor", label: "Editor", num: 1, group: "Core" },
   { id: "dashboard", label: "Dashboard", num: 2, group: "Core" },
   { id: "portfolio", label: "Portfolio", num: 3, group: "Core" },
@@ -28,6 +29,7 @@ const views: { id: PanelView; label: string; num?: number; group: string }[] = [
   { id: "options", label: "Options & Derivatives", group: "Markets" },
 
   { id: "oms-ems", label: "OMS/EMS Trading & L2 DOM", group: "Trading" },
+  { id: "nur-coin", label: "🪙 NUR Coin Ecosystem", group: "Trading" },
   { id: "wallet-gateway", label: "Web3 Wallet & Anonymous Settlement", group: "Trading" },
   { id: "backtest", label: "Backtesting Engine", group: "Trading" },
 
@@ -46,6 +48,9 @@ const views: { id: PanelView; label: string; num?: number; group: string }[] = [
   { id: "alerts", label: "NFS Risk Alerts", group: "NFS" },
   { id: "research", label: "NFS Equity Research", group: "NFS" },
   { id: "pricing", label: "Pricing & Plans", group: "NFS" },
+  { id: "nur-kids", label: "👨‍👩‍👧 NUR Kids", group: "NFS" },
+  { id: "nur-education", label: "🎓 NUR Education", group: "NFS" },
+  { id: "compute-access", label: "⛏️ Smart Mining Free Access", group: "NFS" },
 ];
 
 export default function CommandPalette() {
