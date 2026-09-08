@@ -13,6 +13,32 @@ const viewLabels: Record<string, string> = {
   news: "NFS News",
   alerts: "NFS Alerts",
   research: "NFS Research",
+  "global-markets": "Global Markets",
+  "economic-data": "Economic Data",
+  "data-ingest": "Data Ingest",
+  geopolitics: "Geopolitics",
+  fundamentals: "Fundamentals",
+  screener: "Screener",
+  "news-feed": "News Feed",
+  encyclopedia: "Encyclopedia",
+  pricing: "Pricing",
+  media: "NFS Media",
+  "live-tv": "Live TV",
+  options: "Options",
+  "ai-tools": "AI Tools",
+  "macro-risk": "Macro Risk",
+  "oms-ems": "OMS / EMS",
+  "quant-copilot": "Quant Copilot",
+  "broadcast-studio": "Broadcast Studio",
+  "verification-portal": "Verification",
+  "wallet-gateway": "Wallet Gateway",
+  "nur-coin": "NUR Coin",
+  "umay-boss": "Umay Boss",
+  "holding-ecosystem": "Holding Ecosystem",
+  "tatar-finans": "Tatar Finans",
+  "nur-kids": "NUR Kids",
+  "nur-education": "NUR Education",
+  "compute-access": "Compute Access",
 };
 
 const legalLinks = [
@@ -37,7 +63,7 @@ export default function StatusBar() {
           {isRunning ? "Running" : "Ready"}
         </span>
         <span>|</span>
-        <span>AntiGravi Engine v2.1</span>
+        <span>AntiGravi Engine v3.0</span>
         <span>|</span>
         <span style={{ color: "var(--ag-accent)" }}>{viewLabels[activeView] || activeView}</span>
       </div>

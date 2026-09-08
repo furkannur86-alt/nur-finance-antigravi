@@ -95,7 +95,7 @@ const en: TranslationSet = {
   },
   terminal: {
     ready: "Engine initialized. Ready for development.",
-    version: "AntiGravi IDE v2.1 - Nur Finance Quantitative Engine",
+    version: "AntiGravi IDE v3.0 - Nur Finance Quantitative Engine",
     executed: "executed successfully",
     processed: "Processed in",
   },
@@ -168,7 +168,7 @@ const tr: TranslationSet = {
   },
   terminal: {
     ready: "Motor başlatıldı. Geliştirmeye hazır.",
-    version: "AntiGravi IDE v2.1 - Nur Finans Kantitatif Motor",
+    version: "AntiGravi IDE v3.0 - Nur Finans Kantitatif Motor",
     executed: "başarıyla çalıştırıldı",
     processed: "İşlendi",
   },
@@ -241,7 +241,7 @@ const de: TranslationSet = {
   },
   terminal: {
     ready: "Engine initialisiert. Bereit für die Entwicklung.",
-    version: "AntiGravi IDE v2.1 - Nur Finance Quantitative Engine",
+    version: "AntiGravi IDE v3.0 - Nur Finance Quantitative Engine",
     executed: "erfolgreich ausgeführt",
     processed: "Verarbeitet in",
   },
@@ -314,7 +314,7 @@ const ar: TranslationSet = {
   },
   terminal: {
     ready: "تم تهيئة المحرك. جاهز للتطوير.",
-    version: "AntiGravi IDE v2.1 - محرك نور المالي الكمي",
+    version: "AntiGravi IDE v3.0 - محرك نور المالي الكمي",
     executed: "تم التنفيذ بنجاح",
     processed: "تمت المعالجة في",
   },
@@ -387,7 +387,7 @@ const zh: TranslationSet = {
   },
   terminal: {
     ready: "引擎已初始化。准备就绪。",
-    version: "AntiGravi IDE v2.1 - 光辉金融量化引擎",
+    version: "AntiGravi IDE v3.0 - 光辉金融量化引擎",
     executed: "执行成功",
     processed: "处理时间",
   },

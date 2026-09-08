@@ -378,7 +378,7 @@ from strategies.mean_reversion import MeanReversionStrategy
 
 def main():
     print("=" * 60)
-    print("  AntiGravi v2.0 - Nur Finance Quantitative Engine")
+    print("  AntiGravi v3.0 - Nur Finance Quantitative Engine")
     print("  Gravity-defying market analysis powered by AI")
     print("=" * 60)
 

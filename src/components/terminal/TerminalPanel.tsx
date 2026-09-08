@@ -47,7 +47,7 @@ export default function TerminalPanel() {
         return;
 
       case "version":
-        addConsoleMessage({ type: "output", text: "AntiGravi IDE v2.1.0 | Engine v2.1 | Nur Finance" });
+        addConsoleMessage({ type: "output", text: "AntiGravi IDE v3.0.0 | Engine v3.0 | Nur Finance" });
         addConsoleMessage({ type: "output", text: "Features: Live Market Data, Technical Indicators, Backtesting" });
         return;
 
@@ -236,7 +236,7 @@ export default function TerminalPanel() {
           Terminal
         </span>
         <span className="text-[9px] ml-2 px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.1)", color: "var(--ag-accent)" }}>
-          v2.1
+          v3.0
         </span>
         <div className="flex-1" />
         <button onClick={clearConsole} className="text-[10px] hover:underline" style={{ color: "var(--ag-muted)" }}>
