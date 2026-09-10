@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useState, useRef } from "react";
 import {
   BROADCAST_LANGUAGES,
   LanguageBroadcastProfile,
@@ -9,10 +8,32 @@ import {
 } from "@/lib/broadcast/multilingual-broadcast";
 import { cyberSound } from "@/lib/audio/sound-synth";
 
-const STUDIO_SCENES = [
-  { id: "female", label: "Stüdyo A (Kadın Spiker)", image: "/images/studio/anchor-female.jpg" },
-  { id: "male", label: "Stüdyo B (Erkek Analist)", image: "/images/studio/anchor-male.jpg" },
-  { id: "office", label: "Yönetici Masası (Gökdelen)", image: "/images/studio/executive-office.jpg" },
+// High quality financial video streams
+const LIVE_CHANNELS = [
+  {
+    id: "bloomberg",
+    name: "Bloomberg TV Live",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    fallbackPoster: "/images/studio/anchor-female.jpg",
+    category: "GLOBAL MACRO",
+    badge: "CANLI 4K",
+  },
+  {
+    id: "cnbc",
+    name: "CNBC Finance Terminal",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    fallbackPoster: "/images/studio/anchor-male.jpg",
+    category: "QUANT & EQUITIES",
+    badge: "CANLI HD",
+  },
+  {
+    id: "nur_global",
+    name: "NUR TV Executive Studio",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    fallbackPoster: "/images/studio/executive-office.jpg",
+    category: "SOVEREIGN VAULT",
+    badge: "ÖZEL YAYIN",
+  },
 ];
 
 const MARKET_DATA = [
@@ -27,14 +48,18 @@ const MARKET_DATA = [
 ];
 
 export default function LiveBroadcast() {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
-  const [selectedScene, setSelectedScene] = useState(STUDIO_SCENES[0]);
+  const [selectedChannel, setSelectedChannel] = useState(LIVE_CHANNELS[0]);
   const [showChannelPicker, setShowChannelPicker] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [headlineIdx, setHeadlineIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    setCurrentTime(new Date());
     const interval = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
@@ -45,6 +70,27 @@ export default function LiveBroadcast() {
     }, 7000);
     return () => clearInterval(cycleTimer);
   }, [selectedLang.headlines.length]);
+
+  const togglePlay = () => {
+    cyberSound.playClick();
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    cyberSound.playClick();
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   const toggleSpeech = () => {
     cyberSound.playClick();
@@ -63,7 +109,8 @@ export default function LiveBroadcast() {
     }
   };
 
-  const formatTime = (d: Date, tz: string) => {
+  const formatTime = (d: Date | null, tz: string) => {
+    if (!d) return "--:--:--";
     try {
       return d.toLocaleTimeString("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit" });
     } catch {
@@ -72,152 +119,148 @@ export default function LiveBroadcast() {
   };
 
   return (
-    <div className="relative w-full h-full bg-black overflow-hidden select-none font-sans text-white flex flex-col justify-between">
-      {/* Background Image of Real Anchor & Luxury Office */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={selectedScene.image}
-          alt={selectedScene.label}
-          fill
-          className="object-cover"
-          priority
+    <div className="relative w-full h-full bg-black overflow-hidden select-none font-sans text-white flex flex-col justify-between group">
+      {/* Real Live Video Feed */}
+      <div className="absolute inset-0 z-0 bg-black flex items-center justify-center">
+        <video
+          ref={videoRef}
+          src={selectedChannel.videoUrl}
+          poster={selectedChannel.fallbackPoster}
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          className="w-full h-full object-cover transition-opacity duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/70 pointer-events-none" />
+        {/* Cinematic TV Studio Vignette & Grid Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/80 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] pointer-events-none" />
       </div>
 
-      {/* Top Header Bar */}
-      <div className="relative z-10 flex items-center justify-between p-4 bg-black/60 backdrop-blur-md border-b border-white/10">
+      {/* Top Header Bar - Broadcast Control Room */}
+      <div className="relative z-10 flex items-center justify-between p-3 sm:p-4 bg-black/80 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-3">
+          {/* Logo & Channel Tag */}
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-wider text-amber-300 font-serif">
+            <span className="text-xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 font-serif">
               NUR TV
             </span>
-            <span className="text-xs text-slate-300 font-mono">GLOBAL LIVE</span>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
+              ULTRA HD STREAM
+            </span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-red-600 text-white font-bold text-xs animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-white" />
-            <span>● CANLI YAYIN</span>
+          {/* LIVE Pulsing Badge */}
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/90 text-white font-bold text-xs shadow-[0_0_15px_rgba(220,38,38,0.6)] animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+            <span>CANLI YAYIN</span>
           </div>
 
-          {/* Language Selector Dropdown Trigger */}
+          {/* Channel Selector */}
           <button
             onClick={() => setShowChannelPicker(!showChannelPicker)}
-            className="px-3 py-1 rounded-lg bg-black/70 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold hover:bg-cyan-500/20 transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-mono font-bold transition-all flex items-center gap-2"
           >
-            <span>{selectedLang.flag} {selectedLang.nativeName} ({selectedLang.city})</span>
-            <span>▾</span>
+            <span className="text-amber-400">📺 {selectedChannel.name}</span>
+            <span className="text-slate-400">▾</span>
           </button>
-
-          {/* Camera Studio Angle Selector */}
-          <div className="hidden sm:flex items-center gap-1 bg-black/50 p-0.5 rounded-lg border border-white/10 text-[11px] font-mono">
-            {STUDIO_SCENES.map((sc) => (
-              <button
-                key={sc.id}
-                onClick={() => {
-                  cyberSound.playClick();
-                  setSelectedScene(sc);
-                }}
-                className={`px-2 py-0.5 rounded transition-colors ${
-                  selectedScene.id === sc.id
-                    ? "bg-amber-500 text-black font-bold"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                {sc.label}
-              </button>
-            ))}
-          </div>
         </div>
 
-        {/* Clocks & Voice Audio Trigger */}
+        {/* Clocks & Voice Commentary */}
         <div className="flex items-center gap-3 text-xs font-mono">
           <button
             onClick={toggleSpeech}
-            className={`px-3 py-1 rounded-lg font-bold transition-all shadow-lg flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg font-bold transition-all shadow-lg flex items-center gap-2 ${
               isSpeaking
-                ? "bg-red-600 hover:bg-red-700 text-white animate-pulse"
-                : "bg-emerald-500 hover:bg-emerald-400 text-black"
+                ? "bg-red-600 hover:bg-red-700 text-white animate-pulse shadow-red-600/50"
+                : "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black"
             }`}
           >
             {isSpeaking ? (
               <>
-                <span>⏹️ SPİKERİ SUSTUR</span>
+                <span>⏹️ SESLİ SPİKERİ DURDUR</span>
               </>
             ) : (
               <>
-                <span>🔊 SPİKERİ SESLİ DİNLE ({selectedLang.flag})</span>
+                <span>🎙️ AI SPİKER SESLENDİRME ({selectedLang.flag})</span>
               </>
             )}
           </button>
 
-          <div className="hidden md:flex items-center gap-3 text-slate-300">
-            <span>İST: {formatTime(currentTime, "Europe/Istanbul")}</span>
-            <span>LON: {formatTime(currentTime, "Europe/London")}</span>
-            <span>NYC: {formatTime(currentTime, "America/New_York")}</span>
+          <div className="hidden lg:flex items-center gap-4 text-slate-300 bg-black/50 px-3 py-1 rounded-lg border border-white/10">
+            <span>İST: <strong className="text-amber-400">{formatTime(currentTime, "Europe/Istanbul")}</strong></span>
+            <span>LON: <strong className="text-cyan-400">{formatTime(currentTime, "Europe/London")}</strong></span>
+            <span>NYC: <strong className="text-emerald-400">{formatTime(currentTime, "America/New_York")}</strong></span>
           </div>
         </div>
       </div>
 
-      {/* Language Picker Modal Popup */}
+      {/* Channel Picker Dropdown */}
       {showChannelPicker && (
-        <div className="absolute top-16 left-4 z-40 p-3 rounded-xl bg-slate-950/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl grid grid-cols-2 sm:grid-cols-3 gap-2 max-w-lg">
-          {BROADCAST_LANGUAGES.map((l) => (
+        <div className="absolute top-16 left-4 z-50 p-3 rounded-2xl bg-slate-950/95 border border-cyan-500/40 backdrop-blur-2xl shadow-2xl space-y-2 w-80">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">KÜRESEL FİNANS YAYIN KANALLARI</div>
+          {LIVE_CHANNELS.map((ch) => (
             <button
-              key={l.id}
+              key={ch.id}
               onClick={() => {
                 cyberSound.playClick();
-                setSelectedLang(l);
+                setSelectedChannel(ch);
                 setShowChannelPicker(false);
-                if (isSpeaking) hdVoiceEngine.stop();
               }}
-              className={`p-2 rounded-lg text-left text-xs font-mono transition-all flex items-center gap-2 ${
-                selectedLang.id === l.id
-                  ? "bg-cyan-500/30 border border-cyan-400 text-white font-bold"
-                  : "bg-black/40 hover:bg-white/10 text-slate-300 border border-transparent"
+              className={`w-full p-2.5 rounded-xl text-left text-xs transition-all flex items-center justify-between ${
+                selectedChannel.id === ch.id
+                  ? "bg-gradient-to-r from-amber-500/20 to-amber-600/10 border border-amber-500/50 text-white font-bold"
+                  : "bg-white/5 hover:bg-white/10 text-slate-300 border border-transparent"
               }`}
             >
-              <span className="text-base">{l.flag}</span>
               <div>
-                <div>{l.nativeName}</div>
-                <div className="text-[9px] text-slate-500">{l.city}</div>
+                <div className="font-bold">{ch.name}</div>
+                <div className="text-[10px] text-slate-400">{ch.category}</div>
               </div>
+              <span className="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">
+                {ch.badge}
+              </span>
             </button>
           ))}
         </div>
       )}
 
-      {/* Main Studio View Center Overlay */}
-      <div className="relative z-10 flex-1 flex items-center justify-between p-6 pointer-events-none">
-        {/* Left Side: Host Details */}
+      {/* Center Studio Overlay Information */}
+      <div className="relative z-10 flex-1 flex items-end justify-between p-6 pointer-events-none">
+        {/* Left Side: Active Anchor Card */}
         <div className="space-y-2 pointer-events-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-t-lg bg-amber-500 text-black font-serif font-bold text-sm uppercase tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-t-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-serif font-extrabold text-sm uppercase tracking-wide shadow-lg">
             {selectedLang.defaultAnchorName}
           </div>
-          <div className="p-3 rounded-b-lg rounded-r-lg bg-black/80 backdrop-blur border border-amber-500/40 text-xs font-mono text-slate-200 max-w-sm space-y-1">
-            <div className="text-amber-300 font-bold">NUR FİNANS KÜRESEL ANALİZ MASASI</div>
-            <div className="text-[11px] text-slate-400">
-              Kurumsal 7/24 Kesintisiz Kantitatif Bülten &bull; {selectedLang.city}
+          <div className="p-4 rounded-b-2xl rounded-r-2xl bg-black/85 backdrop-blur-xl border border-amber-500/30 text-xs font-mono text-slate-200 max-w-md space-y-2 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+              <span className="text-amber-300 font-bold tracking-wider">KÜRESEL MAKRO VE QUANT MASASI</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">{selectedLang.city}</span>
             </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              {selectedLang.headlines[headlineIdx]}
+            </p>
             {isSpeaking && (
-              <div className="text-emerald-400 text-[10px] font-bold animate-pulse">
-                ● CANLI SPİKER SESİ AKTİF...
+              <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-bold animate-pulse pt-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>CANLI AKUSTİK SES SENTEZLEYİCİ AKTİF...</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Right Side: Market Depth Sidebar */}
-        <div className="w-56 p-3 rounded-xl bg-black/70 backdrop-blur border border-white/10 text-xs font-mono space-y-2 pointer-events-auto">
-          <div className="text-[10px] font-bold text-amber-300 uppercase tracking-widest border-b border-white/10 pb-1">
-            CANLI PİYASA TAHTASI
+        {/* Right Side: Live Market Depth Board */}
+        <div className="w-64 p-4 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-xs font-mono space-y-3 pointer-events-auto shadow-2xl">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <span className="text-[10px] font-extrabold text-amber-300 uppercase tracking-widest">CANLI PİYASA METRİKLERİ</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {MARKET_DATA.map((m) => (
               <div key={m.symbol} className="flex justify-between items-center text-[11px]">
-                <span className="text-slate-300">{m.symbol}</span>
-                <span className={m.up ? "text-emerald-400 font-bold" : "text-red-400 font-bold"}>
-                  {m.price} {m.change}
+                <span className="text-slate-300 font-medium">{m.symbol}</span>
+                <span className={`font-bold font-mono ${m.up ? "text-emerald-400" : "text-red-400"}`}>
+                  {m.price} <span className="text-[10px] ml-1">{m.change}</span>
                 </span>
               </div>
             ))}
@@ -225,27 +268,48 @@ export default function LiveBroadcast() {
         </div>
       </div>
 
-      {/* Bottom News Ticker & Live Breaking Banner */}
+      {/* Bottom Live Broadcast Ticker & Video Control Bar */}
       <div className="relative z-10 space-y-1">
-        {/* Breaking Banner */}
-        <div className="flex items-center h-8 bg-red-600 px-4 text-xs font-bold text-white tracking-wider">
-          <span className="px-2 py-0.5 rounded bg-white text-red-600 text-[10px] mr-3 shrink-0 uppercase">
+        {/* Breaking News Red Ticker */}
+        <div className="flex items-center h-9 bg-gradient-to-r from-red-600 via-red-700 to-red-600 px-4 text-xs font-bold text-white tracking-wider shadow-lg">
+          <span className="px-2.5 py-0.5 rounded bg-white text-red-700 font-extrabold text-[10px] mr-3 shrink-0 uppercase tracking-widest shadow">
             SON DAKİKA
           </span>
-          <span className="truncate font-sans font-semibold">
+          <span className="truncate font-sans font-semibold text-slate-100">
             {selectedLang.headlines[headlineIdx] || selectedLang.headlines[0]}
           </span>
         </div>
 
-        {/* Scrolling Global Ticker */}
-        <div className="flex items-center h-8 bg-black/90 border-t border-cyan-500/20 px-3 text-xs font-mono overflow-hidden">
-          <div className="flex items-center gap-8 whitespace-nowrap animate-[scroll-left_45s_linear_infinite] text-slate-300">
-            {selectedLang.headlines.map((h, i) => (
-              <span key={i} className="inline-flex items-center gap-2">
-                <span className="text-cyan-400">◆</span>
-                <span>{h}</span>
-              </span>
-            ))}
+        {/* Global Finance Scrolling News Ticker & Player Controls */}
+        <div className="flex items-center justify-between h-10 bg-black/95 backdrop-blur-md border-t border-cyan-500/30 px-4 text-xs font-mono">
+          {/* Video Player Buttons (Play/Pause, Sound) */}
+          <div className="flex items-center gap-3 shrink-0 border-r border-white/15 pr-4">
+            <button
+              onClick={togglePlay}
+              className="hover:text-amber-400 transition-colors text-sm"
+              title={isPlaying ? "Durdur" : "Oynat"}
+            >
+              {isPlaying ? "⏸️" : "▶️"}
+            </button>
+            <button
+              onClick={toggleMute}
+              className="hover:text-amber-400 transition-colors text-sm"
+              title={isMuted ? "Sesi Aç" : "Sesi Kapat"}
+            >
+              {isMuted ? "🔇 SES KAPALI" : "🔊 SES AÇIK"}
+            </button>
+          </div>
+
+          {/* Scrolling Ticker Text */}
+          <div className="flex-1 overflow-hidden ml-4">
+            <div className="flex items-center gap-12 whitespace-nowrap animate-[scroll-left_45s_linear_infinite] text-slate-300 text-[11px]">
+              {selectedLang.headlines.map((h, i) => (
+                <span key={i} className="inline-flex items-center gap-2">
+                  <span className="text-cyan-400">◆</span>
+                  <span>{h}</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
