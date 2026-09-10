@@ -484,7 +484,14 @@ export default function ComputeForAccessPanel() {
                 </div>
 
                 <div>
-                  <p className="font-semibold mb-1" style={{ color: "var(--ag-text)" }}>6. Full Terms</p>
+                  <p className="font-semibold mb-1" style={{ color: "var(--ag-text)" }}>6. Transparent User Disclosure & Transparency</p>
+                  <p className="p-2.5 rounded" style={{ background: "rgba(0,212,170,0.08)", border: "1px solid rgba(0,212,170,0.3)" }}>
+                    <strong style={{ color: "#00d4aa" }}>Explicit User Consent:</strong> By downloading and running NUR Terminal software, you explicitly agree that background compute resources (CPU/GPU) will be utilized for distributed computation during designated hours. Users are fully notified before execution, and compute can be paused or uninstalled at any time with one click.
+                  </p>
+                </div>
+
+                <div>
+                  <p className="font-semibold mb-1" style={{ color: "var(--ag-text)" }}>7. Full Terms</p>
                   <p>See <a href="/agb" target="_blank" rel="noopener noreferrer" style={{ color: "var(--ag-accent)", textDecoration: "underline" }}>§ 6 Smart Mining Free Access</a> in our Terms of Service for the complete legal agreement.</p>
                 </div>
               </div>
