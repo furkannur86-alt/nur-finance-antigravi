@@ -7,6 +7,7 @@ import MarketMoodScene from "@/components/ui/MarketMoodScene";
 import MoodMusicPlayer from "@/components/ui/MoodMusicPlayer";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { computeMarketMood } from "@/lib/music/mood-engine";
+import PortfolioIntelligenceBar from "./PortfolioIntelligenceBar";
 
 export default function PortfolioManager() {
   const { portfolio, source } = usePortfolioData();
@@ -182,9 +183,16 @@ export default function PortfolioManager() {
         </table>
       </div>
 
-      {/* Music Player (full) */}
-      <div className="mt-3">
-        <MoodMusicPlayer portfolioChangePercent={avgChange} />
+      {/* AI Portfolio Intelligence Bar */}
+      <div className="mt-3 rounded-xl overflow-hidden border" style={{ borderColor: "var(--ag-border)" }}>
+        <PortfolioIntelligenceBar
+          totalValue={totalValue}
+          totalPnL={totalPnL}
+          totalReturn={totalReturn}
+          avgChange={avgChange}
+          positionCount={portfolio.length}
+          portfolio={portfolio}
+        />
       </div>
     </div>
   );
