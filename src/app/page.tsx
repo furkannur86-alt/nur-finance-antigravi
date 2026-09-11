@@ -45,9 +45,15 @@ import NurKidsPanel from "@/components/kids/NurKidsPanel";
 import NurEducationPanel from "@/components/education/NurEducationPanel";
 import ComputeForAccessPanel from "@/components/compute/ComputeForAccessPanel";
 import GeophysicsResourcesPanel from "@/components/geophysics/GeophysicsResourcesPanel";
+import InstitutionalSuitePanel from "@/components/institutional/InstitutionalSuitePanel";
+import OrbitalTelemetryPanel from "@/components/orbital/OrbitalTelemetryPanel";
+import ProfessionalAIHubPanel from "@/components/professional/ProfessionalAIHubPanel";
+import FinancialSocialPanel from "@/components/social/FinancialSocialPanel";
 import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
 import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
+import CockpitFrame from "@/components/cockpit/CockpitFrame";
+import FloatingWindowManager from "@/components/layout/FloatingWindowManager";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -62,6 +68,11 @@ const FULLSCREEN_VIEWS = [
   "nur-kids",
   "nur-education",
   "compute-access",
+  "geophysics-resources",
+  "institutional-suite",
+  "orbital-telemetry",
+  "professional-ai",
+  "professional-social",
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
@@ -70,13 +81,26 @@ const FULLSCREEN_VIEWS = [
 ];
 
 export default function Home() {
-  const { activeView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity } = useIDEStore();
+  const { activeView, setActiveView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity } = useIDEStore();
   const didInit = useRef(false);
   const [consoleHeight, setConsoleHeight] = useState(DEFAULT_CONSOLE_HEIGHT);
   const [consoleCollapsed, setConsoleCollapsed] = useState(false);
+  const [isPopoutMode, setIsPopoutMode] = useState(false);
   const dragging = useRef(false);
   const startY = useRef(0);
   const startHeight = useRef(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const popout = urlParams.get("popout");
+      if (popout) {
+        setActiveView(popout as any);
+        setIsPopoutMode(true);
+      }
+    }
+  }, [setActiveView]);
+
 
   useEffect(() => {
     if (didInit.current) return;
@@ -130,6 +154,14 @@ export default function Home() {
         return <ComputeForAccessPanel />;
       case "geophysics-resources":
         return <GeophysicsResourcesPanel />;
+      case "institutional-suite":
+        return <InstitutionalSuitePanel />;
+      case "orbital-telemetry":
+        return <OrbitalTelemetryPanel />;
+      case "professional-ai":
+        return <ProfessionalAIHubPanel />;
+      case "professional-social":
+        return <FinancialSocialPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":
@@ -157,7 +189,11 @@ export default function Home() {
       case "data-ingest":
         return <DataIngestPanel />;
       case "geopolitics":
-        return <GeopoliticsPanel />;
+        return (
+          <CockpitFrame showControls>
+            <GeopoliticsPanel />
+          </CockpitFrame>
+        );
       case "fundamentals":
         return <FundamentalsPanel />;
       case "screener":
@@ -199,14 +235,23 @@ export default function Home() {
     }
   };
 
+  if (isPopoutMode) {
+    return (
+      <div className="w-screen h-screen bg-black overflow-auto select-text font-sans">
+        {renderMainContent()}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col h-screen relative overflow-hidden" style={{ background: "var(--ag-bg)" }}>
+    <div className="flex flex-col h-screen relative overflow-hidden cockpit-app-root" style={{ background: "var(--ag-bg)" }}>
       {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
       <CommandPalette />
       <HUDNotificationSystem />
       <SovereignAuthModal />
       <Quantum2126Ticker />
       <TopBar />
+      <FloatingWindowManager />
       <div className="flex flex-1 min-h-0">
         {sidebarOpen && <Sidebar />}
         <div className="flex flex-col flex-1 min-w-0">
@@ -231,3 +276,4 @@ export default function Home() {
     </div>
   );
 }
+

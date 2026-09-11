@@ -25,8 +25,8 @@ export default function VerificationPanel() {
     e.preventDefault();
     if (!fullName.trim() || !uploadFileName) {
       addNotification({
-        title: "Eksik Bilgi",
-        message: "Ad-soyad ve kullanım geçmişi kanıt belgesi (fatura/ekstre) başvuru için zorunludur.",
+        title: "Missing Information",
+        message: "Full name and proof of usage document (invoice/statement) are required to submit an application.",
         severity: "WARNING",
         category: "COMPLIANCE",
       });
@@ -58,8 +58,8 @@ export default function VerificationPanel() {
         });
 
         addNotification({
-          title: "Başvuru İncelemeye Alındı: NUR Finance R",
-          message: "1 yıllık Reuters kullanım geçmişi ön koşulu karşılandı. Ekibimiz kanıt belgenizi 24-48 saat içinde inceleyip son onayı verecek.",
+          title: "Application Under Review: NUR Finance R",
+          message: "1-year Reuters usage history prerequisite satisfied. Our team will review your attestation document within 24–48 hours and issue final approval.",
           severity: "INFO",
           category: "COMPLIANCE",
         });
@@ -88,8 +88,8 @@ export default function VerificationPanel() {
           });
 
           addNotification({
-            title: "👑 FURKAN VIP ACCESS GRANTED: NUR Finance B",
-            message: "Furkan Özel Liderlik VIP Yetkisi Doğrulandı. Bloomberg Katmanı Terminali (NUR Finance B) Tam Erişimle Aktifleştirildi!",
+            title: "👑 VIP ACCESS GRANTED: NUR Finance B",
+            message: "Leadership VIP authority verified. Bloomberg-tier terminal (NUR Finance B) activated with full access.",
             severity: "SUCCESS",
             category: "COMPLIANCE",
           });
@@ -126,8 +126,8 @@ export default function VerificationPanel() {
         });
 
         addNotification({
-          title: "VIP Erişim Aktif: NUR Finance B",
-          message: "Davet kodu doğrulandı ve Bloomberg katmanı terminali aktifleştirildi.",
+          title: "VIP Access Activated: NUR Finance B",
+          message: "Invitation code verified. Bloomberg-tier terminal is now active.",
           severity: "SUCCESS",
           category: "COMPLIANCE",
         });
@@ -240,12 +240,12 @@ export default function VerificationPanel() {
 
             {/* Full Name */}
             <div>
-              <label className="text-[11px] font-semibold text-[var(--ag-muted)] uppercase block mb-1">Ad Soyad</label>
+              <label className="text-[11px] font-semibold text-[var(--ag-muted)] uppercase block mb-1">Full Name</label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Uyum kaydı için tam ad"
+                placeholder="Full legal name for compliance record"
                 required
                 className="w-full p-2 rounded text-xs bg-black/50 border text-white font-mono focus:outline-none focus:border-[var(--ag-accent)]"
                 style={{ borderColor: "var(--ag-border)" }}
@@ -292,7 +292,7 @@ export default function VerificationPanel() {
                       onClick={() => setInviteCode("FURKAN-VIP")}
                       className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 border border-indigo-400/30 transition-all"
                     >
-                      ⚡ Furkan VIP Kodunu Doldur (FURKAN-VIP)
+                      ⚡ Autofill VIP Code (FURKAN-VIP)
                     </button>
                   </div>
                   <input
@@ -304,7 +304,7 @@ export default function VerificationPanel() {
                     style={{ borderColor: "var(--ag-border)" }}
                   />
                   <span className="text-[10px] text-[var(--ag-muted)] mt-1 block">
-                    Kod, yalnızca NUR Finance liderliği tarafından el ile seçilen davetlilere iletilir ve sunucu tarafında doğrulanır.
+                    Code is issued exclusively to hand-selected invitees by NUR Finance leadership and verified server-side.
                   </span>
                 </div>
 
@@ -339,7 +339,7 @@ export default function VerificationPanel() {
                   />
                 </label>
                 <span className="text-xs text-[var(--ag-muted)] font-mono">
-                  {uploadFileName || "Belge seçilmedi — başvuru için zorunlu"}
+                  {uploadFileName || "No file selected — required for submission"}
                 </span>
               </div>
             </div>
@@ -358,13 +358,13 @@ export default function VerificationPanel() {
           <div className="p-4 rounded-lg border bg-emerald-950/20 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="text-xs font-bold text-emerald-400 flex items-center gap-2">
-                <span>&#128274; Digital Wallet Settlement & Client Academy</span>
+                <span>&#128274; Digital Wallet Settlement &amp; Client Academy</span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">
-                  KYC/AML UYUMLU
+                  KYC/AML COMPLIANT
                 </span>
               </div>
               <p className="text-[11px] text-[var(--ag-muted)]">
-                Zincir üzerinde doğrulanan çok zincirli USDT/USDC ödemesi (Ethereum, Polygon, Arbitrum, TRON, BTC) — kimlik bilgisi ve adım adım cüzdan kurulum rehberi ile.
+                On-chain verified multi-chain settlement via USDT/USDC (Ethereum, Polygon, Arbitrum, TRON, BTC) — with identity attestation and step-by-step wallet setup guide.
               </p>
             </div>
             <button

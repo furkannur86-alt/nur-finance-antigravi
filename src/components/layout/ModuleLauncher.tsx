@@ -41,6 +41,9 @@ const MODULES: Module[] = [
   { id: "ai-tools",          label: "Quant Models",     icon: "🧮", desc: "ML & quantitative models",   color: "#f59e0b", group: "ANALYSIS" },
   { id: "geopolitics",       label: "NUR Earth 3D",     icon: "🌐", desc: "Geopolitical risk globe",    color: "#f59e0b", group: "ANALYSIS" },
   { id: "geophysics-resources", label: "Geophysics & Mining", icon: "⛏️", desc: "3D Geophysics natural resources map", color: "#f59e0b", group: "ANALYSIS" },
+  { id: "institutional-suite", label: "Institutional ($8.5K)", icon: "🏛️", desc: "7-Pillar Sovereign Intelligence Matrix", color: "#06b6d4", group: "ANALYSIS" },
+  { id: "orbital-telemetry", label: "Orbital Telemetry", icon: "🛰️", desc: "Downlink & RF Spectrum Telemetry (13·35·42·55·54751113)", color: "#00f0ff", group: "ANALYSIS" },
+  { id: "professional-ai",   label: "Professional AI",  icon: "🩺", desc: "Medical, engineering, legal & education AI", color: "#10b981", group: "ANALYSIS" },
   { id: "data-ingest",       label: "Data Ingest",      icon: "📥", desc: "Pipeline & data ingestion",  color: "#f59e0b", group: "ANALYSIS" },
   { id: "encyclopedia",      label: "Wiki",             icon: "📚", desc: "Financial encyclopedia",     color: "#f59e0b", group: "ANALYSIS" },
 
@@ -55,6 +58,7 @@ const MODULES: Module[] = [
   { id: "verification-portal", label: "VIP Verify",    icon: "✅", desc: "On-chain payment verify",    color: "#e879f9", group: "MEDIA" },
 
   // SOCIAL / EDUCATION
+  { id: "professional-social", label: "Sovereign Social", icon: "👥", desc: "Closed-loop professional financial network", color: "#a855f7", group: "SOCIAL" },
   { id: "nur-education",     label: "Education",        icon: "🎓", desc: "Financial education hub",    color: "#34d399", group: "SOCIAL" },
   { id: "nur-kids",          label: "Nur Kids",         icon: "👨‍👩‍👧", desc: "Family finance platform",   color: "#34d399", group: "SOCIAL" },
   { id: "compute-access",    label: "Free Access",      icon: "⛏️", desc: "Compute-for-access mining",  color: "#34d399", group: "SOCIAL" },
@@ -205,19 +209,33 @@ export default function ModuleLauncher({ open, onClose }: Props) {
                       <span className="text-2xl leading-none" style={{ filter: isHovered ? "drop-shadow(0 0 6px currentColor)" : "none" }}>
                         {m.icon}
                       </span>
-                      <div>
+                      <div className="w-full">
                         <div
-                          className="text-[11px] font-semibold leading-tight"
+                          className="text-[11px] font-semibold leading-tight truncate"
                           style={{ color: isHovered ? m.color : "rgba(255,255,255,0.8)" }}
                         >
                           {m.label}
                         </div>
                         <div
-                          className="text-[9px] mt-0.5 leading-tight"
-                          style={{ color: "rgba(255,255,255,0.3)" }}
+                          className="text-[9px] mt-0.5 leading-tight truncate"
+                          style={{ color: "rgba(255,255,255,0.4)" }}
                         >
                           {m.desc}
                         </div>
+                      </div>
+                      <div className="flex items-center justify-between w-full mt-1">
+                        <span className="text-[8px] text-slate-500">{m.group}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            useIDEStore.getState().openFloatingWindow(m.id, m.label);
+                            onClose();
+                          }}
+                          className="px-1 py-0.2 rounded bg-cyan-500/20 hover:bg-cyan-500/50 text-cyan-300 text-[8px] font-mono border border-cyan-500/30"
+                          title="Open as Floating Window"
+                        >
+                          ⤢ FLOATING
+                        </button>
                       </div>
                     </button>
                   );
@@ -225,6 +243,8 @@ export default function ModuleLauncher({ open, onClose }: Props) {
               </div>
             </div>
           ))}
+
+
         </div>
 
         {/* Footer */}
@@ -232,12 +252,13 @@ export default function ModuleLauncher({ open, onClose }: Props) {
           className="flex items-center justify-between px-5 py-3 border-t"
           style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.3)" }}
         >
-          <div className="flex items-center gap-3 text-[9px]" style={{ color: "rgba(255,255,255,0.25)" }}>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↑↓</kbd> Gezin</span>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↵</kbd> Aç</span>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Esc</kbd> Kapat</span>
+          <div className="flex items-center gap-3 text-[9px]" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↑↓</kbd> Navigate</span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↵</kbd> Open Full View</span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Esc</kbd> Close</span>
           </div>
           <div className="flex items-center gap-1.5">
+
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4aa" }} />
             <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Modül Aktif</span>
           </div>

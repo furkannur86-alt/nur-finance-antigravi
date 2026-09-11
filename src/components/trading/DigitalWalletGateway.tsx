@@ -64,33 +64,33 @@ const SUPPORTED_NETWORKS: CryptoNetwork[] = [
 const WALLET_GUIDE_STEPS = [
   {
     step: 1,
-    title: "1. Dijital Cüzdanınızı Seçin ve Kurun",
-    desc: "Güvenli ve gözetimsiz (non-custodial) bir cüzdan tercih edin. Masaüstü için MetaMask veya Rabby Wallet (Chrome/Brave eklentisi), mobil için Trust Wallet önerilir. Kurumsal güvenlik için Ledger veya Trezor gibi donanım cüzdanları idealdir.",
-    tip: "Asla borsa hesap şifrenizi cüzdan şifresiyle aynı yapmayın.",
+    title: "1. Choose and Set Up Your Digital Wallet",
+    desc: "Select a secure, non-custodial Web3 wallet. MetaMask or Rabby Wallet (Chrome/Brave extension) is recommended for desktop, Trust Wallet for mobile, or hardware wallets like Ledger / Trezor for institutional-grade cold storage.",
+    tip: "Never reuse exchange account passwords for your Web3 wallet.",
   },
   {
     step: 2,
-    title: "2. 12/24 Kelimelik Gizli Kurtarma İfadesini (Seed Phrase) Saklayın",
-    desc: "Cüzdan oluşturulduğunda verilen 12 veya 24 kelimelik kurtarma anahtarını fiziki olarak bir kağıda yazın. Bu ifadeyi asla bilgisayarda ekran görüntüsü olarak tutmayın, e-posta ile göndermeyin veya kimseyle paylaşmayın.",
-    tip: "Bu kelimeler cüzdanınızın tek anahtarıdır.",
+    title: "2. Secure Your 12/24-Word Recovery Secret Phrase",
+    desc: "Write down your secret seed recovery phrase physically on paper. Never store digital screenshots, send via email, or reveal your recovery phrase to anyone under any circumstances.",
+    tip: "These words represent the single master key to your digital assets.",
   },
   {
     step: 3,
-    title: "3. Cüzdanınıza Bakiye (USDT / USDC) Yükleyin",
-    desc: "Kullandığınız borsadan (ör. Binance, Kraken, OKX) cüzdanınızın genel adresine (0x... ile başlayan adres) USDT veya USDC çekimi yapın.",
-    tip: "Düşük transfer ücreti için Polygon veya Arbitrum ağını tercih edebilirsiniz.",
+    title: "3. Fund Your Wallet with Stablecoins (USDT / USDC)",
+    desc: "Withdraw USDT or USDC from your primary exchange (e.g. Binance, Kraken, Coinbase) directly to your public Web3 wallet address (starting with 0x...).",
+    tip: "Use Polygon or Arbitrum networks for ultra-low transaction gas fees.",
   },
   {
     step: 4,
-    title: "4. Doğru Ağı (Network) ve Adresi Seçin",
-    desc: "Ödeme yapacağınız para birimi ve ağı (örneğin Polygon USDC) seçin. Çekim yaparken ağın gönderici ve alıcı tarafta birebir aynı olduğundan emin olun.",
-    tip: "Ağ uyumsuzluğu durumunda transferler askıda kalabilir.",
+    title: "4. Select the Matching Network and Vault Address",
+    desc: "Select the currency and network (e.g. Polygon USDC). Ensure the destination network matches the sender network exactly prior to initiating transfer.",
+    tip: "Mismatched blockchain networks may cause permanent loss of funds.",
   },
   {
     step: 5,
-    title: "5. Transferi Gerçekleştirin ve TXID Kodunu Girin",
-    desc: "Ödeme tutarını yukarıdaki kurum cüzdan adresimize gönderdikten sonra işlem özetinde yer alan İşlem Kodu (TXID / Transaction Hash) bilgisini forma yapıştırarak anonim erişimi anında aktif edin.",
-    tip: "Terminaliniz blokzincir onayının ardından 60 saniye içinde otomatik açılır.",
+    title: "5. Execute Transfer and Submit TXID Hash",
+    desc: "Send the settlement amount to our corporate vault address above and paste your Transaction Hash (TXID) into the field to activate instant terminal access.",
+    tip: "Terminal access is provisioned automatically within 60 seconds upon network confirmation.",
   },
 ];
 

@@ -28,6 +28,11 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }
   "macro-risk":       { label: "Macro Risk",        icon: "⚠️", color: "#f59e0b" },
   "ai-tools":         { label: "Quant Models",      icon: "🧮", color: "#f59e0b" },
   geopolitics:        { label: "NUR Earth 3D",      icon: "🌐", color: "#f59e0b" },
+  "geophysics-resources": { label: "Geophysics & Mining", icon: "⛏️", color: "#f59e0b" },
+  "institutional-suite": { label: "Institutional ($8.5K)", icon: "🏛️", color: "#06b6d4" },
+  "orbital-telemetry": { label: "Orbital Telemetry", icon: "🛰️", color: "#00f0ff" },
+  "professional-ai":  { label: "Professional AI",   icon: "🩺", color: "#10b981" },
+  "professional-social": { label: "Sovereign Social", icon: "👥", color: "#a855f7" },
   "data-ingest":      { label: "Data Ingest",       icon: "📥", color: "#f59e0b" },
   encyclopedia:       { label: "Wiki",              icon: "📚", color: "#f59e0b" },
   "live-tv":          { label: "NUR TV",            icon: "📺", color: "#e879f9" },
@@ -62,7 +67,10 @@ export default function TopBar() {
     isSovereignAdmin,
     setSovereignAuthModalOpen,
     updateVerification,
+    openFloatingWindow,
+    popoutToNativeWindow,
   } = useIDEStore();
+
 
   const crestClickCount = useRef(0);
   const crestClickTimer = useRef<NodeJS.Timeout | null>(null);
@@ -181,19 +189,35 @@ export default function TopBar() {
           </span>
         </button>
 
-        {/* Current Active View Breadcrumb */}
+        {/* Current Active View Breadcrumb with Detach & Popout Controls */}
         <div
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md shrink-0"
+          className="flex items-center gap-2 px-2.5 py-1 rounded-md shrink-0"
           style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
         >
           <span className="text-sm leading-none">{currentView.icon}</span>
           <span className="text-[11px] font-semibold" style={{ color: currentView.color }}>
             {currentView.label}
           </span>
+          <button
+            onClick={() => openFloatingWindow(activeView, currentView.label)}
+            title="Detach this module into a Draggable Floating Window"
+            className="px-1.5 py-0.5 rounded bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-300 text-[9px] font-mono font-bold border border-cyan-500/40 transition-all flex items-center gap-1"
+          >
+            <span>⤢</span>
+            <span>DETACH</span>
+          </button>
+          <button
+            onClick={() => popoutToNativeWindow(activeView)}
+            title="Pop out to Separate Multi-Monitor Native Window"
+            className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/15 text-slate-300 text-[9px] font-mono font-bold border border-white/10 transition-all"
+          >
+            ↗ DUAL-SCREEN
+          </button>
         </div>
 
         {/* Quick-access pills */}
         <div className="flex items-center gap-1 shrink-0">
+
           {QUICK.map((q) => {
             const isActive = activeView === q.id;
             return (

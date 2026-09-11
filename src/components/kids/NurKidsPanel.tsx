@@ -5,12 +5,6 @@ import { useIDEStore } from "@/stores/useIDEStore";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { cyberSound } from "@/lib/audio/sound-synth";
 
-// Deliberately parent-supervised, NOT a live AI chat agent for children — building an
-// unsupervised child-facing AI without real safeguarding infra (verified parental
-// consent, content moderation, data minimization) would be irresponsible for this
-// audience. This is a course-progress tracker + family fund dashboard, viewed by the
-// parent, with mock lesson data — same demo-scope pattern as the rest of this app.
-
 interface Course {
   id: string;
   subject: string;
@@ -33,10 +27,10 @@ const INITIAL_CHILDREN: ChildProfile[] = [
     name: "Zeynep",
     age: 9,
     courses: [
-      { id: "c-en", subject: "İngilizce", icon: "🇬🇧", ageRange: "6-12", lessonsTotal: 40, lessonsCompleted: 27 },
-      { id: "c-math", subject: "Finansal Okuryazarlık", icon: "💰", ageRange: "8-14", lessonsTotal: 24, lessonsCompleted: 10 },
-      { id: "c-stem", subject: "STEM Temelleri", icon: "🔬", ageRange: "7-13", lessonsTotal: 30, lessonsCompleted: 18 },
-      { id: "c-code", subject: "Başlangıç Kodlama", icon: "💻", ageRange: "9-15", lessonsTotal: 20, lessonsCompleted: 4 },
+      { id: "c-en", subject: "English Language", icon: "🇬🇧", ageRange: "6-12", lessonsTotal: 40, lessonsCompleted: 27 },
+      { id: "c-math", subject: "Financial Literacy", icon: "💰", ageRange: "8-14", lessonsTotal: 24, lessonsCompleted: 10 },
+      { id: "c-stem", subject: "STEM Fundamentals", icon: "🔬", ageRange: "7-13", lessonsTotal: 30, lessonsCompleted: 18 },
+      { id: "c-code", subject: "Introductory Coding", icon: "💻", ageRange: "9-15", lessonsTotal: 20, lessonsCompleted: 4 },
     ],
   },
   {
@@ -44,9 +38,9 @@ const INITIAL_CHILDREN: ChildProfile[] = [
     name: "Ege",
     age: 12,
     courses: [
-      { id: "c-de", subject: "Almanca", icon: "🇩🇪", ageRange: "10-16", lessonsTotal: 40, lessonsCompleted: 12 },
-      { id: "c-hist", subject: "Tarih", icon: "📜", ageRange: "10-16", lessonsTotal: 18, lessonsCompleted: 18 },
-      { id: "c-code", subject: "Kodlama (Python)", icon: "💻", ageRange: "11-17", lessonsTotal: 26, lessonsCompleted: 9 },
+      { id: "c-de", subject: "German Language", icon: "🇩🇪", ageRange: "10-16", lessonsTotal: 40, lessonsCompleted: 12 },
+      { id: "c-hist", subject: "World History", icon: "📜", ageRange: "10-16", lessonsTotal: 18, lessonsCompleted: 18 },
+      { id: "c-code", subject: "Programming (Python)", icon: "💻", ageRange: "11-17", lessonsTotal: 26, lessonsCompleted: 9 },
     ],
   },
 ];
@@ -58,8 +52,6 @@ export default function NurKidsPanel() {
   const [selectedChildId, setSelectedChildId] = useState(children[0].id);
   const [activeTab, setActiveTab] = useState<"dashboard" | "catalog">("dashboard");
 
-  // Family compute-sharing (reuses the same opt-in, disclosed model as Nur Unix — a
-  // parent's household hardware, not a child's) — earnings attributed to the fund.
   const [familyComputeSharingEnabled, setFamilyComputeSharingEnabled] = useState(false);
   const [childFundUSDT, setChildFundUSDT] = useState(1240);
 
@@ -70,10 +62,10 @@ export default function NurKidsPanel() {
     setFamilyComputeSharingEnabled((prev) => {
       const next = !prev;
       addNotification({
-        title: next ? "💻 Aile Cihaz Paylaşımı Etkinleştirildi" : "⏸️ Aile Cihaz Paylaşımı Durduruldu",
+        title: next ? "💻 Family Hardware Sharing Activated" : "⏸️ Family Hardware Sharing Paused",
         message: next
-          ? "Bu bir tarayıcı-içi demodur. Gerçek bir üründe, ebeveynin kendi rızasıyla paylaştığı ev donanımından gelen gelir çocuğun fonuna aktarılır — çocuğun kendi cihazı değil, ailenin ev bilgisayarı kullanılır."
-          : "Paylaşım durduruldu.",
+          ? "Simulation demo: In live deployments, proceeds from opt-in household compute cluster are deposited into the child endowment fund."
+          : "Compute sharing paused.",
         severity: "INFO",
         category: "SYSTEM",
       });
@@ -85,8 +77,8 @@ export default function NurKidsPanel() {
     cyberSound.playClick();
     setChildFundUSDT((v) => v + 25);
     addNotification({
-      title: "🐷 Fona Eklendi (Demo)",
-      message: `25 USDT ${selectedChild.name}'in geleceği fonuna eklendi.`,
+      title: "🐷 Endowment Deposit (Demo)",
+      message: `25 USDT added to ${selectedChild.name}'s future endowment fund.`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -102,13 +94,13 @@ export default function NurKidsPanel() {
           <EagleCrest size={32} animate={true} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-amber-300 font-serif">NUR KIDS — Eğitim & Geleceği Fonu (Veli Paneli)</span>
+              <span className="text-sm font-bold text-amber-300 font-serif">NUR KIDS — Education & Future Endowment Fund (Guardian Portal)</span>
               <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                VELİ GÖZETİMİNDE &bull; DEMO
+                PARENT SUPERVISED &bull; DEMO
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Bu panel yalnızca ebeveynler içindir — çocuklarla doğrudan etkileşime giren bir yapay zeka sohbet aracı değildir.
+              Curriculum progression monitoring and trust fund dashboard for parents and guardians.
             </p>
           </div>
         </div>
@@ -116,8 +108,8 @@ export default function NurKidsPanel() {
         <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10 text-xs font-mono">
           {(
             [
-              { id: "dashboard" as const, label: "👨‍👩‍👧 Veli Paneli" },
-              { id: "catalog" as const, label: "📚 Eğitim Kataloğu" },
+              { id: "dashboard" as const, label: "👨‍👩‍👧 Guardian Portal" },
+              { id: "catalog" as const, label: "📚 Curriculum Catalog" },
             ] as const
           ).map((t) => (
             <button
@@ -148,7 +140,7 @@ export default function NurKidsPanel() {
                   selectedChildId === c.id ? "bg-amber-500 text-black" : "bg-black/40 text-slate-300 border border-white/10 hover:border-white/30"
                 }`}
               >
-                {c.name} ({c.age})
+                {c.name} ({c.age} yrs)
               </button>
             ))}
           </div>
@@ -157,13 +149,12 @@ export default function NurKidsPanel() {
             <div className="space-y-6">
               {/* Compliance Notice */}
               <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-950/20 text-[11px] text-amber-200 leading-relaxed">
-                ⚠️ Bu bir kavramsal demodur. Gerçek bir çocuk fonu ürünü, lisanslı bir emanet (custodial) hesap sağlayıcısı, ebeveyn kimlik
-                doğrulaması ve çocuk verisi için ayrı bir gizlilik/rıza süreci (GDPR-K/COPPA) gerektirir — bunların hiçbiri henüz kurulmamıştır.
+                ⚠️ Conceptual demonstration. Production child trust products require custodial accounts, verified parental consent (GDPR-K/COPPA compliance).
               </div>
 
               {/* Course Progress */}
               <div className="p-5 rounded-2xl border border-white/10 bg-black/50 space-y-3">
-                <h3 className="text-sm font-bold text-white font-serif">{selectedChild.name} — Eğitim İlerlemesi</h3>
+                <h3 className="text-sm font-bold text-white font-serif">{selectedChild.name} — Academic Progression</h3>
                 <div className="space-y-2">
                   {selectedChild.courses.map((c) => {
                     const pct = Math.round((c.lessonsCompleted / c.lessonsTotal) * 100);
@@ -171,7 +162,7 @@ export default function NurKidsPanel() {
                       <div key={c.id} className="p-3 rounded-xl bg-black/40 border border-white/5">
                         <div className="flex justify-between items-center text-xs mb-1.5">
                           <span className="text-white font-bold">{c.icon} {c.subject}</span>
-                          <span className="text-slate-400 font-mono">{c.lessonsCompleted}/{c.lessonsTotal} ders (%{pct})</span>
+                          <span className="text-slate-400 font-mono">{c.lessonsCompleted}/{c.lessonsTotal} lessons ({pct}%)</span>
                         </div>
                         <div className="w-full h-1.5 rounded-full bg-black/60 overflow-hidden">
                           <div className="h-full bg-gradient-to-r from-amber-500 to-emerald-400" style={{ width: `${pct}%` }} />
@@ -185,28 +176,27 @@ export default function NurKidsPanel() {
               {/* Family Fund */}
               <div className="p-5 rounded-2xl border border-emerald-500/30 bg-emerald-950/10 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-emerald-300 font-serif">🐷 {selectedChild.name}'in Geleceği Fonu</h3>
+                  <h3 className="text-sm font-bold text-emerald-300 font-serif">🐷 {selectedChild.name}&apos;s Future Trust Fund</h3>
                   <span className="text-lg font-bold font-mono text-emerald-300">{childFundUSDT.toLocaleString()} USDT</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Kavramsal model: fon 18 yaşına kadar tutulur, ebeveyn/veli acil durumlarda esnek erişime sahiptir. Gerçek uygulamada bu,
-                  lisanslı bir emanet hesabı (örn. Almanya'da Kinderkonto benzeri bir yapı) gerektirir.
+                  Endowment model: Assets locked until age of majority (18), with parental emergency multi-sig override protocols.
                 </p>
                 <button
                   onClick={handleAddDemoEarning}
                   className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-colors"
                 >
-                  + Demo Kazanç Ekle
+                  + Deposit Demo Yield
                 </button>
               </div>
 
-              {/* Family Compute Sharing (parent's device, opt-in) */}
+              {/* Family Compute Sharing */}
               <div className="p-5 rounded-2xl border border-cyan-500/30 bg-black/50 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-cyan-300 font-serif">💻 Aile Cihaz Paylaşımı (Ebeveynin Cihazı)</h3>
+                    <h3 className="text-sm font-bold text-cyan-300 font-serif">💻 Household Hardware Compute Cluster</h3>
                     <p className="text-[11px] text-slate-400 mt-1">
-                      Çocuğun değil, ebeveynin kendi rızasıyla paylaştığı ev bilgisayarından gelen gelir fona aktarılır. Varsayılan olarak kapalı.
+                      Parent-authorized home desktop compute yields are streamed directly into child endowment wallet. Disabled by default.
                     </p>
                   </div>
                   <button
@@ -217,7 +207,7 @@ export default function NurKidsPanel() {
                         : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                     }`}
                   >
-                    {familyComputeSharingEnabled ? "DURDUR" : "ETKİNLEŞTİR"}
+                    {familyComputeSharingEnabled ? "STOP" : "ENABLE"}
                   </button>
                 </div>
               </div>
@@ -226,19 +216,16 @@ export default function NurKidsPanel() {
 
           {activeTab === "catalog" && (
             <div className="p-5 rounded-2xl border border-white/10 bg-black/50 space-y-3">
-              <h3 className="text-sm font-bold text-white font-serif">Eğitim Kataloğu</h3>
+              <h3 className="text-sm font-bold text-white font-serif">Curriculum Catalog</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {selectedChild.courses.map((c) => (
                   <div key={c.id} className="p-4 rounded-xl bg-black/40 border border-white/5">
                     <div className="text-sm font-bold text-white">{c.icon} {c.subject}</div>
-                    <div className="text-[11px] text-slate-400 mt-1">Yaş grubu: {c.ageRange}</div>
-                    <div className="text-[11px] text-emerald-400 mt-0.5">{c.lessonsCompleted}/{c.lessonsTotal} ders tamamlandı</div>
+                    <div className="text-[11px] text-slate-400 mt-1">Target Age: {c.ageRange} yrs</div>
+                    <div className="text-[11px] text-emerald-400 mt-0.5">{c.lessonsCompleted}/{c.lessonsTotal} lessons completed</div>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-500 border-t border-white/10 pt-2">
-                Not: Bu bir ders ilerleme kataloğudur, çocukla canlı etkileşime giren bir yapay zeka sohbet aracı değildir.
-              </p>
             </div>
           )}
         </div>

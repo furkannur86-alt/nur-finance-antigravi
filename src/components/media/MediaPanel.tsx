@@ -1,9 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { channels, hosts, guests, shows, type NURChannel, type NURHost, type NURGuest, type NURShow } from "@/lib/data/broadcast";
+import EagleCrest from "@/components/ui/EagleCrest";
+import { useIDEStore } from "@/stores/useIDEStore";
+import { BROADCAST_LANGUAGES, hdVoiceEngine } from "@/lib/broadcast/multilingual-broadcast";
+
+const NurEarth3DGlobe = dynamic(() => import("@/components/geopolitics/NurEarth3DGlobe"), { ssr: false });
 
 type TabId = "channels" | "hosts" | "schedule" | "social";
+type VideoStageMode = "3D_GLOBE" | "RADAR" | "TELEPROMPTER";
 
 const STATUS_COLORS: Record<string, string> = { live: "#00d4aa", upcoming: "#f0b429", "pre-launch": "#6366f1" };
 
@@ -193,8 +200,11 @@ function ShowCard({ show }: { show: NURShow }) {
 }
 
 export default function MediaPanel() {
+  const { openFloatingWindow, popoutToNativeWindow, setActiveView } = useIDEStore();
   const [tab, setTab] = useState<TabId>("channels");
-  const [selectedChannel, setSelectedChannel] = useState<NURChannel | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState<NURChannel | null>(channels[0]);
+  const [videoStageMode, setVideoStageMode] = useState<VideoStageMode>("3D_GLOBE");
+  const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
 
   const tabs: { id: TabId; label: string; count?: number }[] = [
     { id: "channels", label: "Channels", count: channels.length },
@@ -209,18 +219,69 @@ export default function MediaPanel() {
     ? guests.filter(g => g.channelIds.includes(selectedChannel.id))
     : [];
 
+  const handleSpeakSample = () => {
+    if (isVoiceSpeaking) {
+      hdVoiceEngine.stop();
+      setIsVoiceSpeaking(false);
+      return;
+    }
+    const sampleText = selectedChannel 
+      ? `This is NUR Finance ${selectedChannel.nameLocal}, broadcasting live from ${selectedChannel.city}. Delivering real-time sovereign quantitative market intelligence.`
+      : "Welcome to NUR Finance Global Media Network.";
+    hdVoiceEngine.speak(
+      sampleText,
+      selectedChannel?.language === "Turkish" ? "tr-TR" : "en-US",
+      () => setIsVoiceSpeaking(true),
+      () => setIsVoiceSpeaking(false),
+      () => setIsVoiceSpeaking(false)
+    );
+  };
+
   return (
     <div className="h-full overflow-y-auto" style={{ background: "var(--ag-bg)" }}>
       <div className="p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="var(--ag-accent)">
-            <rect x="1" y="3" width="14" height="10" rx="1.5" fill="none" stroke="var(--ag-accent)" strokeWidth="1.5" />
-            <polygon points="6,5.5 11,8 6,10.5" fill="var(--ag-accent)" />
-          </svg>
-          <h1 className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>NUR Finance Media Network</h1>
-          <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}>
-            {channels.filter(c => c.status === "live").length} Live
-          </span>
+        {/* Header with Title & Popout Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2">
+            <EagleCrest size={24} animate={true} />
+            <h1 className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>NUR Finance Media Network</h1>
+            <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}>
+              {channels.filter(c => c.status === "live").length} Live Channels
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveView("broadcast-studio")}
+              className="px-2.5 py-1 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-bold transition-all flex items-center gap-1.5"
+            >
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span>🎬 STUDIO ON-AIR</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView("live-tv")}
+              className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all"
+            >
+              📺 NUR TV LIVE
+            </button>
+
+            <button
+              onClick={() => openFloatingWindow("media", "📡 NUR Finance Media Network")}
+              className="px-2 py-1 rounded bg-black/50 border border-white/10 text-slate-300 hover:text-white text-xs font-bold"
+              title="Open in floating window"
+            >
+              ⤢ FLOAT
+            </button>
+
+            <button
+              onClick={() => popoutToNativeWindow("media")}
+              className="px-2 py-1 rounded bg-black/50 border border-white/10 text-slate-300 hover:text-white text-xs font-bold"
+              title="Pop out to separate window"
+            >
+              ↗ DUAL-SCREEN
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -246,19 +307,74 @@ export default function MediaPanel() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
               {selectedChannel ? (
-                <div className="rounded-xl border overflow-hidden" style={{ borderColor: "var(--ag-border)" }}>
-                  <div className="aspect-video flex items-center justify-center relative" style={{ background: "#000" }}>
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">{selectedChannel.flag}</div>
-                      <p className="text-sm font-semibold" style={{ color: "var(--ag-text)" }}>{selectedChannel.nameLocal}</p>
-                      <p className="text-xs mt-1" style={{ color: "var(--ag-muted)" }}>
-                        {selectedChannel.status === "live" ? "Live broadcast — connecting..." : `Launching ${selectedChannel.launchDate}`}
-                      </p>
+                <div className="rounded-xl border overflow-hidden shadow-2xl" style={{ borderColor: "var(--ag-border)" }}>
+                  {/* Dynamic Studio Stage Selector Bar */}
+                  <div className="flex items-center justify-between px-3 py-2 bg-black/80 border-b border-white/10 text-xs font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-slate-400 font-bold">STAGE:</span>
+                      {[
+                        { id: "3D_GLOBE", label: "🌐 3D GLOBE" },
+                        { id: "RADAR", label: "📡 ORBITAL RADAR" },
+                        { id: "TELEPROMPTER", label: "🎙️ TELEPROMPTER" },
+                      ].map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => setVideoStageMode(m.id as VideoStageMode)}
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${
+                            videoStageMode === m.id
+                              ? "bg-amber-500 text-black border-amber-400"
+                              : "bg-black/50 border-white/10 text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
                     </div>
-                    {selectedChannel.status === "live" && (
-                      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2 py-1 rounded bg-red-600/90">
-                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                        <span className="text-[10px] font-bold text-white">LIVE</span>
+
+                    <button
+                      onClick={handleSpeakSample}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center gap-1 ${
+                        isVoiceSpeaking
+                          ? "bg-red-600 text-white border-red-500 animate-pulse"
+                          : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                      }`}
+                    >
+                      <span>{isVoiceSpeaking ? "⏹️ STOP" : "🔊 AI ANCHOR VOICE"}</span>
+                    </button>
+                  </div>
+
+                  {/* Video Stage Viewport */}
+                  <div className="aspect-video relative overflow-hidden bg-black flex items-center justify-center">
+                    {videoStageMode === "3D_GLOBE" ? (
+                      <div className="w-full h-full relative">
+                        <NurEarth3DGlobe />
+                        <div className="absolute top-3 left-3 flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 pointer-events-none z-10">
+                          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                          <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+                            {selectedChannel.flag} {selectedChannel.nameLocal} • LIVE 4K
+                          </span>
+                        </div>
+                      </div>
+                    ) : videoStageMode === "RADAR" ? (
+                      <div className="w-full h-full relative flex items-center justify-center bg-[radial-gradient(ellipse_at_center,#082f49_0%,#020617_70%,#000000_100%)] font-mono">
+                        <div className="w-[320px] h-[320px] rounded-full border border-cyan-500/30 relative animate-pulse flex items-center justify-center">
+                          <div className="w-[220px] h-[220px] rounded-full border border-cyan-400/20" />
+                          <div className="w-[120px] h-[120px] rounded-full border border-cyan-300/30" />
+                          <div className="w-full h-[1px] bg-cyan-500/30 absolute" />
+                          <div className="h-full w-[1px] bg-cyan-500/30 absolute" />
+                        </div>
+                        <div className="absolute top-4 left-4 text-xs text-cyan-300 font-bold">
+                          ORBITAL TELEMETRY DOWNLINK • FREQ: 54.751113 MHz [CH-13·35·42·55]
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-full p-6 flex flex-col justify-center bg-slate-950 font-mono text-center space-y-3">
+                        <div className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+                          LIVE TELEPROMPTER • {selectedChannel.nameLocal}
+                        </div>
+                        <p className="text-sm font-semibold text-white max-w-lg mx-auto leading-relaxed">
+                          &ldquo;This is NUR Finance {selectedChannel.nameLocal}, broadcasting live from {selectedChannel.city}. Bringing you real-time geopolitical intelligence and sovereign quant strategies.&rdquo;
+                        </p>
                       </div>
                     )}
                   </div>

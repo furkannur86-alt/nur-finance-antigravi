@@ -10,7 +10,7 @@ export default function WiderrufPage() {
           href="/"
           style={{ color: "var(--ag-accent)", textDecoration: "none", fontSize: 14 }}
         >
-          &larr; Zurück zum Terminal
+          &larr; Return to Sovereign Terminal
         </Link>
 
         <h1 style={{ fontSize: 32, fontWeight: 700, marginTop: 24, marginBottom: 32 }}>

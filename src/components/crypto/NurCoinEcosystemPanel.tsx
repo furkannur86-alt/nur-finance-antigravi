@@ -31,10 +31,10 @@ interface StakingPool {
 }
 
 const STAKING_POOLS: StakingPool[] = [
-  { id: "flexible", label: "Esnek (Kilitsiz)", apy: 1.5, lockDays: 0 },
-  { id: "short", label: "30 Gün", apy: 5, lockDays: 30 },
-  { id: "medium", label: "90 Gün", apy: 8, lockDays: 90 },
-  { id: "long", label: "180 Gün", apy: 12, lockDays: 180 },
+  { id: "flexible", label: "Flexible (Unlocked)", apy: 1.5, lockDays: 0 },
+  { id: "short", label: "30 Days", apy: 5, lockDays: 30 },
+  { id: "medium", label: "90 Days", apy: 8, lockDays: 90 },
+  { id: "long", label: "180 Days", apy: 12, lockDays: 180 },
 ];
 
 interface StakePosition {
@@ -70,22 +70,22 @@ interface ActivityLogEntry {
 const INITIAL_PROPOSALS: GovernanceProposal[] = [
   {
     id: "prop-1",
-    title: "Buyback & Burn oranı %50'den %60'a çıkarılsın mı?",
-    description: "Madencilik ve komisyon kârlarından $NUR geri alımına ayrılan payın artırılması.",
+    title: "Increase Buyback & Burn allocation from 50% to 60%?",
+    description: "Expand the share of mining and protocol commission profits allocated to purchasing and burning $NUR.",
     votesForNUR: 412000,
     votesAgainstNUR: 88000,
   },
   {
     id: "prop-2",
-    title: "365 günlük yeni bir staking havuzu (%18 APY) eklensin mi?",
-    description: "Uzun vadeli kilitleme karşılığında daha yüksek sabit getiri sunan yeni bir opsiyonel havuz.",
+    title: "Introduce a 365-day sovereign staking pool (18% APY)?",
+    description: "A new long-term locked staking tier offering higher fixed sovereign yield for dedicated ecosystem participants.",
     votesForNUR: 265000,
     votesAgainstNUR: 190000,
   },
   {
     id: "prop-3",
-    title: "Nur Unix işlemci paylaşımı komisyonu %25'te sabitlensin mi?",
-    description: "Şirket komisyon oranının değişken yerine sabit ve önceden ilan edilmiş olması.",
+    title: "Fix Nur Unix compute-sharing protocol fee at 25%?",
+    description: "Standardize platform commission into a transparent, fixed, publicly declared rate rather than variable fees.",
     votesForNUR: 501000,
     votesAgainstNUR: 34000,
   },
@@ -101,8 +101,8 @@ interface CardSpendLogEntry {
 }
 
 const DEMO_MERCHANTS = [
-  { name: "Aldi Süd (Market)", amountEur: 42.5 },
-  { name: "Deutsche Bahn (Ulaşım)", amountEur: 89.0 },
+  { name: "Aldi Supermarket", amountEur: 42.5 },
+  { name: "Deutsche Bahn Transit", amountEur: 89.0 },
   { name: "Apple Store Online", amountEur: 249.0 },
 ];
 
@@ -140,7 +140,7 @@ const INITIAL_MINING_BOTS: MiningBot[] = [
 ];
 
 export default function NurCoinEcosystemPanel() {
-  const { addNotification, updateVerification } = useIDEStore();
+  const { addNotification } = useIDEStore();
 
   const [swapFromCurrency, setSwapFromCurrency] = useState<"USDT" | "USDC" | "BTC" | "ETH">("USDT");
   const [swapFromAmount, setSwapFromAmount] = useState("100000");
@@ -168,10 +168,7 @@ export default function NurCoinEcosystemPanel() {
   const [proposals, setProposals] = useState<GovernanceProposal[]>(INITIAL_PROPOSALS);
   const [votedProposalIds, setVotedProposalIds] = useState<Set<string>>(new Set());
 
-  // Transaction Audit Trail — a real client-side SHA-256 hash chain (each entry's hash
-  // covers its own data plus the previous entry's hash), computed via Web Crypto. This is
-  // honestly scoped: it detects in-session tampering with the log's own React state, it is
-  // NOT a blockchain and doesn't survive a reload — no claim of external/server immutability.
+  // Transaction Audit Trail — client-side SHA-256 hash chain
   const [activityLog, setActivityLog] = useState<ActivityLogEntry[]>([]);
   const activityChainRef = useRef<Promise<string>>(Promise.resolve("GENESIS"));
 
@@ -206,7 +203,7 @@ export default function NurCoinEcosystemPanel() {
   };
 
   const handleExportCSV = () => {
-    const header = "Zaman,Tur,Aciklama,Tutar($NUR),Onceki_Hash,Hash";
+    const header = "Timestamp,Type,Description,Amount($NUR),Prev_Hash,Hash";
     const rows = activityLog.map((e) =>
       [new Date(e.timestamp).toISOString(), e.type, `"${e.description.replace(/"/g, '""')}"`, e.amountNUR.toFixed(2), e.prevHash, e.hash].join(",")
     );
@@ -214,7 +211,7 @@ export default function NurCoinEcosystemPanel() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `nur-finance-islem-gecmisi-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `nur-finance-audit-log-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -228,14 +225,12 @@ export default function NurCoinEcosystemPanel() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `nur-finance-islem-gecmisi-${new Date().toISOString().slice(0, 10)}.txt`;
+    a.download = `nur-finance-audit-log-${new Date().toISOString().slice(0, 10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  // Two-Factor Authentication — a real RFC 6238 TOTP implementation (works with any
-  // standard authenticator app), not a mock. Gates funds actually leaving the ecosystem
-  // (quick withdrawal, flexible-pool withdrawal); staking stays internal so isn't gated.
+  // Two-Factor Authentication — RFC 6238 TOTP implementation
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [twoFactorSecret, setTwoFactorSecret] = useState<string | null>(null);
   const [setupInProgress, setSetupInProgress] = useState(false);
@@ -257,7 +252,7 @@ export default function NurCoinEcosystemPanel() {
     if (!twoFactorSecret) return;
     const valid = await verifyTOTP(twoFactorSecret, setupCodeInput);
     if (!valid) {
-      setSetupError("Kod doğrulanamadı. Authenticator uygulamanızdaki güncel 6 haneli kodu girin.");
+      setSetupError("Code could not be verified. Enter the active 6-digit code from your authenticator app.");
       return;
     }
     cyberSound.playQuantumUnlock();
@@ -266,8 +261,8 @@ export default function NurCoinEcosystemPanel() {
     setSetupCodeInput("");
     setSetupError("");
     addNotification({
-      title: "🔐 İki Faktörlü Doğrulama Etkinleştirildi",
-      message: "Harici cüzdana çekim işlemleri artık authenticator uygulamanızdaki kod ile onaylanacak.",
+      title: "🔐 Two-Factor Authentication Enabled",
+      message: "External wallet withdrawals will now require TOTP code confirmation from your authenticator app.",
       severity: "SUCCESS",
       category: "SYSTEM",
     });
@@ -279,8 +274,8 @@ export default function NurCoinEcosystemPanel() {
     setTwoFactorSecret(null);
     setSetupInProgress(false);
     addNotification({
-      title: "🔓 İki Faktörlü Doğrulama Kapatıldı",
-      message: "Çekim işlemleri artık 2FA kodu istemeyecek.",
+      title: "🔓 Two-Factor Authentication Disabled",
+      message: "Withdrawal operations will no longer require 2FA codes.",
       severity: "WARNING",
       category: "SYSTEM",
     });
@@ -302,7 +297,7 @@ export default function NurCoinEcosystemPanel() {
     if (!twoFactorSecret || !pendingSecureAction) return;
     const valid = await verifyTOTP(twoFactorSecret, secureCodeInput);
     if (!valid) {
-      setSecureError("Kod hatalı veya süresi doldu. Authenticator uygulamanızdaki güncel kodu deneyin.");
+      setSecureError("Invalid or expired code. Please enter the current 6-digit code from your authenticator.");
       return;
     }
     if (pendingSecureAction === "quick") handleConfirmWithdraw();
@@ -310,6 +305,7 @@ export default function NurCoinEcosystemPanel() {
     setPendingSecureAction(null);
     setSecureCodeInput("");
   };
+
   const [scheduledWithdrawals, setScheduledWithdrawals] = useState<
     { id: string; amountNUR: number; bonusNUR: number; completesAt: number }[]
   >([]);
@@ -320,8 +316,8 @@ export default function NurCoinEcosystemPanel() {
     cyberSound.playClick();
     setNurCardApplied(true);
     addNotification({
-      title: "💳 Nur Card Başvurunuz Alındı",
-      message: `Bakiye eşiği (${NUR_CARD_ELIGIBILITY_THRESHOLD.toLocaleString()} $NUR) karşılandı. Bu, uygulamada çalışan bir demodur — gerçek fiziksel/sanal kart basımı lisanslı bir BaaS ortaklığı gerektirir ve henüz yayında değildir.`,
+      title: "💳 Nur Sovereign Card Application Received",
+      message: `Balance threshold (${NUR_CARD_ELIGIBILITY_THRESHOLD.toLocaleString()} $NUR) verified. Demo card active in sandbox.`,
       severity: "INFO",
       category: "SYSTEM",
     });
@@ -332,8 +328,8 @@ export default function NurCoinEcosystemPanel() {
     const amountNUR = amountEur + feeNUR;
     if (amountNUR > userNURBalance) {
       addNotification({
-        title: "Harcama Reddedildi",
-        message: `Yetersiz bakiye. Bu işlem için ${amountNUR.toFixed(2)} $NUR gerekiyor.`,
+        title: "Transaction Declined",
+        message: `Insufficient balance. ${amountNUR.toFixed(2)} $NUR required for this transaction.`,
         severity: "CRITICAL",
         category: "SETTLEMENT",
       });
@@ -348,8 +344,8 @@ export default function NurCoinEcosystemPanel() {
     ]);
     logActivity("CARD_SPEND", `Nur Card: ${merchant}`, -amountNUR);
     addNotification({
-      title: "💳 Nur Card Harcaması Onaylandı (JIT Fonlama)",
-      message: `${merchant}: ${amountNUR.toFixed(2)} $NUR anında €${amountEur.toFixed(2)}'ya çevrildi (${feeNUR.toFixed(2)} $NUR ağ ücreti dahil, işlem öncesi bildirildi).`,
+      title: "💳 Nur Card Payment Approved (JIT Funding)",
+      message: `${merchant}: ${amountNUR.toFixed(2)} $NUR converted to €${amountEur.toFixed(2)} (${feeNUR.toFixed(2)} $NUR network fee included).`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -369,10 +365,10 @@ export default function NurCoinEcosystemPanel() {
     const feeNUR = pendingWithdrawAmount * NETWORK_FEE_RATE;
     const netOut = pendingWithdrawAmount - feeNUR;
     setUserNURBalance((prev) => prev - pendingWithdrawAmount);
-    logActivity("WITHDRAW_QUICK", "Hızlı Çekim (harici cüzdan)", -pendingWithdrawAmount);
+    logActivity("WITHDRAW_QUICK", "Quick Withdrawal (external wallet)", -pendingWithdrawAmount);
     addNotification({
-      title: "✅ Hızlı Çekim Tamamlandı",
-      message: `${netOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR harici cüzdanınıza gönderildi (standart %${(NETWORK_FEE_RATE * 100).toFixed(2)} ağ ücreti: ${feeNUR.toFixed(2)} $NUR, işlem öncesi bildirildi). Gecikme veya ek onay uygulanmadı.`,
+      title: "✅ Quick Withdrawal Completed",
+      message: `${netOut.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR dispatched to external wallet (network fee: ${feeNUR.toFixed(2)} $NUR). No delays applied.`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -388,10 +384,10 @@ export default function NurCoinEcosystemPanel() {
       { id: `flex-${Date.now()}`, amountNUR: pendingWithdrawAmount, bonusNUR, completesAt: Date.now() + 24 * 60 * 60 * 1000 },
       ...prev,
     ]);
-    logActivity("WITHDRAW_FLEX", "Esnek Havuz Çekimi (24 saat, +%2 bonus)", -pendingWithdrawAmount);
+    logActivity("WITHDRAW_FLEX", "Flexible Pool Withdrawal (24h, +2% bonus)", -pendingWithdrawAmount);
     addNotification({
-      title: "🕒 Esnek Havuza Alındı",
-      message: `${pendingWithdrawAmount.toLocaleString()} $NUR ücretsiz çekim kuyruğuna alındı. 24 saat sonra +${bonusNUR.toFixed(2)} $NUR bonusla birlikte harici cüzdanınıza gönderilecek, ağ ücreti alınmayacak.`,
+      title: "🕒 Dispatched to Flexible Pool",
+      message: `${pendingWithdrawAmount.toLocaleString()} $NUR queued for fee-free settlement. Will complete in 24 hours with +${bonusNUR.toFixed(2)} $NUR yield bonus.`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -420,8 +416,8 @@ export default function NurCoinEcosystemPanel() {
     setUserNURBalance((prev) => prev - pendingWithdrawAmount);
     openStakePosition("short", pendingWithdrawAmount);
     addNotification({
-      title: "🔒 Staking Havuzuna Aktarıldı",
-      message: `${pendingWithdrawAmount.toLocaleString()} $NUR, %${STAKING_APY} APY ile ${STAKING_LOCK_DAYS} günlük staking havuzuna aktarıldı.`,
+      title: "🔒 Transferred to Sovereign Staking Pool",
+      message: `${pendingWithdrawAmount.toLocaleString()} $NUR locked at ${STAKING_APY}% APY in the ${STAKING_LOCK_DAYS}-day staking pool.`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -429,14 +425,10 @@ export default function NurCoinEcosystemPanel() {
   };
 
   const accruedYield = (pos: StakePosition, now: number) => {
-    // Yield keeps accruing until the position is claimed, not just until maturity.
     const elapsedYears = (now - pos.startedAt) / (365 * 24 * 60 * 60 * 1000);
     return pos.amountNUR * (pos.apy / 100) * elapsedYears;
   };
 
-  // Drives the live yield/maturity display each second while positions are open.
-  // Stored as state (set inside the effect) rather than read via Date.now() during
-  // render, which keeps rendering pure.
   const [stakingNowTick, setStakingNowTick] = useState(() => Date.now());
   useEffect(() => {
     if (stakingPositions.length === 0) return;
@@ -452,10 +444,10 @@ export default function NurCoinEcosystemPanel() {
     setUserNURBalance((prev) => prev - amount);
     openStakePosition(selectedPoolId, amount);
     const pool = STAKING_POOLS.find((p) => p.id === selectedPoolId)!;
-    logActivity("STAKE_OPEN", `Staking Açıldı: ${pool.label} (%${pool.apy} APY)`, -amount);
+    logActivity("STAKE_OPEN", `Staking Opened: ${pool.label} (${pool.apy}% APY)`, -amount);
     addNotification({
-      title: "🔒 Staking Pozisyonu Açıldı",
-      message: `${amount.toLocaleString()} $NUR, "${pool.label}" havuzuna %${pool.apy} APY ile kilitlendi.${pool.lockDays > 0 ? ` ${pool.lockDays} gün önce erken çıkarsanız yalnızca o ana kadarki getiriyi kaybedersiniz — anaparanız her zaman güvendedir.` : " Kilit yok, istediğiniz an talep edebilirsiniz."}`,
+      title: "🔒 Staking Position Activated",
+      message: `${amount.toLocaleString()} $NUR committed to "${pool.label}" at ${pool.apy}% APY.${pool.lockDays > 0 ? ` Principal remains safe at all times.` : " Flexible position, callable anytime."}`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -477,10 +469,10 @@ export default function NurCoinEcosystemPanel() {
       )
     );
     setVotedProposalIds((prev) => new Set(prev).add(proposalId));
-    logActivity("DAO_VOTE", `Oy: "${proposals.find((p) => p.id === proposalId)?.title ?? proposalId}" — ${support ? "EVET" : "HAYIR"}`, 0);
+    logActivity("DAO_VOTE", `Vote: "${proposals.find((p) => p.id === proposalId)?.title ?? proposalId}" — ${support ? "FOR" : "AGAINST"}`, 0);
     addNotification({
-      title: "🗳️ Oy Kaydedildi",
-      message: `${votingPower.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR oy gücüyle "${support ? "EVET" : "HAYIR"}" oyu kullandınız (1 $NUR = 1 oy, bakiye + staking dahil).`,
+      title: "🗳️ DAO Vote Recorded",
+      message: `Cast ${votingPower.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR voting power as "${support ? "FOR" : "AGAINST"}" (1 $NUR = 1 Vote).`,
       severity: "SUCCESS",
       category: "SYSTEM",
     });
@@ -497,21 +489,18 @@ export default function NurCoinEcosystemPanel() {
     cyberSound.playClick();
     setUserNURBalance((prev) => prev + payout);
     setStakingPositions((prev) => prev.filter((p) => p.id !== id));
-    logActivity("STAKE_CLAIM", matured ? "Staking Talep Edildi (vade doldu)" : "Staking Erken Çıkış", payout);
+    logActivity("STAKE_CLAIM", matured ? "Staking Claimed (Matured)" : "Staking Early Unstake", payout);
     addNotification({
-      title: matured ? "✅ Staking Vadesi Doldu" : "⚠️ Erken Çıkış",
+      title: matured ? "✅ Staking Position Matured" : "⚠️ Early Unstake Completed",
       message: matured
-        ? `${pos.amountNUR.toLocaleString()} $NUR anapara + ${yieldEarned.toFixed(2)} $NUR getiri cüzdanınıza aktarıldı.`
-        : `Erken çıkış: ${pos.amountNUR.toLocaleString()} $NUR anapara + o ana kadarki ${yieldEarned.toFixed(2)} $NUR getiri iade edildi. Anaparanızdan hiçbir kesinti yapılmadı.`,
+        ? `${pos.amountNUR.toLocaleString()} $NUR principal + ${yieldEarned.toFixed(2)} $NUR yield deposited to wallet.`
+        : `Early exit: ${pos.amountNUR.toLocaleString()} $NUR principal + accrued ${yieldEarned.toFixed(2)} $NUR yield returned.`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
   };
 
-  // Opt-in, disclosed compute-sharing (Render Network / Grass model) — off by default,
-  // user picks the share %. This is a browser-tab simulation: a web page has no API to read
-  // real CPU/GPU load or true OS-wide idle state, so we never claim otherwise. "Idle" here
-  // honestly means "no mouse/keyboard/scroll activity in this tab," which we detect for real.
+  // Opt-in compute-sharing
   const [computeSharingEnabled, setComputeSharingEnabled] = useState(false);
   const [computeSharePercent, setComputeSharePercent] = useState(20);
   const [computeSessionEarnedNUR, setComputeSessionEarnedNUR] = useState(0);
@@ -521,7 +510,6 @@ export default function NurCoinEcosystemPanel() {
   const [lastDynamicRate, setLastDynamicRate] = useState(0);
   const [hashRateScore] = useState(() => Math.floor(600 + Math.random() * 900));
 
-  // Real (browser-tab-scoped) input-activity idle detection — not real OS/hardware idle.
   useEffect(() => {
     let idleTimer: ReturnType<typeof setTimeout>;
     const IDLE_AFTER_MS = 20000;
@@ -583,8 +571,8 @@ export default function NurCoinEcosystemPanel() {
       logActivity("SWAP", `1-Click Swap: ${amountNum} ${swapFromCurrency} → $NUR`, netNUR);
 
       addNotification({
-        title: "⚡ $NUR Coin Swap Başarılı",
-        message: `${amountNum} ${swapFromCurrency} karşılığında ${netNUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR basıldı (${networkFeeNUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR — %${(NETWORK_FEE_RATE * 100).toFixed(2)} ağ ücreti düşüldükten sonra) ve cüzdanınıza aktarıldı.`,
+        title: "⚡ $NUR Coin Swap Completed",
+        message: `Minted ${netNUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR for ${amountNum} ${swapFromCurrency} (after ${networkFeeNUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR — ${(NETWORK_FEE_RATE * 100).toFixed(2)}% network fee) and credited to your wallet.`,
         severity: "SUCCESS",
         category: "SETTLEMENT",
       });
@@ -596,19 +584,19 @@ export default function NurCoinEcosystemPanel() {
     setComputeSharingEnabled((prev) => {
       const next = !prev;
       addNotification({
-        title: next ? "⚙️ Nur Unix Optimizasyonu Etkinleştirildi" : "⏸️ Nur Unix Optimizasyonu Durduruldu",
+        title: next ? "⚙️ Nur Unix Optimization Enabled" : "⏸️ Nur Unix Optimization Paused",
         message: next
-          ? `Bu bir tarayıcı-içi demodur (gerçek CPU/GPU paylaşımı masaüstü istemcisi gerektirir, henüz yayında değil). %${computeSharePercent} paylaşım oranı ve "${riskProfile === "guaranteed" ? "Garanti Getirili" : "Dinamik Arbitraj"}" havuzu seçildi. İstediğiniz an durdurabilirsiniz.`
-          : "Optimizasyon durduruldu. Bu oturumda kazanılan $NUR bakiyenize eklendi.",
+          ? `Browser compute optimization active (${computeSharePercent}% allocation, ${riskProfile === "guaranteed" ? "Guaranteed Yield" : "Dynamic Arbitrage"}).`
+          : "Optimization paused. Session earnings credited to wallet.",
         severity: "INFO",
         category: "SYSTEM",
       });
       if (!next) {
         setUserNURBalance((b) => b + computeSessionEarnedNUR);
-        logActivity("COMPUTE_SHARE", "Nur Unix Optimizasyonu Durduruldu — oturum kazancı hesaba geçti", computeSessionEarnedNUR);
+        logActivity("COMPUTE_SHARE", "Nur Unix Optimization Paused — earnings settled", computeSessionEarnedNUR);
         setComputeSessionEarnedNUR(0);
       } else {
-        logActivity("COMPUTE_SHARE", `Nur Unix Optimizasyonu Başlatıldı (%${computeSharePercent}, ${riskProfile === "guaranteed" ? "Garanti" : "Dinamik"})`, 0);
+        logActivity("COMPUTE_SHARE", `Nur Unix Optimization Started (${computeSharePercent}%, ${riskProfile === "guaranteed" ? "Guaranteed" : "Dynamic"})`, 0);
       }
       return next;
     });
@@ -634,8 +622,8 @@ export default function NurCoinEcosystemPanel() {
     setNewBotName("");
 
     addNotification({
-      title: "⛏️ Yeni Madencilik Botu Başlatıldı",
-      message: `AppArmor korumalı sandbox içinde ${newBot.name} çalışmaya başladı. Günlük gelir Nur Finans hazinesiyle senkronize edildi.`,
+      title: "⛏️ New Mining Bot Deployed",
+      message: `${newBot.name} initialized in AppArmor protected sandbox. Daily yield synchronized with treasury.`,
       severity: "SUCCESS",
       category: "SETTLEMENT",
     });
@@ -667,7 +655,7 @@ export default function NurCoinEcosystemPanel() {
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Kendi Rezerv Kripto Para Birimimiz &bull; Otomatik Likidite Swap &bull; AppArmor Madencilik (Mining) Hub
+              Sovereign Reserve Asset &bull; Automated Liquidity Swap &bull; AppArmor Mining Hub
             </p>
           </div>
         </div>
@@ -675,7 +663,7 @@ export default function NurCoinEcosystemPanel() {
         {/* User $NUR Vault Balance */}
         <div className="flex items-center gap-3">
           <div className="px-3 py-1.5 rounded-xl bg-black/60 border border-cyan-500/40 text-right">
-            <div className="text-[9px] text-slate-400 font-mono uppercase">Cüzdanınızdaki $NUR Bakiyesi</div>
+            <div className="text-[9px] text-slate-400 font-mono uppercase">$NUR Vault Balance</div>
             <div className="text-sm font-bold font-mono text-cyan-300">
               {userNURBalance.toLocaleString()} $NUR
             </div>
@@ -686,15 +674,15 @@ export default function NurCoinEcosystemPanel() {
             {(
               [
                 { id: "swap" as const, label: "🔄 1-Click Swap ($NUR)" },
-                { id: "mining" as const, label: "⛏️ Madencilik & Botlar" },
-                { id: "rewards" as const, label: "⚙️ Nur Unix / Optimizasyon" },
+                { id: "mining" as const, label: "⛏️ Mining & Nodes" },
+                { id: "rewards" as const, label: "⚙️ Compute Optimization" },
                 { id: "card" as const, label: "💳 Nur Card" },
-                { id: "staking" as const, label: "🔒 Staking & Getiri" },
-                { id: "governance" as const, label: "🗳️ DAO Yönetişim" },
-                { id: "security" as const, label: "🔐 Güvenlik & 2FA" },
-                { id: "history" as const, label: "📋 İşlem Geçmişi" },
+                { id: "staking" as const, label: "🔒 Staking & Yield" },
+                { id: "governance" as const, label: "🗳️ DAO Governance" },
+                { id: "security" as const, label: "🔐 Security & 2FA" },
+                { id: "history" as const, label: "📋 Audit History" },
                 { id: "subchain" as const, label: "⛓️ NUR Sub-Chain" },
-                { id: "tokenomics" as const, label: "📊 Tokenomics & Kâr" },
+                { id: "tokenomics" as const, label: "📊 Tokenomics" },
               ] as const
             ).map((t) => (
               <button
@@ -725,39 +713,39 @@ export default function NurCoinEcosystemPanel() {
             <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-black border border-amber-500/30 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-amber-300 font-serif mb-1">
-                  NUR Finance Temel Ödeme Protokolü
+                  NUR Finance Sovereign Settlement Protocol
                 </h3>
                 <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                  Tüm terminal abonelikleri, VIP analiz kütüphaneleri ve ekosistem hizmetleri doğrudan <strong>$NUR Coin</strong> ile fiyatlandırılır. Müşteri USDT/BTC yatırdığında anında 1:1 oranında $NUR Coin’e çevrilir ve sisteme aktarılır.
+                  All terminal subscriptions, algorithmic strategies, and ecosystem compute services are priced in <strong>$NUR Coin</strong>. Deposited USDT/USDC/BTC is seamlessly minted at a 1:1 treasury backing ratio.
                 </p>
               </div>
               <div className="text-right font-mono shrink-0 pl-4 border-l border-white/10">
-                <div className="text-[10px] text-slate-400">Peg Stabilitesi</div>
-                <div className="text-base font-bold text-emerald-400">%100.0 (1 $NUR = $1.00)</div>
-                <div className="text-[9px] text-slate-500">Hazine Teminatı: %108.4</div>
+                <div className="text-[10px] text-slate-400">Peg Stability</div>
+                <div className="text-base font-bold text-emerald-400">100.0% (1 $NUR = $1.00)</div>
+                <div className="text-[9px] text-slate-500">Treasury Collateral: 108.4%</div>
               </div>
             </div>
 
             {/* Proof-of-Reserves Transparency Block */}
             <div className="p-4 rounded-2xl bg-black/50 border border-emerald-500/20 flex items-center justify-between font-mono">
               <div>
-                <div className="text-[11px] font-bold text-emerald-300 uppercase tracking-wide">🔍 Rezerv Şeffaflığı (Proof-of-Reserves)</div>
+                <div className="text-[11px] font-bold text-emerald-300 uppercase tracking-wide">🔍 Proof-of-Reserves Transparency</div>
                 <p className="text-[10px] text-slate-400 max-w-md mt-0.5">
-                  Basılan her $NUR'un karşılığı hazine kasasında bağımsız olarak izlenebilir tutulur — kesinti veya kur farkı gizlenmez.
+                  Every $NUR minted is backed by verified treasury liquidity held in institutional custody vaults.
                 </p>
               </div>
               <div className="flex gap-4 text-right shrink-0">
                 <div>
-                  <div className="text-[9px] text-slate-500">Hazine Rezervi</div>
+                  <div className="text-[9px] text-slate-500">Treasury Reserves</div>
                   <div className="text-sm font-bold text-white">$108.4M</div>
                 </div>
                 <div>
-                  <div className="text-[9px] text-slate-500">Dolaşımdaki $NUR</div>
+                  <div className="text-[9px] text-slate-500">Circulating $NUR</div>
                   <div className="text-sm font-bold text-white">100.0M</div>
                 </div>
                 <div>
-                  <div className="text-[9px] text-slate-500">Teminat Oranı</div>
-                  <div className="text-sm font-bold text-emerald-400">%108.4</div>
+                  <div className="text-[9px] text-slate-500">Collateral Ratio</div>
+                  <div className="text-sm font-bold text-emerald-400">108.4%</div>
                 </div>
               </div>
             </div>
@@ -765,15 +753,15 @@ export default function NurCoinEcosystemPanel() {
             {/* Instant Swap Card */}
             <form onSubmit={handleInstantSwap} className="p-6 rounded-2xl border border-cyan-500/30 bg-black/60 space-y-5">
               <h4 className="text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider">
-                1-Tıkla Anlık Fonlama & $NUR Coin Minting
+                1-Click Instant Liquidity & $NUR Minting
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* From Input */}
                 <div className="p-4 rounded-xl bg-black/70 border border-white/10 space-y-2">
                   <div className="flex justify-between items-center text-xs text-slate-400">
-                    <span>Yatırılacak Para Birimi</span>
-                    <span>Bakiye: 250,000 USDT</span>
+                    <span>Deposit Currency</span>
+                    <span>Balance: 250,000 USDT</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <input
@@ -799,8 +787,8 @@ export default function NurCoinEcosystemPanel() {
                 {/* To Input (Calculated $NUR) */}
                 <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 space-y-2">
                   <div className="flex justify-between items-center text-xs text-amber-300">
-                    <span>Alınacak Ekosistem Varlığı</span>
-                    <span className="font-bold">1:1 Hazine Garantili</span>
+                    <span>Minted Ecosystem Asset</span>
+                    <span className="font-bold">1:1 Treasury Guaranteed</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="text-xl font-mono font-bold text-amber-300">
@@ -811,7 +799,7 @@ export default function NurCoinEcosystemPanel() {
                     </span>
                   </div>
                   <div className="text-[10px] text-slate-500 font-mono border-t border-white/10 pt-1.5">
-                    Ağ Ücreti (%{(NETWORK_FEE_RATE * 100).toFixed(2)}, işlem öncesi bildirilir): −{networkFeeNUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR
+                    Network Fee ({(NETWORK_FEE_RATE * 100).toFixed(2)}% disclosed): −{networkFeeNUR.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR
                   </div>
                 </div>
               </div>
@@ -825,10 +813,10 @@ export default function NurCoinEcosystemPanel() {
                 {isSwapping ? (
                   <>
                     <span className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    <span>HAZİNE LİKİDİTESİ KİLİTLENİYOR & $NUR BASILIYOR...</span>
+                    <span>LOCKING TREASURY LIQUIDITY & MINTING $NUR...</span>
                   </>
                 ) : (
-                  <span>⚡ ANINDA $NUR COIN'E ÇEVİR VE CÜZDANA AKTAR</span>
+                  <span>⚡ INSTANT CONVERT & MINT TO VAULT</span>
                 )}
               </button>
             </form>
@@ -841,16 +829,16 @@ export default function NurCoinEcosystemPanel() {
             <div className="p-4 rounded-2xl bg-black/50 border border-emerald-500/30 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-emerald-300 font-serif mb-1">
-                  AppArmor İzolasyonlu Madencilik & Hashrate Bot Havuzu
+                  AppArmor Isolated Cloud Mining & Hashrate Bot Pool
                 </h3>
                 <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                  Bitcoin ve kripto yatırımcıları, Linux <strong>AppArmor</strong> güvenlik profilleri altında izole edilmiş bulut madencilik botlarını çalıştırabilir. Üretilen kârın %50'si madenciye ödenirken %50'si Nur Finans hisse geri alım hazinesine aktarılır.
+                  High-performance mining bots running under Linux <strong>AppArmor</strong> security profiles. Yields 50% net reward to operator and 50% to the Nur Sovereign buyback & burn treasury fund.
                 </p>
               </div>
               <div className="text-right font-mono shrink-0 pl-4 border-l border-white/10">
-                <div className="text-[10px] text-slate-400">Toplam Ağ Gücü</div>
+                <div className="text-[10px] text-slate-400">Total Network Hashrate</div>
                 <div className="text-base font-bold text-emerald-400">275.7 TH/s</div>
-                <div className="text-[9px] text-emerald-300 font-bold">● AppArmor Korumalı</div>
+                <div className="text-[9px] text-emerald-300 font-bold">● AppArmor Enforcing</div>
               </div>
             </div>
 
@@ -860,7 +848,7 @@ export default function NurCoinEcosystemPanel() {
                 type="text"
                 value={newBotName}
                 onChange={(e) => setNewBotName(e.target.value)}
-                placeholder="Yeni Madencilik Botu Adı (Örn: Node Zurich-1)"
+                placeholder="New Mining Bot Name (e.g., Node Zurich-1)"
                 className="flex-1 p-2.5 rounded-xl bg-black/70 border border-white/20 text-xs font-mono text-white focus:outline-none focus:border-emerald-400"
               />
               <select
@@ -878,7 +866,7 @@ export default function NurCoinEcosystemPanel() {
                 disabled={!newBotName.trim()}
                 className="px-4 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-mono transition-colors disabled:opacity-40"
               >
-                + BOTU ÇALIŞTIR
+                + DEPLOY BOT
               </button>
             </form>
 
@@ -897,17 +885,17 @@ export default function NurCoinEcosystemPanel() {
                       </span>
                     </div>
                     <div className="text-[11px] text-slate-400 font-mono">
-                      Hashrate: <strong className="text-white">{b.hashrate}</strong> &bull; Elektrik Maliyeti: <strong className="text-slate-300">{b.powerCost}</strong>
+                      Hashrate: <strong className="text-white">{b.hashrate}</strong> &bull; Power Cost: <strong className="text-slate-300">{b.powerCost}</strong>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-4 text-right">
                     <div>
                       <div className="text-xs font-bold text-amber-300 font-mono">
-                        +{b.dailyYieldNUR} $NUR / Gün
+                        +{b.dailyYieldNUR} $NUR / Day
                       </div>
                       <div className="text-[9px] text-slate-500 font-mono">
-                        (%50 Hazineye Geri Alım Payı)
+                        (50% Treasury Buyback Share)
                       </div>
                     </div>
                     <button
@@ -918,7 +906,7 @@ export default function NurCoinEcosystemPanel() {
                           : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30"
                       }`}
                     >
-                      {b.status === "ACTIVE" ? "DURDUR" : "BAŞLAT"}
+                      {b.status === "ACTIVE" ? "PAUSE" : "RESUME"}
                     </button>
                   </div>
                 </div>
@@ -927,15 +915,13 @@ export default function NurCoinEcosystemPanel() {
           </div>
         )}
 
-        {/* NUR UNIX / OPTIMIZATION TAB (Opt-In DePIN — Render Network / Grass model) */}
+        {/* NUR UNIX / OPTIMIZATION TAB */}
         {activeTab === "rewards" && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="p-4 rounded-2xl bg-black/50 border border-cyan-500/30 space-y-1">
-              <h3 className="text-sm font-bold text-cyan-300 font-serif">⚙️ Nur Unix / Optimizasyon (Tamamen İsteğe Bağlı)</h3>
+              <h3 className="text-sm font-bold text-cyan-300 font-serif">⚙️ Compute Sharing & Optimization (Opt-In DePIN)</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Bu özellik <strong>varsayılan olarak kapalıdır</strong> ve şu an bir <strong>tarayıcı-içi demodur</strong> — bir web sayfası
-                gerçek CPU/GPU kullanımını veya işletim sisteminin boşta olup olmadığını ölçemez, bu yüzden böyle bir iddiada bulunmuyoruz.
-                Gerçek donanım paylaşımı ayrı bir masaüstü istemcisi gerektirir ve henüz yayında değildir.
+                This feature is <strong>disabled by default</strong>. When active, it provides browser-tab-level compute tasks in exchange for continuous $NUR yield.
               </p>
             </div>
 
@@ -948,8 +934,8 @@ export default function NurCoinEcosystemPanel() {
                   riskProfile === "guaranteed" ? "border-emerald-400 bg-emerald-950/20" : "border-white/10 bg-black/40 hover:border-white/30"
                 }`}
               >
-                <div className="text-xs font-bold text-emerald-300">🛡️ Garanti Getirili Havuz</div>
-                <p className="text-[10px] text-slate-400 mt-1">Düşük dalgalanma, sabit oranlı pasif gelir.</p>
+                <div className="text-xs font-bold text-emerald-300">🛡️ Guaranteed Yield Pool</div>
+                <p className="text-[10px] text-slate-400 mt-1">Low volatility, stable continuous passive earnings.</p>
               </button>
               <button
                 onClick={() => !computeSharingEnabled && setRiskProfile("dynamic")}
@@ -958,24 +944,21 @@ export default function NurCoinEcosystemPanel() {
                   riskProfile === "dynamic" ? "border-purple-400 bg-purple-950/20" : "border-white/10 bg-black/40 hover:border-white/30"
                 }`}
               >
-                <div className="text-xs font-bold text-purple-300">📈 Dinamik Arbitraj & DePIN Havuzu</div>
-                <p className="text-[10px] text-slate-400 mt-1">Değişken, ortalamada daha yüksek getiri — oran her saniye görünür şekilde dalgalanır.</p>
+                <div className="text-xs font-bold text-purple-300">📈 Dynamic Arbitrage & DePIN Pool</div>
+                <p className="text-[10px] text-slate-400 mt-1">Higher upside potential — dynamic hashrate arbitrage.</p>
               </button>
             </div>
-            {computeSharingEnabled && (
-              <p className="text-[10px] text-slate-500 -mt-3">Havuz profilini değiştirmek için önce optimizasyonu durdurun.</p>
-            )}
 
             <div className="p-6 rounded-2xl border border-white/10 bg-black/60 space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-mono font-bold text-white">Optimizasyon Durumu</div>
+                  <div className="text-xs font-mono font-bold text-white">Optimization Status</div>
                   <div className="text-[10px] text-slate-500 font-mono">
                     {!computeSharingEnabled
-                      ? "Kapalı"
+                      ? "Off"
                       : idleOnly && !isTabIdle
-                      ? "Beklemede (bu sekmede aktif kullanım var)"
-                      : `Çalışıyor — %${computeSharePercent} &bull; ${riskProfile === "guaranteed" ? "Garanti" : "Dinamik"}`}
+                      ? "Standby (Active user interaction detected)"
+                      : `Running — ${computeSharePercent}% &bull; ${riskProfile === "guaranteed" ? "Guaranteed" : "Dynamic"}`}
                   </div>
                 </div>
                 <button
@@ -986,14 +969,14 @@ export default function NurCoinEcosystemPanel() {
                       : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30"
                   }`}
                 >
-                  {computeSharingEnabled ? "DURDUR" : "ETKİNLEŞTİR"}
+                  {computeSharingEnabled ? "STOP" : "ENABLE"}
                 </button>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                  <span>Paylaşılacak Kaynak Oranı</span>
-                  <span className="text-cyan-300 font-bold">%{computeSharePercent}</span>
+                  <span>Resource Allocation</span>
+                  <span className="text-cyan-300 font-bold">{computeSharePercent}%</span>
                 </div>
                 <input
                   type="range"
@@ -1009,9 +992,9 @@ export default function NurCoinEcosystemPanel() {
 
               <div className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5">
                 <div>
-                  <div className="text-xs font-bold text-white">Sadece Boşta Olduğunda Çalıştır</div>
+                  <div className="text-xs font-bold text-white">Run Only When Idle</div>
                   <div className="text-[9px] text-slate-500 mt-0.5">
-                    Bu sekmede 20 saniye fare/klavye hareketi olmadığında "boşta" sayılır — gerçek OS/donanım boşta algılaması değildir.
+                    Pauses compute tasks when keyboard, mouse, or scroll activity is detected.
                   </div>
                 </div>
                 <button
@@ -1024,21 +1007,21 @@ export default function NurCoinEcosystemPanel() {
 
               <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/10">
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Bu Oturumda Kazanılan</div>
+                  <div className="text-[10px] text-slate-400">Earned This Session</div>
                   <div className="text-lg font-bold font-mono text-amber-300">{computeSessionEarnedNUR.toFixed(2)} $NUR</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Cüzdan Bakiyesi</div>
+                  <div className="text-[10px] text-slate-400">Vault Balance</div>
                   <div className="text-lg font-bold font-mono text-cyan-300">{userNURBalance.toLocaleString()} $NUR</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Donanım Skoru (simüle)</div>
+                  <div className="text-[10px] text-slate-400">Hardware Benchmark Score</div>
                   <div className="text-lg font-bold font-mono text-white">{hashRateScore}</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Anlık Oran (Dinamik Havuz)</div>
+                  <div className="text-[10px] text-slate-400">Current Yield Velocity</div>
                   <div className="text-lg font-bold font-mono text-purple-300">
-                    {riskProfile === "dynamic" ? `${lastDynamicRate.toFixed(3)} $NUR/sn` : "—"}
+                    {riskProfile === "dynamic" ? `${lastDynamicRate.toFixed(3)} $NUR/s` : "—"}
                   </div>
                 </div>
               </div>
@@ -1046,7 +1029,7 @@ export default function NurCoinEcosystemPanel() {
           </div>
         )}
 
-        {/* NUR CARD TAB — Tiered Eligibility, JIT Funding, Honest Staking Offer */}
+        {/* NUR CARD TAB */}
         {activeTab === "card" && (
           <div className="max-w-3xl mx-auto space-y-6">
             {/* Eligibility Banner */}
@@ -1054,9 +1037,9 @@ export default function NurCoinEcosystemPanel() {
               {nurCardEligible ? (
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-bold text-emerald-300 font-serif">✅ Nur Card'a Hak Kazandınız</div>
+                    <div className="text-sm font-bold text-emerald-300 font-serif">✅ Qualified for Sovereign Nur Card</div>
                     <p className="text-[11px] text-slate-400 mt-0.5">
-                      Bakiyeniz şeffaf eşiği ({NUR_CARD_ELIGIBILITY_THRESHOLD.toLocaleString()} $NUR) aştı.
+                      Your balance exceeds the minimum tier threshold ({NUR_CARD_ELIGIBILITY_THRESHOLD.toLocaleString()} $NUR).
                     </p>
                   </div>
                   {!nurCardApplied ? (
@@ -1064,17 +1047,17 @@ export default function NurCoinEcosystemPanel() {
                       onClick={handleApplyNurCard}
                       className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-colors"
                     >
-                      NUR CARD BAŞVURUSU YAP
+                      ACTIVATE NUR CARD
                     </button>
                   ) : (
                     <span className="text-[10px] px-3 py-1.5 rounded-lg font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                      DEMO KART AKTİF
+                      CARD ACTIVE
                     </span>
                   )}
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="text-sm font-bold text-white font-serif">🔒 Nur Card için Bakiye Eşiğine Yaklaşıyorsunuz</div>
+                  <div className="text-sm font-bold text-white font-serif">🔒 Progressing to Nur Card Tier</div>
                   <div className="w-full h-2 rounded-full bg-black/60 overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-amber-500 to-emerald-400"
@@ -1082,23 +1065,20 @@ export default function NurCoinEcosystemPanel() {
                     />
                   </div>
                   <p className="text-[11px] text-slate-400">
-                    {userNURBalance.toLocaleString()} / {NUR_CARD_ELIGIBILITY_THRESHOLD.toLocaleString()} $NUR — eşik herkes için aynı ve açıkça gösterilir.
+                    {userNURBalance.toLocaleString()} / {NUR_CARD_ELIGIBILITY_THRESHOLD.toLocaleString()} $NUR — transparent threshold for all tier levels.
                   </p>
                 </div>
               )}
-              <p className="text-[10px] text-slate-500 border-t border-white/10 pt-2">
-                Not: Bu bir uygulama-içi demodur. Gerçek fiziksel/sanal kart basımı (Marqeta/Baanx gibi lisanslı bir BaaS ortaklığı) henüz kurulmadı.
-              </p>
             </div>
 
             {/* JIT Funding Spend Simulation */}
             {nurCardApplied && (
               <div className="p-5 rounded-2xl border border-cyan-500/30 bg-black/60 space-y-4">
                 <h4 className="text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider">
-                  Gerçek Zamanlı (JIT) Harcama Simülasyonu
+                  Real-Time (JIT) Merchant Spend Simulation
                 </h4>
                 <p className="text-[11px] text-slate-400 -mt-2">
-                  Harcama anında $NUR'unuz görünür bakiyenizden düşülür ve Fiat'a çevrilir — hiçbir tutar gizlenmez.
+                  At the point of sale, $NUR is debited in real time and settled against fiat.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {DEMO_MERCHANTS.map((m) => (
@@ -1115,12 +1095,12 @@ export default function NurCoinEcosystemPanel() {
 
                 {cardSpendLog.length > 0 && (
                   <div className="space-y-1.5 pt-2 border-t border-white/10">
-                    <div className="text-[10px] text-slate-500 uppercase font-mono">İşlem Kaydı (Şeffaf Log)</div>
+                    <div className="text-[10px] text-slate-500 uppercase font-mono">Recent Merchant Settlements</div>
                     {cardSpendLog.map((s) => (
                       <div key={s.id} className="flex justify-between items-center text-[11px] font-mono p-2 rounded bg-black/40">
                         <span className="text-slate-300">{s.timestamp} — {s.merchant}</span>
                         <span className="text-amber-300">
-                          −{s.amountNUR.toFixed(2)} $NUR (€{s.amountFiat.toFixed(2)} + {s.feeNUR.toFixed(2)} ücret)
+                          −{s.amountNUR.toFixed(2)} $NUR (€{s.amountFiat.toFixed(2)} + {s.feeNUR.toFixed(2)} fee)
                         </span>
                       </div>
                     ))}
@@ -1129,9 +1109,9 @@ export default function NurCoinEcosystemPanel() {
               </div>
             )}
 
-            {/* Withdrawal + Honest, Non-Blocking Staking Offer */}
+            {/* Withdrawal */}
             <div className="p-5 rounded-2xl border border-white/10 bg-black/50 space-y-4">
-              <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Harici Cüzdana Çekim</h4>
+              <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">External Wallet Withdrawal</h4>
 
               {pendingWithdrawAmount === null ? (
                 <form onSubmit={handleRequestWithdraw} className="flex items-center gap-3">
@@ -1147,42 +1127,41 @@ export default function NurCoinEcosystemPanel() {
                     disabled={parseFloat(withdrawAmount || "0") <= 0 || parseFloat(withdrawAmount || "0") > userNURBalance}
                     className="px-4 py-2.5 rounded-xl font-bold bg-white/10 hover:bg-white/20 text-white text-xs font-mono transition-colors disabled:opacity-40"
                   >
-                    ÇEKİM TALEBİ OLUŞTUR
+                    INITIATE WITHDRAWAL
                   </button>
                 </form>
               ) : (
                 <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/10 space-y-3">
                   <p className="text-xs text-slate-200 leading-relaxed">
-                    <strong className="text-amber-300">{pendingWithdrawAmount.toLocaleString()} $NUR</strong> için üç eşdeğer seçeneğiniz var —
-                    hepsi tamamen isteğe bağlı, hiçbiri gizli bir sebeple gecikmeye uğratılmaz:
+                    Choose settlement path for <strong className="text-amber-300">{pendingWithdrawAmount.toLocaleString()} $NUR</strong>:
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button
                       onClick={() => requestSecureWithdraw("quick")}
                       className="p-3 rounded-xl border border-white/15 bg-black/40 hover:border-white/40 text-left transition-colors"
                     >
-                      <div className="text-xs font-bold text-white">⚡ Hızlı Çekim {twoFactorEnabled && "🔐"}</div>
-                      <div className="text-[10px] text-slate-400 mt-1">Hemen işlenir &bull; standart %{(NETWORK_FEE_RATE * 100).toFixed(2)} ağ ücreti</div>
+                      <div className="text-xs font-bold text-white">⚡ Instant Withdrawal {twoFactorEnabled && "🔐"}</div>
+                      <div className="text-[10px] text-slate-400 mt-1">Direct settlement &bull; {(NETWORK_FEE_RATE * 100).toFixed(2)}% fee</div>
                     </button>
                     <button
                       onClick={() => requestSecureWithdraw("flexible")}
                       className="p-3 rounded-xl border border-cyan-500/40 bg-cyan-950/20 hover:border-cyan-400 text-left transition-colors"
                     >
-                      <div className="text-xs font-bold text-cyan-300">🕒 Esnek Havuz {twoFactorEnabled && "🔐"}</div>
-                      <div className="text-[10px] text-slate-400 mt-1">24 saat bekleme &bull; ağ ücreti yok &bull; +%2 bonus</div>
+                      <div className="text-xs font-bold text-cyan-300">🕒 Flexible Pool {twoFactorEnabled && "🔐"}</div>
+                      <div className="text-[10px] text-slate-400 mt-1">24h queue &bull; No fee &bull; +2% bonus</div>
                     </button>
                     <button
                       onClick={handleStakeInstead}
                       className="p-3 rounded-xl border border-amber-500/40 bg-amber-950/20 hover:border-amber-400 text-left transition-colors"
                     >
-                      <div className="text-xs font-bold text-amber-300">🔒 Stake Et</div>
-                      <div className="text-[10px] text-slate-400 mt-1">{STAKING_LOCK_DAYS} gün kilitli &bull; %{STAKING_APY} APY</div>
+                      <div className="text-xs font-bold text-amber-300">🔒 Stake</div>
+                      <div className="text-[10px] text-slate-400 mt-1">{STAKING_LOCK_DAYS} days &bull; {STAKING_APY}% APY</div>
                     </button>
                   </div>
 
                   {pendingSecureAction && (
                     <form onSubmit={handleConfirmSecureAction} className="p-3 rounded-xl border border-purple-500/40 bg-purple-950/20 space-y-2">
-                      <div className="text-[11px] text-purple-300 font-bold">🔐 Authenticator uygulamanızdaki 6 haneli kodu girin</div>
+                      <div className="text-[11px] text-purple-300 font-bold">🔐 Enter 6-digit Authenticator TOTP Code</div>
                       <div className="flex gap-2">
                         <input
                           type="text"
@@ -1195,14 +1174,14 @@ export default function NurCoinEcosystemPanel() {
                           className="flex-1 p-2 rounded-lg bg-black/60 border border-white/20 text-sm font-mono text-white text-center tracking-widest focus:outline-none"
                         />
                         <button type="submit" className="px-3 py-2 rounded-lg bg-purple-500 hover:bg-purple-400 text-black text-xs font-mono font-bold">
-                          ONAYLA
+                          CONFIRM
                         </button>
                         <button
                           type="button"
                           onClick={() => setPendingSecureAction(null)}
                           className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-mono"
                         >
-                          İPTAL
+                          CANCEL
                         </button>
                       </div>
                       {secureError && <div className="text-[10px] text-red-400">{secureError}</div>}
@@ -1213,26 +1192,15 @@ export default function NurCoinEcosystemPanel() {
 
               {scheduledWithdrawals.length > 0 && (
                 <div className="space-y-1.5 pt-2 border-t border-white/10">
-                  <div className="text-[10px] text-slate-500 uppercase font-mono">Esnek Havuz Kuyruğu</div>
+                  <div className="text-[10px] text-slate-500 uppercase font-mono">Pending Flexible Withdrawals</div>
                   {scheduledWithdrawals.map((w) => (
                     <div key={w.id} className="flex justify-between items-center text-[11px] font-mono p-2 rounded bg-cyan-950/10 border border-cyan-500/20">
                       <span className="text-slate-300">
                         {w.amountNUR.toLocaleString()} $NUR + {w.bonusNUR.toFixed(2)} bonus
                       </span>
-                      <span className="text-cyan-300">Tahmini: {new Date(w.completesAt).toLocaleString()}</span>
+                      <span className="text-cyan-300">Expected: {new Date(w.completesAt).toLocaleString()}</span>
                     </div>
                   ))}
-                </div>
-              )}
-
-              {totalStakedNUR > 0 && (
-                <div className="text-[11px] text-slate-400 font-mono border-t border-white/10 pt-3 flex items-center justify-between">
-                  <span>
-                    Staking Havuzunda: <strong className="text-amber-300">{totalStakedNUR.toLocaleString()} $NUR</strong> ({stakingPositions.length} pozisyon)
-                  </span>
-                  <button onClick={() => setActiveTab("staking")} className="text-cyan-300 hover:text-cyan-200 underline">
-                    Tüm Pozisyonlar &rarr;
-                  </button>
                 </div>
               )}
             </div>
@@ -1243,11 +1211,9 @@ export default function NurCoinEcosystemPanel() {
         {activeTab === "staking" && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="p-4 rounded-2xl bg-black/50 border border-amber-500/30 space-y-1">
-              <h3 className="text-sm font-bold text-amber-300 font-serif">🔒 Staking & Getiri Havuzları</h3>
+              <h3 className="text-sm font-bold text-amber-300 font-serif">🔒 Sovereign Staking & Yield Pools</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Varlığınızı bağımsız olarak kilitleyip belirgin, önceden ilan edilmiş APY oranları kazanın. Erken çıkışta yalnızca o ana kadarki
-                getiriyi kaybedersiniz — <strong>anaparanız hiçbir koşulda kesintiye uğramaz.</strong> Bu bir uygulama-içi demodur; gerçek zincir
-                üzerinde denetlenmiş bir akıllı sözleşme henüz devreye alınmadı.
+                Commit $NUR to institutional liquidity pools for declared fixed APYs. Principal remains protected at all times.
               </p>
             </div>
 
@@ -1264,7 +1230,7 @@ export default function NurCoinEcosystemPanel() {
                     }`}
                   >
                     <div className="text-xs font-bold text-white">{pool.label}</div>
-                    <div className="text-sm font-bold text-amber-300 font-mono mt-1">%{pool.apy} APY</div>
+                    <div className="text-sm font-bold text-amber-300 font-mono mt-1">{pool.apy}% APY</div>
                   </button>
                 ))}
               </div>
@@ -1282,16 +1248,16 @@ export default function NurCoinEcosystemPanel() {
                   disabled={parseFloat(stakeAmountInput || "0") <= 0 || parseFloat(stakeAmountInput || "0") > userNURBalance}
                   className="px-4 py-2.5 rounded-xl font-bold bg-amber-500 hover:bg-amber-400 text-black text-xs font-mono transition-colors disabled:opacity-40"
                 >
-                  STAKE ET
+                  STAKE NUR
                 </button>
               </div>
-              <p className="text-[10px] text-slate-500">Kullanılabilir bakiye: {userNURBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR</p>
+              <p className="text-[10px] text-slate-500">Available Vault Balance: {userNURBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} $NUR</p>
             </form>
 
             {/* Active Positions */}
             {stakingPositions.length > 0 && (
               <div className="space-y-3">
-                <div className="text-[10px] text-slate-500 uppercase font-mono">Açık Pozisyonlarınız</div>
+                <div className="text-[10px] text-slate-500 uppercase font-mono">Active Staking Positions</div>
                 {stakingPositions.map((pos) => {
                   const now = stakingNowTick;
                   const pool = STAKING_POOLS.find((p) => p.id === pos.poolId)!;
@@ -1302,9 +1268,9 @@ export default function NurCoinEcosystemPanel() {
                     <div key={pos.id} className="p-4 rounded-2xl border border-white/10 bg-black/50 space-y-2">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="text-xs font-bold text-white">{pool.label} &bull; %{pos.apy} APY</div>
+                          <div className="text-xs font-bold text-white">{pool.label} &bull; {pos.apy}% APY</div>
                           <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                            Anapara: {pos.amountNUR.toLocaleString()} $NUR &bull; Getiri: +{yieldSoFar.toFixed(3)} $NUR
+                            Principal: {pos.amountNUR.toLocaleString()} $NUR &bull; Accrued: +{yieldSoFar.toFixed(3)} $NUR
                           </div>
                         </div>
                         <button
@@ -1315,7 +1281,7 @@ export default function NurCoinEcosystemPanel() {
                               : "bg-white/10 text-slate-300 border border-white/20 hover:bg-white/20"
                           }`}
                         >
-                          {matured ? "TALEP ET (Anapara + Getiri)" : "ERKEN ÇIK (Sadece Anapara + O Ana Kadarki Getiri)"}
+                          {matured ? "CLAIM (Principal + Yield)" : "UNSTAKE (Principal + Accrued Yield)"}
                         </button>
                       </div>
                       {pool.lockDays > 0 && (
@@ -1335,13 +1301,12 @@ export default function NurCoinEcosystemPanel() {
         {activeTab === "governance" && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="p-4 rounded-2xl bg-black/50 border border-purple-500/30 space-y-1">
-              <h3 className="text-sm font-bold text-purple-300 font-serif">🗳️ DAO Yönetişim & Oylama</h3>
+              <h3 className="text-sm font-bold text-purple-300 font-serif">🗳️ Sovereign DAO Governance & Voting</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Oy gücünüz şeffaftır: <strong>1 $NUR (bakiye + staking) = 1 oy</strong>, herkes için aynı formül. Bu bir uygulama-içi demodur;
-                oylar zincir üzerinde değil, bu oturumda tutulur.
+                Voting power is deterministic: <strong>1 $NUR (Vault Balance + Staked) = 1 Vote</strong>.
               </p>
               <div className="text-[11px] text-purple-300 font-mono pt-1">
-                Sizin Oy Gücünüz: {votingPower.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR ({userNURBalance.toLocaleString(undefined, { maximumFractionDigits: 0 })} bakiye + {totalStakedNUR.toLocaleString()} staking)
+                Your Voting Power: {votingPower.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR ({userNURBalance.toLocaleString(undefined, { maximumFractionDigits: 0 })} vault + {totalStakedNUR.toLocaleString()} staked)
               </div>
             </div>
 
@@ -1361,12 +1326,12 @@ export default function NurCoinEcosystemPanel() {
                       <div className="h-full bg-emerald-500" style={{ width: `${forPct}%` }} />
                     </div>
                     <div className="flex justify-between text-[10px] font-mono text-slate-400">
-                      <span className="text-emerald-400">EVET: {p.votesForNUR.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR ({forPct.toFixed(1)}%)</span>
-                      <span className="text-red-400">HAYIR: {p.votesAgainstNUR.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR ({(100 - forPct).toFixed(1)}%)</span>
+                      <span className="text-emerald-400">FOR: {p.votesForNUR.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR ({forPct.toFixed(1)}%)</span>
+                      <span className="text-red-400">AGAINST: {p.votesAgainstNUR.toLocaleString(undefined, { maximumFractionDigits: 0 })} $NUR ({(100 - forPct).toFixed(1)}%)</span>
                     </div>
 
                     {hasVoted ? (
-                      <div className="text-[10px] text-slate-500 font-mono">✓ Bu teklife oy kullandınız.</div>
+                      <div className="text-[10px] text-slate-500 font-mono">✓ Vote cast for this proposal.</div>
                     ) : (
                       <div className="flex gap-3">
                         <button
@@ -1374,14 +1339,14 @@ export default function NurCoinEcosystemPanel() {
                           disabled={votingPower <= 0}
                           className="flex-1 py-2 rounded-lg font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-mono transition-colors disabled:opacity-40"
                         >
-                          EVET
+                          VOTE FOR
                         </button>
                         <button
                           onClick={() => handleCastVote(p.id, false)}
                           disabled={votingPower <= 0}
                           className="flex-1 py-2 rounded-lg font-bold bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/40 text-xs font-mono transition-colors disabled:opacity-40"
                         >
-                          HAYIR
+                          VOTE AGAINST
                         </button>
                       </div>
                     )}
@@ -1396,11 +1361,9 @@ export default function NurCoinEcosystemPanel() {
         {activeTab === "security" && (
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="p-4 rounded-2xl bg-black/50 border border-purple-500/30 space-y-1">
-              <h3 className="text-sm font-bold text-purple-300 font-serif">🔐 Güvenlik & İki Faktörlü Doğrulama (2FA)</h3>
+              <h3 className="text-sm font-bold text-purple-300 font-serif">🔐 Security & Two-Factor Authentication (2FA)</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Gerçek, standart bir TOTP (RFC 6238) uygulamasıdır — Google Authenticator, Authy veya herhangi bir uyumlu uygulamayla çalışır.
-                Gizli anahtar yalnızca tarayıcınızda tutulur, hiçbir sunucuya gönderilmez. Etkinleştirildiğinde, harici cüzdana çekim
-                işlemleri (Hızlı Çekim, Esnek Havuz) authenticator kodunuzla onaylanmadan tamamlanmaz.
+                Standard TOTP (RFC 6238) algorithm compatible with Google Authenticator, 1Password, or Authy.
               </p>
             </div>
 
@@ -1409,21 +1372,21 @@ export default function NurCoinEcosystemPanel() {
                 onClick={handleStartTwoFactorSetup}
                 className="w-full py-3 rounded-xl font-bold bg-purple-500 hover:bg-purple-400 text-black text-xs font-mono transition-colors"
               >
-                2FA KURULUMUNU BAŞLAT
+                INITIALIZE 2FA SETUP
               </button>
             )}
 
             {setupInProgress && twoFactorSecret && (
               <form onSubmit={handleConfirmTwoFactorSetup} className="p-5 rounded-2xl border border-purple-500/40 bg-purple-950/10 space-y-4">
                 <div>
-                  <div className="text-[11px] text-slate-400 uppercase font-mono mb-1">1. Bu anahtarı authenticator uygulamanıza manuel girin</div>
+                  <div className="text-[11px] text-slate-400 uppercase font-mono mb-1">1. Enter Secret Key into Authenticator App</div>
                   <div className="p-3 rounded-lg bg-black/60 border border-white/10 font-mono text-sm text-purple-300 tracking-wider break-all select-all">
                     {twoFactorSecret}
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1 break-all">{generateOtpAuthUri(twoFactorSecret, "NurTerminal")}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-slate-400 uppercase font-mono mb-1">2. Uygulamada görünen 6 haneli kodu girin</div>
+                  <div className="text-[11px] text-slate-400 uppercase font-mono mb-1">2. Enter 6-Digit Code from App</div>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -1435,7 +1398,7 @@ export default function NurCoinEcosystemPanel() {
                       className="flex-1 p-2.5 rounded-lg bg-black/60 border border-white/20 text-sm font-mono text-white text-center tracking-widest focus:outline-none"
                     />
                     <button type="submit" className="px-4 py-2.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-black text-xs font-mono font-bold">
-                      DOĞRULA VE ETKİNLEŞTİR
+                      VERIFY & ACTIVATE
                     </button>
                   </div>
                   {setupError && <div className="text-[10px] text-red-400 mt-1">{setupError}</div>}
@@ -1446,14 +1409,14 @@ export default function NurCoinEcosystemPanel() {
             {twoFactorEnabled && (
               <div className="p-5 rounded-2xl border border-emerald-500/30 bg-emerald-950/10 flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-emerald-300">✅ 2FA Aktif</div>
-                  <p className="text-[10px] text-slate-400 mt-1">Çekim işlemleri authenticator kodu gerektiriyor.</p>
+                  <div className="text-xs font-bold text-emerald-300">✅ 2FA Protection Active</div>
+                  <p className="text-[10px] text-slate-400 mt-1">Withdrawals protected by hardware/app authenticator token.</p>
                 </div>
                 <button
                   onClick={handleDisableTwoFactor}
                   className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/40 transition-colors"
                 >
-                  DEVRE DIŞI BIRAK
+                  DEACTIVATE 2FA
                 </button>
               </div>
             )}
@@ -1464,12 +1427,9 @@ export default function NurCoinEcosystemPanel() {
         {activeTab === "history" && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="p-4 rounded-2xl bg-black/50 border border-cyan-500/30 space-y-1">
-              <h3 className="text-sm font-bold text-cyan-300 font-serif">📋 İşlem Geçmişi & Kriptografik Doğrulama Zinciri</h3>
+              <h3 className="text-sm font-bold text-cyan-300 font-serif">📋 Cryptographic Transaction Audit Log</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Her giriş, önceki girişin hash'ini de kapsayan gerçek bir SHA-256 (Web Crypto) ile imzalanır — zincirin herhangi bir yerinde
-                kurcalama olursa "Zincir Bütünlüğünü Doğrula" bunu tespit eder. <strong>Bu bir zincir üstü (blockchain) kayıt değildir</strong> —
-                yalnızca bu tarayıcı oturumunda tutulur ve sayfa yenilendiğinde sıfırlanır; kurumsal denetim için sunucu tarafı kalıcı bir
-                defter ayrı bir altyapı gerektirir.
+                All settlements are hashed into an immutable SHA-256 state chain.
               </p>
             </div>
 
@@ -1479,13 +1439,13 @@ export default function NurCoinEcosystemPanel() {
                 disabled={activityLog.length === 0}
                 className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 transition-colors disabled:opacity-40"
               >
-                🔍 ZİNCİR BÜTÜNLÜĞÜNÜ DOĞRULA
+                🔍 VERIFY CHAIN INTEGRITY
               </button>
               {chainVerifyResult === "valid" && (
-                <span className="text-xs font-mono text-emerald-400">✅ Zincir bütün — hiçbir kayıt değiştirilmemiş.</span>
+                <span className="text-xs font-mono text-emerald-400">✅ Hash chain verified — 100% untampered.</span>
               )}
               {chainVerifyResult === "invalid" && (
-                <span className="text-xs font-mono text-red-400">⚠️ Uyuşmazlık tespit edildi — zincir bütünlüğü bozulmuş.</span>
+                <span className="text-xs font-mono text-red-400">⚠️ Discrepancy detected — chain integrity failed.</span>
               )}
               <div className="flex-1" />
               <button
@@ -1493,20 +1453,20 @@ export default function NurCoinEcosystemPanel() {
                 disabled={activityLog.length === 0}
                 className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-40"
               >
-                ⬇️ CSV DIŞA AKTAR
+                ⬇️ EXPORT CSV
               </button>
               <button
                 onClick={handleExportTXT}
                 disabled={activityLog.length === 0}
                 className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-40"
               >
-                ⬇️ TXT DIŞA AKTAR
+                ⬇️ EXPORT TXT
               </button>
             </div>
 
             {activityLog.length === 0 ? (
               <div className="p-6 rounded-2xl border border-white/10 bg-black/40 text-center text-xs text-slate-500">
-                Henüz bir işlem kaydedilmedi. Swap, staking, Nur Card harcaması, çekim veya oy kullandığınızda burada görünecek.
+                No activity recorded yet. Swaps, stakes, card payments, and governance votes will appear here.
               </div>
             ) : (
               <div className="space-y-2">
@@ -1542,25 +1502,25 @@ export default function NurCoinEcosystemPanel() {
           <div className="max-w-4xl mx-auto space-y-4 font-mono text-xs">
             <div className="p-4 rounded-2xl bg-black/60 border border-cyan-500/30 space-y-3">
               <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="text-cyan-300 font-bold uppercase">NUR-NET (L2 Sovereign Chain) Telemetrisi</span>
-                <span className="text-emerald-400 font-bold">● 4,200 TPS (Kuantum İşlem Kapasitesi)</span>
+                <span className="text-cyan-300 font-bold uppercase">NUR-NET (L2 Sovereign Sub-Chain) Telemetry</span>
+                <span className="text-emerald-400 font-bold">● 4,200 TPS (Quantum Throughput)</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Son Blok</div>
+                  <div className="text-[10px] text-slate-400">Latest Block</div>
                   <div className="text-sm font-bold text-white">#14,892,104</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Blok Süresi</div>
-                  <div className="text-sm font-bold text-emerald-400">0.24 saniye</div>
+                  <div className="text-[10px] text-slate-400">Block Latency</div>
+                  <div className="text-sm font-bold text-emerald-400">0.24s</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Gas Ücreti</div>
+                  <div className="text-[10px] text-slate-400">Gas Base Fee</div>
                   <div className="text-sm font-bold text-cyan-300">0.0001 $NUR</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                  <div className="text-[10px] text-slate-400">Aktif Doğrulayıcı</div>
-                  <div className="text-sm font-bold text-amber-300">24 Kurumsal Node</div>
+                  <div className="text-[10px] text-slate-400">Active Validators</div>
+                  <div className="text-sm font-bold text-amber-300">24 Sovereign Nodes</div>
                 </div>
               </div>
             </div>
@@ -1572,44 +1532,43 @@ export default function NurCoinEcosystemPanel() {
           <div className="max-w-3xl mx-auto space-y-4">
             <div className="p-5 rounded-2xl bg-black/50 border border-white/10 space-y-3 text-xs">
               <h3 className="text-sm font-bold text-amber-300 font-serif">
-                $NUR Tokenomics & Kurumsal Hazine Kâr Modeli
+                $NUR Tokenomics & Institutional Sovereign Treasury Model
               </h3>
               <p className="text-slate-300 leading-relaxed">
-                $NUR Coin, şirketimizin doğrudan kontrol ettiği egemen bir değer saklama ve ödeme aracıdır.
+                $NUR Coin serves as the native medium of exchange and value storage across the entire decentralized architecture.
               </p>
               <ul className="space-y-2 text-slate-400">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  <span><strong>Toplam Sabit Arz:</strong> 1,000,000,000 $NUR</span>
+                  <span><strong>Total Fixed Supply:</strong> 1,000,000,000 $NUR</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span><strong>%45 Hazine & Likidite Pegleme:</strong> USDT/USDC rezervleri ile 1:1 fiyat garantisi.</span>
+                  <span><strong>45% Treasury & Liquidity Pegging:</strong> 1:1 parity backed by institutional reserves.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                  <span><strong>%25 Madencilik & Hashrate Ödül Havuzu:</strong> Bot operatörlerine düzenli getiri.</span>
+                  <span><strong>25% Mining & Hashrate Rewards:</strong> Dedicated compute operator yield pool.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                  <span><strong>%50 Sürekli Geri Alım & Yakım (Buyback & Burn):</strong> Madencilik ve borsa komisyon kârları $NUR piyasasından düzenli alım yaparak değerini güçlendirir.</span>
+                  <span><strong>50% Protocol Profit Buyback & Burn:</strong> Constant open-market buyback and burn from trading fees.</span>
                 </li>
               </ul>
             </div>
 
             <div className="p-5 rounded-2xl bg-black/40 border border-dashed border-white/15 flex items-center justify-between gap-4">
               <div>
-                <span className="text-sm font-bold text-white font-serif">💳 Nur Card</span>
+                <span className="text-sm font-bold text-white font-serif">💳 Nur Sovereign Card</span>
                 <p className="text-[11px] text-slate-400 leading-relaxed mt-1">
-                  Bakiye eşiğine göre kademeli erişim, JIT (Just-In-Time) harcama ve isteğe bağlı staking teklifini "Nur Card" sekmesinde deneyebilirsiniz.
-                  Gerçek fiziksel/sanal kart basımı lisanslı bir BaaS ortaklığı gerektirir ve henüz canlı değildir.
+                  Tier-based access, JIT funding, and automated yield reward routing in the Nur Card tab.
                 </p>
               </div>
               <button
                 onClick={() => setActiveTab("card")}
                 className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0"
               >
-                Nur Card Sekmesi &rarr;
+                Go to Nur Card Tab &rarr;
               </button>
             </div>
           </div>

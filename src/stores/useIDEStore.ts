@@ -10,8 +10,10 @@ import {
   HUDNotification,
   AlertRule,
   VIPVerificationStatus,
+  FloatingWindowConfig,
 } from "@/types";
 import { sampleFiles } from "@/lib/sample-files";
+
 
 const INITIAL_ORDERS: SimulatedOrder[] = [
   {
@@ -159,8 +161,10 @@ interface IDEState {
   isSovereignAdmin: boolean;
   sovereignAuthModalOpen: boolean;
   soundMuted: boolean;
+  focusedCoordinates: [number, number] | null;
 
   // Actions
+  setFocusedCoordinates: (coords: [number, number] | null) => void;
   openFile: (node: FileNode) => void;
   closeTab: (id: string) => void;
   setActiveTab: (id: string) => void;
@@ -193,6 +197,16 @@ interface IDEState {
 
   // Verification Actions
   updateVerification: (updates: Partial<VIPVerificationStatus>) => void;
+
+  // Floating Window & Detach Actions
+  floatingWindows: FloatingWindowConfig[];
+  openFloatingWindow: (view: PanelView, title?: string) => void;
+  closeFloatingWindow: (id: string) => void;
+  updateFloatingWindow: (id: string, updates: Partial<FloatingWindowConfig>) => void;
+  toggleMaximizeFloatingWindow: (id: string) => void;
+  toggleMinimizeFloatingWindow: (id: string) => void;
+  focusFloatingWindow: (id: string) => void;
+  popoutToNativeWindow: (view: PanelView) => void;
 }
 
 export const useIDEStore = create<IDEState>((set, get) => ({
@@ -208,12 +222,15 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   isSovereignAdmin: false,
   sovereignAuthModalOpen: false,
   soundMuted: false,
+  focusedCoordinates: null,
   breakingNewsTicker: "NUR TV GLOBAL: U.S. ISM Services PMI reaches 54.8; Quant Rotation active across Tech and Financials.",
   orders: INITIAL_ORDERS,
   positions: INITIAL_POSITIONS,
   fillLogs: [],
   notifications: INITIAL_NOTIFICATIONS,
+  floatingWindows: [],
   alertRules: [
+
     { id: "rule-1", name: "S&P 500 Spike > 5,700", category: "PRICE", targetSymbol: "SPY", condition: "GREATER_THAN", threshold: 570, enabled: true, soundEnabled: true },
     { id: "rule-2", name: "VIX Fear Shock > 30", category: "VIX_REGIME", condition: "CROSS_ABOVE", threshold: 30, enabled: true, soundEnabled: true },
     { id: "rule-3", name: "ACLED Conflict Severity > 75", category: "ACLED_CONFLICT", condition: "GREATER_THAN", threshold: 75, enabled: true, soundEnabled: false },
@@ -230,6 +247,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     overallStatus: "NOT_STARTED",
   },
 
+  setFocusedCoordinates: (focusedCoordinates) => set({ focusedCoordinates }),
   setSovereignAdmin: (isSovereignAdmin) => set({ isSovereignAdmin }),
   setSovereignAuthModalOpen: (sovereignAuthModalOpen) => set({ sovereignAuthModalOpen }),
   toggleSoundMuted: () => set((s) => ({ soundMuted: !s.soundMuted })),
@@ -437,6 +455,104 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     set((s) => ({
       verification: { ...s.verification, ...updates },
     }));
+  },
+
+  // Floating Window Management
+  openFloatingWindow: (view: PanelView, title?: string) => {
+
+    const existing = get().floatingWindows.find((w) => w.view === view);
+    if (existing) {
+      // Focus existing window
+      get().focusFloatingWindow(existing.id);
+      return;
+    }
+
+    const defaultTitles: Record<string, string> = {
+      geopolitics: "🌐 Nur Earth 3D & Planetary Recon",
+      "broadcast-studio": "📺 Nur Finans Medya Studio Control",
+      "geophysics-resources": "💎 Geophysics & Strategic Reserves",
+      "institutional-suite": "🏛️ Institutional Sovereign Suite ($8.5K)",
+      "orbital-telemetry": "🛰️ Orbital Telemetry HUD (13·35·42·55·54751113)",
+      "professional-ai": "🩺 Professional AI Hub & DePIN Cluster",
+      "professional-social": "👥 NUR Sovereign Financial Social Network",
+      "umay-boss": "👑 Umay Boss Sovereign Terminal",
+      "holding-ecosystem": "🏛️ Holding Ecosystem Command",
+      charts: "📈 High-Resolution Multi-Chart Station",
+      "oms-ems": "⚡ OMS / EMS Sovereign Execution Desk",
+      "quant-copilot": "🤖 AI Quant Copilot & Factor Engine",
+      "nur-coin": "🪙 Nur Coin Sovereign Matrix",
+      terminal: "💻 Sovereign Linux Command Terminal",
+    };
+
+    const count = get().floatingWindows.length;
+    const offsetX = (count % 6) * 35 + 80;
+    const offsetY = (count % 6) * 30 + 80;
+
+    const newWin: FloatingWindowConfig = {
+      id: `win-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      view,
+      title: title || defaultTitles[view] || `Module: ${view.toUpperCase()}`,
+      x: offsetX,
+      y: offsetY,
+      width: Math.min(1050, typeof window !== "undefined" ? window.innerWidth * 0.75 : 900),
+      height: Math.min(680, typeof window !== "undefined" ? window.innerHeight * 0.75 : 600),
+      isMaximized: false,
+      isMinimized: false,
+      zIndex: 100 + count,
+      opacity: 1.0,
+    };
+
+    set((s) => ({ floatingWindows: [...s.floatingWindows, newWin] }));
+  },
+
+  closeFloatingWindow: (id: string) => {
+    set((s) => ({ floatingWindows: s.floatingWindows.filter((w) => w.id !== id) }));
+  },
+
+  updateFloatingWindow: (id: string, updates: Partial<FloatingWindowConfig>) => {
+    set((s) => ({
+      floatingWindows: s.floatingWindows.map((w) => (w.id === id ? { ...w, ...updates } : w)),
+    }));
+  },
+
+  toggleMaximizeFloatingWindow: (id: string) => {
+    set((s) => ({
+      floatingWindows: s.floatingWindows.map((w) =>
+        w.id === id ? { ...w, isMaximized: !w.isMaximized, isMinimized: false } : w
+      ),
+    }));
+  },
+
+  toggleMinimizeFloatingWindow: (id: string) => {
+    set((s) => ({
+      floatingWindows: s.floatingWindows.map((w) =>
+        w.id === id ? { ...w, isMinimized: !w.isMinimized } : w
+      ),
+    }));
+  },
+
+  focusFloatingWindow: (id: string) => {
+    set((s) => {
+      const maxZ = s.floatingWindows.reduce((max, w) => Math.max(max, w.zIndex), 100);
+      return {
+        floatingWindows: s.floatingWindows.map((w) =>
+          w.id === id ? { ...w, zIndex: maxZ + 1, isMinimized: false } : w
+        ),
+      };
+    });
+  },
+
+  popoutToNativeWindow: (view: PanelView) => {
+    if (typeof window === "undefined") return;
+    const url = `/?popout=${view}`;
+    const win = window.open(
+      url,
+      `NurSovereign_${view}`,
+      "width=1280,height=800,menubar=no,toolbar=no,location=no,status=no,resizable=yes"
+    );
+    if (win) {
+      win.focus();
+    }
   },
 
   runActiveFile: () => {

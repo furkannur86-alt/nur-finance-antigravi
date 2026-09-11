@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",
+    "@types/three": "^0.185.4",
     "chart.js": "^4.5.1",
     "lucide-react": "^1.35.0",
     "next": "16.3.3",
@@ -20,6 +21,7 @@
     "react": "19.2.8",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.8",
+    "three": "^0.186.0",
     "zustand": "^5.0.15"
   },
   "devDependencies": {

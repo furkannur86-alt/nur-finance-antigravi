@@ -106,7 +106,25 @@ export type PanelView =
   | "umay-boss"
   | "nur-education"
   | "compute-access"
-  | "geophysics-resources";
+  | "geophysics-resources"
+  | "institutional-suite"
+  | "orbital-telemetry"
+  | "professional-ai"
+  | "professional-social";
+
+export interface FloatingWindowConfig {
+  id: string;
+  view: PanelView;
+  title: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isMaximized: boolean;
+  isMinimized: boolean;
+  zIndex: number;
+  opacity: number;
+}
 
 export interface GlobalMarketQuote {
   symbol: string;
