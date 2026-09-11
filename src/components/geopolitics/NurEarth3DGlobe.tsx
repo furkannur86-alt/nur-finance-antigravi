@@ -1085,23 +1085,23 @@ export default function NurEarth3DGlobe() {
       >
         <canvas ref={canvasRef} className="w-full h-full block" />
 
-        {/* Orbit Control Hint Overlay */}
-        <div className="absolute top-4 left-4 pointer-events-none text-[10px] font-mono text-slate-400 bg-black/60 backdrop-blur-sm px-2.5 py-1.5 rounded border border-white/10 space-y-0.5">
-          <div>🌐 <strong>Fareyle Sürükle:</strong> 3D Küreyi Döndür</div>
-          <div>🔍 <strong>Tekerlek:</strong> Yakınlaş / Uzaklaş ({zoom.toFixed(1)}x)</div>
-          <div>⚡ <strong>Gerçek Zamanlı:</strong> 60 FPS WebGL/Canvas 3D Motoru</div>
+        {/* Orbit Control Hint Overlay - Minimal Top-Left Pill */}
+        <div className="absolute top-3 left-3 pointer-events-none text-[9px] font-mono text-slate-300 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-2 z-10">
+          <span>🌐 Orbit: Drag Mouse</span>
+          <span>&bull;</span>
+          <span>🔍 Zoom: Scroll ({zoom.toFixed(1)}x)</span>
         </div>
 
-        {/* Quick Entity Selector Grid (Bottom Left) */}
-        <div className="absolute bottom-4 left-4 z-10 flex gap-2 max-w-xl overflow-x-auto no-scrollbar pb-1">
+        {/* Quick Entity Selector Grid (Bottom Left Dock) */}
+        <div className="absolute bottom-3 left-3 z-10 flex gap-1.5 max-w-lg overflow-x-auto no-scrollbar">
           {[...LIVE_TANKERS, ...LIVE_FLIGHTS, ...DEFENSE_HOTSPOTS].map((ent) => (
             <button
               key={ent.id}
               onClick={() => setSelectedEntity(ent)}
-              className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-bold shrink-0 border backdrop-blur-md transition-all ${
+              className={`px-2 py-1 rounded text-[9px] font-mono font-bold shrink-0 border backdrop-blur-md transition-all ${
                 selectedEntity?.id === ent.id
-                  ? "bg-cyan-500/30 border-cyan-400 text-white shadow-lg"
-                  : "bg-black/70 border-white/10 text-slate-400 hover:text-white"
+                  ? "bg-cyan-500/30 border-cyan-400 text-white shadow-sm"
+                  : "bg-black/60 border-white/10 text-slate-400 hover:text-white"
               }`}
             >
               {ent.type === "FLIGHT" ? "✈ " : ent.type === "TANKER" ? "🚢 " : "⚔ "}
@@ -1110,22 +1110,22 @@ export default function NurEarth3DGlobe() {
           ))}
         </div>
 
-        {/* Live Telemetry & Inspector Drawer (Right Side) */}
+        {/* Live Telemetry & Inspector Drawer (Non-blocking Bottom-Right Panel) */}
         {selectedEntity && (
-          <div className="absolute top-4 right-4 bottom-4 w-96 rounded-xl border border-cyan-500/30 bg-gradient-to-b from-slate-950/95 via-slate-900/95 to-black/95 backdrop-blur-md p-5 shadow-2xl flex flex-col justify-between overflow-y-auto z-20">
-            <div className="space-y-4">
+          <div className="absolute bottom-3 right-3 w-80 max-h-[70vh] rounded-xl border border-cyan-500/30 bg-black/85 backdrop-blur-xl p-4 shadow-2xl flex flex-col justify-between overflow-y-auto z-20">
+            <div className="space-y-3">
               {/* Header */}
-              <div className="flex items-start justify-between border-b border-white/10 pb-3">
+              <div className="flex items-start justify-between border-b border-white/10 pb-2">
                 <div>
-                  <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                    {selectedEntity.type} TELEMETRİ RADARI
+                  <div className="text-[9px] font-mono font-bold uppercase tracking-widest text-cyan-400">
+                    {selectedEntity.type} TELEMETRY RADAR
                   </div>
-                  <h3 className="text-sm font-bold text-white mt-0.5">{selectedEntity.name}</h3>
-                  <p className="text-[11px] font-mono text-amber-300">{selectedEntity.code}</p>
+                  <h3 className="text-xs font-bold text-white mt-0.5">{selectedEntity.name}</h3>
+                  <p className="text-[10px] font-mono text-amber-300">{selectedEntity.code}</p>
                 </div>
                 {selectedEntity.riskLevel && (
                   <span
-                    className={`text-[9px] font-mono px-2 py-0.5 rounded font-bold uppercase ${
+                    className={`text-[8px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
                       selectedEntity.riskLevel === "CRITICAL"
                         ? "bg-red-500/20 text-red-400 border border-red-500/30"
                         : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
@@ -1137,108 +1137,44 @@ export default function NurEarth3DGlobe() {
               </div>
 
               {/* Real Satellite Photo Feed (Esri World Imagery) */}
-              <div className="space-y-1.5 p-3 rounded-lg bg-black/60 border border-cyan-500/30">
-                <div className="flex justify-between items-center text-[10px] font-mono">
-                  <span className="font-bold text-cyan-300 uppercase flex items-center gap-1">
-                    <span>📡 CANLI UYDU GÖRÜNTÜSÜ (ESRI WORLD IMAGERY)</span>
-                  </span>
-                  <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300">HIGH-RES</span>
+              <div className="space-y-1 p-2 rounded bg-black/60 border border-cyan-500/20">
+                <div className="flex justify-between items-center text-[9px] font-mono">
+                  <span className="font-bold text-cyan-300 uppercase">📡 HIGH-RES SATELLITE FEED</span>
+                  <span className="text-[8px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300">LIVE</span>
                 </div>
                 {satTileUrl ? (
-                  <div className="relative h-44 rounded overflow-hidden border border-white/10 group">
+                  <div className="relative h-28 rounded overflow-hidden border border-white/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={satTileUrl}
-                      alt="Uydu Görüntüsü"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      alt="Satellite Feed"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
-                    <div className="absolute bottom-2 left-2 text-[9px] font-mono text-cyan-300 bg-black/70 px-2 py-0.5 rounded">
-                      UYDU ZOOM: 11x &bull; LAT: {selectedEntity.lat.toFixed(2)}°
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-1 left-1 right-1 flex justify-between text-[8px] font-mono text-white/90">
+                      <span>LAT: {selectedEntity.lat.toFixed(2)}°</span>
+                      <span>LON: {selectedEntity.lon.toFixed(2)}°</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="h-36 rounded bg-slate-900 flex items-center justify-center text-xs text-slate-500 font-mono">
-                    Uydu Akışı Yükleniyor...
+                  <div className="h-24 bg-slate-900 rounded flex items-center justify-center text-[9px] font-mono text-slate-500">
+                    Connecting to ESRI Satellite...
                   </div>
                 )}
               </div>
 
-              {/* Geo Coordinates & Speed */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded bg-black/40 border border-white/5">
-                  <span className="text-[10px] text-slate-400 block font-mono">KONUM:</span>
-                  <span className="font-mono font-bold text-cyan-300">
-                    {selectedEntity.lat.toFixed(2)}°N, {selectedEntity.lon.toFixed(2)}°E
-                  </span>
-                </div>
-                {selectedEntity.speed && (
-                  <div className="p-2.5 rounded bg-black/40 border border-white/5">
-                    <span className="text-[10px] text-slate-400 block font-mono">HIZ:</span>
-                    <span className="font-mono font-bold text-emerald-300">{selectedEntity.speed}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Cargo & Value (For Tankers & Planes) */}
-              {selectedEntity.cargo && (
-                <div className="p-3 rounded bg-amber-950/20 border border-amber-500/30 space-y-1">
-                  <span className="text-[10px] text-amber-400 block font-bold uppercase">Kargo Manifestosu:</span>
-                  <p className="text-xs text-white font-semibold">{selectedEntity.cargo}</p>
-                  {selectedEntity.cargoValueUSD && (
-                    <p className="text-xs font-mono font-bold text-emerald-400">
-                      Tahmini Değer: {selectedEntity.cargoValueUSD}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Route: Origin & Destination */}
-              {selectedEntity.origin && selectedEntity.destination && (
-                <div className="p-3 rounded bg-black/40 border border-white/5 space-y-1.5 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Kalkış:</span>
-                    <span className="font-bold text-white">{selectedEntity.origin}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Varış:</span>
-                    <span className="font-bold text-cyan-300">{selectedEntity.destination}</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Details & Strategic Significance */}
-              <div className="space-y-1 text-xs">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">Stratejik İstihbarat:</span>
-                <p className="text-slate-300 leading-relaxed text-[11px] bg-white/5 p-2.5 rounded border border-white/5">
-                  {selectedEntity.details}
-                </p>
-              </div>
-
-              {/* Correlated Financial Instruments */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">
-                  Etkilenen Borsa & Emtia Varlıkları:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedEntity.correlatedAssets.map((ast, i) => (
-                    <span
-                      key={i}
-                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30"
-                    >
-                      {ast}
-                    </span>
-                  ))}
-                </div>
+              {/* Strategic Details */}
+              <div className="text-[10px] text-slate-300 leading-snug bg-white/5 p-2 rounded border border-white/5">
+                {selectedEntity.details}
               </div>
             </div>
 
             {/* Close Drawer Button */}
             <button
               onClick={() => setSelectedEntity(null)}
-              className="mt-4 w-full py-2 rounded text-xs font-mono text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+              className="mt-3 w-full py-1 rounded text-[10px] font-mono text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
             >
-              ✕ RADAR PANELİNİ KAPAT
+              ✕ CLOSE RADAR PANEL
             </button>
           </div>
         )}
