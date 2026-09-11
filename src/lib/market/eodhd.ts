@@ -3,6 +3,113 @@ import type { HistoricalBar } from "./yahoo-finance";
 
 const BASE = "https://eodhd.com/api";
 
+// ─── Static market universe ───────────────────────────────────────────────────
+export const MAJOR_INDICES = [
+  { symbol: "GSPC.INDX",  name: "S&P 500",         region: "US"      },
+  { symbol: "DJI.INDX",   name: "Dow Jones",        region: "US"      },
+  { symbol: "IXIC.INDX",  name: "NASDAQ Composite", region: "US"      },
+  { symbol: "RUT.INDX",   name: "Russell 2000",     region: "US"      },
+  { symbol: "FTSE.INDX",  name: "FTSE 100",         region: "Europe"  },
+  { symbol: "GDAXI.INDX", name: "DAX",              region: "Europe"  },
+  { symbol: "FCHI.INDX",  name: "CAC 40",           region: "Europe"  },
+  { symbol: "N225.INDX",  name: "Nikkei 225",       region: "Asia"    },
+  { symbol: "HSI.INDX",   name: "Hang Seng",        region: "Asia"    },
+  { symbol: "000001.SHG", name: "Shanghai Comp.",   region: "Asia"    },
+  { symbol: "BIST100.INDX",name:"BIST 100",         region: "Europe"  },
+  { symbol: "MERVAL.INDX",name: "Merval",           region: "Americas"},
+  { symbol: "BVSP.INDX",  name: "Bovespa",          region: "Americas"},
+];
+
+export const COMMODITIES = [
+  { symbol: "GC.COMM",  name: "Gold",          unit: "USD/oz"  },
+  { symbol: "SI.COMM",  name: "Silver",        unit: "USD/oz"  },
+  { symbol: "CL.COMM",  name: "WTI Crude Oil", unit: "USD/bbl" },
+  { symbol: "BZ.COMM",  name: "Brent Crude",   unit: "USD/bbl" },
+  { symbol: "NG.COMM",  name: "Natural Gas",   unit: "USD/MMBtu"},
+  { symbol: "ZW.COMM",  name: "Wheat",         unit: "USc/bu"  },
+  { symbol: "ZC.COMM",  name: "Corn",          unit: "USc/bu"  },
+];
+
+export const CRYPTO_PAIRS = ["BTC-USD", "ETH-USD", "SOL-USD", "BNB-USD", "MATIC-USD"];
+export const FOREX_PAIRS  = ["EUR/USD", "USD/JPY", "GBP/USD", "USD/TRY", "USD/CHF", "AUD/USD"];
+
+// ─── Low-level EODHD raw response ─────────────────────────────────────────────
+interface EODHDRaw {
+  code: string;
+  close: number;
+  open: number;
+  high: number;
+  low: number;
+  volume: number;
+  previousClose: number;
+  change: number;
+  change_p: number;
+}
+
+async function eodhdBatch(symbols: string[], apiKey: string): Promise<EODHDRaw[]> {
+  if (!symbols.length || !apiKey) return [];
+  const [first, ...rest] = symbols;
+  const extra = rest.length ? `&s=${rest.join(",")}` : "";
+  try {
+    const res = await fetch(`${BASE}/real-time/${first}?api_token=${apiKey}&fmt=json${extra}`, { next: { revalidate: 30 } });
+    if (!res.ok) return [];
+    const raw = await res.json();
+    return Array.isArray(raw) ? raw : [raw];
+  } catch { return []; }
+}
+
+// ─── Aliased exports used by older API routes ──────────────────────────────────
+export async function fetchEODHDRealtime(symbol: string, apiKey?: string): Promise<EODHDRaw | null> {
+  const key = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+  const results = await eodhdBatch([symbol], key);
+  return results[0] ?? null;
+}
+
+export async function fetchEODHDBatchQuotes(symbols: string[], apiKey?: string): Promise<EODHDRaw[]> {
+  const key = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+  return eodhdBatch(symbols, key);
+}
+
+export async function fetchEODHDFundamentals(symbol: string, apiKey?: string): Promise<unknown> {
+  const key = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+  if (!key) return null;
+  try {
+    const res = await fetch(`${BASE}/fundamentals/${symbol}?api_token=${key}&fmt=json`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch { return null; }
+}
+
+export async function searchEODHDSymbols(query: string, exchange?: string, apiKey?: string): Promise<unknown[]> {
+  const key = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+  if (!key) return [];
+  try {
+    const ex = exchange ? `&exchange=${exchange}` : "";
+    const res = await fetch(`${BASE}/search/${encodeURIComponent(query)}?api_token=${key}&fmt=json${ex}`);
+    if (!res.ok) return [];
+    return res.json();
+  } catch { return []; }
+}
+
+export const GLOBAL_EXCHANGES = [
+  { code: "US",  name: "NYSE/NASDAQ", country: "United States", currency: "USD", region: "Americas" },
+  { code: "LSE", name: "London SE",   country: "United Kingdom",currency: "GBP", region: "Europe"   },
+  { code: "XETRA",name:"XETRA",      country: "Germany",        currency: "EUR", region: "Europe"   },
+  { code: "TSE", name: "Tokyo SE",    country: "Japan",          currency: "JPY", region: "Asia"     },
+  { code: "BIST",name: "Borsa Istanbul",country:"Turkey",        currency: "TRY", region: "Europe"   },
+  { code: "CC",  name: "Crypto",      country: "Global",         currency: "USD", region: "Global"   },
+];
+
+export async function fetchExchangeSymbols(exchange: string, apiKey?: string): Promise<unknown[]> {
+  const key = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+  if (!key) return [];
+  try {
+    const res = await fetch(`${BASE}/exchange-symbol-list/${exchange}?api_token=${key}&fmt=json`);
+    if (!res.ok) return [];
+    return res.json();
+  } catch { return []; }
+}
+
 // EODHD uses symbol.EXCHANGE notation — US stocks need .US suffix
 function toEODHD(symbol: string): string {
   if (symbol.includes(".")) return symbol; // already qualified

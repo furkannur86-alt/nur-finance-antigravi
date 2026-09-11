@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import * as THREE from "three";
 import EagleCrest from "@/components/ui/EagleCrest";
 
 export interface GeoEntity {
@@ -24,7 +25,7 @@ export interface GeoEntity {
   correlatedAssets: string[];
 }
 
-// Tile coordinate math for Esri World Imagery (free, no API key)
+// Tile coordinate math for Esri World Imagery (sidebar detail tiles, no API key)
 function latLonToTile(lat: number, lon: number, z: number) {
   const x = Math.floor(((lon + 180) / 360) * Math.pow(2, z));
   const latRad = (lat * Math.PI) / 180;
@@ -37,6 +38,12 @@ function latLonToTile(lat: number, lon: number, z: number) {
 function esriTileUrl(z: number, y: number, x: number) {
   return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;
 }
+
+// NASA Blue Marble texture (public domain, no API key required)
+// Using a reliable CDN-hosted version of NASA's visible Earth imagery
+const EARTH_TEXTURE_URL = "https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg";
+const EARTH_SPECULAR_URL = "https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_specular_2048.jpg";
+const EARTH_CLOUDS_URL  = "https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_clouds_1024.png";
 
 // Comprehensive Global Flight Corridors
 const LIVE_FLIGHTS: GeoEntity[] = [
@@ -472,7 +479,10 @@ const CONTINENTS: Array<Array<[number, number]>> = [
 const AUTO_EVENT_ZONES = [...DEFENSE_HOTSPOTS, ...NUCLEAR_ZONES];
 
 export default function NurEarth3DGlobe() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const threeContainerRef = useRef<HTMLDivElement>(null);
+  const overlayCanvasRef  = useRef<HTMLCanvasElement>(null);
+  // Three.js live refs — not state so they never cause re-renders
+  const threeSceneRef    = useRef<{ renderer: THREE.WebGLRenderer; earth: THREE.Mesh; clouds: THREE.Mesh | null } | null>(null);
   const [selectedEntity, setSelectedEntity] = useState<GeoEntity | null>(DEFENSE_HOTSPOTS[1]);
   const [activeLayers, setActiveLayers] = useState({
     flights: true,
@@ -581,117 +591,145 @@ export default function NurEarth3DGlobe() {
     targetZoomRef.current = Math.max(0.65, Math.min(3.0, targetZoomRef.current - e.deltaY * 0.001));
   };
 
-  // Main 3D Render Loop — lerps toward targets
+  // ── Three.js WebGL globe — photorealistic Earth ────────────────────────────
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const container = threeContainerRef.current;
+    if (!container) return;
+
+    // Scene / camera
+    const scene    = new THREE.Scene();
+    const camera   = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 2.5;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+
+    // Lighting — sun from upper-left
+    const ambient = new THREE.AmbientLight(0x333344, 0.5);
+    scene.add(ambient);
+    const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+    sun.position.set(5, 3, 5);
+    scene.add(sun);
+
+    // Earth sphere
+    const geo       = new THREE.SphereGeometry(1, 64, 64);
+    const texLoader = new THREE.TextureLoader();
+    const earthMat  = new THREE.MeshPhongMaterial({
+      map:          texLoader.load(EARTH_TEXTURE_URL),
+      specularMap:  texLoader.load(EARTH_SPECULAR_URL),
+      specular:     new THREE.Color(0x222222),
+      shininess:    15,
+    });
+    const earth = new THREE.Mesh(geo, earthMat);
+    scene.add(earth);
+
+    // Cloud layer
+    const cloudMat = new THREE.MeshPhongMaterial({
+      map:         texLoader.load(EARTH_CLOUDS_URL),
+      transparent: true,
+      opacity:     0.38,
+      depthWrite:  false,
+    });
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.012, 64, 64), cloudMat);
+    scene.add(clouds);
+
+    // Atmosphere glow (additive blend shell)
+    const atmGeo = new THREE.SphereGeometry(1.06, 64, 64);
+    const atmMat = new THREE.MeshBasicMaterial({
+      color:       new THREE.Color(0x1a88ff),
+      transparent: true,
+      opacity:     0.08,
+      side:        THREE.BackSide,
+      blending:    THREE.AdditiveBlending,
+      depthWrite:  false,
+    });
+    scene.add(new THREE.Mesh(atmGeo, atmMat));
+
+    threeSceneRef.current = { renderer, earth, clouds };
+
+    // Apply initial yaw/pitch to the earth mesh
+    earth.rotation.y  = yawRef.current;
+    earth.rotation.x  = pitchRef.current;
+    clouds.rotation.y = yawRef.current + 0.01;
+
+    // Resize handler
+    const onResize = () => {
+      if (!container) return;
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    };
+    window.addEventListener("resize", onResize);
+
+    // Animation loop — sync with yaw/pitch/zoom refs
+    let rafId: number;
+    function animThree() {
+      rafId = requestAnimationFrame(animThree);
+
+      const lerpSpeed = 0.038;
+      let dy = targetYawRef.current - yawRef.current;
+      while (dy >  Math.PI) dy -= 2 * Math.PI;
+      while (dy < -Math.PI) dy += 2 * Math.PI;
+      yawRef.current   += dy * lerpSpeed;
+      pitchRef.current += (targetPitchRef.current - pitchRef.current) * lerpSpeed;
+      zoomLiveRef.current += (targetZoomRef.current - zoomLiveRef.current) * lerpSpeed;
+
+      earth.rotation.y  = yawRef.current;
+      earth.rotation.x  = pitchRef.current;
+      clouds.rotation.y = yawRef.current + timeRef.current * 0.0008;
+      clouds.rotation.x = pitchRef.current;
+
+      // Zoom by moving camera along Z
+      camera.position.z = 2.5 / zoomLiveRef.current;
+      camera.updateProjectionMatrix();
+
+      timeRef.current += 0.015;
+      renderer.render(scene, camera);
+    }
+    animThree();
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", onResize);
+      renderer.dispose();
+      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
+      threeSceneRef.current = null;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Overlay canvas — entity markers (flights, tankers, hotspots, nuclear) ──
+  useEffect(() => {
+    const canvas = overlayCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     function render() {
       if (!canvas || !ctx) return;
-      const width = canvas.clientWidth;
+      const width  = canvas.clientWidth;
       const height = canvas.clientHeight;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr    = window.devicePixelRatio || 1;
 
       if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
-        canvas.width = width * dpr;
+        canvas.width  = width * dpr;
         canvas.height = height * dpr;
       }
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
 
-      timeRef.current += 0.015;
-
-      // Smooth lerp animation toward targets
-      const lerpSpeed = 0.038;
-      let dy = targetYawRef.current - yawRef.current;
-      while (dy > Math.PI) dy -= 2 * Math.PI;
-      while (dy < -Math.PI) dy += 2 * Math.PI;
-      yawRef.current += dy * lerpSpeed;
-      pitchRef.current += (targetPitchRef.current - pitchRef.current) * lerpSpeed;
-      zoomLiveRef.current += (targetZoomRef.current - zoomLiveRef.current) * lerpSpeed;
-
-      const localYaw = yawRef.current;
-      const localPitch = pitchRef.current;
-      const effectiveZoom = zoomLiveRef.current;
-
       ctx.clearRect(0, 0, width, height);
       const cx = width / 2;
       const cy = height / 2;
-      const globeRadius = Math.min(width, height) * 0.38 * effectiveZoom;
+      const globeRadius = Math.min(width, height) * 0.38 * zoomLiveRef.current;
 
-      // Atmospheric glow
-      const glowGrad = ctx.createRadialGradient(cx, cy, globeRadius * 0.7, cx, cy, globeRadius * 1.35);
-      glowGrad.addColorStop(0, "rgba(0, 212, 170, 0.12)");
-      glowGrad.addColorStop(0.5, "rgba(56, 189, 248, 0.06)");
-      glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
-      ctx.fillStyle = glowGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, globeRadius * 1.35, 0, Math.PI * 2);
-      ctx.fill();
+      const localYaw   = yawRef.current;
+      const localPitch = pitchRef.current;
 
-      // Ocean sphere
-      const oceanGrad = ctx.createRadialGradient(cx - globeRadius * 0.3, cy - globeRadius * 0.3, 10, cx, cy, globeRadius);
-      oceanGrad.addColorStop(0, "#0e1a2f");
-      oceanGrad.addColorStop(0.6, "#060d18");
-      oceanGrad.addColorStop(1, "#020409");
-      ctx.fillStyle = oceanGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, globeRadius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Grid lines
-      if (activeLayers.grid) {
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.07)";
-        ctx.lineWidth = 0.6;
-        for (let lat = -60; lat <= 60; lat += 30) {
-          ctx.beginPath();
-          let first = true;
-          for (let lon = -180; lon <= 180; lon += 10) {
-            const p = latLonTo3D(lat, lon, globeRadius, localYaw, localPitch);
-            if (p.isVisible) {
-              if (first) { ctx.moveTo(cx + p.x, cy + p.y); first = false; }
-              else ctx.lineTo(cx + p.x, cy + p.y);
-            } else { first = true; }
-          }
-          ctx.stroke();
-        }
-        for (let lon = -180; lon < 180; lon += 45) {
-          ctx.beginPath();
-          let first = true;
-          for (let lat = -80; lat <= 80; lat += 10) {
-            const p = latLonTo3D(lat, lon, globeRadius, localYaw, localPitch);
-            if (p.isVisible) {
-              if (first) { ctx.moveTo(cx + p.x, cy + p.y); first = false; }
-              else ctx.lineTo(cx + p.x, cy + p.y);
-            } else { first = true; }
-          }
-          ctx.stroke();
-        }
-      }
-
-      // Continents
-      ctx.fillStyle = "rgba(0, 212, 170, 0.09)";
-      ctx.strokeStyle = "rgba(0, 212, 170, 0.4)";
-      ctx.lineWidth = 1.2;
-      CONTINENTS.forEach((polygon) => {
-        ctx.beginPath();
-        let anyVisible = false;
-        let first = true;
-        polygon.forEach(([lat, lon]) => {
-          const p = latLonTo3D(lat, lon, globeRadius, localYaw, localPitch);
-          if (p.isVisible) {
-            anyVisible = true;
-            if (first) { ctx.moveTo(cx + p.x, cy + p.y); first = false; }
-            else ctx.lineTo(cx + p.x, cy + p.y);
-          }
-        });
-        if (anyVisible) { ctx.closePath(); ctx.fill(); ctx.stroke(); }
-      });
+      // Continents are rendered by the Three.js texture — no wireframe needed here
 
       // Flight corridors
       if (activeLayers.flights) {
@@ -965,7 +1003,7 @@ export default function NurEarth3DGlobe() {
         </div>
       </div>
 
-      {/* 3D Canvas */}
+      {/* 3D Globe Viewport */}
       <div
         className="flex-1 relative cursor-grab active:cursor-grabbing overflow-hidden"
         onMouseDown={handleMouseDown}
@@ -974,7 +1012,10 @@ export default function NurEarth3DGlobe() {
         onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
       >
-        <canvas ref={canvasRef} className="w-full h-full block" />
+        {/* Three.js WebGL canvas — photorealistic Earth */}
+        <div ref={threeContainerRef} className="absolute inset-0" style={{ zIndex: 1 }} />
+        {/* Overlay canvas — entity markers */}
+        <canvas ref={overlayCanvasRef} className="absolute inset-0 w-full h-full" style={{ zIndex: 2, pointerEvents: "none" }} />
 
         {/* Control hint */}
         <div className="absolute top-4 left-4 pointer-events-none text-[10px] font-mono text-slate-400 bg-black/60 backdrop-blur-sm px-2.5 py-1.5 rounded border border-white/10 space-y-0.5">
