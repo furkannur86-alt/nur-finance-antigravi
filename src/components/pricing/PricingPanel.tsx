@@ -123,6 +123,31 @@ const platformTiers: PlatformTier[] = [
     badge: "€27K/mo · Enterprise",
     color: "#f59e0b",
   },
+  {
+    id: "institutional-suite",
+    name: "Institutional Suite — 7-Pillar Sovereign Intelligence",
+    price: "$8,500",
+    period: "/month",
+    description: "Command-level intelligence for armies, central banks, sovereign wealth funds, intelligence services, and holding company owners. Seven sovereign intelligence pillars in one classified terminal.",
+    features: [
+      "Demographics & Health: median wealth, youth unemployment, brain-drain risk, hospital capacity buffer",
+      "Elections & Political Risk: election calendar, coalition stability score, civil unrest probability",
+      "Biosurveillance: BSL-4 lab tracking, vaccine stockpile (months), critical API pharma import dependency",
+      "Central Bank Intelligence: FX reserves, gold reserves, sovereign CDS spread, devaluation risk",
+      "Supply Chain Chokepoints: REE autonomy score, 2nm chip production class, strategic port choke risk",
+      "C4ISR Defense Theater: active personnel, hypersonic SAM batteries, 5th-gen stealth aircraft count",
+      "Cyber Warfare & SCADA: APT threat signatures, SCADA air-gap isolation level, sub-cable sovereignty",
+      "Electoral Monte Carlo Simulator: 1,000-iteration vote-share & GDP shock projections",
+      "Central Bank Liquidity & CDS Stress Test: emergency rate hike + FX depreciation simulation",
+      "3D Globe Sovereign Teleportation: camera fly-to on capital / theater on NUR Earth 3D",
+      "Export CSV / JSON / Classified Memo with one click",
+      "Dedicated sovereign intelligence analyst team (24h SLA)",
+      "MITRE ATT&CK TTP matrix — live APT monitoring (Volt Typhoon, APT44, Lazarus)",
+      "Full access to all 7 pillars across 45+ monitored nations",
+    ],
+    badge: "$8.5K/mo · Sovereign",
+    color: "#a78bfa",
+  },
 ];
 
 const managedTiers = [

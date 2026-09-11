@@ -6,7 +6,7 @@ import EagleCrest from "@/components/ui/EagleCrest";
 
 export interface GeoEntity {
   id: string;
-  type: "FLIGHT" | "TANKER" | "HOTSPOT" | "CHOKEPOINT" | "FIBER" | "NUCLEAR";
+  type: "FLIGHT" | "TANKER" | "HOTSPOT" | "CHOKEPOINT" | "FIBER" | "NUCLEAR" | "OIL_BASIN" | "MINING_SITE" | "MINERAL_ZONE";
   name: string;
   code: string;
   lat: number;
@@ -20,7 +20,7 @@ export interface GeoEntity {
   origin?: string;
   destination?: string;
   riskScore?: number;
-  riskLevel?: "CRITICAL" | "HIGH" | "ELEVATED" | "STABLE";
+  riskLevel?: "CRITICAL" | "HIGH" | "ELEVATED" | "MODERATE" | "LOW" | "STABLE";
   details: string;
   correlatedAssets: string[];
 }
@@ -478,6 +478,48 @@ const CONTINENTS: Array<Array<[number, number]>> = [
 // All event-driven zones (hotspots + nuclear) — auto-cycled every 8s
 const AUTO_EVENT_ZONES = [...DEFENSE_HOTSPOTS, ...NUCLEAR_ZONES];
 
+// ── Resource Intelligence: Oil & Gas Basins ──────────────────────────────────
+const OIL_BASINS_GEO: GeoEntity[] = [
+  { id: "ob1",  type: "OIL_BASIN", name: "Permian Basin",           code: "USA · WEST TEXAS",         lat: 31.8,  lon: -102.5, riskScore: 25, riskLevel: "LOW",      details: "World's most productive oil basin. ~6.5 Mbbl/d. Wolfcamp, Spraberry, Bone Spring formations. Tight oil revolution epicenter.", correlatedAssets: ["XOP","CL=F","DVN","PXD","FANG"] },
+  { id: "ob2",  type: "OIL_BASIN", name: "Ghawar Field",            code: "SAUDI ARABIA · EASTERN",   lat: 25.0,  lon:  49.5,  riskScore: 42, riskLevel: "MODERATE", details: "Largest conventional oil field. ~3.8 Mbbl/d. Arab-D reservoir. Aramco cornerstone asset. Depletion risk monitored.", correlatedAssets: ["2222.SR","BZ=F","XAU/USD","SABIC"] },
+  { id: "ob3",  type: "OIL_BASIN", name: "Vaca Muerta Shale",       code: "ARGENTINA · NEUQUÉN",      lat: -38.5, lon:  -69.0, riskScore: 55, riskLevel: "ELEVATED", details: "2nd largest shale gas / 4th largest shale oil globally. ~650 Kbbl/d growing. YPF & Shell key operators.", correlatedAssets: ["YPF","YPFD.BA","BZ=F","ARS/USD"] },
+  { id: "ob4",  type: "OIL_BASIN", name: "Pre-Salt Santos Basin",   code: "BRAZIL · OFFSHORE",        lat: -24.0, lon:  -42.0, riskScore: 38, riskLevel: "MODERATE", details: "Ultra-deepwater pre-salt carbonate. Buzios, Tupi fields. ~3 Mbbl/d potential. Petrobras crown asset.", correlatedAssets: ["PBR","PETR4.SA","BZ=F","BRL/USD"] },
+  { id: "ob5",  type: "OIL_BASIN", name: "Stabroek Block",          code: "GUYANA · OFFSHORE",        lat:   7.0, lon:  -57.5, riskScore: 30, riskLevel: "LOW",      details: "Major deepwater discovery. Yellowtail, Payara, Liza phases. ~1.3 Mbbl/d by 2027. ExxonMobil operatorship.", correlatedAssets: ["XOM","HES","CNOOC","GYD/USD"] },
+  { id: "ob6",  type: "OIL_BASIN", name: "Kashagan Field",          code: "KAZAKHSTAN · CASPIAN",     lat:  45.4, lon:   52.6, riskScore: 60, riskLevel: "ELEVATED", details: "Largest post-1968 oil discovery. ~1.7 Mbbl/d. H2S challenges, pipeline corrosion. BTC & CPC export routes.", correlatedAssets: ["NCOC","KZT/USD","ENI.MI","XOM"] },
+  { id: "ob7",  type: "OIL_BASIN", name: "East Siberia–Pacific",    code: "RUSSIA · IRKUTSK",         lat:  58.0, lon:  108.0, riskScore: 75, riskLevel: "HIGH",     details: "ESPO pipeline corridor. Vankor, Verkhnechonskoye fields. ~1.6 Mbbl/d. Rosneft strategic asset. Sanction risk.", correlatedAssets: ["ROSN.ME","RUB/USD","BZ=F","CN50"] },
+  { id: "ob8",  type: "OIL_BASIN", name: "Coral FLNG Mozambique",   code: "MOZAMBIQUE · ROVUMA",      lat: -11.5, lon:   40.6, riskScore: 68, riskLevel: "HIGH",     details: "Sub-Saharan Africa's largest gas discovery. Coral South FLNG first unit. ~50 TCF recoverable. Eni, ExxonMobil.", correlatedAssets: ["ENI.MI","XOM","LNG=F","MZN/USD"] },
+  { id: "ob9",  type: "OIL_BASIN", name: "North Sea Brent Province", code: "NORWAY/UK · NORTH SEA",   lat:  61.0, lon:    3.0, riskScore: 32, riskLevel: "LOW",      details: "Mature basin, Brent crude benchmark. Johan Sverdrup giant (755 Kbbl/d). Equinor key operator. UKCS & NCS.", correlatedAssets: ["EQNR","BP.L","BZ=F","GBP/USD"] },
+  { id: "ob10", type: "OIL_BASIN", name: "ACG Azerbaijan",          code: "AZERBAIJAN · CASPIAN",     lat:  40.4, lon:   50.8, riskScore: 45, riskLevel: "MODERATE", details: "Azeri-Chirag-Gunashli complex. ~0.7 Mbbl/d. BTC pipeline to Ceyhan. BP majority stake. SDG contract to 2050.", correlatedAssets: ["BP.L","BZ=F","AZN/USD","SOCAR"] },
+  { id: "ob11", type: "OIL_BASIN", name: "Tengiz Field",            code: "KAZAKHSTAN · TENGIZ",      lat:  45.5, lon:   53.2, riskScore: 50, riskLevel: "ELEVATED", details: "Supergiant carbonate. ~1 Mbbl/d. TCO joint venture: Chevron, ExxonMobil, KMG. FGP-WPMP expansion 2024.", correlatedAssets: ["CVX","XOM","KMG.LN","KZT/USD"] },
+  { id: "ob12", type: "OIL_BASIN", name: "Kirkuk Field",            code: "IRAQ · KURDISTAN",         lat:  35.5, lon:   44.4, riskScore: 82, riskLevel: "CRITICAL", details: "Super-giant discovered 1927. ~350 Kbbl/d disputed. Kurdish-Baghdad revenue conflict, ISIS proximity, export halt risk.", correlatedAssets: ["IQD/USD","BZ=F","KRI","HO=F"] },
+];
+
+// ── Resource Intelligence: Gold & Mining Sites ───────────────────────────────
+const MINING_SITES_GEO: GeoEntity[] = [
+  { id: "ms1",  type: "MINING_SITE", name: "Muruntau Gold Mine",      code: "UZBEKISTAN · QIZILQUM",    lat:  41.5, lon:   64.6, riskScore: 35, riskLevel: "MODERATE", details: "World's largest open-pit gold mine. ~2.8 Moz/yr. Navoi Mining & Metallurgical Combinat. Ultra-low AISC ~$600/oz.", correlatedAssets: ["XAU/USD","GC=F","GDX","UZS/USD"] },
+  { id: "ms2",  type: "MINING_SITE", name: "Super Pit Kalgoorlie",    code: "AUSTRALIA · W.AUSTRALIA",  lat: -30.8, lon:  121.5, riskScore: 20, riskLevel: "LOW",      details: "Australia's largest open-cut gold mine. ~0.6 Moz/yr. Northern Star Resources. Superpit life extended to 2035+.", correlatedAssets: ["NST.AX","NCM.AX","XAU/USD","AUD/USD"] },
+  { id: "ms3",  type: "MINING_SITE", name: "Grasberg Copper-Gold",    code: "INDONESIA · PAPUA",        lat:  -4.0, lon:  137.1, riskScore: 65, riskLevel: "HIGH",     details: "World's largest gold mine by reserves, 2nd largest copper. ~0.8 Moz Au + 400 Kt Cu/yr. Freeport-McMoRan / PTFI.", correlatedAssets: ["FCX","PTBA.JK","XAU/USD","HG=F"] },
+  { id: "ms4",  type: "MINING_SITE", name: "Carlin Trend",            code: "USA · NEVADA",             lat:  40.9, lon: -116.1, riskScore: 18, riskLevel: "LOW",      details: "World's 2nd largest gold-producing district. ~1.5 Moz/yr combined. Nevada Gold Mines JV (Barrick 61.5% / Newmont 38.5%).", correlatedAssets: ["GOLD","NEM","XAU/USD","GDX"] },
+  { id: "ms5",  type: "MINING_SITE", name: "Kibali Gold Mine",        code: "DRC · HAUT-UÉLÉ",          lat:   3.0, lon:   29.6, riskScore: 72, riskLevel: "HIGH",     details: "Africa's largest gold mine. ~0.8 Moz/yr. Barrick 45%, AngloGold 45%, Sokimo 10%. Hydropower self-sufficient.", correlatedAssets: ["GOLD","AU","XAU/USD","CDF/USD"] },
+  { id: "ms6",  type: "MINING_SITE", name: "Lihir Gold Mine",         code: "PAPUA NEW GUINEA",         lat:  -3.1, lon:  152.6, riskScore: 42, riskLevel: "MODERATE", details: "Active volcanic island geothermal mine. ~1 Moz/yr. Newcrest / Newmont. Volcanic ground management critical.", correlatedAssets: ["NEM","NCM.AX","XAU/USD","PGK/USD"] },
+  { id: "ms7",  type: "MINING_SITE", name: "Oyu Tolgoi Copper-Gold",  code: "MONGOLIA · SOUTH GOBI",    lat:  43.0, lon:  106.9, riskScore: 52, riskLevel: "ELEVATED", details: "World-class porphyry Cu-Au. Hugo North underground. ~0.5 Mt Cu + 0.3 Moz Au/yr at peak. Rio Tinto 66%.", correlatedAssets: ["RIO","TRQ.TO","HG=F","XAU/USD"] },
+  { id: "ms8",  type: "MINING_SITE", name: "Sukhoi Log",              code: "RUSSIA · BODAIBO",         lat:  58.3, lon:  116.8, riskScore: 78, riskLevel: "HIGH",     details: "Undeveloped world's largest gold deposit. ~63 Moz Au resource. Polyus Gold. Sanctions risk, remote Arctic logistics.", correlatedAssets: ["PLZL.ME","XAU/USD","RUB/USD","GDX"] },
+];
+
+// ── Resource Intelligence: Critical Mineral Zones ────────────────────────────
+const MINERAL_ZONES_GEO: GeoEntity[] = [
+  { id: "mz1",  type: "MINERAL_ZONE", name: "Pilbara Iron-Lithium Corridor", code: "AUSTRALIA · W.AUSTRALIA",   lat: -23.0, lon:  118.5, riskScore: 22, riskLevel: "LOW",      details: "Pilbara iron ore + Pilgangoora lithium spodumene. 800+ Mt Fe/yr. Pilbara Minerals, Rio Tinto, BHP dominant.", correlatedAssets: ["RIO","BHP.AX","PLS.AX","LIT"] },
+  { id: "mz2",  type: "MINERAL_ZONE", name: "Atacama Lithium Triangle",      code: "CHILE/ARG/BOLIVIA",         lat: -24.5, lon:  -67.5, riskScore: 55, riskLevel: "ELEVATED", details: "70% world's lithium brine reserves. SQM, Albemarle, Livent. Bolivia nationalization risk. Brine extraction water stress.", correlatedAssets: ["SQM","ALB","LTHM","LI=F"] },
+  { id: "mz3",  type: "MINERAL_ZONE", name: "DRC Copper-Cobalt Belt",        code: "DRC · KATANGA",             lat:  -10.5, lon:   25.5, riskScore: 80, riskLevel: "CRITICAL", details: "70% global cobalt supply. Tenke Fungurume, KCC, Mutanda. Artisanal mining, governance risk, geopolitical leverage.", correlatedAssets: ["GLEN.L","IVN.TO","Co=F","CDF/USD"] },
+  { id: "mz4",  type: "MINERAL_ZONE", name: "Inner Mongolia REE Province",   code: "CHINA · INNER MONGOLIA",    lat:  41.5, lon:  110.0, riskScore: 45, riskLevel: "MODERATE", details: "Bayan Obo — world's largest REE deposit. China controls 60% global REE production. Strategic export restriction risk.", correlatedAssets: ["MP","LYNAS.AX","REE","CNY/USD"] },
+  { id: "mz5",  type: "MINERAL_ZONE", name: "Bushveld Platinum Complex",     code: "SOUTH AFRICA · LIMPOPO",    lat: -25.0, lon:   28.0, riskScore: 60, riskLevel: "ELEVATED", details: "Hosts 80% world's platinum, 40% palladium. Anglo American Platinum, Impala, Sibanye. Electricity & labor strike risk.", correlatedAssets: ["AMS.JO","IMP.JO","XPT=F","XPD=F"] },
+  { id: "mz6",  type: "MINERAL_ZONE", name: "Norilsk Nickel-Palladium",      code: "RUSSIA · SIBERIA",          lat:  69.3, lon:   88.2, riskScore: 82, riskLevel: "CRITICAL", details: "World's largest Ni-Pd producer. 40% global palladium. Nornickel. Arctic Circle, sanctions risk, pollution legacy.", correlatedAssets: ["GMKN.ME","XPD=F","NI=F","RUB/USD"] },
+  { id: "mz7",  type: "MINERAL_ZONE", name: "Jadar Lithium-Boron Deposit",   code: "SERBIA · JADAR VALLEY",    lat:  44.1, lon:   19.4, riskScore: 48, riskLevel: "MODERATE", details: "World's largest jadarite (lithium-boron silicate) deposit. Rio Tinto €2.4B project. Community opposition, EU supply chain priority.", correlatedAssets: ["RIO","ALB","EUR/USD","LIT"] },
+  { id: "mz8",  type: "MINERAL_ZONE", name: "Greenland Critical Minerals",   code: "GREENLAND · ILIMAUSSAQ",    lat:  61.0, lon:  -45.0, riskScore: 35, riskLevel: "MODERATE", details: "Kvanefjeld REE-U deposit, Citronen Zn-Pb, Isua iron ore. Geopolitical flashpoint — US, EU, China competing for access.", correlatedAssets: ["MP","NGLOY","REE","USD/DKK"] },
+  { id: "mz9",  type: "MINERAL_ZONE", name: "Philippine Nickel Laterites",   code: "PHILIPPINES · PALAWAN",     lat:   9.5, lon:  118.3, riskScore: 50, riskLevel: "ELEVATED", details: "World's 2nd largest nickel reserves. ~330 Kt Ni/yr. DMCI, Nickel Asia. China buyer dominance, laterite processing shift.", correlatedAssets: ["NICKEL.JK","NI=F","DMCI.PS","PHP/USD"] },
+  { id: "mz10", type: "MINERAL_ZONE", name: "Andes Copper Porphyry Belt",    code: "CHILE · ATACAMA CORDILLERA", lat: -28.0, lon:  -69.8, riskScore: 40, riskLevel: "MODERATE", details: "World's largest porphyry Cu belt. Chuquicamata, Escondida (BHP/Rio), Collahuasi. ~5.5 Mt Cu/yr. Water & energy key constraints.", correlatedAssets: ["BHP","RIO","FCX","HG=F"] },
+];
+
 export default function NurEarth3DGlobe() {
   const threeContainerRef = useRef<HTMLDivElement>(null);
   const overlayCanvasRef  = useRef<HTMLCanvasElement>(null);
@@ -491,6 +533,9 @@ export default function NurEarth3DGlobe() {
     chokepoints: true,
     nuclear: true,
     grid: true,
+    oilBasins: true,
+    miningSites: true,
+    mineralZones: true,
   });
   const [autoEventMode, setAutoEventMode] = useState(true);
   const [eventIndex, setEventIndex] = useState(0);
@@ -879,6 +924,116 @@ export default function NurEarth3DGlobe() {
         });
       }
 
+      // Oil Basins — amber hexagons with pulse ring
+      if (activeLayers.oilBasins) {
+        OIL_BASINS_GEO.forEach((ob, idx) => {
+          const p = latLonTo3D(ob.lat, ob.lon, globeRadius, localYaw, localPitch);
+          if (!p.isVisible) return;
+          const px = cx + p.x;
+          const py = cy + p.y;
+          const pulse = (Math.sin(timeRef.current * 1.8 + idx * 0.6) + 1) * 0.5;
+          const isSelected = selectedEntity?.id === ob.id;
+
+          // Outer glow ring
+          ctx.strokeStyle = `rgba(251, 146, 60, ${0.2 + pulse * 0.3})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(px, py, 9 + pulse * 6, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Hexagon shape
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (i * Math.PI) / 3 - Math.PI / 6;
+            const r = isSelected ? 6 : 4.5;
+            if (i === 0) ctx.moveTo(px + r * Math.cos(angle), py + r * Math.sin(angle));
+            else ctx.lineTo(px + r * Math.cos(angle), py + r * Math.sin(angle));
+          }
+          ctx.closePath();
+          ctx.fillStyle = isSelected ? "#fb923c" : `rgba(251, 146, 60, ${0.7 + pulse * 0.3})`;
+          ctx.shadowColor = "#fb923c";
+          ctx.shadowBlur = isSelected ? 14 : 5;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Label
+          ctx.fillStyle = "#fed7aa";
+          ctx.font = `bold ${isSelected ? 10 : 8}px monospace`;
+          ctx.fillText(`⛽ ${ob.code.split("·")[0].trim()}`, px + 9, py - 5);
+        });
+      }
+
+      // Mining Sites — gold diamonds
+      if (activeLayers.miningSites) {
+        MINING_SITES_GEO.forEach((ms, idx) => {
+          const p = latLonTo3D(ms.lat, ms.lon, globeRadius, localYaw, localPitch);
+          if (!p.isVisible) return;
+          const px = cx + p.x;
+          const py = cy + p.y;
+          const pulse = (Math.sin(timeRef.current * 2.2 + idx * 0.9) + 1) * 0.5;
+          const isSelected = selectedEntity?.id === ms.id;
+          const r = isSelected ? 6 : 4;
+
+          // Diamond shape
+          ctx.beginPath();
+          ctx.moveTo(px, py - r * 1.3);
+          ctx.lineTo(px + r, py);
+          ctx.lineTo(px, py + r * 1.3);
+          ctx.lineTo(px - r, py);
+          ctx.closePath();
+          ctx.fillStyle = isSelected ? "#fbbf24" : `rgba(250, 204, 21, ${0.75 + pulse * 0.25})`;
+          ctx.shadowColor = "#fbbf24";
+          ctx.shadowBlur = isSelected ? 14 : 5;
+          ctx.fill();
+          ctx.strokeStyle = `rgba(253, 224, 71, ${0.5 + pulse * 0.4})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = "#fef9c3";
+          ctx.font = `bold ${isSelected ? 10 : 8}px monospace`;
+          ctx.fillText(`⛏ ${ms.name.split(" ")[0]}`, px + 9, py + 4);
+        });
+      }
+
+      // Critical Mineral Zones — blue-purple triangles
+      if (activeLayers.mineralZones) {
+        MINERAL_ZONES_GEO.forEach((mz, idx) => {
+          const p = latLonTo3D(mz.lat, mz.lon, globeRadius, localYaw, localPitch);
+          if (!p.isVisible) return;
+          const px = cx + p.x;
+          const py = cy + p.y;
+          const pulse = (Math.sin(timeRef.current * 2.8 + idx * 1.1) + 1) * 0.5;
+          const isSelected = selectedEntity?.id === mz.id;
+          const r = isSelected ? 7 : 5;
+
+          // Triangle marker
+          ctx.beginPath();
+          ctx.moveTo(px, py - r * 1.2);
+          ctx.lineTo(px + r, py + r * 0.8);
+          ctx.lineTo(px - r, py + r * 0.8);
+          ctx.closePath();
+          const alpha = 0.65 + pulse * 0.35;
+          const color = mz.riskLevel === "CRITICAL" ? `rgba(167, 139, 250, ${alpha})` : `rgba(99, 102, 241, ${alpha})`;
+          ctx.fillStyle = isSelected ? "#a78bfa" : color;
+          ctx.shadowColor = "#818cf8";
+          ctx.shadowBlur = isSelected ? 14 : 4;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Outer dot ring
+          ctx.strokeStyle = `rgba(139, 92, 246, ${0.3 + pulse * 0.35})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(px, py, 8 + pulse * 5, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = "#ddd6fe";
+          ctx.font = `bold ${isSelected ? 10 : 8}px monospace`;
+          ctx.fillText(`💎 ${mz.name.split(" ")[0]}`, px + 9, py - 5);
+        });
+      }
+
       animFrameRef.current = requestAnimationFrame(render);
     }
 
@@ -984,6 +1139,36 @@ export default function NurEarth3DGlobe() {
             }`}
           >
             ☢️ Nuclear ({NUCLEAR_ZONES.length})
+          </button>
+          <button
+            onClick={() => setActiveLayers((l) => ({ ...l, oilBasins: !l.oilBasins }))}
+            className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
+              activeLayers.oilBasins
+                ? "bg-orange-500/20 border-orange-400 text-orange-300"
+                : "bg-black/40 border-white/10 text-slate-400"
+            }`}
+          >
+            ⛽ Oil ({OIL_BASINS_GEO.length})
+          </button>
+          <button
+            onClick={() => setActiveLayers((l) => ({ ...l, miningSites: !l.miningSites }))}
+            className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
+              activeLayers.miningSites
+                ? "bg-yellow-500/20 border-yellow-400 text-yellow-300"
+                : "bg-black/40 border-white/10 text-slate-400"
+            }`}
+          >
+            ⛏ Gold ({MINING_SITES_GEO.length})
+          </button>
+          <button
+            onClick={() => setActiveLayers((l) => ({ ...l, mineralZones: !l.mineralZones }))}
+            className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
+              activeLayers.mineralZones
+                ? "bg-violet-500/20 border-violet-400 text-violet-300"
+                : "bg-black/40 border-white/10 text-slate-400"
+            }`}
+          >
+            💎 Minerals ({MINERAL_ZONES_GEO.length})
           </button>
           <button
             onClick={() => {

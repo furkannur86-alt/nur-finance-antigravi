@@ -61,6 +61,7 @@ const MODULES: Module[] = [
 
   // RESOURCE INTELLIGENCE
   { id: "resource-intelligence", label: "Resource Intel", icon: "⛏️", desc: "Oil, gas, gold, critical minerals & geological survey intelligence — €27K/mo sovereign tier", color: "#f59e0b", group: "RESOURCES" },
+  { id: "institutional-suite",   label: "Institutional Suite", icon: "🏛", desc: "7-pillar sovereign intelligence: demographics, elections, biosurveillance, CB, supply chains, C4ISR, cyber — $8.5K/mo", color: "#a78bfa", group: "RESOURCES" },
 
   // SOVEREIGN (admin only)
   { id: "umay-boss",         label: "Umay Gül Nur",     icon: "👑", desc: "Sovereign boss terminal",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },

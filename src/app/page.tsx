@@ -51,6 +51,7 @@ import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 import CockpitFrame from "@/components/layout/CockpitFrame";
 import PanelExpander from "@/components/layout/PanelExpander";
 import ResourceIntelligencePanel from "@/components/resources/ResourceIntelligencePanel";
+import InstitutionalSuitePanel from "@/components/institutional/InstitutionalSuitePanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -71,6 +72,7 @@ const FULLSCREEN_VIEWS = [
   "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
   "wallet-gateway", "nur-coin",
   "resource-intelligence",
+  "institutional-suite",
 ];
 
 export default function Home() {
@@ -134,6 +136,8 @@ export default function Home() {
         return <ComputeForAccessPanel />;
       case "resource-intelligence":
         return <ResourceIntelligencePanel />;
+      case "institutional-suite":
+        return <InstitutionalSuitePanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":

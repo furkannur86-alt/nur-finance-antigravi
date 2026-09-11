@@ -45,6 +45,7 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }
   "holding-ecosystem":  { label: "7 Growth Arms",      icon: "🏛️", color: "#fbbf24" },
   "tatar-finans":       { label: "Tatar Finans",       icon: "🛡️", color: "#fbbf24" },
   "resource-intelligence": { label: "Resource Intel",   icon: "⛏️", color: "#f59e0b" },
+  "institutional-suite":  { label: "Institutional Suite", icon: "🏛", color: "#a78bfa" },
   editor:               { label: "Code Editor",        icon: "⌨️", color: "#6b7280" },
 };
 
