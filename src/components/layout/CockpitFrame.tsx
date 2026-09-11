@@ -15,7 +15,7 @@ const HITCH_NUMBERS = [
   { n: "13", x: 78, y: 8,  size: 8,  color: "#60a5fa", delay: 2.4 },
   { n: "35", x: 55, y: 72, size: 9,  color: "#a78bfa", delay: 5.1 },
   { n: "55", x: 88, y: 55, size: 10, color: "#f59e0b", delay: 1.7 },
-  { n: "5,475,146", x: 28, y: 85, size: 4.5, color: "#60a5fa", delay: 3.8 },
+  { n: "54,751,113", x: 28, y: 85, size: 4.5, color: "#60a5fa", delay: 3.8 },
   { n: "42", x: 68, y: 30, size: 6,  color: "#a78bfa", delay: 7.2 },
   { n: "∞", x: 42, y: 45, size: 13, color: "#6ee7b7", delay: 4.3 },
   { n: "13", x: 8,  y: 60, size: 7,  color: "#f59e0b", delay: 6.0 },
@@ -293,7 +293,7 @@ export default function CockpitFrame({ children }: { children: React.ReactNode }
           }}
           title="Restore Cockpit HUD"
         >
-          ◈ ORBIT: #5475146 | CH: 13·35·42·55 | EXPAND ⤢
+          ◈ ORBIT: #54751113 | CH: 13·35·42·55 | EXPAND ⤢
         </button>
       </div>
     );
