@@ -168,64 +168,230 @@ interface NurCommand {
 }
 
 const NUR_COMMANDS: NurCommand[] = [
-  // Market Intelligence
-  { aliases: ["DASH", "HOME"], view: "dashboard", description: "Main dashboard — live market overview", category: "MARKET" },
-  { aliases: ["CHART", "GP", "GPC"], view: "charts", description: "Interactive charting — equity, FX, commodities", category: "MARKET" },
-  { aliases: ["SCR", "SCRN", "EQS"], view: "screener", description: "Equity & asset screener with quant filters", category: "MARKET" },
-  { aliases: ["GLB", "WEI", "GMKT"], view: "global-markets", description: "Global markets — indices, FX, bonds, commodities", category: "MARKET" },
-  { aliases: ["ECO", "ECON", "WECO"], view: "economic-data", description: "Economic indicators — GDP, CPI, PMI, NFP", category: "MACRO" },
-  { aliases: ["RSK", "RISK", "MRSK"], view: "macro-risk", description: "Macro risk monitor — geopolitical, credit, vol", category: "MACRO" },
-  { aliases: ["GEO", "GEOP", "GPOL"], view: "geopolitics", description: "Geopolitical intelligence — nuclear, sanctions, conflicts", category: "MACRO" },
-  { aliases: ["FUND", "FA", "CFS"], view: "fundamentals", description: "Company fundamentals — P/E, EV/EBITDA, DCF", category: "EQUITY" },
-  // Trading & Portfolio
-  { aliases: ["PORT", "PRTU", "PRTF"], view: "portfolio", description: "Portfolio manager — positions, P&L, attribution", category: "PORTFOLIO" },
-  { aliases: ["OMS", "EMS", "OEMS"], view: "oms-ems", description: "Order & execution management — trade blotter", category: "TRADING" },
-  { aliases: ["OPT", "OMON", "OVDV"], view: "options", description: "Options analytics — vol surface, Greeks, strats", category: "DERIVATIVES" },
-  { aliases: ["BT", "BACK", "BTST"], view: "backtest", description: "Strategy backtesting engine — Sharpe, drawdown", category: "QUANT" },
-  { aliases: ["WISH"], view: "wish-framework", description: "WISH Framework — NUR's core trading strategy", category: "QUANT" },
-  // AI & Research
-  { aliases: ["AI", "QUANT", "QC", "COPILOT"], view: "quant-copilot", description: "AI Quant Strategist — alpha signals, factor models", category: "AI" },
-  { aliases: ["AITOOLS", "MODELS"], view: "ai-tools", description: "Quantitative model library", category: "AI" },
-  { aliases: ["RES", "RESEARCH", "BI"], view: "research", description: "NFS Research — analyst reports, deep dives", category: "RESEARCH" },
-  { aliases: ["NI", "NEWS", "BRIEF", "TOP"], view: "news", description: "Market briefs — breaking financial news", category: "NEWS" },
-  { aliases: ["NF", "FEED", "NFEED"], view: "news-feed", description: "Live news feed — multi-source stream", category: "NEWS" },
-  { aliases: ["ALRT", "ALERTS", "RMW"], view: "alerts", description: "Risk alerts — threshold monitoring, signals", category: "ALERTS" },
-  { aliases: ["INGEST", "DATA", "DI"], view: "data-ingest", description: "Data ingest — connect APIs, feeds, databases", category: "DATA" },
-  // Media & Broadcast
-  { aliases: ["TV", "LIVE", "NTV"], view: "live-tv", description: "NUR TV Live — 24/7 financial broadcast", category: "MEDIA" },
-  { aliases: ["MEDIA", "MED"], view: "media", description: "NFS Media hub — video library, podcasts", category: "MEDIA" },
-  { aliases: ["STUDIO", "BCAST", "BRDC"], view: "broadcast-studio", description: "Broadcast Studio — produce & stream live content", category: "MEDIA" },
-  // Platform
-  { aliases: ["PLANS", "PRICE", "SUB"], view: "pricing", description: "Subscription plans — NUR Finance B & R tiers", category: "PLATFORM" },
-  { aliases: ["VERIFY", "KYC", "VER"], view: "verification-portal", description: "Identity & accreditation verification", category: "PLATFORM" },
-  { aliases: ["WALLET", "PAY", "DWG"], view: "wallet-gateway", description: "Digital wallet & payment gateway", category: "PLATFORM" },
-  { aliases: ["COIN", "NRC", "NURC"], view: "nur-coin", description: "NUR Coin ecosystem — tokenomics, staking", category: "CRYPTO" },
-  { aliases: ["COMPUTE", "GPU", "CFA"], view: "compute-access", description: "Compute for access — GPU mining participation", category: "PLATFORM" },
-  { aliases: ["EDU", "LEARN", "NURED"], view: "nur-education", description: "NUR Education — quant curriculum, courses", category: "EDUCATION" },
-  { aliases: ["KIDS", "NURK"], view: "nur-kids", description: "NUR Kids — financial literacy for youth", category: "EDUCATION" },
-  { aliases: ["HOLD", "ECOSYSTEM", "7ARM"], view: "holding-ecosystem", description: "7 Growth Arms — NUR holding ecosystem overview", category: "CORPORATE" },
-  { aliases: ["TATAR", "TATFIN"], view: "tatar-finans", description: "Tatar Finans — regional finance division", category: "CORPORATE" },
-  { aliases: ["UMAY", "BOSS", "CEO"], view: "umay-boss", description: "Umay Gül Nur — executive terminal", category: "CORPORATE" },
-  { aliases: ["ENCY", "WIKI", "ENC"], view: "encyclopedia", description: "Financial encyclopedia — glossary, concepts", category: "REFERENCE" },
-  // Terminal itself
-  { aliases: ["TERM", "NFS", "NFST", "CLI"], view: "terminal", description: "NFS Terminal — this screen", category: "SYSTEM" },
-  { aliases: ["EDITOR", "CODE", "IDE"], view: "editor", description: "Code editor — strategy IDE", category: "SYSTEM" },
-  // Special output-only commands
+  // MARKET
+  { aliases: ["DASH", "HOME", "HP"], view: "dashboard", description: "Main dashboard — live market overview", category: "MARKET" },
+  { aliases: ["CHART", "GP", "GPC", "G"], view: "charts", description: "Interactive charting — equity, FX, commodities", category: "MARKET" },
+  { aliases: ["SCR", "SCRN", "EQS", "EQSF"], view: "screener", description: "Equity & asset screener with quant filters", category: "MARKET" },
+  { aliases: ["GLB", "GMKT", "WORLD"], view: "global-markets", description: "Global markets — indices, FX, bonds, commodities", category: "MARKET" },
+  { aliases: ["WEI", "WL", "MOV"], view: "watchlist", description: "Watchlist — monitor selected securities", category: "MARKET" },
+  { aliases: ["FUND", "FA", "CFS", "DES"], view: "fundamentals", description: "Fundamentals — P/E, EV/EBITDA, DCF valuation", category: "EQUITY" },
+  { aliases: ["DVD", "DIVD", "DVD1"], view: "dividends", description: "Dividend calendar & yield monitor", category: "EQUITY" },
+  { aliases: ["HDS", "HIST", "GHD"], view: "historical-data", description: "Historical data — OHLCV, returns, correlations", category: "EQUITY" },
+  { aliases: ["LEAG", "LT", "DEALS"], view: "league-tables", description: "League tables — M&A, ECM, DCM rankings", category: "EQUITY" },
+  { aliases: ["CORP", "EVTS", "CACT"], view: "corporate-events", description: "Corporate events — earnings, splits, M&A", category: "EQUITY" },
+  // MACRO
+  { aliases: ["ECO", "ECON", "WECO", "MAPI"], view: "economic-data", description: "Economic indicators — GDP, CPI, PMI, NFP", category: "MACRO" },
+  { aliases: ["RSK", "RISK", "MRSK", "RSKM"], view: "macro-risk", description: "Macro risk monitor — geopolitical, credit, vol", category: "MACRO" },
+  { aliases: ["GEO", "GEOP", "GPOL", "NCI"], view: "geopolitics", description: "Geopolitical intelligence — nuclear, sanctions, conflicts", category: "MACRO" },
+  { aliases: ["BOND", "GOVT", "SRCH"], view: "bonds", description: "Fixed income — govts, credit, yield search", category: "RATES" },
+  { aliases: ["FX", "FXGO", "XCCY"], view: "fx-monitor", description: "FX monitor — spot, forwards, cross rates", category: "FX" },
+  // QUANT
+  { aliases: ["BT", "BACK", "BTST", "STRAT"], view: "backtest", description: "Strategy backtesting — Sharpe, drawdown, returns", category: "QUANT" },
+  { aliases: ["WISH", "WISHF"], view: "wish-framework", description: "WISH Framework — NUR's core trading methodology", category: "QUANT" },
+  { aliases: ["OPT", "OMON", "OVDV", "MARS"], view: "options", description: "Options analytics — vol surface, Greeks, strategies", category: "DERIVATIVES" },
+  // TRADING
+  { aliases: ["PORT", "PRTU", "PRTF", "ALP"], view: "portfolio", description: "Portfolio manager — positions, P&L, attribution", category: "PORTFOLIO" },
+  { aliases: ["OMS", "EMS", "OEMS", "BOLT"], view: "oms-ems", description: "Order & execution management — trade blotter", category: "TRADING" },
+  { aliases: ["ALRT", "ALERTS", "RMW", "NRGE"], view: "alerts", description: "Risk alerts — threshold signals, notifications", category: "ALERTS" },
+  // AI
+  { aliases: ["AI", "QC", "COPILOT", "AIQC"], view: "quant-copilot", description: "AI Quant Strategist — alpha signals, factor models", category: "AI" },
+  { aliases: ["AITOOLS", "MODELS", "MLHB"], view: "ai-tools", description: "Quantitative ML model library", category: "AI" },
+  // RESEARCH & NEWS
+  { aliases: ["RES", "RESEARCH", "BI", "BIGO"], view: "research", description: "NFS Research — analyst reports, deep dives", category: "RESEARCH" },
+  { aliases: ["NI", "NEWS", "BRIEF", "TOP", "BN"], view: "news", description: "Market briefs — breaking financial headlines", category: "NEWS" },
+  { aliases: ["NF", "FEED", "NFEED", "WIRE"], view: "news-feed", description: "Live news wire — multi-source real-time stream", category: "NEWS" },
+  // DATA
+  { aliases: ["INGEST", "DATA", "DI", "DFLT"], view: "data-ingest", description: "Data ingest — APIs, feeds, databases", category: "DATA" },
+  // MEDIA
+  { aliases: ["TV", "LIVE", "NTV", "BBTV"], view: "live-tv", description: "NUR TV Live — 24/7 financial broadcast", category: "MEDIA" },
+  { aliases: ["MEDIA", "MED", "VID"], view: "media", description: "NFS Media hub — video library, podcasts", category: "MEDIA" },
+  { aliases: ["STUDIO", "BCAST", "BRDC"], view: "broadcast-studio", description: "Broadcast Studio — produce & stream live", category: "MEDIA" },
+  // PLATFORM
+  { aliases: ["PLANS", "PRICE", "SUB", "TIER"], view: "pricing", description: "Subscription plans — NUR Finance B & R tiers", category: "PLATFORM" },
+  { aliases: ["VERIFY", "KYC", "VER", "ACRD"], view: "verification-portal", description: "Identity & accreditation verification", category: "PLATFORM" },
+  { aliases: ["WALLET", "PAY", "DWG", "PWGT"], view: "wallet-gateway", description: "Digital wallet & payment gateway", category: "PLATFORM" },
+  { aliases: ["COMPUTE", "GPU", "CFA"], view: "compute-access", description: "Compute for access — GPU participation", category: "PLATFORM" },
+  // CRYPTO
+  { aliases: ["COIN", "NRC", "NURC", "NURT"], view: "nur-coin", description: "NUR Coin — tokenomics, staking, ecosystem", category: "CRYPTO" },
+  // EDUCATION
+  { aliases: ["EDU", "LEARN", "NURED", "CRSE"], view: "nur-education", description: "NUR Education — quant curriculum, certifications", category: "EDUCATION" },
+  { aliases: ["KIDS", "NURK", "YTH"], view: "nur-kids", description: "NUR Kids — financial literacy for youth", category: "EDUCATION" },
+  { aliases: ["ENCY", "WIKI", "GLOSS", "DEFN"], view: "encyclopedia", description: "Financial encyclopedia — glossary, concepts", category: "REFERENCE" },
+  // CORPORATE
+  { aliases: ["HOLD", "ECOSYSTEM", "7ARM", "NHC"], view: "holding-ecosystem", description: "7 Growth Arms — NUR holding ecosystem", category: "CORPORATE" },
+  { aliases: ["TATAR", "TATFIN", "TF"], view: "tatar-finans", description: "Tatar Finans — regional finance division", category: "CORPORATE" },
+  { aliases: ["UMAY", "BOSS", "CEO", "EXEC"], view: "umay-boss", description: "Umay Gül Nur — executive terminal", category: "CORPORATE" },
+  // SYSTEM
+  { aliases: ["TERM", "NFS", "NFST", "CLI"], view: "terminal", description: "NFS Terminal — command interface", category: "SYSTEM" },
+  { aliases: ["EDITOR", "CODE", "IDE", "STRM"], view: "editor", description: "Code editor — strategy IDE", category: "SYSTEM" },
+
+  // ── Output-only commands ──────────────────────────────────────────────────
   {
-    aliases: ["HEAT", "HEATMAP", "HEATUP"],
-    description: "Sector heat map — real-time color-coded performance matrix",
+    aliases: ["HEAT", "HEATMAP", "HEATUP", "WEP"],
+    description: "Sector heat map — real-time color-coded performance",
     category: "MARKET",
     output: [
-      "━━━━━━━━━━━━━━━━ SECTOR HEAT MAP ━━━━━━━━━━━━━━━━",
-      "  TECHNOLOGY    ████████░░  +2.4%  ▲ OUTPERFORM",
-      "  ENERGY        ██████░░░░  +1.8%  ▲ OUTPERFORM",
-      "  FINANCIALS    █████░░░░░  +1.1%  ▲ NEUTRAL",
-      "  HEALTHCARE    ███░░░░░░░  +0.6%  ▲ NEUTRAL",
-      "  UTILITIES     ░░░░░░░░░░  -0.2%  ▼ UNDERPERFORM",
-      "  REAL ESTATE   ░░░░░░░░░░  -0.8%  ▼ UNDERPERFORM",
-      "  MATERIALS     ░░░░░░░░░░  -1.4%  ▼ UNDERPERFORM",
-      "─────────────────────────────────────────────────",
-      "  Source: NUR Quant · Updated: " + new Date().toUTCString(),
+      "━━━━━━━━━━━━━━━━━━ SECTOR HEAT MAP ━━━━━━━━━━━━━━━━━━",
+      "  SECTOR           BAR           RETURN    SIGNAL",
+      "  ─────────────────────────────────────────────────",
+      "  TECHNOLOGY    ████████████░░  +2.41%  ▲ OUTPERFORM",
+      "  ENERGY        ██████████░░░░  +1.83%  ▲ OUTPERFORM",
+      "  FINANCIALS    ████████░░░░░░  +1.12%  ▲ NEUTRAL+",
+      "  HEALTHCARE    █████░░░░░░░░░  +0.63%  ▲ NEUTRAL",
+      "  CONS. DISC.   ███░░░░░░░░░░░  +0.21%  ▲ NEUTRAL",
+      "  INDUSTRIALS   ██░░░░░░░░░░░░  -0.09%  ▼ NEUTRAL",
+      "  UTILITIES     ░░░░░░░░░░░░░░  -0.24%  ▼ UNDERPERFORM",
+      "  REAL ESTATE   ░░░░░░░░░░░░░░  -0.81%  ▼ UNDERPERFORM",
+      "  MATERIALS     ░░░░░░░░░░░░░░  -1.38%  ▼ UNDERPERFORM",
+      "  COMM. SVCS    ░░░░░░░░░░░░░░  -1.74%  ▼ UNDERPERFORM",
+      "  ─────────────────────────────────────────────────",
+      "  Source: NUR Quant Engine  ·  Refreshed: " + new Date().toUTCString().slice(0,25),
+    ],
+  },
+  {
+    aliases: ["CURVE", "YCURVE", "YLDCV", "YCRV"],
+    description: "US Treasury yield curve — live snapshot",
+    category: "RATES",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ US TREASURY YIELD CURVE ━━━━━━━━━━━━━━━━━━",
+      "  TENOR    YIELD    CHG       CURVE SHAPE",
+      "  ───────────────────────────────────────",
+      "  3M       5.38%   +0.02   ████████████████████  INVERTED",
+      "  6M       5.42%   +0.01   █████████████████████",
+      "  1Y       5.21%   -0.01   ████████████████████",
+      "  2Y       4.84%   -0.03   ██████████████████",
+      "  3Y       4.61%   -0.04   █████████████████",
+      "  5Y       4.40%   -0.05   ████████████████",
+      "  7Y       4.38%   -0.04   ████████████████",
+      "  10Y      4.27%   -0.03   ███████████████",
+      "  20Y      4.48%   -0.02   ████████████████",
+      "  30Y      4.44%   -0.02   ████████████████",
+      "  ───────────────────────────────────────",
+      "  2s10s spread: -57bps  ·  Curve: INVERTED  ·  Regime: LATE CYCLE",
+    ],
+  },
+  {
+    aliases: ["VIX", "VVIX", "VOL", "VOLM"],
+    description: "Volatility monitor — VIX, VVIX, vol surface",
+    category: "DERIVATIVES",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ VOLATILITY DASHBOARD ━━━━━━━━━━━━━━━━━━",
+      "  VIX (SPX 30d impl. vol)   14.23   ▼ -0.84   LOW REGIME",
+      "  VVIX (vol of vol)         87.41   ▼ -1.20   CONTAINED",
+      "  VIX3M / VIX ratio          1.08   ─  0.00   CONTANGO",
+      "  SKEW Index                147.2   ▲ +1.20   ELEVATED TAIL RISK",
+      "  ─────────────────────────────────────────────────",
+      "  IMPLIED VOL SURFACE (SPX ATM) — TERM STRUCTURE",
+      "  1W    12.4%  ░░░░░░░░░░░░",
+      "  1M    14.2%  ░░░░░░░░░░░░░░",
+      "  3M    15.1%  ░░░░░░░░░░░░░░░",
+      "  6M    16.0%  ░░░░░░░░░░░░░░░░",
+      "  1Y    16.8%  ░░░░░░░░░░░░░░░░░",
+      "  ─────────────────────────────────────────────────",
+      "  Put/Call Ratio: 0.83  ·  CBOE Put Vol: 43.2%  ·  Regime: RISK-ON",
+    ],
+  },
+  {
+    aliases: ["DXY", "DOLL", "USD", "USDIDX"],
+    description: "US Dollar Index — DXY snapshot & FX basket",
+    category: "FX",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ US DOLLAR INDEX (DXY) ━━━━━━━━━━━━━━━━━━",
+      "  DXY Spot     104.21    ▲ +0.32  (+0.31%)",
+      "  DXY 52W Hi   107.34    DXY 52W Lo  100.18",
+      "  ─────────────────────────────────────────────────",
+      "  CURRENCY PAIR    SPOT       CHG      YTD",
+      "  EUR/USD         1.0842   -0.0033  -2.14%",
+      "  USD/JPY       154.32    +0.48   +8.32%",
+      "  GBP/USD         1.2718   -0.0021  -1.98%",
+      "  USD/CHF         0.9012   +0.0018  +3.21%",
+      "  USD/CAD         1.3641   +0.0025  +2.87%",
+      "  AUD/USD         0.6521   -0.0028  -3.45%",
+      "  USD/SEK        10.7341   +0.0342  +5.14%",
+      "  ─────────────────────────────────────────────────",
+      "  Fed Funds target: 5.25-5.50%  ·  Next FOMC: 31 Jul 2025",
+    ],
+  },
+  {
+    aliases: ["CREDIT", "CDX", "CRED", "IG"],
+    description: "Credit spreads — IG, HY, CDS indices",
+    category: "RATES",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ CREDIT MARKETS MONITOR ━━━━━━━━━━━━━━━━━━",
+      "  INDEX              SPREAD    CHG      SIGNAL",
+      "  ─────────────────────────────────────────────────",
+      "  CDX IG 5Y (S42)     58 bps  -1.2   ▼ TIGHTENING",
+      "  CDX HY 5Y (S42)    312 bps  -4.8   ▼ TIGHTENING",
+      "  iTraxx Europe 5Y    67 bps  -0.9   ▼ TIGHTENING",
+      "  iTraxx Xover 5Y    298 bps  -3.1   ▼ TIGHTENING",
+      "  ─────────────────────────────────────────────────",
+      "  IG OAS (Barclays)   112 bps  -2.0   ▼ TIGHTENING",
+      "  HY OAS (Barclays)   340 bps  -6.0   ▼ TIGHTENING",
+      "  EM Sov (EMBI+)      214 bps  -1.5   ▼ TIGHTENING",
+      "  ─────────────────────────────────────────────────",
+      "  Regime: RISK-ON  ·  CCC/B ratio: 0.42  ·  Default rate: 3.1%",
+    ],
+  },
+  {
+    aliases: ["STATUS", "PING", "SYS", "SYST"],
+    description: "NFS system health — API status, data feeds",
+    category: "SYSTEM",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ NFS SYSTEM STATUS ━━━━━━━━━━━━━━━━━━",
+      "  COMPONENT               STATUS    LATENCY",
+      "  ─────────────────────────────────────────────────",
+      "  NFS Core Engine           ● ONLINE     2ms",
+      "  Market Data Feed (EODHD)  ● ONLINE    18ms",
+      "  News Wire (Reuters)       ● ONLINE    42ms",
+      "  AI Quant Engine           ● ONLINE    87ms",
+      "  Supabase DB               ● ONLINE     5ms",
+      "  NUR Coin RPC              ● ONLINE   124ms",
+      "  Broadcast Server          ● ONLINE    33ms",
+      "  ─────────────────────────────────────────────────",
+      "  All systems operational  ·  Uptime: 99.97%",
+      "  Session: NFS Terminal v3.0  ·  " + new Date().toUTCString().slice(0,25),
+    ],
+  },
+  {
+    aliases: ["NFP", "CPI", "ECAL", "FCAL"],
+    description: "Economic calendar — upcoming high-impact releases",
+    category: "MACRO",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ ECONOMIC CALENDAR ━━━━━━━━━━━━━━━━━━",
+      "  DATE          EVENT                    IMPACT   PREV",
+      "  ─────────────────────────────────────────────────",
+      "  Thu 14:30 ET  US CPI MoM (Jun)         ★★★★★   +0.3%",
+      "  Thu 14:30 ET  US Core CPI MoM           ★★★★★   +0.3%",
+      "  Fri 14:30 ET  US PPI Final Demand       ★★★★☆   +0.2%",
+      "  Mon 09:30 ET  Empire State Mfg.         ★★★☆☆   -15.6",
+      "  Tue 14:30 ET  US Retail Sales MoM       ★★★★☆   +0.1%",
+      "  Wed 10:00 ET  FOMC Minutes Release      ★★★★★   N/A",
+      "  Thu 14:30 ET  US Initial Claims         ★★★☆☆   238K",
+      "  Fri 14:30 ET  US NFP (Jul)              ★★★★★   206K",
+      "  ─────────────────────────────────────────────────",
+      "  Next FOMC: 31 Jul  ·  Next ECB: 12 Sep  ·  Next BOJ: 31 Jul",
+    ],
+  },
+  {
+    aliases: ["MRKT", "MKT", "SPX", "INDEX"],
+    description: "Major index snapshot — SPX, NDX, DAX, Nikkei",
+    category: "MARKET",
+    output: [
+      "━━━━━━━━━━━━━━━━━━ MAJOR INDICES SNAPSHOT ━━━━━━━━━━━━━━━━━━",
+      "  INDEX         LAST      CHG       CHG%    YTD",
+      "  ─────────────────────────────────────────────────────────",
+      "  SPX           5,432.1  +18.4    +0.34%  +16.2%",
+      "  NDX (Nasdaq) 19,321.4  +72.8    +0.38%  +19.8%",
+      "  DJIA         39,142.2   -34.1   -0.09%  +7.14%",
+      "  VIX               14.2   -0.84   -5.59%",
+      "  SX5E (Euro)   5,234.5  +11.2    +0.21%  +9.32%",
+      "  DAX          18,542.1   -33.4   -0.18%  +11.4%",
+      "  FTSE 100      8,321.4   -10.8   -0.13%  +7.24%",
+      "  NKY (Nikkei) 38,741.2 +142.0    +0.37%  +19.1%",
+      "  HSI (HK)     17,821.3  -142.8   -0.80%  -4.32%",
+      "  CSI 300       3,421.8   +22.4   +0.66%  +3.41%",
+      "  ─────────────────────────────────────────────────────────",
+      "  Source: NUR Market Data  ·  Delayed 15min for non-subscribers",
     ],
   },
 ];
@@ -275,17 +441,50 @@ export default function NURTerminalPanel() {
 
     const upper = trimmed.toUpperCase();
 
+    // CLEAR command
+    if (upper === "CLEAR" || upper === "CLS" || upper === "CLR") {
+      setCmdLines([{ id: `clr-${Date.now()}`, type: "info", text: "NFS Terminal cleared  ·  Type HELP <GO> for commands", time: formatTime(new Date()) }]);
+      return;
+    }
+
     // HELP command
-    if (upper === "HELP" || upper === "?") {
-      const categories = [...new Set(NUR_COMMANDS.map(c => c.category))];
-      pushLine({ type: "info", text: "━━━━━━━━━━━━━━━━━━ NUR FINANCE COMMAND REFERENCE ━━━━━━━━━━━━━━━━━━", time: formatTime(new Date()) });
-      for (const cat of categories) {
-        pushLine({ type: "info", text: `\n  ── ${cat} ──`, time: formatTime(new Date()) });
-        NUR_COMMANDS.filter(c => c.category === cat).forEach(cmd => {
-          pushLine({ type: "output", text: `  ${cmd.aliases.join(" · ").padEnd(24)} ${cmd.description}`, time: formatTime(new Date()) });
-        });
-      }
-      pushLine({ type: "info", text: "\n  Press Enter or type <GO> after any command to execute.", time: formatTime(new Date()) });
+    if (upper === "HELP" || upper === "?" || upper === "HLP") {
+      const now = formatTime(new Date());
+      const categories = [...new Set(NUR_COMMANDS.filter(c => !c.output).map(c => c.category))];
+      const specialCats = [...new Set(NUR_COMMANDS.filter(c => c.output).map(c => c.category))];
+
+      setCmdLines(prev => {
+        const header: CmdLine[] = [
+          { id: `h0-${Date.now()}`, type: "info", text: "╔══════════════════ NUR FINANCE SYSTEM — COMMAND REFERENCE ═══════════════════╗", time: now },
+          { id: `h1-${Date.now()}`, type: "info", text: "║  Type command + Enter  ·  Arrow ↑/↓ for history  ·  CLEAR to reset output  ║", time: now },
+          { id: `h2-${Date.now()}`, type: "info", text: "╚═════════════════════════════════════════════════════════════════════════════╝", time: now },
+        ];
+        const catLines: CmdLine[] = [];
+
+        for (const cat of categories) {
+          const cmds = NUR_COMMANDS.filter(c => c.category === cat && !c.output);
+          catLines.push({ id: `cat-${cat}-${Date.now()}`, type: "info", text: `  ┌── ${cat} ${"─".repeat(Math.max(0, 70 - cat.length))}`, time: now });
+          for (const cmd of cmds) {
+            const aliases = cmd.aliases.slice(0, 3).join(" · ");
+            catLines.push({ id: `cmd-${cmd.aliases[0]}-${Date.now()}-${Math.random()}`, type: "output", text: `  │  ${aliases.padEnd(22)}  ${cmd.description}`, time: now });
+          }
+          catLines.push({ id: `catend-${cat}-${Date.now()}`, type: "info", text: "  └" + "─".repeat(74), time: now });
+        }
+
+        // Output-only commands
+        if (specialCats.length) {
+          catLines.push({ id: `sp-hdr-${Date.now()}`, type: "info", text: "  ┌── OUTPUT COMMANDS (inline data, no navigation) ──────────────────────────", time: now });
+          for (const cmd of NUR_COMMANDS.filter(c => c.output)) {
+            const aliases = cmd.aliases.slice(0, 3).join(" · ");
+            catLines.push({ id: `sp-${cmd.aliases[0]}-${Date.now()}-${Math.random()}`, type: "output", text: `  │  ${aliases.padEnd(22)}  ${cmd.description}`, time: now });
+          }
+          catLines.push({ id: `sp-end-${Date.now()}`, type: "info", text: "  └" + "─".repeat(74), time: now });
+        }
+
+        catLines.push({ id: `hfooter-${Date.now()}`, type: "info", text: "  CLEAR · CLS = clear output   HELP = this reference   <GO> = execute", time: now });
+
+        return [...prev, ...header, ...catLines].slice(-300);
+      });
       return;
     }
 
