@@ -27,31 +27,18 @@ async function detectGeoLocale(): Promise<{ locale: Locale; country: string } | 
 
 export function useLocale() {
   const [locale, setLocaleState] = useState<Locale>("en");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState<string | null>(null);
 
   useEffect(() => {
-    async function init() {
-      const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
-      if (stored) {
-        setLocaleState(stored);
-        setLoading(false);
-        return;
-      }
-
-      const geo = await detectGeoLocale();
-      if (geo) {
-        setLocaleState(geo.locale);
-        setCountry(geo.country);
-        localStorage.setItem(STORAGE_KEY, geo.locale);
-      } else {
-        const browserLocale = detectBrowserLocale();
-        setLocaleState(browserLocale);
-        localStorage.setItem(STORAGE_KEY, browserLocale);
-      }
-      setLoading(false);
+    const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
+    if (stored) {
+      setLocaleState(stored);
+    } else {
+      // NUR Finance primary native language is English. Default to 'en' strictly.
+      setLocaleState("en");
+      localStorage.setItem(STORAGE_KEY, "en");
     }
-    init();
   }, []);
 
   const setLocale = useCallback((newLocale: Locale) => {
