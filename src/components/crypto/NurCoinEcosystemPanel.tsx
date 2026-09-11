@@ -6,6 +6,7 @@ import EagleCrest from "@/components/ui/EagleCrest";
 import { cyberSound } from "@/lib/audio/sound-synth";
 import { generateBase32Secret, generateOtpAuthUri, verifyTOTP } from "@/lib/security/totp";
 import { sha256Hex } from "@/lib/security/hash";
+import SovereignLedgerExplorer from "./SovereignLedgerExplorer";
 
 interface MiningBot {
   id: string;
@@ -148,7 +149,7 @@ export default function NurCoinEcosystemPanel() {
   const [userNURBalance, setUserNURBalance] = useState(125000);
   const [miningBots, setMiningBots] = useState<MiningBot[]>(INITIAL_MINING_BOTS);
   const [activeTab, setActiveTab] = useState<
-    "swap" | "mining" | "rewards" | "card" | "staking" | "governance" | "security" | "history" | "tokenomics" | "subchain"
+    "swap" | "explorer" | "mining" | "rewards" | "card" | "staking" | "governance" | "security" | "history" | "tokenomics" | "subchain"
   >("swap");
   const [newBotName, setNewBotName] = useState("");
   const [newBotAlgorithm, setNewBotAlgorithm] = useState<MiningBot["algorithm"]>("NurPoY (Yield)");
@@ -674,6 +675,7 @@ export default function NurCoinEcosystemPanel() {
             {(
               [
                 { id: "swap" as const, label: "🔄 1-Click Swap ($NUR)" },
+                { id: "explorer" as const, label: "🌐 On-Chain Explorer" },
                 { id: "mining" as const, label: "⛏️ Mining & Nodes" },
                 { id: "rewards" as const, label: "⚙️ Compute Optimization" },
                 { id: "card" as const, label: "💳 Nur Card" },
@@ -820,6 +822,13 @@ export default function NurCoinEcosystemPanel() {
                 )}
               </button>
             </form>
+          </div>
+        )}
+
+        {/* ON-CHAIN EXPLORER TAB */}
+        {activeTab === "explorer" && (
+          <div className="h-full">
+            <SovereignLedgerExplorer />
           </div>
         )}
 

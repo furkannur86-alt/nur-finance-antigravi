@@ -5,6 +5,7 @@ import EagleCrest from "@/components/ui/EagleCrest";
 import { useIDEStore } from "@/stores/useIDEStore";
 import { getStoredSovereignWallet, updateSovereignWallet } from "@/lib/crypto/sovereignWallet";
 import { hdVoiceEngine } from "@/lib/broadcast/multilingual-broadcast";
+import AIAvatarStudio from "./AIAvatarStudio";
 
 export interface SocialPost {
   id: string;
@@ -83,6 +84,7 @@ export default function FinancialSocialPanel() {
   const [nationalIdHash, setNationalIdHash] = useState("ID-TR-8492048194-VERIFIED");
   const [ibanNumber, setIbanNumber] = useState("DE89 3704 0044 0532 0130 00");
   const [kycVerified, setKycVerified] = useState(true);
+  const [activeSocialTab, setActiveSocialTab] = useState<"FEED_DOSSIER" | "AVATAR_STUDIO">("FEED_DOSSIER");
   const [isSpeakingConcierge, setIsSpeakingConcierge] = useState(false);
 
   // Presentable AI Concierge persona matching user's opposite gender
@@ -169,6 +171,25 @@ export default function FinancialSocialPanel() {
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
+          <div className="flex bg-slate-900 border border-white/10 rounded-xl p-1">
+            <button
+              onClick={() => setActiveSocialTab("FEED_DOSSIER")}
+              className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                activeSocialTab === "FEED_DOSSIER" ? "bg-cyan-500 text-slate-950 shadow" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              👥 SOCIAL FEED & KYC
+            </button>
+            <button
+              onClick={() => setActiveSocialTab("AVATAR_STUDIO")}
+              className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                activeSocialTab === "AVATAR_STUDIO" ? "bg-purple-600 text-white shadow" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              🎙️ AI AVATAR STUDIO
+            </button>
+          </div>
+
           <button
             onClick={() => openFloatingWindow("professional-social", "👥 NUR Sovereign Social Network")}
             className="px-2 py-1.5 rounded bg-black/50 border border-white/10 text-slate-300 hover:text-white text-xs font-bold"
@@ -186,59 +207,65 @@ export default function FinancialSocialPanel() {
         </div>
       </div>
 
-      {/* ── PRESENTABLE OPPOSITE-GENDER AI CONCIERGE WELCOME BANNER ──────── */}
-      <div className="px-4 py-3 bg-gradient-to-r from-slate-950 via-[#0a1830] to-slate-950 border-b border-cyan-500/20 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-amber-400 p-0.5 shadow-lg flex items-center justify-center text-2xl">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              {conciergePersona.avatar}
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-white font-serif">{conciergePersona.name}</span>
-              <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">
-                {conciergePersona.title}
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 mt-0.5 max-w-2xl leading-relaxed">
-              &ldquo;{conciergePersona.greeting}&rdquo;
-            </p>
-          </div>
+      {activeSocialTab === "AVATAR_STUDIO" ? (
+        <div className="flex-1 overflow-hidden">
+          <AIAvatarStudio />
         </div>
+      ) : (
+        <>
+          {/* ── PRESENTABLE OPPOSITE-GENDER AI CONCIERGE WELCOME BANNER ──────── */}
+          <div className="px-4 py-3 bg-gradient-to-r from-slate-950 via-[#0a1830] to-slate-950 border-b border-cyan-500/20 flex flex-wrap items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-amber-400 p-0.5 shadow-lg flex items-center justify-center text-2xl">
+                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                  {conciergePersona.avatar}
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-white font-serif">{conciergePersona.name}</span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">
+                    {conciergePersona.title}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 mt-0.5 max-w-2xl leading-relaxed">
+                  &ldquo;{conciergePersona.greeting}&rdquo;
+                </p>
+              </div>
+            </div>
 
-        <div className="flex items-center gap-2">
-          {/* Gender Selector Toggle */}
-          <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-[10px] font-mono">
-            <span className="text-slate-400 px-1">GENDER:</span>
-            {(["MALE", "FEMALE"] as const).map((g) => (
+            <div className="flex items-center gap-2">
+              {/* Gender Selector Toggle */}
+              <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-[10px] font-mono">
+                <span className="text-slate-400 px-1">GENDER:</span>
+                {(["MALE", "FEMALE"] as const).map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setUserGender(g)}
+                    className={`px-2 py-0.5 rounded font-bold transition-all ${
+                      userGender === g ? "bg-cyan-500 text-black shadow" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+
               <button
-                key={g}
-                onClick={() => setUserGender(g)}
-                className={`px-2 py-0.5 rounded font-bold transition-all ${
-                  userGender === g ? "bg-cyan-500 text-black shadow" : "text-slate-400 hover:text-white"
+                onClick={handleSpeakConcierge}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs font-mono transition-all border flex items-center gap-1.5 ${
+                  isSpeakingConcierge
+                    ? "bg-red-600 text-white border-red-500 animate-pulse"
+                    : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
                 }`}
               >
-                {g}
+                <span>{isSpeakingConcierge ? "⏹️ STOP" : "🔊 CONCIERGE VOICE"}</span>
               </button>
-            ))}
+            </div>
           </div>
 
-          <button
-            onClick={handleSpeakConcierge}
-            className={`px-3 py-1.5 rounded-xl font-bold text-xs font-mono transition-all border flex items-center gap-1.5 ${
-              isSpeakingConcierge
-                ? "bg-red-600 text-white border-red-500 animate-pulse"
-                : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
-            }`}
-          >
-            <span>{isSpeakingConcierge ? "⏹️ STOP" : "🔊 CONCIERGE VOICE"}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── MAIN 2-COLUMN LAYOUT: SOCIAL FEED & KYC DOSSIER ──────────────── */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-hidden">
+          {/* ── MAIN 2-COLUMN LAYOUT: SOCIAL FEED & KYC DOSSIER ──────────────── */}
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-hidden">
         {/* LEFT COLUMN: SOCIAL FEED & POST CREATOR (7 COLS) */}
         <div className="lg:col-span-7 flex flex-col gap-3 overflow-hidden">
           {/* Post Creator Box */}
@@ -460,6 +487,8 @@ export default function FinancialSocialPanel() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
