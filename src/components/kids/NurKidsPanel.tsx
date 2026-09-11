@@ -27,6 +27,21 @@ interface ChildProfile {
   courses: Course[];
 }
 
+const CATALOG_COURSES: Course[] = [
+  { id: "c-en",     subject: "English",            icon: "🇬🇧", ageRange: "6–12",  lessonsTotal: 40, lessonsCompleted: 0 },
+  { id: "c-de",     subject: "German",             icon: "🇩🇪", ageRange: "8–14",  lessonsTotal: 36, lessonsCompleted: 0 },
+  { id: "c-tr",     subject: "Turkish",            icon: "🇹🇷", ageRange: "6–12",  lessonsTotal: 32, lessonsCompleted: 0 },
+  { id: "c-math",   subject: "Financial Literacy", icon: "💰", ageRange: "8–14",  lessonsTotal: 24, lessonsCompleted: 0 },
+  { id: "c-inv",    subject: "Investing 101",      icon: "📈", ageRange: "12–17", lessonsTotal: 18, lessonsCompleted: 0 },
+  { id: "c-stem",   subject: "STEM Fundamentals",  icon: "🔬", ageRange: "7–13",  lessonsTotal: 30, lessonsCompleted: 0 },
+  { id: "c-code",   subject: "Beginner Coding",    icon: "💻", ageRange: "9–15",  lessonsTotal: 20, lessonsCompleted: 0 },
+  { id: "c-py",     subject: "Python Programming", icon: "🐍", ageRange: "11–17", lessonsTotal: 26, lessonsCompleted: 0 },
+  { id: "c-hist",   subject: "World History",      icon: "📜", ageRange: "10–16", lessonsTotal: 22, lessonsCompleted: 0 },
+  { id: "c-env",    subject: "Climate & Nature",   icon: "🌿", ageRange: "6–12",  lessonsTotal: 16, lessonsCompleted: 0 },
+  { id: "c-music",  subject: "Music Theory",       icon: "🎵", ageRange: "6–12",  lessonsTotal: 18, lessonsCompleted: 0 },
+  { id: "c-entre",  subject: "Young Entrepreneur", icon: "🚀", ageRange: "12–17", lessonsTotal: 14, lessonsCompleted: 0 },
+];
+
 const INITIAL_CHILDREN: ChildProfile[] = [
   {
     id: "child-1",
@@ -225,19 +240,64 @@ export default function NurKidsPanel() {
           )}
 
           {activeTab === "catalog" && (
-            <div className="p-5 rounded-2xl border border-white/10 bg-black/50 space-y-3">
-              <h3 className="text-sm font-bold text-white font-serif">Course Catalog</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {selectedChild.courses.map((c) => (
-                  <div key={c.id} className="p-4 rounded-xl bg-black/40 border border-white/5">
-                    <div className="text-sm font-bold text-white">{c.icon} {c.subject}</div>
-                    <div className="text-[11px] text-slate-400 mt-1">Age group: {c.ageRange}</div>
-                    <div className="text-[11px] text-emerald-400 mt-0.5">{c.lessonsCompleted}/{c.lessonsTotal} lessons completed</div>
-                  </div>
-                ))}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white font-serif">Full Course Catalog</h3>
+                <span className="text-[10px] text-slate-400">{CATALOG_COURSES.length} courses available</span>
               </div>
-              <p className="text-[10px] text-slate-500 border-t border-white/10 pt-2">
-                Note: This is a course progress catalog, not an AI chat tool that interacts live with the child.
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {CATALOG_COURSES.map((c) => {
+                  const enrolled = selectedChild.courses.find(sc => sc.id === c.id);
+                  const pct = enrolled ? Math.round((enrolled.lessonsCompleted / enrolled.lessonsTotal) * 100) : 0;
+                  return (
+                    <div
+                      key={c.id}
+                      className="p-4 rounded-xl border transition-all hover:border-amber-500/30"
+                      style={{
+                        background: enrolled ? "rgba(251,191,36,0.04)" : "rgba(0,0,0,0.4)",
+                        borderColor: enrolled ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)",
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{c.icon}</span>
+                          <div>
+                            <div className="text-[12px] font-bold text-white">{c.subject}</div>
+                            <div className="text-[10px] text-slate-400">Ages {c.ageRange} · {c.lessonsTotal} lessons</div>
+                          </div>
+                        </div>
+                        {enrolled && (
+                          <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24" }}>
+                            ENROLLED
+                          </span>
+                        )}
+                      </div>
+                      {enrolled && (
+                        <div className="mt-2">
+                          <div className="flex justify-between text-[9px] text-slate-400 mb-1">
+                            <span>{enrolled.lessonsCompleted}/{enrolled.lessonsTotal} lessons</span>
+                            <span>{pct}%</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-black/60 overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all" style={{ width: `${pct}%` }} />
+                          </div>
+                        </div>
+                      )}
+                      {!enrolled && (
+                        <button
+                          onClick={() => addNotification({ title: "Demo — Enrollment", message: `In production: enroll ${selectedChild.name} in ${c.subject}.`, severity: "INFO", category: "SYSTEM" })}
+                          className="mt-2 w-full py-1 rounded-lg text-[10px] font-bold transition-colors"
+                          style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.2)" }}
+                        >
+                          + Enroll {selectedChild.name}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-slate-500 border-t border-white/10 pt-3">
+                Course content delivered via curated third-party curricula (Khan Academy, Duolingo API, Coursera). Enrollment management is parent-controlled. Not an AI chat tool.
               </p>
             </div>
           )}

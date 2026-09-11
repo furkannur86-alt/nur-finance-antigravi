@@ -8,6 +8,7 @@ import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { getMyProfile } from "@/lib/auth/supabase-auth";
 import AccountAuthModal from "@/components/auth/AccountAuthModal";
 import ModuleLauncher from "@/components/layout/ModuleLauncher";
+import DownloadAppModal from "@/components/layout/DownloadAppModal";
 
 const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }> = {
   dashboard:            { label: "Dashboard",         icon: "📊", color: "#00d4aa" },
@@ -64,6 +65,7 @@ export default function TopBar() {
   const { user } = useSupabaseAuth();
   const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [launcherOpen, setLauncherOpen] = useState(false);
+  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -239,6 +241,23 @@ export default function TopBar() {
 
         <div className="flex-1" />
 
+        {/* ── Download CTA ──────────────────────────────────────────────── */}
+        <button
+          onClick={() => setDownloadModalOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 shrink-0 text-[10px] font-mono font-black tracking-widest transition-all hover:scale-[1.02]"
+          style={{
+            background: "linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.06))",
+            border: "1px solid rgba(245,158,11,0.35)",
+            borderRadius: 4,
+            color: "#f59e0b",
+            boxShadow: "0 0 12px rgba(245,158,11,0.08)",
+          }}
+          title="Download NUR Finance Desktop App"
+        >
+          <span>⬇</span>
+          <span>APP</span>
+        </button>
+
         {/* ── Right controls ────────────────────────────────────────────── */}
 
         {/* Account */}
@@ -335,6 +354,7 @@ export default function TopBar() {
 
       <ModuleLauncher open={launcherOpen} onClose={() => setLauncherOpen(false)} />
       <AccountAuthModal open={accountModalOpen} onClose={() => setAccountModalOpen(false)} />
+      <DownloadAppModal open={downloadModalOpen} onClose={() => setDownloadModalOpen(false)} />
     </>
   );
 }
