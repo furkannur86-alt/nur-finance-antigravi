@@ -140,7 +140,7 @@ const INITIAL_MINING_BOTS: MiningBot[] = [
 ];
 
 export default function NurCoinEcosystemPanel() {
-  const { addNotification, updateVerification } = useIDEStore();
+  const { addNotification } = useIDEStore();
 
   const [swapFromCurrency, setSwapFromCurrency] = useState<"USDT" | "USDC" | "BTC" | "ETH">("USDT");
   const [swapFromAmount, setSwapFromAmount] = useState("100000");
@@ -785,7 +785,7 @@ export default function NurCoinEcosystemPanel() {
                     />
                     <select
                       value={swapFromCurrency}
-                      onChange={(e) => setSwapFromCurrency(e.target.value as any)}
+                      onChange={(e) => setSwapFromCurrency(e.target.value as "USDT" | "USDC" | "BTC" | "ETH")}
                       className="bg-slate-900 border border-white/20 text-xs font-mono text-cyan-300 p-2 rounded-lg focus:outline-none"
                     >
                       <option value="USDT">USDT (Tether)</option>
@@ -865,7 +865,7 @@ export default function NurCoinEcosystemPanel() {
               />
               <select
                 value={newBotAlgorithm}
-                onChange={(e) => setNewBotAlgorithm(e.target.value as any)}
+                onChange={(e) => setNewBotAlgorithm(e.target.value as MiningBot["algorithm"])}
                 className="p-2.5 rounded-xl bg-slate-900 border border-white/20 text-xs font-mono text-emerald-300 focus:outline-none"
               >
                 <option value="NurPoY (Yield)">NurPoY (Yield)</option>

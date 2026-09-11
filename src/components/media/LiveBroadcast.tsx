@@ -48,8 +48,8 @@ const MARKET_DATA = [
 ];
 
 export default function LiveBroadcast() {
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
+  const [currentTime, setCurrentTime] = useState<Date | null>(() => new Date());
+  const [selectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
   const [selectedChannel, setSelectedChannel] = useState(LIVE_CHANNELS[0]);
   const [showChannelPicker, setShowChannelPicker] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -59,7 +59,6 @@ export default function LiveBroadcast() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    setCurrentTime(new Date());
     const interval = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);

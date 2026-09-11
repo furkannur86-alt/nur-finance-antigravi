@@ -4,9 +4,6 @@
  * dynamic chart overlays, and real-time market telemetry to YouTube RTMP.
  */
 
-import { spawn } from "child_process";
-import fs from "fs";
-import path from "path";
 
 const YOUTUBE_RTMP_URL = process.env.YOUTUBE_RTMP_URL || "rtmp://a.rtmp.youtube.com/live2";
 const YOUTUBE_STREAM_KEY = process.env.YOUTUBE_STREAM_KEY || "YOUR_STREAM_KEY_HERE";

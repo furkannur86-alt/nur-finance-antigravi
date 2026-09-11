@@ -50,7 +50,7 @@ export default function NurEducationPanel() {
   const [computeActive, setComputeActive] = useState(false);
   const [earnedTotal, setEarnedTotal] = useState(0);
   const [sessionHashRate, setSessionHashRate] = useState(0);
-  const [tickNow, setTickNow] = useState(Date.now());
+  const [, setTickNow] = useState(() => Date.now());
 
   useEffect(() => {
     if (!computeActive) return;

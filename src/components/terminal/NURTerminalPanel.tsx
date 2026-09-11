@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import EagleCrest from "@/components/ui/EagleCrest";
 
 interface TickerItem {
@@ -134,23 +134,20 @@ export default function NURTerminalPanel() {
   const newsRef = useRef<HTMLDivElement>(null);
   const commentaryRef = useRef<HTMLDivElement>(null);
 
-  const addNews = useCallback(() => {
-    setNews((prev) => [generateNewsItem(), ...prev].slice(0, 50));
-  }, []);
-
-  const addCommentary = useCallback(() => {
-    setCommentaries((prev) => [generateCommentaryItem(), ...prev].slice(0, 30));
-  }, []);
-
   useEffect(() => {
-    const newsInterval = setInterval(addNews, 4000 + Math.random() * 6000);
-    const commentaryInterval = setInterval(addCommentary, 12000 + Math.random() * 18000);
-
+    const newsInterval = setInterval(
+      () => setNews((prev) => [generateNewsItem(), ...prev].slice(0, 50)),
+      4000 + Math.random() * 6000
+    );
+    const commentaryInterval = setInterval(
+      () => setCommentaries((prev) => [generateCommentaryItem(), ...prev].slice(0, 30)),
+      12000 + Math.random() * 18000
+    );
     return () => {
       clearInterval(newsInterval);
       clearInterval(commentaryInterval);
     };
-  }, [addNews, addCommentary]);
+  }, []);
 
   const chartPoints = generateChartData(chartTimeframe);
 
