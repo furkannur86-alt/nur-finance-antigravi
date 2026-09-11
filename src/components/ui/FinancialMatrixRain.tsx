@@ -8,6 +8,9 @@ interface FinancialMatrixRainProps {
 }
 
 const SYMBOLS_POOL = [
+  // Hitchhiker's Guide to the Galaxy Easter Egg & Sacred Number Stream
+  "13 35 42 55 5475146", "42 — THE ANSWER", "DON'T PANIC 42", "42 55 5475146",
+
   // Live Borsa & Ticker Strings
   "NVDA 128.40 ▲", "AAPL 224.50 ▲", "BTC 68,450 ▲", "ETH 3,520 ▲",
   "XAU/USD 2,530 ▲", "EUR/USD 1.0914", "SPX 5,742.8 ▲", "NQ 19,850 ▲",

@@ -544,29 +544,61 @@ export default function NurEarth3DGlobe() {
       const cy = height / 2;
       const globeRadius = Math.min(width, height) * 0.38 * zoom;
 
-      // 1. Cosmic Atmosphere & Deep Space Halo Glow
-      const glowGrad = ctx.createRadialGradient(cx, cy, globeRadius * 0.7, cx, cy, globeRadius * 1.35);
-      glowGrad.addColorStop(0, "rgba(0, 212, 170, 0.12)");
-      glowGrad.addColorStop(0.5, "rgba(56, 189, 248, 0.06)");
+      // 1. Starfield Space Background (Spaceship Cockpit View)
+      ctx.fillStyle = "rgba(10, 15, 26, 0.4)";
+      ctx.fillRect(0, 0, width, height);
+
+      // Star particles
+      for (let i = 0; i < 80; i++) {
+        const starX = ((Math.sin(i * 99 + timeRef.current * 0.05) + 1) * 0.5) * width;
+        const starY = ((Math.cos(i * 33 + timeRef.current * 0.02) + 1) * 0.5) * height;
+        const starSize = (i % 3) === 0 ? 1.5 : 1;
+        const starAlpha = 0.3 + 0.5 * Math.sin(timeRef.current * 2 + i);
+        ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
+        ctx.beginPath();
+        ctx.arc(starX, starY, starSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Cosmic Atmosphere & Deep Space Halo Glow
+      const glowGrad = ctx.createRadialGradient(cx, cy, globeRadius * 0.8, cx, cy, globeRadius * 1.4);
+      glowGrad.addColorStop(0, "rgba(56, 189, 248, 0.18)");
+      glowGrad.addColorStop(0.5, "rgba(0, 212, 170, 0.08)");
       glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = glowGrad;
       ctx.beginPath();
-      ctx.arc(cx, cy, globeRadius * 1.35, 0, Math.PI * 2);
+      ctx.arc(cx, cy, globeRadius * 1.4, 0, Math.PI * 2);
       ctx.fill();
 
-      // 2. Globe Oceanic Base Sphere
-      const oceanGrad = ctx.createRadialGradient(cx - globeRadius * 0.3, cy - globeRadius * 0.3, 10, cx, cy, globeRadius);
-      oceanGrad.addColorStop(0, "#0e1a2f");
-      oceanGrad.addColorStop(0.6, "#060d18");
-      oceanGrad.addColorStop(1, "#020409");
+      // 2. Globe Oceanic Base Sphere with Realistic Day/Night Sunlight Shading
+      // Sun position moves slowly around the planet
+      const sunAngle = timeRef.current * 0.05;
+      const sunX = cx + Math.cos(sunAngle) * globeRadius * 0.6;
+      const sunY = cy - Math.sin(sunAngle) * globeRadius * 0.3;
+
+      const oceanGrad = ctx.createRadialGradient(sunX, sunY, globeRadius * 0.1, cx, cy, globeRadius);
+      oceanGrad.addColorStop(0, "#1e3a8a");   // Direct Sunlight Sapphire Blue
+      oceanGrad.addColorStop(0.35, "#0f2b5c"); // Ocean Mid-Depth
+      oceanGrad.addColorStop(0.7, "#061329");  // Twilight Zone
+      oceanGrad.addColorStop(1, "#02060f");    // Night Side Deep Black
       ctx.fillStyle = oceanGrad;
       ctx.beginPath();
       ctx.arc(cx, cy, globeRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Globe Rim Edge Shading
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
-      ctx.lineWidth = 1.5;
+      // Atmospheric Limb Glow (Realistic Space Edge Effect)
+      const limbGrad = ctx.createRadialGradient(cx, cy, globeRadius * 0.93, cx, cy, globeRadius);
+      limbGrad.addColorStop(0, "rgba(56, 189, 248, 0)");
+      limbGrad.addColorStop(0.8, "rgba(56, 189, 248, 0.25)");
+      limbGrad.addColorStop(1, "rgba(186, 230, 253, 0.6)");
+      ctx.fillStyle = limbGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, globeRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Globe Rim Outer Ring
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+      ctx.lineWidth = 1.8;
       ctx.stroke();
 
       // 3. Grid Lines (Lat / Lon wireframe)
