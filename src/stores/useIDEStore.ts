@@ -162,8 +162,10 @@ interface IDEState {
   sovereignAuthModalOpen: boolean;
   soundMuted: boolean;
   focusedCoordinates: [number, number] | null;
+  expandedPanel: string | null;
 
   // Actions
+  setExpandedPanel: (panel: string | null) => void;
   setFocusedCoordinates: (coords: [number, number] | null) => void;
   openFile: (node: FileNode) => void;
   closeTab: (id: string) => void;
@@ -246,7 +248,9 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     documentUploaded: false,
     overallStatus: "NOT_STARTED",
   },
+  expandedPanel: null,
 
+  setExpandedPanel: (expandedPanel) => set({ expandedPanel }),
   setFocusedCoordinates: (focusedCoordinates) => set({ focusedCoordinates }),
   setSovereignAdmin: (isSovereignAdmin) => set({ isSovereignAdmin }),
   setSovereignAuthModalOpen: (sovereignAuthModalOpen) => set({ sovereignAuthModalOpen }),

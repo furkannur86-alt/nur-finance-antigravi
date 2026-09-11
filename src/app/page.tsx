@@ -49,6 +49,10 @@ import InstitutionalSuitePanel from "@/components/institutional/InstitutionalSui
 import OrbitalTelemetryPanel from "@/components/orbital/OrbitalTelemetryPanel";
 import ProfessionalAIHubPanel from "@/components/professional/ProfessionalAIHubPanel";
 import FinancialSocialPanel from "@/components/social/FinancialSocialPanel";
+import ResourceIntelligencePanel from "@/components/resources/ResourceIntelligencePanel";
+import ProfessionHubPanel from "@/components/social/ProfessionHubPanel";
+import UserProfilePanel from "@/components/social/UserProfilePanel";
+import WISHFrameworkPanel from "@/components/trading/WISHFrameworkPanel";
 import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
 import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
@@ -69,10 +73,14 @@ const FULLSCREEN_VIEWS = [
   "nur-education",
   "compute-access",
   "geophysics-resources",
+  "resource-intelligence",
   "institutional-suite",
   "orbital-telemetry",
   "professional-ai",
   "professional-social",
+  "user-profile",
+  "profession-hub",
+  "wish-framework",
   "global-markets", "economic-data", "data-ingest", "geopolitics",
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
@@ -154,6 +162,8 @@ export default function Home() {
         return <ComputeForAccessPanel />;
       case "geophysics-resources":
         return <GeophysicsResourcesPanel />;
+      case "resource-intelligence":
+        return <ResourceIntelligencePanel />;
       case "institutional-suite":
         return <InstitutionalSuitePanel />;
       case "orbital-telemetry":
@@ -162,6 +172,12 @@ export default function Home() {
         return <ProfessionalAIHubPanel />;
       case "professional-social":
         return <FinancialSocialPanel />;
+      case "user-profile":
+        return <UserProfilePanel />;
+      case "profession-hub":
+        return <ProfessionHubPanel />;
+      case "wish-framework":
+        return <WISHFrameworkPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":

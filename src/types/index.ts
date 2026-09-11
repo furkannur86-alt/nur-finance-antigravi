@@ -107,10 +107,14 @@ export type PanelView =
   | "nur-education"
   | "compute-access"
   | "geophysics-resources"
+  | "resource-intelligence"
   | "institutional-suite"
   | "orbital-telemetry"
   | "professional-ai"
-  | "professional-social";
+  | "professional-social"
+  | "user-profile"
+  | "profession-hub"
+  | "wish-framework";
 
 export interface FloatingWindowConfig {
   id: string;

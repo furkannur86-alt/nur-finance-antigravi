@@ -1,0 +1,972 @@
+<title>NUR TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#060810;--surface:#0c1420;--surface2:#111827;--surface3:#1a2235;
+  --amber:#C8882A;--amber-b:#E8A040;--amber-d:#7A5018;
+  --cyan:#00C4D0;--cyan-d:#005a60;
+  --crimson:#C41E1E;--crimson-d:#6b1010;
+  --text:#E2DDD4;--text-dim:#8a8580;--text-muted:#4a4a55;
+  --green:#22c55e;--red:#ef4444;
+  --border:rgba(200,136,42,0.18);--border-c:rgba(0,196,208,0.2);
+}
+html,body{height:100%;background:var(--void);color:var(--text);font-family:'Barlow',sans-serif;overflow:hidden;font-variant-numeric:tabular-nums}
+
+/* SHELL */
+#shell{display:flex;flex-direction:column;height:100vh;position:relative}
+#three-canvas{position:absolute;inset:0;z-index:0;width:100%!important;height:100%!important}
+#scanlines{position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px)}
+#ui{position:relative;z-index:2;display:flex;flex-direction:column;height:100%}
+
+/* TOP BAR */
+#top{display:flex;align-items:center;gap:12px;padding:8px 16px;background:rgba(6,8,16,0.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px;margin-right:4px}
+.logo-box{width:32px;height:32px;background:linear-gradient(135deg,var(--amber),var(--amber-b));border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:#000;flex-shrink:0}
+.logo-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:.08em;color:var(--amber-b);text-transform:uppercase;line-height:1}
+.logo-sub{font-size:8px;letter-spacing:.22em;color:var(--text-muted);text-transform:uppercase;line-height:1;margin-top:2px}
+.live{display:flex;align-items:center;gap:4px;background:var(--crimson);padding:2px 7px;border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:.14em;color:#fff;text-transform:uppercase;flex-shrink:0}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#fff;animation:blink 1s steps(1) infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ch-tabs{display:flex;gap:3px}
+.ch{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:.05em;padding:4px 10px;border-radius:3px;cursor:pointer;transition:all .12s;white-space:nowrap}
+.ch:hover{background:rgba(200,136,42,0.1);color:var(--amber-b);border-color:var(--amber-d)}
+.ch.active{background:linear-gradient(135deg,rgba(200,136,42,0.22),rgba(200,136,42,0.08));border-color:var(--amber);color:var(--amber-b)}
+/* Camera angle buttons */
+.cam-tabs{display:flex;gap:3px}
+.cam{background:rgba(0,196,208,0.06);border:1px solid rgba(0,196,208,0.12);color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;cursor:pointer;transition:all .12s;white-space:nowrap;text-transform:uppercase}
+.cam:hover{color:var(--cyan);border-color:var(--border-c)}
+.cam.active{background:rgba(0,196,208,0.15);border-color:var(--cyan);color:var(--cyan)}
+.clocks{display:flex;gap:14px;flex-shrink:0}
+.clk{text-align:center}
+.clk-city{font-size:8px;letter-spacing:.16em;color:var(--text-muted);text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:600}
+.clk-t{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--cyan);letter-spacing:.03em}
+.lang-sel{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.05em;padding:3px 7px;border-radius:3px;cursor:pointer;outline:none}
+.ctrl{width:28px;height:28px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:3px;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .12s;flex-shrink:0}
+.ctrl:hover{background:rgba(0,196,208,0.14);color:var(--cyan);border-color:var(--border-c)}
+.ctrl.on{background:rgba(0,196,208,0.18);color:var(--cyan);border-color:var(--cyan)}
+/* Audio status pill */
+.audio-pill{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,0.5);border:1px solid rgba(200,136,42,0.25);border-radius:20px;padding:3px 10px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:.06em;color:var(--text-dim);white-space:nowrap;cursor:pointer;transition:all .12s;flex-shrink:0}
+.audio-pill:hover{border-color:var(--amber);color:var(--amber-b)}
+.audio-pill.playing{border-color:var(--cyan);color:var(--cyan);background:rgba(0,196,208,0.08)}
+.audio-bars{display:flex;align-items:center;gap:1px;height:12px}
+.ab{width:2px;background:currentColor;border-radius:1px;height:3px}
+.playing .ab:nth-child(1){animation:aw .8s ease-in-out 0s infinite}
+.playing .ab:nth-child(2){animation:aw .8s ease-in-out .13s infinite}
+.playing .ab:nth-child(3){animation:aw .8s ease-in-out .26s infinite}
+.playing .ab:nth-child(4){animation:aw .8s ease-in-out .39s infinite}
+.playing .ab:nth-child(5){animation:aw .8s ease-in-out .52s infinite}
+@keyframes aw{0%,100%{height:2px}50%{height:11px}}
+
+/* MAIN */
+#main{display:flex;flex:1;min-height:0}
+#center{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
+#studio-wrap{flex:1;min-height:0;position:relative;overflow:hidden}
+#three-local{width:100%;height:100%;display:block}
+/* CG OVERLAY */
+#cg{position:absolute;inset:0;pointer-events:none}
+#cg-canvas{width:100%;height:100%;display:block}
+
+/* Spiker button */
+#spiker{position:absolute;top:12px;left:14px;pointer-events:all;display:flex;align-items:center;gap:7px;background:rgba(6,8,16,0.8);border:1px solid var(--amber-d);border-radius:5px;padding:5px 11px;cursor:pointer;transition:all .13s;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.07em;backdrop-filter:blur(10px)}
+#spiker:hover{border-color:var(--amber);color:var(--amber-b);background:rgba(200,136,42,0.1)}
+#spiker.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,196,208,0.1)}
+.sw{display:flex;align-items:center;gap:1px;height:12px}
+.sb{width:2px;background:currentColor;border-radius:1px;height:3px}
+.on .sb:nth-child(1){animation:aw .7s ease-in-out 0s infinite}
+.on .sb:nth-child(2){animation:aw .7s ease-in-out .1s infinite}
+.on .sb:nth-child(3){animation:aw .7s ease-in-out .2s infinite}
+.on .sb:nth-child(4){animation:aw .7s ease-in-out .3s infinite}
+.on .sb:nth-child(5){animation:aw .7s ease-in-out .4s infinite}
+
+/* ElevenLabs badge */
+#el-badge{position:absolute;top:12px;right:14px;pointer-events:all;display:flex;align-items:center;gap:6px;background:rgba(6,8,16,0.75);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:4px 10px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--text-muted);backdrop-filter:blur(8px);cursor:pointer;transition:all .13s}
+#el-badge:hover{border-color:var(--cyan);color:var(--cyan)}
+#el-badge.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,196,208,0.08)}
+.el-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan)}
+.active .el-dot{animation:blink .8s steps(1) infinite}
+
+/* BREAKING BAND */
+#breaking{background:var(--crimson);height:25px;display:flex;align-items:center;overflow:hidden;flex-shrink:0}
+.brk-label{background:#7a0f0f;padding:0 12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:.18em;color:#fff;white-space:nowrap;height:100%;display:flex;align-items:center;flex-shrink:0}
+.brk-wrap{flex:1;overflow:hidden;height:100%;display:flex;align-items:center}
+.brk-scroll{white-space:nowrap;animation:scrollL 50s linear infinite;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.02em;color:#fff}
+@keyframes scrollL{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+/* RIGHT PANEL */
+#rpanel{width:210px;flex-shrink:0;background:rgba(6,8,16,0.9);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.ph{padding:8px 12px 7px;border-bottom:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ph-dot{width:4px;height:4px;border-radius:50%;background:var(--cyan);animation:blink 2s steps(1) infinite}
+.mlist{flex:1;overflow-y:auto;scrollbar-width:none}
+.mlist::-webkit-scrollbar{display:none}
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.025);cursor:default;transition:background .1s}
+.mrow:hover{background:rgba(255,255,255,0.02)}
+.ml{flex:1;min-width:0}
+.msym{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:var(--text);line-height:1}
+.mname{font-size:8px;color:var(--text-muted);margin-top:1px;line-height:1}
+.mr{text-align:right;flex-shrink:0}
+.mprice{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--text);line-height:1}
+.mchg{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:1px;line-height:1}
+.pos{color:var(--green)}.neg{color:var(--red)}
+.msp{width:36px;height:18px;flex-shrink:0;margin:0 7px}
+
+/* Headlines */
+#hpanel{border-top:1px solid var(--border);flex-shrink:0;padding:0 0 3px}
+.hph{padding:7px 12px 5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase}
+.hi{padding:5px 12px;border-bottom:1px solid rgba(255,255,255,0.025);cursor:pointer;transition:background .1s}
+.hi:hover{background:rgba(0,196,208,0.03)}
+.hi.active{background:rgba(0,196,208,0.05);border-left:2px solid var(--cyan);padding-left:10px}
+.ht{font-size:9px;line-height:1.3;color:var(--text-dim)}
+.hi.active .ht{color:var(--text)}
+.htm{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-muted);margin-top:1px}
+
+/* TICKER */
+#ticker{height:28px;background:rgba(6,8,16,0.96);border-top:1px solid var(--border);display:flex;align-items:center;overflow:hidden;flex-shrink:0}
+.tlogo{padding:0 11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:.12em;background:linear-gradient(135deg,var(--amber),var(--amber-b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-right:1px solid var(--border);white-space:nowrap;height:100%;display:flex;align-items:center;flex-shrink:0}
+.twrap{flex:1;overflow:hidden;height:100%;display:flex;align-items:center}
+.tscroll{display:flex;align-items:center;white-space:nowrap;animation:tickR 100s linear infinite}
+@keyframes tickR{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ti{display:inline-flex;align-items:center;gap:4px;padding:0 16px;border-right:1px solid rgba(255,255,255,0.05);height:28px}
+.tsym{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--text);letter-spacing:.04em}
+.tpr{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;color:var(--text)}
+.tch{font-family:'JetBrains Mono',monospace;font-size:8px}
+.tctrl{display:flex;align-items:center;gap:3px;padding:0 8px;border-left:1px solid var(--border);height:100%;flex-shrink:0}
+
+/* Audio mode badge */
+.audio-mode{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase;padding:2px 6px;border:1px solid rgba(255,255,255,0.07);border-radius:2px}
+</style>
+
+<div id="shell">
+  <!-- Three.js renders here, behind UI -->
+  <canvas id="three-canvas" style="position:absolute;inset:0;z-index:0"></canvas>
+  <div id="scanlines"></div>
+
+  <div id="ui">
+    <!-- TOP BAR -->
+    <div id="top">
+      <div class="logo">
+        <div class="logo-box">N</div>
+        <div><div class="logo-name">NUR TV</div><div class="logo-sub">Finance Broadcast</div></div>
+      </div>
+      <div class="live"><span class="live-dot"></span>LIVE</div>
+
+      <div class="ch-tabs">
+        <button class="ch active" data-ch="0">📺 Bloomberg TV</button>
+        <button class="ch" data-ch="1">📡 CNBC Terminal</button>
+        <button class="ch" data-ch="2">🎬 NUR Executive</button>
+      </div>
+
+      <div class="cam-tabs">
+        <button class="cam active" data-cam="0">🎥 Anchor</button>
+        <button class="cam" data-cam="1">📷 Wide</button>
+        <button class="cam" data-cam="2">🖥 Data Wall</button>
+        <button class="cam" data-cam="3">↗ OTS</button>
+      </div>
+
+      <div class="clocks">
+        <div class="clk"><div class="clk-city">Istanbul</div><div class="clk-t" id="ci">--:--</div></div>
+        <div class="clk"><div class="clk-city">London</div><div class="clk-t" id="cl">--:--</div></div>
+        <div class="clk"><div class="clk-city">NY</div><div class="clk-t" id="cn">--:--</div></div>
+        <div class="clk"><div class="clk-city">Tokyo</div><div class="clk-t" id="ct">--:--</div></div>
+      </div>
+
+      <select class="lang-sel" id="lsel">
+        <option value="tr">🇹🇷 TR</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="de">🇩🇪 DE</option>
+        <option value="ar">🇸🇦 AR</option>
+        <option value="zh">🇨🇳 ZH</option>
+        <option value="ja">🇯🇵 JA</option>
+        <option value="ru">🇷🇺 RU</option>
+        <option value="pt">🇧🇷 PT</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="hi">🇮🇳 HI</option>
+      </select>
+
+      <div class="audio-pill" id="audioPill" onclick="toggleAudio()">
+        <div class="audio-bars">
+          <div class="ab"></div><div class="ab"></div><div class="ab"></div>
+          <div class="ab"></div><div class="ab"></div>
+        </div>
+        <span id="audioPillLabel">Studio Ambient</span>
+      </div>
+
+      <button class="ctrl on" id="muteBtn" onclick="toggleMute()">🔊</button>
+      <button class="ctrl" onclick="toggleFS()">⛶</button>
+    </div>
+
+    <!-- MAIN -->
+    <div id="main">
+      <!-- CENTER STUDIO -->
+      <div id="center">
+        <div id="studio-wrap">
+          <canvas id="three-local"></canvas>
+          <!-- CG 2D overlay -->
+          <canvas id="cg-canvas" style="position:absolute;inset:0;pointer-events:none"></canvas>
+
+          <!-- AI Spiker -->
+          <button id="spiker" onclick="toggleSpiker()">
+            <div class="sw"><div class="sb"></div><div class="sb"></div><div class="sb"></div><div class="sb"></div><div class="sb"></div></div>
+            <span id="spikerLabel">AI Spiker: Standby</span>
+          </button>
+
+          <!-- ElevenLabs badge -->
+          <div id="el-badge" onclick="cycleAudioMode()">
+            <div class="el-dot"></div>
+            <span id="elLabel">ElevenLabs · Ambient</span>
+          </div>
+        </div>
+
+        <!-- Breaking band -->
+        <div id="breaking">
+          <div class="brk-label" id="brkLabel">SON DAKİKA</div>
+          <div class="brk-wrap"><div class="brk-scroll" id="brkScroll">Yükleniyor...</div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div id="rpanel">
+        <div class="ph">Piyasa Verileri<div class="ph-dot"></div></div>
+        <div class="mlist" id="mlist"></div>
+        <div id="hpanel">
+          <div class="hph">Manşetler</div>
+          <div id="hlist"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TICKER -->
+    <div id="ticker">
+      <div class="tlogo">NUR FINANCE</div>
+      <div class="twrap"><div class="tscroll" id="tscroll"></div></div>
+      <div class="tctrl">
+        <span class="audio-mode" id="audioMode">🎵 AMBIENT</span>
+        <button class="ctrl" onclick="toggleTicker()" id="tpBtn">⏸</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const MKT = [
+  {sym:"BIST100",name:"Borsa İstanbul",price:9847.32,chg:+1.42,spark:[9700,9720,9750,9730,9800,9820,9847]},
+  {sym:"S&P 500",name:"US Large Cap",price:5823.14,chg:+0.38,spark:[5780,5790,5800,5810,5805,5815,5823]},
+  {sym:"NASDAQ",name:"Tech Index",price:19243.67,chg:+0.61,spark:[19100,19150,19180,19200,19220,19240,19243]},
+  {sym:"DAX",name:"Germany 40",price:21347.85,chg:-0.22,spark:[21400,21380,21370,21360,21350,21355,21347]},
+  {sym:"NIKKEI",name:"Japan 225",price:38924.10,chg:+0.94,spark:[38700,38780,38820,38880,38900,38910,38924]},
+  {sym:"BRENT",name:"Crude Oil",price:81.43,chg:-0.67,spark:[82.2,82.0,81.8,81.6,81.5,81.4,81.43]},
+  {sym:"GOLD",name:"Spot Gold",price:2684.20,chg:+0.89,spark:[2660,2665,2670,2675,2678,2681,2684]},
+  {sym:"BTC",name:"Bitcoin",price:67843.00,chg:+2.14,spark:[66000,66500,67000,67200,67500,67700,67843]},
+  {sym:"EUR/USD",name:"Euro/Dollar",price:1.0921,chg:-0.11,spark:[1.094,1.093,1.092,1.093,1.091,1.092,1.0921]},
+  {sym:"VIX",name:"Fear Index",price:14.87,chg:-3.21,spark:[17,16.5,16,15.5,15.2,15,14.87]},
+];
+
+const LANGS={
+  tr:{breaking:"TCMB politika faizini sabit tuttu · BIST100 rekor seviyesinde · Altın 2.700 dolar sınırına yaklaştı · BTC ETF alımları rekor kırdı · OPEC+ arz genişletme görüşüyor",
+    headlines:[{t:"BIST100 rekor kırdı, yabancı yatırımcı girişi güçlü",tm:"12:34"},{t:"Fed tutanakları: Faiz indirimi 2026'ya erteleniyor",tm:"12:21"},{t:"Altın 2.700 dolar hedefliyor, analistler iyimser",tm:"12:08"},{t:"BTC spot ETF alımları yeni rekora ulaştı",tm:"11:55"},{t:"Brent petrolde OPEC+ genişletme kararı bekleniyor",tm:"11:42"}],
+    chyron:{ey:"CANLI · NUR TV",hl:"Piyasalar güne yükselişle başladı — BIST100 rekor",sub:"NUR Finance · Anlık Piyasa Haberleri"},brkLabel:"SON DAKİKA",spiker:"AI Sözcü"},
+  en:{breaking:"Fed holds rates as inflation cools · S&P500 notches fresh record · Gold approaches $2700 · BTC spot ETF inflows hit all-time high · OPEC+ weighs supply extension",
+    headlines:[{t:"S&P500 hits record — tech leads broad rally",tm:"12:34"},{t:"Fed minutes: rate cut delayed to 2026",tm:"12:21"},{t:"Gold targeting $2,700 — analysts bullish",tm:"12:08"},{t:"BTC ETF inflows reach all-time high",tm:"11:55"},{t:"Brent crude: OPEC+ weighs output extension",tm:"11:42"}],
+    chyron:{ey:"LIVE · NUR TV",hl:"Markets open higher — S&P500 prints new record",sub:"NUR Finance · Real-time Market Intelligence"},brkLabel:"BREAKING",spiker:"AI Anchor"},
+  de:{breaking:"DAX unter Druck nach schwachen Industriedaten · EZB hält Leitzins stabil · Gold nähert sich 2.700$ · Bitcoin-ETF-Zuflüsse Rekordhoch · OPEC+ erwägt Förderkürzung",
+    headlines:[{t:"DAX unter Druck — IFO-Index enttäuscht",tm:"12:34"},{t:"EZB-Protokoll: Zinssenkung erst 2026",tm:"12:21"},{t:"Gold: Analysten sehen Ziel bei 2.700 USD",tm:"12:08"},{t:"BTC ETF-Zuflüsse auf Rekordhoch",tm:"11:55"},{t:"Brent-Öl: OPEC+ prüft Verlängerung",tm:"11:42"}],
+    chyron:{ey:"LIVE · NUR TV",hl:"DAX unter Druck nach schwachen Konjunkturdaten",sub:"NUR Finance · Echtzeit-Marktdaten"},brkLabel:"EILMELDUNG",spiker:"KI-Sprecher"},
+  ar:{breaking:"الاحتياطي الفيدرالي يُبقي أسعار الفائدة ثابتة · S&P500 يسجل رقماً قياسياً · الذهب يقترب من 2700$ · تدفقات ETF البيتكوين قياسية · أوبك+ تدرس تمديد التخفيضات",
+    headlines:[{t:"مؤشر S&P500 يسجل رقماً قياسياً — التكنولوجيا في الصدارة",tm:"12:34"},{t:"محضر الفيدرالي: تأجيل خفض الفائدة حتى 2026",tm:"12:21"},{t:"الذهب يستهدف 2700 دولار",tm:"12:08"},{t:"صناديق البيتكوين تبلغ أعلى مستوى",tm:"11:55"},{t:"خام برنت: أوبك+ تدرس تمديد التخفيضات",tm:"11:42"}],
+    chyron:{ey:"مباشر · NUR TV",hl:"الأسواق ترتفع — S&P500 يسجل رقماً قياسياً",sub:"NUR Finance · تغطية الأسواق المالية"},brkLabel:"عاجل",spiker:"مذيع AI"},
+  zh:{breaking:"中国PMI超预期制造业回暖 · 美联储维持利率不变 · 黄金逼近2700美元 · 比特币ETF资金创历史新高 · 沪深300强势上涨",
+    headlines:[{t:"沪深300强势上涨，外资大举买入",tm:"12:34"},{t:"美联储会议纪要：降息推迟至2026年",tm:"12:21"},{t:"黄金逼近2700美元，分析师看涨",tm:"12:08"},{t:"比特币现货ETF资金创新高",tm:"11:55"},{t:"布伦特原油：OPEC+考虑延长减产",tm:"11:42"}],
+    chyron:{ey:"直播 · NUR TV",hl:"中国PMI超预期，A股大幅走强",sub:"NUR Finance · 实时市场资讯"},brkLabel:"突发",spiker:"AI主播"},
+  ja:{breaking:"日銀が追加利上げを示唆 · 日経平均が年初来高値更新 · ドル円150円台で推移 · 金スポット2700ドルに接近 · 米国株は最高値圏で継続",
+    headlines:[{t:"日銀、追加利上げを示唆 — 円高進行",tm:"12:34"},{t:"FED議事録：利下げは2026年以降に先送り",tm:"12:21"},{t:"金スポット2700ドル目前、アナリスト強気",tm:"12:08"},{t:"ビットコインETF資金流入が過去最高",tm:"11:55"},{t:"WTI原油：OPEC+が減産延長を検討",tm:"11:42"}],
+    chyron:{ey:"生放送 · NUR TV",hl:"日銀追加利上げ示唆 — 日経平均年初来高値更新",sub:"NUR Finance · リアルタイム市場情報"},brkLabel:"速報",spiker:"AIアンカー"},
+  ru:{breaking:"ФРС сохраняет ключевую ставку · S&P500 обновил исторический максимум · Золото приближается к $2700 · Приток в Bitcoin ETF рекорд · ОПЕК+ рассматривает продление",
+    headlines:[{t:"S&P500 обновил исторический максимум",tm:"12:34"},{t:"Протокол ФРС: снижение ставки отложено до 2026",tm:"12:21"},{t:"Золото: аналитики нацелены на $2700",tm:"12:08"},{t:"Приток в BTC ETF достиг рекорда",tm:"11:55"},{t:"Нефть Brent: ОПЕК+ обдумывает продление",tm:"11:42"}],
+    chyron:{ey:"ПРЯМОЙ ЭФИР · NUR TV",hl:"Рынки открылись ростом — S&P500 на историческом максимуме",sub:"NUR Finance · Рыночная аналитика в реальном времени"},brkLabel:"СРОЧНО",spiker:"ИИ-диктор"},
+  pt:{breaking:"Petrobras anuncia descoberta no pré-sal · Ibovespa sobe com capital estrangeiro · Fed mantém juros · Ouro próximo de US$2.700 · Bitcoin ETF bate recorde",
+    headlines:[{t:"Petrobras: descoberta bilionária no pré-sal",tm:"12:34"},{t:"Fed: corte de juros adiado para 2026",tm:"12:21"},{t:"Ouro mira US$2.700 — analistas otimistas",tm:"12:08"},{t:"ETF de Bitcoin capta recorde",tm:"11:55"},{t:"Brent: OPEP+ avalia extensão de cortes",tm:"11:42"}],
+    chyron:{ey:"AO VIVO · NUR TV",hl:"Ibovespa sobe forte com descoberta da Petrobras",sub:"NUR Finance · Inteligência de Mercado em Tempo Real"},brkLabel:"URGENTE",spiker:"Âncora AI"},
+  fr:{breaking:"La Fed maintient ses taux · S&P500 nouveau record · Or approche 2700$ · Flux ETF Bitcoin record historique · OPEP+ envisage prolongation réductions",
+    headlines:[{t:"S&P500 : nouveau record, tech en tête",tm:"12:34"},{t:"PV Fed : baisse des taux repoussée à 2026",tm:"12:21"},{t:"Or : analystes visent 2 700$",tm:"12:08"},{t:"ETF Bitcoin : flux atteignent un record",tm:"11:55"},{t:"Brent : OPEP+ étudie prolongation",tm:"11:42"}],
+    chyron:{ey:"EN DIRECT · NUR TV",hl:"Les marchés ouvrent en hausse — S&P500 au sommet",sub:"NUR Finance · Intelligence Marchés en Temps Réel"},brkLabel:"FLASH INFO",spiker:"Présentateur IA"},
+  hi:{breaking:"फेड ने ब्याज दरें स्थिर रखीं · S&P500 ने नई ऊंचाई छुई · सोना $2700 के करीब · BTC ETF में रिकॉर्ड · OPEC+ उत्पादन पर विचार",
+    headlines:[{t:"S&P500 नई ऊंचाई पर, टेक शेयरों में तेजी",tm:"12:34"},{t:"फेड: ब्याज कटौती 2026 तक टली",tm:"12:21"},{t:"सोना $2,700 की ओर — विश्लेषक आशावादी",tm:"12:08"},{t:"BTC ETF में ऐतिहासिक प्रवाह",tm:"11:55"},{t:"ब्रेंट क्रूड: OPEC+ कटौती विस्तार",tm:"11:42"}],
+    chyron:{ey:"लाइव · NUR TV",hl:"बाजार ऊंचाई पर खुले — S&P500 ने रिकॉर्ड बनाया",sub:"NUR Finance · रीयल-टाइम बाजार खुफिया"},brkLabel:"ब्रेकिंग",spiker:"AI एंकर"},
+};
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let lang='tr', activeCh=0, activeCam=0, hlIdx=0;
+let muted=false, tickerPaused=false, spikerOn=false;
+let audioPlaying=false, audioCtx=null, ambientNodes={}, spikerTimer=null;
+let audioModes=['ambient','intro','breaking'];
+let audioModeIdx=0;
+
+// ─── THREE.JS 3D STUDIO ENGINE ────────────────────────────────────────────────
+const canvas3 = document.getElementById('three-local');
+const renderer = new THREE.WebGLRenderer({canvas:canvas3,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=0.85;
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x060810);
+scene.fog=new THREE.FogExp2(0x060810,0.035);
+
+const W=()=>canvas3.clientWidth, H=()=>canvas3.clientHeight;
+const camera=new THREE.PerspectiveCamera(50,W()/H(),0.1,100);
+
+// ── Camera presets (pos, lookAt) ──
+const CAM_PRESETS=[
+  {pos:[0,1.6,4.5],look:[0,1.2,0]},       // 0 Anchor — straight-on desk
+  {pos:[-4.5,2.5,5.5],look:[0,1.0,-1]},    // 1 Wide — left-angle sweeping
+  {pos:[3.0,2.2,2.0],look:[-1,1.8,-3.5]},  // 2 Data Wall — facing screens
+  {pos:[1.8,2.0,3.5],look:[-0.5,1.1,0]},   // 3 OTS — over the shoulder
+];
+let camTarget={pos:[...CAM_PRESETS[0].pos],look:[...CAM_PRESETS[0].look]};
+let camCurrent={pos:[...CAM_PRESETS[0].pos],look:[...CAM_PRESETS[0].look]};
+
+function lerpArr(a,b,t){return a.map((v,i)=>v+(b[i]-v)*t)}
+
+// ── Helpers ──
+function hex2(h){const r=parseInt(h.slice(1,3),16)/255,g=parseInt(h.slice(3,5),16)/255,b=parseInt(h.slice(5,7),16)/255;return new THREE.Color(r,g,b)}
+
+// ── FLOOR ──
+const floorGeo=new THREE.PlaneGeometry(24,24);
+const floorMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x08090f),metalness:0.6,roughness:0.3,envMapIntensity:0.4});
+const floor=new THREE.Mesh(floorGeo,floorMat);
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+
+// Floor grid
+const gridH=new THREE.GridHelper(24,48,new THREE.Color(0x1a1a2e),new THREE.Color(0x111122));
+scene.add(gridH);
+
+// ── BACK WALL ──
+const wallGeo=new THREE.PlaneGeometry(16,7);
+const wallMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x060a14),metalness:0.1,roughness:0.9});
+const wall=new THREE.Mesh(wallGeo,wallMat);
+wall.position.set(0,3.5,-5);scene.add(wall);
+
+// ── LED SCREENS (3 large panels on back wall) ──
+const screenConfigs=[
+  {x:-4.2,y:3.2,w:3.5,h:2.2,z:-4.88},
+  {x:0,y:3.5,w:4.5,h:2.8,z:-4.88},
+  {x:4.2,y:3.2,w:3.5,h:2.2,z:-4.88},
+];
+const screenCanvases=[], screenTextures=[], screenCtxs=[];
+screenConfigs.forEach(sc=>{
+  const cvs=document.createElement('canvas'); cvs.width=512; cvs.height=320;
+  const ctx=cvs.getContext('2d');
+  const tex=new THREE.CanvasTexture(cvs);
+  const geo=new THREE.BoxGeometry(sc.w,sc.h,0.08);
+  const mat=new THREE.MeshStandardMaterial({map:tex,emissiveMap:tex,emissive:new THREE.Color(1,1,1),emissiveIntensity:0.7,roughness:0.4,metalness:0.6});
+  const mesh=new THREE.Mesh(geo,mat);
+  mesh.position.set(sc.x,sc.y,sc.z); mesh.castShadow=true;
+  scene.add(mesh);
+  screenCanvases.push(cvs); screenTextures.push(tex); screenCtxs.push(ctx);
+
+  // Frame bezel
+  const bezelGeo=new THREE.BoxGeometry(sc.w+0.12,sc.h+0.1,0.06);
+  const bezelMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x1a1a2a),metalness:0.9,roughness:0.2});
+  const bezel=new THREE.Mesh(bezelGeo,bezelMat);
+  bezel.position.set(sc.x,sc.y,sc.z-0.05);
+  scene.add(bezel);
+});
+
+// ── NEWS DESK ──
+const deskGeo=new THREE.BoxGeometry(5.5,0.12,1.8);
+const deskMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x0d1525),metalness:0.8,roughness:0.25,envMapIntensity:0.6});
+const desk=new THREE.Mesh(deskGeo,deskMat);
+desk.position.set(0,0.9,1.2); desk.castShadow=true; desk.receiveShadow=true;
+scene.add(desk);
+
+// Desk front panel (with amber line)
+const frontGeo=new THREE.BoxGeometry(5.5,0.85,0.04);
+const frontMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x0a1020),metalness:0.85,roughness:0.2});
+const deskFront=new THREE.Mesh(frontGeo,frontMat);
+deskFront.position.set(0,0.5,2.1);
+scene.add(deskFront);
+
+// Amber accent stripe on desk
+const stripeGeo=new THREE.BoxGeometry(5.5,0.03,0.04);
+const stripeMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0xC8882A),emissive:new THREE.Color(0xC8882A),emissiveIntensity:1.2,metalness:0.3,roughness:0.4});
+const stripe=new THREE.Mesh(stripeGeo,stripeMat);
+stripe.position.set(0,0.91,2.12);
+scene.add(stripe);
+
+// Desk supports
+[-2.2,2.2].forEach(x=>{
+  const sg=new THREE.BoxGeometry(0.18,0.88,1.75);
+  const sm=new THREE.MeshStandardMaterial({color:new THREE.Color(0x0a1020),metalness:0.8,roughness:0.3});
+  const s=new THREE.Mesh(sg,sm); s.position.set(x,0.44,1.2); s.castShadow=true; scene.add(s);
+});
+
+// ── SIDE WALLS (partial) ──
+[-6.5,6.5].forEach((x,i)=>{
+  const wg=new THREE.PlaneGeometry(8,7);
+  const wm=new THREE.MeshStandardMaterial({color:new THREE.Color(0x070a12),metalness:0.1,roughness:0.9});
+  const wm2=new THREE.Mesh(wg,wm);
+  wm2.position.set(x,3.5,-1); wm2.rotation.y=i===0?Math.PI/2:-Math.PI/2;
+  scene.add(wm2);
+});
+
+// ── CEILING ──
+const ceilGeo=new THREE.PlaneGeometry(16,12);
+const ceilMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x060810),metalness:0.05,roughness:1});
+const ceil=new THREE.Mesh(ceilGeo,ceilMat);
+ceil.rotation.x=Math.PI/2; ceil.position.set(0,7,0);
+scene.add(ceil);
+
+// ── CEILING TRACK LIGHTS ──
+const lightPositions=[
+  [-3.5,6.8,0.5],[-1.2,6.8,0.5],[1.2,6.8,0.5],[3.5,6.8,0.5],
+  [0,6.8,2.5],[-2,6.8,-1.5],[2,6.8,-1.5],
+];
+const spotLights=[];
+lightPositions.forEach((lp,idx)=>{
+  const sl=new THREE.SpotLight(0xffffff,idx<4?2.5:1.8,20,Math.PI/7,0.3,1.5);
+  sl.position.set(...lp); sl.target.position.set(lp[0]*0.3,(idx<4?0.95:1.0),lp[2]*0.2);
+  sl.castShadow=true; sl.shadow.mapSize.width=512; sl.shadow.mapSize.height=512;
+  scene.add(sl); scene.add(sl.target); spotLights.push(sl);
+
+  // Light housing fixture
+  const hg=new THREE.CylinderGeometry(0.08,0.1,0.12,8);
+  const hm=new THREE.MeshStandardMaterial({color:new THREE.Color(0x333344),metalness:0.9,roughness:0.2});
+  const hx=new THREE.Mesh(hg,hm); hx.position.set(lp[0],lp[1]+0.06,lp[2]);
+  scene.add(hx);
+});
+
+// ── CYAN ACCENT LIGHTS on screens ──
+const screenLight1=new THREE.PointLight(0x00C4D0,0.8,8);
+screenLight1.position.set(-4.5,4,-4); scene.add(screenLight1);
+const screenLight2=new THREE.PointLight(0x00C4D0,1.2,10);
+screenLight2.position.set(0,4,-4); scene.add(screenLight2);
+const screenLight3=new THREE.PointLight(0x00C4D0,0.8,8);
+screenLight3.position.set(4.5,4,-4); scene.add(screenLight3);
+
+// ── AMBER DESK ACCENT LIGHT ──
+const deskLight=new THREE.PointLight(0xC8882A,1.5,5);
+deskLight.position.set(0,1.5,2); scene.add(deskLight);
+
+// ── AMBIENT ──
+const ambient=new THREE.AmbientLight(0x0a0d18,0.4); scene.add(ambient);
+
+// ── FLOOR LOGO PROJECTION (cyan) ──
+const logoLight=new THREE.SpotLight(0x00C4D0,0.6,15,Math.PI/12,0.8,2);
+logoLight.position.set(0,6.5,1); logoLight.target.position.set(0,0,1);
+scene.add(logoLight); scene.add(logoLight.target);
+
+// ── CAMERA LENS FLARE PARTICLES ──
+const lensGeo=new THREE.BufferGeometry();
+const lensPos=new Float32Array(80*3);
+for(let i=0;i<80;i++){lensPos[i*3]=(Math.random()-0.5)*14;lensPos[i*3+1]=Math.random()*6+0.5;lensPos[i*3+2]=(Math.random()-0.5)*8-1;}
+lensGeo.setAttribute('position',new THREE.BufferAttribute(lensPos,3));
+const lensMat=new THREE.PointsMaterial({color:0xC8882A,size:0.04,transparent:true,opacity:0.4});
+const lensDust=new THREE.Points(lensGeo,lensMat);
+scene.add(lensDust);
+
+// Resize handler
+function onResize(){
+  const w=canvas3.clientWidth,h=canvas3.clientHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false);
+}
+window.addEventListener('resize',onResize); onResize();
+
+// ─── CG 2D OVERLAY ────────────────────────────────────────────────────────────
+const cgCvs=document.getElementById('cg-canvas');
+const cgCtx=cgCvs.getContext('2d');
+
+function resizeCG(){cgCvs.width=cgCvs.clientWidth;cgCvs.height=cgCvs.clientHeight;}
+window.addEventListener('resize',resizeCG); setTimeout(resizeCG,100);
+
+let chyronAnim=0;
+function drawCG(t){
+  const w=cgCvs.width,h=cgCvs.height; if(!w||!h)return;
+  cgCtx.clearRect(0,0,w,h);
+  const p=LANGS[lang]||LANGS.tr;
+
+  // ── Lower Third (Chyron) ──
+  const cy=h-58, barH=50, barW=Math.min(w*0.62,620);
+  const chySlide=Math.min(1,(chyronAnim/30));
+  const bx=-barW*(1-chySlide)+20;
+
+  // Background gradient
+  cgCtx.save();
+  const lg=cgCtx.createLinearGradient(bx,0,bx+barW+40,0);
+  lg.addColorStop(0,'rgba(6,8,16,0.96)');
+  lg.addColorStop(0.8,'rgba(10,14,24,0.90)');
+  lg.addColorStop(1,'rgba(6,8,16,0)');
+  cgCtx.fillStyle=lg;
+  cgCtx.fillRect(bx,cy,barW+40,barH);
+
+  // Amber left stripe
+  cgCtx.fillStyle='#C8882A';
+  cgCtx.fillRect(bx,cy,3,barH);
+
+  // Eyebrow
+  cgCtx.fillStyle='#C8882A';
+  cgCtx.font='bold 9px "Barlow Condensed",sans-serif';
+  cgCtx.letterSpacing='0.2em';
+  cgCtx.fillText(p.chyron.ey.toUpperCase(),bx+12,cy+14);
+
+  // Headline
+  cgCtx.fillStyle='#E2DDD4';
+  cgCtx.font='700 18px "Barlow Condensed",sans-serif';
+  cgCtx.letterSpacing='0.01em';
+  cgCtx.fillText(p.chyron.hl,bx+12,cy+33);
+
+  // Sub
+  cgCtx.fillStyle='rgba(200,200,200,0.45)';
+  cgCtx.font='400 10px "Barlow",sans-serif';
+  cgCtx.letterSpacing='0';
+  cgCtx.fillText(p.chyron.sub,bx+12,cy+46);
+  cgCtx.restore();
+
+  chyronAnim=Math.min(chyronAnim+1,30);
+
+  // ── Network Bug (top-right corner) ──
+  const brgx=w-90, brgy=10;
+  cgCtx.save();
+  cgCtx.globalAlpha=0.85;
+  cgCtx.fillStyle='rgba(6,8,16,0.75)';
+  cgCtx.strokeStyle='rgba(200,136,42,0.3)';
+  cgCtx.lineWidth=1;
+  roundRect(cgCtx,brgx,brgy,80,28,3);
+  cgCtx.fill(); cgCtx.stroke();
+  // NUR TV logo text
+  cgCtx.fillStyle='#E8A040';
+  cgCtx.font='800 11px "Barlow Condensed",sans-serif';
+  cgCtx.letterSpacing='0.1em';
+  cgCtx.textAlign='center';
+  cgCtx.fillText('NUR TV',brgx+40,brgy+13);
+  cgCtx.fillStyle='rgba(255,255,255,0.3)';
+  cgCtx.font='600 7px "Barlow Condensed",sans-serif';
+  cgCtx.letterSpacing='0.15em';
+  cgCtx.fillText('FINANCE',brgx+40,brgy+23);
+  cgCtx.textAlign='left';
+  cgCtx.restore();
+
+  // ── Timecode (top-left) ──
+  const now=new Date();
+  const tc=now.toLocaleTimeString('en-GB',{hour12:false});
+  cgCtx.save();
+  cgCtx.globalAlpha=0.7;
+  cgCtx.fillStyle='rgba(6,8,16,0.6)';
+  cgCtx.fillRect(10,10,72,20);
+  cgCtx.fillStyle='#00C4D0';
+  cgCtx.font='600 10px "JetBrains Mono",monospace';
+  cgCtx.fillText(tc,14,24);
+  cgCtx.restore();
+
+  // ── Camera label ──
+  const camNames=['ANCHOR CAM','WIDE CAM','DATA WALL','OTS CAM'];
+  cgCtx.save();
+  cgCtx.globalAlpha=0.65;
+  cgCtx.fillStyle='rgba(0,196,208,0.12)';
+  cgCtx.strokeStyle='rgba(0,196,208,0.3)';
+  cgCtx.lineWidth=1;
+  roundRect(cgCtx,10,34,80,16,2); cgCtx.fill(); cgCtx.stroke();
+  cgCtx.fillStyle='#00C4D0';
+  cgCtx.font='700 8px "Barlow Condensed",sans-serif';
+  cgCtx.letterSpacing='0.12em';
+  cgCtx.fillText(camNames[activeCam],14,45);
+  cgCtx.restore();
+
+  // ── AUDIO MODE badge (bottom center) ──
+  const audioLabels=['🎵 STUDIO AMBIENT','🎺 NUR FINANCE INTRO','⚡ BREAKING STING'];
+  cgCtx.save();
+  cgCtx.globalAlpha=audioPlaying?0.8:0.3;
+  const alabel=audioLabels[audioModeIdx];
+  cgCtx.font='700 9px "Barlow Condensed",sans-serif';
+  const aw2=cgCtx.measureText(alabel).width+20;
+  const ax=(w-aw2)/2, ay=h-86;
+  cgCtx.fillStyle='rgba(0,196,208,0.1)';
+  cgCtx.strokeStyle=audioPlaying?'rgba(0,196,208,0.5)':'rgba(0,196,208,0.15)';
+  cgCtx.lineWidth=1;
+  roundRect(cgCtx,ax,ay,aw2,16,2); cgCtx.fill(); cgCtx.stroke();
+  cgCtx.fillStyle=audioPlaying?'#00C4D0':'rgba(0,196,208,0.4)';
+  cgCtx.textAlign='center';
+  cgCtx.letterSpacing='0.1em';
+  cgCtx.fillText(alabel,w/2,ay+11);
+  cgCtx.textAlign='left';
+  cgCtx.restore();
+}
+
+function roundRect(c,x,y,w,h,r){
+  c.beginPath(); c.moveTo(x+r,y); c.lineTo(x+w-r,y);
+  c.quadraticCurveTo(x+w,y,x+w,y+r); c.lineTo(x+w,y+h-r);
+  c.quadraticCurveTo(x+w,y+h,x+w-r,y+h); c.lineTo(x+r,y+h);
+  c.quadraticCurveTo(x,y+h,x,y+h-r); c.lineTo(x,y+r);
+  c.quadraticCurveTo(x,y,x+r,y); c.closePath();
+}
+
+// ─── LED SCREEN CONTENT ───────────────────────────────────────────────────────
+let screenPhase=0;
+function drawScreens(t){
+  screenPhase+=0.008;
+  // Screen 0 — Chart
+  {
+    const ctx=screenCtxs[0],cw=512,ch=320;
+    ctx.fillStyle='#04060f'; ctx.fillRect(0,0,cw,ch);
+    ctx.fillStyle='#0c1525'; ctx.fillRect(0,0,cw,28);
+    ctx.fillStyle='#C8882A'; ctx.font='bold 10px "Barlow Condensed",sans-serif';
+    ctx.letterSpacing='0.15em'; ctx.fillText('S&P 500 · LIVE',10,18);
+    ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='9px "JetBrains Mono",monospace';
+    ctx.fillText('5,823.14  +0.38%',350,18);
+    // Mini chart
+    const pts=[];
+    for(let i=0;i<80;i++) pts.push(0.5+0.2*Math.sin(i*0.18+screenPhase)+0.08*Math.sin(i*0.45+screenPhase*2));
+    const cx0=20,cy0=50,cxw=470,cyh=230;
+    ctx.beginPath(); ctx.moveTo(cx0,cy0+cyh);
+    pts.forEach((v,i)=>{const px=cx0+(i/79)*cxw,py=cy0+(1-v)*cyh; i===0?ctx.lineTo(px,py):ctx.lineTo(px,py);});
+    ctx.lineTo(cx0+cxw,cy0+cyh); ctx.closePath();
+    const ag=ctx.createLinearGradient(0,cy0,0,cy0+cyh);
+    ag.addColorStop(0,'rgba(200,136,42,0.35)'); ag.addColorStop(1,'rgba(200,136,42,0)');
+    ctx.fillStyle=ag; ctx.fill();
+    ctx.beginPath();
+    pts.forEach((v,i)=>{const px=cx0+(i/79)*cxw,py=cy0+(1-v)*cyh; i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});
+    ctx.strokeStyle='#C8882A'; ctx.lineWidth=2; ctx.stroke();
+    // Grid
+    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+    for(let g=0;g<=4;g++){const gy=cy0+(g/4)*cyh; ctx.beginPath();ctx.moveTo(cx0,gy);ctx.lineTo(cx0+cxw,gy);ctx.stroke();}
+    screenTextures[0].needsUpdate=true;
+  }
+  // Screen 1 — Market table (center, big)
+  {
+    const ctx=screenCtxs[1],cw=512,ch=320;
+    ctx.fillStyle='#03060d'; ctx.fillRect(0,0,cw,ch);
+    ctx.fillStyle='#0a1220'; ctx.fillRect(0,0,cw,30);
+    ctx.fillStyle='#00C4D0'; ctx.font='bold 11px "Barlow Condensed",sans-serif'; ctx.letterSpacing='0.18em';
+    ctx.fillText('NUR FINANCE  ·  LIVE MARKETS',10,20);
+    const rows=[
+      ['BIST100','9,847','▲ +1.42%'],['S&P 500','5,823','▲ +0.38%'],['GOLD','2,684','▲ +0.89%'],
+      ['BTC','67,843','▲ +2.14%'],['BRENT','81.43','▼ -0.67%'],['VIX','14.87','▼ -3.21%'],
+      ['EUR/USD','1.0921','▼ -0.11%'],['NASDAQ','19,243','▲ +0.61%'],
+    ];
+    rows.forEach((r,i)=>{
+      const ry=40+i*34;
+      ctx.fillStyle=i%2===0?'rgba(255,255,255,0.02)':'transparent';
+      ctx.fillRect(0,ry,cw,34);
+      ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='600 10px "Barlow Condensed",sans-serif'; ctx.letterSpacing='0.05em';
+      ctx.fillText(r[0],10,ry+20);
+      ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='500 10px "JetBrains Mono",monospace';
+      ctx.fillText(r[1],200,ry+20);
+      ctx.fillStyle=r[2].includes('▲')?'#22c55e':'#ef4444'; ctx.font='600 10px "Barlow Condensed",sans-serif';
+      ctx.fillText(r[2],340,ry+20);
+    });
+    screenTextures[1].needsUpdate=true;
+  }
+  // Screen 2 — World map / news ticker style
+  {
+    const ctx=screenCtxs[2],cw=512,ch=320;
+    ctx.fillStyle='#03050d'; ctx.fillRect(0,0,cw,ch);
+    ctx.fillStyle='#0a1220'; ctx.fillRect(0,0,cw,28);
+    ctx.fillStyle='#a78bfa'; ctx.font='bold 10px "Barlow Condensed",sans-serif'; ctx.letterSpacing='0.15em';
+    ctx.fillText('NUR FINANCE · GLOBAL BRIEFING',10,18);
+    // Animated wave showing BTC
+    const btcPts=[];
+    for(let i=0;i<80;i++) btcPts.push(0.5+0.18*Math.sin(i*0.22+screenPhase*1.3)+0.07*Math.cos(i*0.5+screenPhase));
+    const cx0=20,cy0=50,cxw=470,cyh=180;
+    ctx.beginPath(); ctx.moveTo(cx0,cy0+cyh);
+    btcPts.forEach((v,i)=>{const px=cx0+(i/79)*cxw,py=cy0+(1-v)*cyh; i===0?ctx.lineTo(px,py):ctx.lineTo(px,py);});
+    ctx.lineTo(cx0+cxw,cy0+cyh); ctx.closePath();
+    const bg2=ctx.createLinearGradient(0,cy0,0,cy0+cyh);
+    bg2.addColorStop(0,'rgba(167,139,250,0.3)'); bg2.addColorStop(1,'rgba(167,139,250,0)');
+    ctx.fillStyle=bg2; ctx.fill();
+    ctx.beginPath();
+    btcPts.forEach((v,i)=>{const px=cx0+(i/79)*cxw,py=cy0+(1-v)*cyh; i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});
+    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#a78bfa'; ctx.font='700 12px "Barlow Condensed",sans-serif';
+    ctx.fillText('BTC/USD · 67,843',20,250);
+    ctx.fillStyle='#22c55e'; ctx.font='600 11px "JetBrains Mono",monospace';
+    ctx.fillText('▲ +2.14%  +1,424.00',20,268);
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1;
+    for(let g=0;g<=3;g++){const gy=cy0+(g/3)*cyh; ctx.beginPath();ctx.moveTo(cx0,gy);ctx.lineTo(cx0+cxw,gy);ctx.stroke();}
+    screenTextures[2].needsUpdate=true;
+  }
+}
+
+// ─── ANIMATION LOOP ───────────────────────────────────────────────────────────
+let t0=null,prevT=0;
+function loop(ts){
+  requestAnimationFrame(loop);
+  if(!t0)t0=ts;
+  const t=ts-t0, dt=ts-prevT; prevT=ts;
+
+  // Smooth camera transition
+  const spd=0.04;
+  camCurrent.pos=lerpArr(camCurrent.pos,camTarget.pos,spd);
+  camCurrent.look=lerpArr(camCurrent.look,camTarget.look,spd);
+  camera.position.set(...camCurrent.pos);
+  camera.lookAt(...camCurrent.look);
+
+  // Pulsing screen glow
+  const pulse=0.7+0.15*Math.sin(t*0.001);
+  screenLight2.intensity=1.2*pulse;
+  deskLight.intensity=1.5+0.3*Math.sin(t*0.0008);
+  lensDust.rotation.y=t*0.00004;
+  lensMat.opacity=0.25+0.15*Math.sin(t*0.0007);
+
+  // Spotlight flicker (very subtle)
+  spotLights.forEach((sl,i)=>{sl.intensity=2.3+0.15*Math.sin(t*0.0003+i*0.7);});
+
+  drawScreens(t);
+  renderer.render(scene,camera);
+  drawCG(t);
+}
+requestAnimationFrame(loop);
+
+// ─── CLOCKS ───────────────────────────────────────────────────────────────────
+function updateClocks(){
+  const now=new Date();
+  const fmt=(tz)=>new Date(now.toLocaleString('en-US',{timeZone:tz})).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('ci').textContent=fmt('Europe/Istanbul');
+  document.getElementById('cl').textContent=fmt('Europe/London');
+  document.getElementById('cn').textContent=fmt('America/New_York');
+  document.getElementById('ct').textContent=fmt('Asia/Tokyo');
+}
+setInterval(updateClocks,1000); updateClocks();
+
+// ─── MARKET DATA ─────────────────────────────────────────────────────────────
+function sparkSVG(vals,pos){
+  const mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||1;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1))*34+1},${17-((v-mn)/rng)*15}`).join(' ');
+  const col=pos?'#22c55e':'#ef4444';
+  const fc=pos?'rgba(34,197,94,0.12)':'rgba(239,68,68,0.12)';
+  const last=pts.split(' ').pop().split(',');
+  const poly=`${pts} ${last[0]},17 1,17`;
+  return `<polygon points="${poly}" fill="${fc}"/><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function fmtPr(p,sym){
+  if(sym==='EUR/USD')return p.toFixed(4);
+  if(p>10000)return p.toLocaleString('en-US',{maximumFractionDigits:0});
+  return p.toFixed(2);
+}
+function renderMkt(){
+  document.getElementById('mlist').innerHTML=MKT.map(m=>{
+    const pos=m.chg>=0,cls=pos?'pos':'neg',sign=pos?'+':'';
+    return `<div class="mrow">
+      <div class="ml"><div class="msym">${m.sym}</div><div class="mname">${m.name}</div></div>
+      <svg class="msp" viewBox="0 0 36 18">${sparkSVG(m.spark,pos)}</svg>
+      <div class="mr"><div class="mprice">${fmtPr(m.price,m.sym)}</div><div class="mchg ${cls}">${sign}${m.chg.toFixed(2)}%</div></div>
+    </div>`;
+  }).join('');
+}
+
+function buildTicker(){
+  const items=MKT.map(m=>{
+    const pos=m.chg>=0,cls=pos?'pos':'neg',arr=pos?'▲':'▼';
+    return `<span class="ti"><span class="tsym">${m.sym}</span><span class="tpr">${fmtPr(m.price,m.sym)}</span><span class="tch ${cls}">${arr}${Math.abs(m.chg).toFixed(2)}%</span></span>`;
+  }).join('');
+  const el=document.getElementById('tscroll');
+  el.innerHTML=items+items;
+}
+function toggleTicker(){
+  tickerPaused=!tickerPaused;
+  document.getElementById('tscroll').style.animationPlayState=tickerPaused?'paused':'running';
+  document.getElementById('tpBtn').textContent=tickerPaused?'▶':'⏸';
+}
+
+// ─── LANGUAGE ────────────────────────────────────────────────────────────────
+function applyLang(l){
+  lang=l;
+  const p=LANGS[l]||LANGS.tr;
+  document.getElementById('brkLabel').textContent=p.brkLabel;
+  document.getElementById('brkScroll').textContent=p.breaking+' · '+p.breaking;
+  document.getElementById('spikerLabel').textContent=p.spiker+': Standby';
+  chyronAnim=0;
+  renderHeadlines(l);
+}
+function renderHeadlines(l){
+  const p=LANGS[l]||LANGS.tr;
+  document.getElementById('hlist').innerHTML=p.headlines.map((h,i)=>`
+    <div class="hi ${i===0?'active':''}" onclick="pickHL(this,${i},'${l}')">
+      <div class="ht">${h.t}</div><div class="htm">${h.tm}</div>
+    </div>`).join('');
+}
+function pickHL(el,idx,l){
+  document.querySelectorAll('.hi').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active'); hlIdx=idx;
+  const p=LANGS[l]||LANGS.tr; p.chyron.hl=p.headlines[idx].t; chyronAnim=0;
+}
+document.getElementById('lsel').addEventListener('change',e=>applyLang(e.target.value));
+
+// ─── CHANNELS ────────────────────────────────────────────────────────────────
+document.querySelectorAll('.ch').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.ch').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); activeCh=parseInt(b.dataset.ch);
+  const chColors=['#E8A040','#00C4D0','#C8882A'];
+  deskLight.color.set(chColors[activeCh]);
+}));
+
+// ─── CAMERA ANGLES ───────────────────────────────────────────────────────────
+document.querySelectorAll('.cam').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.cam').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); activeCam=parseInt(b.dataset.cam);
+  const pr=CAM_PRESETS[activeCam];
+  camTarget.pos=[...pr.pos]; camTarget.look=[...pr.look];
+}));
+
+// ─── AI SPIKER ───────────────────────────────────────────────────────────────
+function toggleSpiker(){
+  spikerOn=!spikerOn;
+  const btn=document.getElementById('spiker'),lbl=document.getElementById('spikerLabel');
+  const p=LANGS[lang]||LANGS.tr;
+  if(spikerOn){btn.classList.add('on');lbl.textContent=p.spiker+': Yayında';clearTimeout(spikerTimer);spikerTimer=setTimeout(()=>{spikerOn=false;btn.classList.remove('on');lbl.textContent=p.spiker+': Standby';},9000);}
+  else{clearTimeout(spikerTimer);btn.classList.remove('on');lbl.textContent=p.spiker+': Standby';}
+}
+
+// ─── WEB AUDIO ENGINE (ElevenLabs-production-note alignment) ─────────────────
+// audioPackages from broadcast.ts:
+//  audio-ambient: "Minimal ambient pad, 85 BPM, subtle, atmospheric"
+//  audio-main-intro: "Orchestral synth with driving beat, 120 BPM, Bloomberg TV meets Hans Zimmer"
+//  audio-breaking: "Sharp brass hit with tension build, 140 BPM"
+function ensureAudio(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
+function stopAudio(){
+  if(ambientNodes.gainNode){try{ambientNodes.gainNode.gain.setTargetAtTime(0,audioCtx.currentTime,0.3);}catch(e){}
+  setTimeout(()=>{try{for(const k of Object.keys(ambientNodes)){ambientNodes[k].stop&&ambientNodes[k].stop();}ambientNodes={};}catch(e){}},500);}
+  audioPlaying=false;
+  document.getElementById('audioPill').classList.remove('playing');
+  document.getElementById('el-badge').classList.remove('active');
+}
+function playAmbient(){
+  // "Studio Ambient Loop" — 85 BPM, A minor pads
+  ensureAudio();
+  const gain=audioCtx.createGain(); gain.gain.value=0; gain.connect(audioCtx.destination);
+  gain.gain.setTargetAtTime(0.12,audioCtx.currentTime,1.5);
+  const oscs=[]; const freqs=[220,330,440,550,660];
+  freqs.forEach((f,i)=>{
+    const o=audioCtx.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=audioCtx.createGain(); g.gain.value=0.08/(i+1);
+    const lfo=audioCtx.createOscillator(); lfo.frequency.value=0.06+i*0.02;
+    const lgain=audioCtx.createGain(); lgain.gain.value=0.03;
+    lfo.connect(lgain); lgain.connect(g.gain); lfo.start();
+    o.connect(g); g.connect(gain); o.start();
+    oscs.push(o,lfo);
+  });
+  // Subtle noise pad
+  const bufLen=audioCtx.sampleRate*2; const buf=audioCtx.createBuffer(1,bufLen,audioCtx.sampleRate);
+  const data=buf.getChannelData(0); for(let i=0;i<bufLen;i++)data[i]=(Math.random()*2-1)*0.05;
+  const src=audioCtx.createBufferSource(); src.buffer=buf; src.loop=true;
+  const filt=audioCtx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=400; filt.Q.value=0.8;
+  const ng=audioCtx.createGain(); ng.gain.value=0.08;
+  src.connect(filt); filt.connect(ng); ng.connect(gain); src.start();
+  ambientNodes={gainNode:gain,oscs,noiseSrc:src};
+  audioPlaying=true;
+  document.getElementById('audioPill').classList.add('playing');
+  document.getElementById('el-badge').classList.add('active');
+}
+function playIntro(){
+  // "NUR Finance Main Theme" — 120 BPM, orchestral synth, confident
+  ensureAudio();
+  const gain=audioCtx.createGain(); gain.gain.value=0; gain.connect(audioCtx.destination);
+  gain.gain.setTargetAtTime(0.18,audioCtx.currentTime,0.4);
+  const notes=[
+    {f:293.66,t:0,dur:0.5},{f:329.63,t:0.5,dur:0.5},{f:392.00,t:1.0,dur:0.5},
+    {f:440.00,t:1.5,dur:0.5},{f:392.00,t:2.0,dur:0.3},{f:349.23,t:2.3,dur:0.3},
+    {f:440.00,t:2.6,dur:1.0},{f:523.25,t:4.0,dur:0.5},{f:587.33,t:4.5,dur:0.5},
+    {f:659.25,t:5.0,dur:0.5},{f:698.46,t:5.5,dur:0.5},{f:783.99,t:6.0,dur:1.5},
+  ];
+  const oscs=[];
+  notes.forEach(n=>{
+    const o=audioCtx.createOscillator(); o.type='sawtooth'; o.frequency.value=n.f;
+    const og=audioCtx.createGain(); og.gain.value=0;
+    const og2=audioCtx.createGain(); og2.gain.value=0.35;
+    const filt=audioCtx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=2200;
+    o.connect(filt); filt.connect(og); og.connect(og2); og2.connect(gain);
+    const st=audioCtx.currentTime+n.t;
+    og.gain.setValueAtTime(0,st); og.gain.linearRampToValueAtTime(0.7,st+0.05);
+    og.gain.setValueAtTime(0.7,st+n.dur-0.05); og.gain.linearRampToValueAtTime(0,st+n.dur);
+    o.start(st); o.stop(st+n.dur+0.1); oscs.push(o);
+  });
+  // Bass drone
+  const bass=audioCtx.createOscillator(); bass.type='sine'; bass.frequency.value=73.42;
+  const bg=audioCtx.createGain(); bg.gain.value=0.25; bass.connect(bg); bg.connect(gain); bass.start();
+  ambientNodes={gainNode:gain,oscs:[...oscs,bass]};
+  audioPlaying=true;
+  document.getElementById('audioPill').classList.add('playing');
+  document.getElementById('el-badge').classList.add('active');
+  setTimeout(()=>{stopAudio();audioModeIdx=0;document.getElementById('audioMode').textContent='🎵 AMBIENT';document.getElementById('audioPillLabel').textContent='Studio Ambient';},8500);
+}
+function playBreaking(){
+  // "Breaking News Sting" — 140 BPM, sharp brass, 5 sec
+  ensureAudio();
+  const gain=audioCtx.createGain(); gain.gain.value=0; gain.connect(audioCtx.destination);
+  gain.gain.setTargetAtTime(0.22,audioCtx.currentTime,0.05);
+  const hits=[{f:880,t:0,dur:0.15},{f:1046,t:0.18,dur:0.15},{f:1318,t:0.36,dur:0.15},{f:1568,t:0.54,dur:0.3},{f:1318,t:0.9,dur:0.15},{f:1568,t:1.1,dur:0.9}];
+  const oscs=[];
+  hits.forEach(h=>{
+    const o=audioCtx.createOscillator(); o.type='square'; o.frequency.value=h.f;
+    const og=audioCtx.createGain(); og.gain.value=0;
+    const filt=audioCtx.createBiquadFilter(); filt.type='bandpass'; filt.frequency.value=h.f*1.1; filt.Q.value=2;
+    o.connect(filt); filt.connect(og); og.connect(gain);
+    const st=audioCtx.currentTime+h.t;
+    og.gain.setValueAtTime(0,st); og.gain.linearRampToValueAtTime(0.8,st+0.02);
+    og.gain.setValueAtTime(0.8,st+h.dur-0.04); og.gain.linearRampToValueAtTime(0,st+h.dur);
+    o.start(st); o.stop(st+h.dur+0.15); oscs.push(o);
+  });
+  // Tension noise sweep
+  const bufLen=audioCtx.sampleRate*2.5; const buf=audioCtx.createBuffer(1,bufLen,audioCtx.sampleRate);
+  const d=buf.getChannelData(0); for(let i=0;i<bufLen;i++)d[i]=(Math.random()*2-1)*0.4;
+  const src=audioCtx.createBufferSource(); src.buffer=buf;
+  const f=audioCtx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=800; f.Q.value=1.5;
+  const sg=audioCtx.createGain(); sg.gain.value=0; sg.gain.linearRampToValueAtTime(0.15,audioCtx.currentTime+2);
+  sg.gain.linearRampToValueAtTime(0,audioCtx.currentTime+2.5);
+  src.connect(f); f.connect(sg); sg.connect(gain); src.start();
+  ambientNodes={gainNode:gain,oscs};
+  audioPlaying=true;
+  document.getElementById('audioPill').classList.add('playing');
+  document.getElementById('el-badge').classList.add('active');
+  setTimeout(()=>{stopAudio();audioModeIdx=0;document.getElementById('audioMode').textContent='🎵 AMBIENT';document.getElementById('audioPillLabel').textContent='Studio Ambient';},5000);
+}
+
+function toggleAudio(){
+  if(audioPlaying){stopAudio();return;}
+  if(audioModeIdx===0)playAmbient();
+  else if(audioModeIdx===1)playIntro();
+  else playBreaking();
+}
+function cycleAudioMode(){
+  stopAudio();
+  audioModeIdx=(audioModeIdx+1)%3;
+  const modes=['🎵 AMBIENT','🎺 INTRO','⚡ BREAKING'];
+  const labels=['Studio Ambient','NUR Finance Intro','Breaking Sting'];
+  const elLabels=['ElevenLabs · Ambient','ElevenLabs · Intro','ElevenLabs · Breaking'];
+  document.getElementById('audioMode').textContent=modes[audioModeIdx];
+  document.getElementById('audioPillLabel').textContent=labels[audioModeIdx];
+  document.getElementById('elLabel').textContent=elLabels[audioModeIdx];
+}
+function toggleMute(){
+  muted=!muted;
+  document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
+  document.getElementById('muteBtn').classList.toggle('on',!muted);
+  if(audioCtx) audioCtx.suspend && (muted?audioCtx.suspend():audioCtx.resume());
+}
+function toggleFS(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.();}
+
+// ─── LIVE PRICE FLICKER ───────────────────────────────────────────────────────
+setInterval(()=>{
+  MKT.forEach(m=>{const d=(Math.random()-0.495)*0.3;m.price*=(1+d/100);m.chg+=(Math.random()-0.5)*0.08;m.chg=Math.max(-5,Math.min(5,m.chg));m.spark.push(m.price);m.spark.shift();});
+  renderMkt(); buildTicker();
+},3200);
+
+// ─── HEADLINE AUTO-ROTATE ────────────────────────────────────────────────────
+setInterval(()=>{
+  const p=LANGS[lang]||LANGS.tr; hlIdx=(hlIdx+1)%p.headlines.length;
+  document.querySelectorAll('.hi').forEach((el,i)=>el.classList.toggle('active',i===hlIdx));
+  p.chyron.hl=p.headlines[hlIdx].t; chyronAnim=0;
+},8000);
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderMkt(); buildTicker(); applyLang('tr');
+</script>
