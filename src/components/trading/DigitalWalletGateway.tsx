@@ -248,6 +248,42 @@ export default function DigitalWalletGateway() {
           <div className="max-w-3xl mx-auto flex flex-col gap-5">
             {/* Sovereign Desktop Wallet Vault Mode — Active for Desktop App / Furkan */}
             <div className="p-5 rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-950/50 via-slate-950 to-black space-y-4 shadow-2xl">
+              <div className="flex justify-between items-center border-b border-amber-500/20 pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-xl">
+                    🦊
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-amber-300 font-serif">Polygon Web3 & MetaMask Contract Gateway</h3>
+                    <p className="text-[11px] text-slate-400 font-mono">Official Smart Contract: 0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      const { connectWeb3Wallet } = await import("@/lib/web3/web3-contract-service");
+                      const res = await connectWeb3Wallet();
+                      addNotification({
+                        title: "Web3 Cüzdan Bağlandı",
+                        message: `Adres: ${res.address.slice(0, 6)}...${res.address.slice(-4)} | Bakiye: ${parseFloat(res.balanceNur).toFixed(2)} NUR`,
+                        severity: "SUCCESS",
+                        category: "SETTLEMENT",
+                      });
+                    } catch (err) {
+                      addNotification({
+                        title: "Cüzdan Bağlantı Hatası",
+                        message: err instanceof Error ? err.message : "Cüzdan bağlanamadı",
+                        severity: "CRITICAL",
+                        category: "SETTLEMENT",
+                      });
+                    }
+                  }}
+                  className="px-4 py-2 rounded-lg font-mono font-bold text-xs bg-amber-500 text-black hover:bg-amber-400 transition-all shadow-lg hover:scale-[1.02]"
+                >
+                  🦊 Connect MetaMask Wallet
+                </button>
+              </div>
               <div className="flex items-center justify-between border-b border-amber-500/20 pb-3">
                 <div className="flex items-center gap-2.5">
                   <EagleCrest size={28} animate />
