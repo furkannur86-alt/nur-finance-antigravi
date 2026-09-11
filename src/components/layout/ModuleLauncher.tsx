@@ -34,6 +34,7 @@ const MODULES: Module[] = [
   { id: "oms-ems",           label: "OMS / EMS",        icon: "⚡", desc: "Order management system",    color: "#a78bfa", group: "TRADING" },
   { id: "nur-coin",          label: "$NUR Coin",        icon: "🪙", desc: "Sovereign blockchain token",  color: "#a78bfa", group: "TRADING" },
   { id: "wallet-gateway",    label: "Web3 Wallet",      icon: "🔐", desc: "Multi-chain wallet gateway",  color: "#a78bfa", group: "TRADING" },
+  { id: "wish-framework",    label: "WISH Framework",   icon: "🎯", desc: "Weighted Indicator Signal Harmony algo engine", color: "#00d4aa", group: "TRADING" },
 
   // ANALYSIS
   { id: "quant-copilot",     label: "Quant Strategist", icon: "🤖", desc: "AI-powered quant signals",   color: "#f59e0b", group: "ANALYSIS" },

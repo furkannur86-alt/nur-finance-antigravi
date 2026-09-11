@@ -12,6 +12,7 @@ import PortfolioManager from "@/components/portfolio/PortfolioManager";
 import DashboardPanel from "@/components/dashboard/DashboardPanel";
 import ChartsPanel from "@/components/dashboard/ChartsPanel";
 import BacktestPanel from "@/components/backtest/BacktestPanel";
+import WISHFrameworkPanel from "@/components/trading/WISHFrameworkPanel";
 import GlobalMarketsPanel from "@/components/markets/GlobalMarketsPanel";
 import EconomicDataPanel from "@/components/markets/EconomicDataPanel";
 import DataIngestPanel from "@/components/ingest/DataIngestPanel";
@@ -145,6 +146,8 @@ export default function Home() {
         return <VerificationPanel />;
       case "wallet-gateway":
         return <DigitalWalletGateway />;
+      case "wish-framework":
+        return <WISHFrameworkPanel />;
       case "nur-coin":
         return <NurCoinEcosystemPanel />;
       case "global-markets":
