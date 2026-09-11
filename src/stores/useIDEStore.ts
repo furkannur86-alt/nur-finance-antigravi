@@ -159,6 +159,7 @@ interface IDEState {
   isSovereignAdmin: boolean;
   sovereignAuthModalOpen: boolean;
   soundMuted: boolean;
+  expandedPanel: "maximized" | "floating" | null;
 
   // Actions
   openFile: (node: FileNode) => void;
@@ -178,6 +179,7 @@ interface IDEState {
   setSovereignAdmin: (isAdmin: boolean) => void;
   setSovereignAuthModalOpen: (open: boolean) => void;
   toggleSoundMuted: () => void;
+  setExpandedPanel: (mode: "maximized" | "floating" | null) => void;
 
   // OMS / Trading Actions
   placeOrder: (order: Omit<SimulatedOrder, "id" | "filledQuantity" | "status" | "createdAt" | "updatedAt" | "slippageEstimated" | "feeEstimated">) => void;
@@ -208,6 +210,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   isSovereignAdmin: false,
   sovereignAuthModalOpen: false,
   soundMuted: false,
+  expandedPanel: null,
   breakingNewsTicker: "NUR TV GLOBAL: U.S. ISM Services PMI reaches 54.8; Quant Rotation active across Tech and Financials.",
   orders: INITIAL_ORDERS,
   positions: INITIAL_POSITIONS,
@@ -233,6 +236,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   setSovereignAdmin: (isSovereignAdmin) => set({ isSovereignAdmin }),
   setSovereignAuthModalOpen: (sovereignAuthModalOpen) => set({ sovereignAuthModalOpen }),
   toggleSoundMuted: () => set((s) => ({ soundMuted: !s.soundMuted })),
+  setExpandedPanel: (mode) => set({ expandedPanel: mode }),
 
   setMatrixRainOpacity: (opacity) => set({ matrixRainOpacity: opacity }),
   cycleMatrixRainOpacity: () => {

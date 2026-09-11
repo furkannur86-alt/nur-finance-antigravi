@@ -49,6 +49,7 @@ import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
 import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 import CockpitFrame from "@/components/layout/CockpitFrame";
+import PanelExpander from "@/components/layout/PanelExpander";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -212,7 +213,9 @@ export default function Home() {
         <div className="flex flex-1 min-h-0">
           {sidebarOpen && <Sidebar />}
           <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex-1 min-h-0">{renderMainContent()}</div>
+            <PanelExpander label={activeView}>
+              {renderMainContent()}
+            </PanelExpander>
             {showConsole && (
               <>
                 <div

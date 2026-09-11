@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 
+type CockpitMode = "full" | "backstage" | "min";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Ambient background: Hitchhiker cascade + space atmosphere
 // Numbers are deep background (z-0), barely visible, slowly glowing.
@@ -250,9 +252,14 @@ function ZoomControls({ zoom, onIn, onOut, onReset }: { zoom: number; onIn: () =
 // ─────────────────────────────────────────────────────────────────────────────
 export default function CockpitFrame({ children }: { children: React.ReactNode }) {
   const [zoom, setZoom] = useState(1.0);
+  const [cockpitMode, setCockpitMode] = useState<CockpitMode>("full");
   const zoomIn    = useCallback(() => setZoom(z => Math.min(1.5, parseFloat((z + 0.1).toFixed(1)))), []);
   const zoomOut   = useCallback(() => setZoom(z => Math.max(0.5, parseFloat((z - 0.1).toFixed(1)))), []);
   const zoomReset = useCallback(() => setZoom(1.0), []);
+
+  const cycleCockpit = useCallback(() => {
+    setCockpitMode(m => m === "full" ? "backstage" : m === "backstage" ? "min" : "full");
+  }, []);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -265,13 +272,43 @@ export default function CockpitFrame({ children }: { children: React.ReactNode }
     return () => window.removeEventListener("keydown", h);
   }, [zoomIn, zoomOut, zoomReset]);
 
+  // MIN mode: render only the pill + restore button
+  if (cockpitMode === "min") {
+    return (
+      <div className="w-screen h-screen overflow-hidden relative" style={{ background: "#030810" }}>
+        {children}
+        <button
+          onClick={cycleCockpit}
+          className="fixed select-none font-mono"
+          style={{
+            bottom: 14, left: 14, zIndex: 9999,
+            background: "rgba(4,10,22,0.92)",
+            border: "1px solid rgba(0,212,170,0.4)",
+            borderRadius: 20,
+            padding: "4px 12px",
+            fontSize: 10,
+            color: "#00d4aa",
+            cursor: "pointer",
+            letterSpacing: "0.08em",
+          }}
+          title="Restore Cockpit HUD"
+        >
+          ◈ ORBIT: #5475146 | CH: 13·35·42·55 | EXPAND ⤢
+        </button>
+      </div>
+    );
+  }
+
+  const isBackstage = cockpitMode === "backstage";
+
   return (
     <div className="w-screen h-screen overflow-hidden relative" style={{ background: "#030810" }}>
 
       {/* ── Layer 0: starfield canvas ─────────────────────────────────────── */}
-      <StarCanvas />
+      {!isBackstage && <StarCanvas />}
 
       {/* ── Layer 1: atmospheric nebula gradients ─────────────────────────── */}
+      {!isBackstage && (
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -284,9 +321,10 @@ export default function CockpitFrame({ children }: { children: React.ReactNode }
           `,
         }}
       />
+      )}
 
       {/* ── Layer 2: Hitchhiker cascade numbers (deep background, not blocking) */}
-      <AmbientNumberLayer />
+      {!isBackstage && <AmbientNumberLayer />}
 
       {/* ── Layer 3: scaled content — the actual app UI ───────────────────── */}
       <div
@@ -303,36 +341,54 @@ export default function CockpitFrame({ children }: { children: React.ReactNode }
         {children}
       </div>
 
-      {/* ── Layer 4: screen vignette (dark halo, pushes eye to center) ───── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          zIndex: 30,
-          background: "radial-gradient(ellipse 130% 130% at 50% 50%, transparent 52%, rgba(1,4,12,0.78) 100%)",
-        }}
-      />
-
-      {/* ── Layer 4b: very subtle CRT scan lines ──────────────────────────── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          zIndex: 30,
-          backgroundImage: "repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.015) 3px, rgba(0,0,0,0.015) 4px)",
-        }}
-      />
-
-      {/* ── Layer 5: edge glow rails ──────────────────────────────────────── */}
-      <div className="absolute top-0 left-16 right-16 pointer-events-none" style={{ zIndex: 40, height: 1, background: "linear-gradient(90deg, transparent, rgba(0,212,170,0.18) 30%, rgba(0,212,170,0.18) 70%, transparent)" }} />
-      <div className="absolute bottom-0 left-16 right-16 pointer-events-none" style={{ zIndex: 40, height: 1, background: "linear-gradient(90deg, transparent, rgba(0,212,170,0.1) 30%, rgba(0,212,170,0.1) 70%, transparent)" }} />
-
-      {/* ── Layer 5: HUD corner brackets ──────────────────────────────────── */}
-      <HUDCorner pos="tl" />
-      <HUDCorner pos="tr" />
-      <HUDCorner pos="bl" />
-      <HUDCorner pos="br" />
+      {/* ── Layer 4: screen vignette ──────────────────────────────────────── */}
+      {!isBackstage && (
+        <>
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              zIndex: 30,
+              background: "radial-gradient(ellipse 130% 130% at 50% 50%, transparent 52%, rgba(1,4,12,0.78) 100%)",
+            }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              zIndex: 30,
+              backgroundImage: "repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.015) 3px, rgba(0,0,0,0.015) 4px)",
+            }}
+          />
+          <div className="absolute top-0 left-16 right-16 pointer-events-none" style={{ zIndex: 40, height: 1, background: "linear-gradient(90deg, transparent, rgba(0,212,170,0.18) 30%, rgba(0,212,170,0.18) 70%, transparent)" }} />
+          <div className="absolute bottom-0 left-16 right-16 pointer-events-none" style={{ zIndex: 40, height: 1, background: "linear-gradient(90deg, transparent, rgba(0,212,170,0.1) 30%, rgba(0,212,170,0.1) 70%, transparent)" }} />
+          <HUDCorner pos="tl" />
+          <HUDCorner pos="tr" />
+          <HUDCorner pos="bl" />
+          <HUDCorner pos="br" />
+        </>
+      )}
 
       {/* ── Layer 6: zoom controls ────────────────────────────────────────── */}
       <ZoomControls zoom={zoom} onIn={zoomIn} onOut={zoomOut} onReset={zoomReset} />
+
+      {/* ── Cockpit mode toggle ───────────────────────────────────────────── */}
+      <button
+        onClick={cycleCockpit}
+        title={isBackstage ? "Restore Cockpit HUD" : "Backstage Mode (hides HUD)"}
+        className="absolute select-none font-mono transition-opacity"
+        style={{
+          bottom: 28, left: 12, zIndex: 9999,
+          background: "rgba(4,10,22,0.82)",
+          border: `1px solid ${isBackstage ? "rgba(0,212,170,0.5)" : "rgba(0,212,170,0.18)"}`,
+          borderRadius: 4,
+          padding: "2px 7px",
+          fontSize: 9,
+          color: isBackstage ? "#00d4aa" : "rgba(0,212,170,0.45)",
+          cursor: "pointer",
+          letterSpacing: "0.06em",
+        }}
+      >
+        {isBackstage ? "⤢ RESTORE HUD" : "⬚ BACKSTAGE"}
+      </button>
     </div>
   );
 }
