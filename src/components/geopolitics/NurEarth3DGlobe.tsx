@@ -294,8 +294,8 @@ const DEFENSE_HOTSPOTS: GeoEntity[] = [
   },
 ];
 
-// Global Nuclear Sites & Risk Zones
-const NUCLEAR_ZONES: GeoEntity[] = [
+// Global Nuclear Sites & Risk Zones — exported for use in GeopoliticsPanel
+export const NUCLEAR_ZONES: GeoEntity[] = [
   {
     id: "nz-1",
     type: "NUCLEAR",

@@ -34,7 +34,7 @@ interface MacroEvent {
   actual?: string;
 }
 
-const RISK_CATEGORIES = ["Monetary Policy", "Credit Markets", "Geopolitical", "Liquidity", "Volatility", "Growth"];
+const RISK_CATEGORIES = ["Monetary Policy", "Credit Markets", "Geopolitical", "Liquidity", "Volatility", "Growth", "Nuclear Risk"];
 
 function computeCompositeRisk(indicators: RiskIndicator[]): number {
   if (indicators.length === 0) return 50;
@@ -127,6 +127,24 @@ function generateIndicators(): RiskIndicator[] {
       previous: 100.8,
       threshold: { low: 90, high: 115 }, unit: "", description: "Conference Board LEI — growth outlook"
     },
+    {
+      id: "nuclear-prolif", name: "Nuclear Proliferation Index", category: "Nuclear Risk",
+      value: +(78 + Math.sin(dayPhase * 6.1) * 15 + Math.random() * 3).toFixed(0),
+      previous: 72,
+      threshold: { low: 20, high: 100 }, unit: "", description: "NUR composite — DPRK + Iran + Pakistan risk-weighted index"
+    },
+    {
+      id: "gpr-nuclear", name: "GPR Nuclear Subindex", category: "Nuclear Risk",
+      value: +(187 + Math.cos(dayPhase * 4.3) * 35 + Math.random() * 5).toFixed(0),
+      previous: 175,
+      threshold: { low: 50, high: 400 }, unit: "", description: "Caldara-Iacoviello nuclear-specific threat component"
+    },
+    {
+      id: "uranium-spot", name: "Uranium Spot (U3O8)", category: "Nuclear Risk",
+      value: +(96 + Math.sin(dayPhase * 3.7) * 12 + Math.random() * 2).toFixed(2),
+      previous: 94.5,
+      threshold: { low: 40, high: 150 }, unit: "$/lb", description: "Physical uranium spot — nuclear energy demand & weapons program proxy"
+    },
   ];
 }
 
@@ -167,6 +185,13 @@ function generateScenarios(riskScore: number): PredictionScenario[] {
       description: "Major geopolitical escalation disrupts energy supply or trade routes.",
       affectedAssets: ["Oil +30%", "VIX >30", "Safe havens rally", "EM currencies -10%"]
     },
+    {
+      id: "nuclear-escalation", name: "Nuclear Crisis (Tail Risk)",
+      probability: riskScore < 40 ? 3 : riskScore < 60 ? 8 : 15,
+      impact: "negative", timeframe: "0-6 months",
+      description: "DPRK ICBM or Iran nuclear threshold breach triggers multi-lateral sanctions cascade. Uranium, gold, and energy spike. Global equity circuit breakers activated.",
+      affectedAssets: ["Gold +40-60%", "Uranium +80%", "VIX >60", "Global equities -30%", "Oil +50%"]
+    },
   ];
   return scenarios.sort((a, b) => b.probability - a.probability);
 }
@@ -187,6 +212,11 @@ function generateCalendar(): MacroEvent[] {
     { event: "US Initial Jobless Claims", country: "US", impact: "low" as const },
     { event: "Germany IFO Business Climate", country: "DE", impact: "medium" as const },
     { event: "US Retail Sales (MoM)", country: "US", impact: "medium" as const },
+    { event: "IAEA Board of Governors — Iran Safeguards", country: "AT", impact: "high" as const },
+    { event: "IAEA Iran Inspection Report", country: "AT", impact: "high" as const },
+    { event: "UN Security Council: DPRK Sanctions Review", country: "US", impact: "high" as const },
+    { event: "NPT Review Conference Session", country: "US", impact: "medium" as const },
+    { event: "US-China Strategic Stability Talks", country: "US", impact: "medium" as const },
   ];
 
   for (let i = 0; i < 14; i++) {
@@ -210,7 +240,7 @@ function generateCalendar(): MacroEvent[] {
 }
 
 const COUNTRY_FLAGS: Record<string, string> = {
-  US: "US", EU: "EU", CN: "CN", JP: "JP", GB: "GB", DE: "DE"
+  US: "US", EU: "EU", CN: "CN", JP: "JP", GB: "GB", DE: "DE", AT: "AT (IAEA)"
 };
 
 export default function MacroRiskPanel() {

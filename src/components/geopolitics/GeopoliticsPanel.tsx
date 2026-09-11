@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import NurEarth3DGlobe from "./NurEarth3DGlobe";
+import NurEarth3DGlobe, { NUCLEAR_ZONES } from "./NurEarth3DGlobe";
 import EagleCrest from "@/components/ui/EagleCrest";
 
 interface ConflictEvent {
@@ -278,7 +278,7 @@ export default function GeopoliticsPanel() {
   const [data, setData] = useState<ConflictSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"earth-3d" | "overview" | "events" | "assets">("earth-3d");
+  const [activeTab, setActiveTab] = useState<"earth-3d" | "overview" | "events" | "assets" | "nuclear">("earth-3d");
 
   const fetchData = useCallback(async () => {
     try {
@@ -354,6 +354,7 @@ export default function GeopoliticsPanel() {
               { id: "overview" as const, label: "📊 Risk Özeti & Tablolar" },
               { id: "events" as const, label: "⚔ Olay Günlüğü" },
               { id: "assets" as const, label: "📈 Varlık Etkisi" },
+              { id: "nuclear" as const, label: "☢ Nükleer Bölgeler" },
             ] as const
           ).map((tab) => (
             <button
@@ -392,6 +393,7 @@ export default function GeopoliticsPanel() {
               <StatCard label="Active Conflicts" value={data.totalEvents} sub="last 30 days" />
               <StatCard label="Fatalities" value={data.totalFatalities.toLocaleString()} sub="reported" color="#ef4444" />
               <StatCard label="Hotspots" value={data.hotspots.filter((h) => h.riskLevel === "critical" || h.riskLevel === "high").length} sub="critical + high" color="#f97316" />
+              <StatCard label="Nuclear Sites" value={NUCLEAR_ZONES.length} sub="monitored" color="#facc15" />
             </div>
 
             <div>
@@ -496,6 +498,70 @@ export default function GeopoliticsPanel() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === "nuclear" && (
+          <div className="p-4 space-y-4 overflow-y-auto h-full">
+            <div className="flex items-center justify-between">
+              <div className="text-[10px] uppercase tracking-wider" style={{ color: "var(--ag-muted)" }}>
+                Global Nuclear Sites — Real-Time Risk Index
+              </div>
+              <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-yellow-500/20 text-yellow-400">
+                {NUCLEAR_ZONES.length} SITES MONITORED
+              </span>
+            </div>
+
+            <div className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}>
+              {[...NUCLEAR_ZONES].sort((a, b) => (b.riskScore ?? 0) - (a.riskScore ?? 0)).map((site) => {
+                const score = site.riskScore ?? 0;
+                const scoreColor = score >= 90 ? "#ef4444" : score >= 75 ? "#f97316" : score >= 55 ? "#eab308" : "#22c55e";
+                const countryCode = site.code.split(" · ")[0];
+                return (
+                  <div
+                    key={site.id}
+                    className="px-3 py-2.5 border-b hover:bg-white/5 transition-colors"
+                    style={{ borderColor: "var(--ag-border)" }}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">☢</span>
+                        <span className="text-xs font-semibold" style={{ color: "var(--ag-text)" }}>{site.name}</span>
+                        <span className="text-[10px] px-1 py-0.5 rounded" style={{ background: "rgba(250,204,21,0.15)", color: "#facc15" }}>
+                          {countryCode}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold tabular-nums" style={{ color: scoreColor }}>
+                          {score}
+                        </span>
+                        <span className="text-[9px] font-mono" style={{ color: "var(--ag-muted)" }}>
+                          {site.riskLevel ?? (score >= 90 ? "CRITICAL" : score >= 75 ? "HIGH" : score >= 55 ? "ELEVATED" : "MODERATE")}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--ag-border)" }}>
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${score}%`, background: scoreColor }}
+                      />
+                    </div>
+                    <div className="flex items-start justify-between mt-1 gap-2">
+                      <span className="text-[9px] font-mono shrink-0" style={{ color: "var(--ag-muted)" }}>
+                        {site.lat.toFixed(2)}°, {site.lon.toFixed(2)}°
+                      </span>
+                      {site.details && (
+                        <span className="text-[9px] text-right" style={{ color: "var(--ag-muted)" }}>{site.details}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="text-[9px] text-right" style={{ color: "var(--ag-muted)" }}>
+              Source: IAEA / NUR Intelligence | Risk scores updated continuously
             </div>
           </div>
         )}

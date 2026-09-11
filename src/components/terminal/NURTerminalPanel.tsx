@@ -37,6 +37,11 @@ const TICKERS: TickerItem[] = [
   { symbol: "OIL", price: "$78.90", change: "-0.12%", positive: false },
   { symbol: "VIX", price: "14.2", change: "-0.13%", positive: false },
   { symbol: "US10Y", price: "4.18%", change: "+0.04%", positive: true },
+  { symbol: "URA", price: "$32.14", change: "+2.87%", positive: true },
+  { symbol: "CCJ", price: "$54.20", change: "+3.12%", positive: true },
+  { symbol: "XAU/USD", price: "$2,418", change: "+0.92%", positive: true },
+  { symbol: "GPR-IDX", price: "187.4", change: "+14.2", positive: false },
+  { symbol: "BRENT", price: "$84.50", change: "+1.43%", positive: true },
 ];
 
 const NEWS_TAGS = [
@@ -51,6 +56,9 @@ const NEWS_TAGS = [
   { tag: "MACRO", color: "#6366f1" },
   { tag: "GEOPOL", color: "#ef4444" },
   { tag: "CREDIT", color: "#a855f7" },
+  { tag: "NUCLEAR", color: "#facc15" },
+  { tag: "SATIMG", color: "#38bdf8" },
+  { tag: "ENERGY", color: "#fb923c" },
 ];
 
 const NEWS_HEADLINES = [
@@ -68,6 +76,22 @@ const NEWS_HEADLINES = [
   "Gold hits new high as central bank buying accelerates",
   "Japan core CPI rises 2.8%, reinforcing BOJ tightening path",
   "S&P 500 earnings growth at 11.2% — strongest in 6 quarters",
+  // Nuclear & geopolitical headlines
+  "IAEA satellite imagery confirms new centrifuge hall at Natanz — 60% enrichment capacity up 40%",
+  "Yongbyon reactor thermal signature elevated; CSIS estimates 8kg plutonium production per year",
+  "Uranium spot price surges to $98/lb on Kazakh supply disruption fears — CCJ +9%",
+  "Israel conducts electronic warfare drills simulating multi-front nuclear scenario — XAU/USD +1.2%",
+  "Kahuta facility intercept: Pakistan tests MIRVed Ababeel MRBM — India defence stocks surge",
+  "Bushehr NPP power output anomaly detected via Esri satellite imagery — Brent +$3.20",
+  "US STRATCOM raises DEFCON preparedness following DPRK ICBM launch over Sea of Japan",
+  "Russia deploys three Borei-class nuclear submarines to Atlantic amid NATO exercises — Gold +0.8%",
+  "IAEA Board votes on Iran safeguards breach; USD/IRR volatility spikes 18%",
+  "China tests DF-41 ICBM MIRVed warhead delivery — Taiwan Strait risk premium widening",
+  "Global nuclear proliferation index at 38-year high; URA ETF sees record $420M weekly inflow",
+  "Satellite imagery: North Korea Yongbyon reprocessing plant steam plume confirms active operation",
+  "France test-fires ASMP-A air-launched nuclear cruise missile; CAC40 defence stocks +4%",
+  "India-Pakistan Line of Control — artillery exchange triggers nuclear crisis watch protocol",
+  "NUR Earth 3D: 12 nuclear sites monitored live via Esri World Imagery satellite feed",
 ];
 
 const AI_TEMPLATES = [
@@ -78,6 +102,10 @@ const AI_TEMPLATES = [
   "Analyzing the cross-sectional data, the most robust inference is {outcome}. We must remain cognizant of {concern}.",
   "Crypto correlations with traditional risk assets are {adj}. In a portfolio optimization context, the marginal benefit is {outcome}.",
   "This PMI print aligns with a {phase} regime. The diffusion index suggests {outcome}, though we should caveat with {concern}.",
+  "NUR Earth 3D satellite feed confirms {adj} activity at the {nuclearSite} complex. Proliferation risk index has shifted {outcome}. Uranium spot and gold are the primary hedges here.",
+  "Geopolitical risk index (GPR) is now at {gprLevel}. The market has historically underpriced nuclear tail risk; the correct framework assigns {outcome} to non-linear escalation scenarios.",
+  "Esri satellite imagery of {nuclearSite} shows {adj} thermal signature. This is consistent with {driver}. The financial transmission channel runs through {outcome}.",
+  "The nuclear proliferation premium in energy markets is {adj}. Brent's risk premium embeds approximately $8-12/bbl for Middle East nuclear escalation. {outcome}.",
   "The real effective exchange rate is {adj}. Given the interest rate differential, the 12-month outlook is {outcome}.",
 ];
 
@@ -89,6 +117,8 @@ const FILL = {
   year: ["2013", "2018", "2020", "2022"],
   concern: ["endogeneity concerns", "survivorship bias in the dataset", "structural breaks in the underlying process"],
   phase: ["early-cycle", "mid-cycle", "late-cycle"],
+  nuclearSite: ["Natanz", "Yongbyon", "Bushehr", "Kahuta", "Dimona", "Lop Nor", "Severodvinsk"],
+  gprLevel: ["187 — an 18-month high", "210 — approaching 2022 Ukraine-shock levels", "145 — elevated but contained", "240 — maximum alert territory"],
 };
 
 function pick<T>(arr: T[]): T {
