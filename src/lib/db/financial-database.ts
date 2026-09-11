@@ -70,7 +70,7 @@ export const MACRO_DATABASE: MacroIndicatorRecord[] = [
   { id: "mac-2", name: "US Non-Farm Payrolls", country: "United States", actual: 218000, forecast: 190000, previous: 206000, unit: "Jobs", impact: "HIGH", date: "2026-09-02" },
   { id: "mac-3", name: "ECB Main Refinancing Rate", country: "Eurozone", actual: 3.75, forecast: 3.75, previous: 4.0, unit: "%", impact: "HIGH", date: "2026-09-01" },
   { id: "mac-4", name: "German Ifo Business Climate", country: "Germany", actual: 87.2, forecast: 86.5, previous: 87.0, unit: "Index", impact: "MEDIUM", date: "2026-08-30" },
-  { id: "mac-5", name: "TCMB 1-Hafta Repo Faizi", country: "Türkiye", actual: 50.0, forecast: 50.0, previous: 50.0, unit: "%", impact: "HIGH", date: "2026-08-25" },
+  { id: "mac-5", name: "CBRT 1-Week Repo Rate", country: "Turkey", actual: 50.0, forecast: 50.0, previous: 50.0, unit: "%", impact: "HIGH", date: "2026-08-25" },
   { id: "mac-6", name: "BOJ Policy Balance Rate", country: "Japan", actual: 0.25, forecast: 0.25, previous: 0.1, unit: "%", impact: "HIGH", date: "2026-08-20" },
 ];
 
