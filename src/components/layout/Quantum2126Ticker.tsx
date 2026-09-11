@@ -8,7 +8,7 @@ export default function Quantum2126Ticker() {
   const [quantumMetrics, setQuantumMetrics] = useState({
     latency: "0.0012 ms",
     darkPoolFlow: "$14.8M",
-    neuralLoad: "99.8%",
+    stealth: true,
   });
 
   useEffect(() => {
@@ -16,57 +16,92 @@ export default function Quantum2126Ticker() {
       setQuantumMetrics({
         latency: (0.001 + Math.random() * 0.0008).toFixed(4) + " ms",
         darkPoolFlow: "$" + (14.5 + Math.random() * 1.2).toFixed(1) + "M",
-        neuralLoad: (99.4 + Math.random() * 0.5).toFixed(1) + "%",
+        stealth: !isSovereignAdmin,
       });
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isSovereignAdmin]);
 
   return (
     <div
-      className="flex items-center h-6 px-3 border-b text-[10px] font-mono select-none overflow-hidden shrink-0 relative bg-black/90 text-cyan-400"
-      style={{ borderColor: "rgba(0, 242, 254, 0.15)" }}
+      className="flex items-center h-[22px] px-3 select-none overflow-hidden shrink-0 relative"
+      style={{
+        background: "linear-gradient(90deg, #010508 0%, #020a12 50%, #010508 100%)",
+        borderBottom: "1px solid rgba(0,220,255,0.12)",
+        boxShadow: "0 1px 8px rgba(0,0,0,0.6)",
+      }}
     >
-      {/* 2126 Epoch Badge */}
-      <div className="flex items-center gap-1.5 shrink-0 pr-3 border-r border-white/10">
-        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-        <span className="font-bold text-cyan-300 tracking-wider">YEAR 2126 QUANTUM HUD</span>
+      {/* ── Year badge ─────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-1.5 shrink-0 pr-3 border-r border-cyan-500/10">
+        <span
+          className="w-1.5 h-1.5 rounded-full animate-ping"
+          style={{ background: "#22d3ee", boxShadow: "0 0 4px rgba(34,211,238,0.8)" }}
+        />
+        <span
+          className="text-[9px] font-mono font-black tracking-[0.15em]"
+          style={{ color: "#67e8f9" }}
+        >
+          YEAR 2126 · QUANTUM HUD
+        </span>
       </div>
 
-      {/* Scrolling Live Stream */}
+      {/* ── Live scrolling ticker ──────────────────────────────────────── */}
       <div className="flex-1 overflow-hidden whitespace-nowrap mx-3">
-        <div className="inline-flex items-center gap-6 animate-[scroll-left_35s_linear_infinite]">
-          <span className="text-white font-medium">⚡ {breakingNewsTicker}</span>
-          <span className="text-amber-300">🛢️ BRENT CRUDE OIL: $78.40 ▲ +1.8% (Strait of Hormuz Tanker Traffic Monitored)</span>
-          <span className="text-emerald-400">📈 S&P 500 QUANTUM ARB: 5,742.8 ▲ +0.85%</span>
-          <span className="text-purple-300">📊 QUANT ROTATION DESK: Sharpe 3.42 &bull; 100% Market Neutral Commodity and Equity Arbitrage</span>
-          <span className="text-cyan-300">🌐 NUR EARTH 3D: Live Flight and Oil Tanker Radar Active</span>
+        <div
+          className="inline-flex items-center gap-8 text-[9px] font-mono font-semibold tracking-wider"
+          style={{ animation: "ticker-scroll 35s linear infinite" }}
+        >
+          <span className="text-white font-bold">⚡ {breakingNewsTicker}</span>
+          <span style={{ color: "#fbbf24" }}>🛢️ BRENT CRUDE: $78.40 ▲ +1.8% · HORMUZ TANKER TRAFFIC MONITORED</span>
+          <span style={{ color: "#34d399" }}>📈 S&P 500 QUANT ARB: 5,742.8 ▲ +0.85%</span>
+          <span style={{ color: "#c4b5fd" }}>📊 SHARPE 3.42 · 100% MARKET-NEUTRAL COMMODITY & EQUITY ARB</span>
+          <span style={{ color: "#67e8f9" }}>🌐 NUR EARTH 3D: LIVE FLIGHT & OIL TANKER RADAR ACTIVE</span>
         </div>
       </div>
 
-      {/* Live Quantum Diagnostics Telemetry */}
-      <div className="flex items-center gap-3 shrink-0 pl-3 border-l border-white/10 text-[9px]">
-        <span className="text-slate-400">
-          LATENCY: <strong className="text-emerald-400">{quantumMetrics.latency}</strong>
+      {/* ── Telemetry block ───────────────────────────────────────────── */}
+      <div
+        className="flex items-center gap-3 shrink-0 pl-3 border-l border-cyan-500/10 text-[9px] font-mono font-bold"
+        style={{ letterSpacing: "0.08em" }}
+      >
+        <span style={{ color: "rgba(100,120,150,0.8)" }}>
+          LATENCY: <strong style={{ color: "#34d399" }}>{quantumMetrics.latency}</strong>
         </span>
-        <span className="text-slate-400">
-          FLOW: <strong className="text-cyan-300">{quantumMetrics.darkPoolFlow}</strong>
+        <span style={{ color: "rgba(100,120,150,0.8)" }}>
+          FLOW: <strong style={{ color: "#67e8f9" }}>{quantumMetrics.darkPoolFlow}</strong>
         </span>
 
-        {/* Sovereign Lock Status Indicator */}
         {isSovereignAdmin ? (
           <button
             onClick={() => setSovereignAuthModalOpen(true)}
-            className="px-2 py-0.2 rounded font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-colors"
-            title="Sovereign Executive Mode Active (Click to manage)"
+            className="px-2 py-0.5 rounded-sm font-black text-[9px] tracking-widest transition-all hover:scale-[1.02]"
+            style={{
+              background: "rgba(251,191,36,0.12)",
+              border: "1px solid rgba(251,191,36,0.35)",
+              color: "#fbbf24",
+              boxShadow: "0 0 8px rgba(251,191,36,0.15)",
+            }}
+            title="Sovereign Executive Mode Active"
           >
-            👑 SOVEREIGN ACTIVE
+            👑 SOVEREIGN
           </button>
         ) : (
           <button
             onClick={() => setSovereignAuthModalOpen(true)}
-            className="px-2 py-0.2 rounded text-slate-500 hover:text-cyan-300 border border-transparent hover:border-cyan-500/30 transition-colors"
-            title="Sovereign Vault Key Access (Ctrl+Shift+S)"
+            className="px-2 py-0.5 rounded-sm font-black text-[9px] tracking-widest transition-all hover:text-cyan-300"
+            style={{
+              color: "rgba(78,98,128,0.7)",
+              border: "1px solid transparent",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.color = "#67e8f9";
+              e.currentTarget.style.borderColor = "rgba(103,232,249,0.25)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.color = "rgba(78,98,128,0.7)";
+              e.currentTarget.style.borderColor = "transparent";
+            }}
+            title="Sovereign Vault (Ctrl+Shift+S)"
           >
             🔒 STEALTH
           </button>
@@ -74,8 +109,8 @@ export default function Quantum2126Ticker() {
       </div>
 
       <style jsx>{`
-        @keyframes scroll-left {
-          0% { transform: translateX(0%); }
+        @keyframes ticker-scroll {
+          0%   { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
         }
       `}</style>

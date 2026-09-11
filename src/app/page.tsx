@@ -48,6 +48,7 @@ import ComputeForAccessPanel from "@/components/compute/ComputeForAccessPanel";
 import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
 import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
+import CockpitFrame from "@/components/layout/CockpitFrame";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -200,34 +201,36 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen relative overflow-hidden" style={{ background: "var(--ag-bg)" }}>
-      {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
-      <CommandPalette />
-      <HUDNotificationSystem />
-      <SovereignAuthModal />
-      <Quantum2126Ticker />
-      <TopBar />
-      <div className="flex flex-1 min-h-0">
-        {sidebarOpen && <Sidebar />}
-        <div className="flex flex-col flex-1 min-w-0">
-          <div className="flex-1 min-h-0">{renderMainContent()}</div>
-          {showConsole && (
-            <>
-              <div
-                onMouseDown={onDragStart}
-                onDoubleClick={() => setConsoleCollapsed((c) => !c)}
-                className="h-1 cursor-ns-resize hover:bg-[var(--ag-accent)] transition-colors flex-shrink-0"
-                style={{ background: "var(--ag-border)" }}
-                title="Drag to resize, double-click to toggle"
-              />
-              <div style={{ height: consoleCollapsed ? 0 : consoleHeight, overflow: "hidden" }}>
-                <TerminalPanel />
-              </div>
-            </>
-          )}
+    <CockpitFrame>
+      <div className="flex flex-col h-screen relative overflow-hidden" style={{ background: "var(--ag-bg)" }}>
+        {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
+        <CommandPalette />
+        <HUDNotificationSystem />
+        <SovereignAuthModal />
+        <Quantum2126Ticker />
+        <TopBar />
+        <div className="flex flex-1 min-h-0">
+          {sidebarOpen && <Sidebar />}
+          <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex-1 min-h-0">{renderMainContent()}</div>
+            {showConsole && (
+              <>
+                <div
+                  onMouseDown={onDragStart}
+                  onDoubleClick={() => setConsoleCollapsed((c) => !c)}
+                  className="h-1 cursor-ns-resize hover:bg-[var(--ag-accent)] transition-colors flex-shrink-0"
+                  style={{ background: "var(--ag-border)" }}
+                  title="Drag to resize, double-click to toggle"
+                />
+                <div style={{ height: consoleCollapsed ? 0 : consoleHeight, overflow: "hidden" }}>
+                  <TerminalPanel />
+                </div>
+              </>
+            )}
+          </div>
         </div>
+        <StatusBar />
       </div>
-      <StatusBar />
-    </div>
+    </CockpitFrame>
   );
 }
