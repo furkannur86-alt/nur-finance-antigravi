@@ -41,9 +41,11 @@ const MODULES: Module[] = [
   { id: "ai-tools",          label: "Quant Models",     icon: "🧮", desc: "ML & quantitative models",   color: "#f59e0b", group: "ANALYSIS" },
   { id: "geopolitics",       label: "NUR Earth 3D",     icon: "🌐", desc: "Geopolitical risk globe",    color: "#f59e0b", group: "ANALYSIS" },
   { id: "geophysics-resources", label: "Geophysics & Mining", icon: "⛏️", desc: "3D Geophysics natural resources map", color: "#f59e0b", group: "ANALYSIS" },
+  { id: "resource-intelligence", label: "Resource Engine",   icon: "💎", desc: "€27K/mo Institutional Resource Intelligence", color: "#f59e0b", group: "ANALYSIS" },
   { id: "institutional-suite", label: "Institutional ($8.5K)", icon: "🏛️", desc: "7-Pillar Sovereign Intelligence Matrix", color: "#06b6d4", group: "ANALYSIS" },
   { id: "orbital-telemetry", label: "Orbital Telemetry", icon: "🛰️", desc: "Downlink & RF Spectrum Telemetry (13·35·42·55·54751113)", color: "#00f0ff", group: "ANALYSIS" },
   { id: "professional-ai",   label: "Professional AI",  icon: "🩺", desc: "Medical, engineering, legal & education AI", color: "#10b981", group: "ANALYSIS" },
+  { id: "wish-framework",    label: "W.I.S.H. Engine",  icon: "🎯", desc: "Worldview, Indicators, Setup, Discipline", color: "#10b981", group: "ANALYSIS" },
   { id: "data-ingest",       label: "Data Ingest",      icon: "📥", desc: "Pipeline & data ingestion",  color: "#f59e0b", group: "ANALYSIS" },
   { id: "encyclopedia",      label: "Wiki",             icon: "📚", desc: "Financial encyclopedia",     color: "#f59e0b", group: "ANALYSIS" },
 
@@ -59,6 +61,8 @@ const MODULES: Module[] = [
 
   // SOCIAL / EDUCATION
   { id: "professional-social", label: "Sovereign Social", icon: "👥", desc: "Closed-loop professional financial network", color: "#a855f7", group: "SOCIAL" },
+  { id: "user-profile",      label: "User Profile",     icon: "👤", desc: "Sovereign identity & credentials", color: "#a855f7", group: "SOCIAL" },
+  { id: "profession-hub",    label: "Profession Hub",   icon: "🌐", desc: "Cross-disciplinary verification hub", color: "#a855f7", group: "SOCIAL" },
   { id: "nur-education",     label: "Education",        icon: "🎓", desc: "Financial education hub",    color: "#34d399", group: "SOCIAL" },
   { id: "nur-kids",          label: "Nur Kids",         icon: "👨‍👩‍👧", desc: "Family finance platform",   color: "#34d399", group: "SOCIAL" },
   { id: "compute-access",    label: "Free Access",      icon: "⛏️", desc: "Compute-for-access mining",  color: "#34d399", group: "SOCIAL" },

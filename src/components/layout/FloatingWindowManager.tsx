@@ -10,15 +10,30 @@ import { PanelView } from "@/types";
 const NurEarth3DGlobe = dynamic(() => import("@/components/geopolitics/NurEarth3DGlobe"), { ssr: false });
 const GeopoliticsPanel = dynamic(() => import("@/components/geopolitics/GeopoliticsPanel"), { ssr: false });
 const GeophysicsResourcesPanel = dynamic(() => import("@/components/geophysics/GeophysicsResourcesPanel"), { ssr: false });
+const ResourceIntelligencePanel = dynamic(() => import("@/components/resources/ResourceIntelligencePanel"), { ssr: false });
 const InstitutionalSuitePanel = dynamic(() => import("@/components/institutional/InstitutionalSuitePanel"), { ssr: false });
 const OrbitalTelemetryPanel = dynamic(() => import("@/components/orbital/OrbitalTelemetryPanel"), { ssr: false });
 const ProfessionalAIHubPanel = dynamic(() => import("@/components/professional/ProfessionalAIHubPanel"), { ssr: false });
 const FinancialSocialPanel = dynamic(() => import("@/components/social/FinancialSocialPanel"), { ssr: false });
+const UserProfilePanel = dynamic(() => import("@/components/social/UserProfilePanel"), { ssr: false });
+const ProfessionHubPanel = dynamic(() => import("@/components/social/ProfessionHubPanel"), { ssr: false });
+const WISHFrameworkPanel = dynamic(() => import("@/components/trading/WISHFrameworkPanel"), { ssr: false });
 const BroadcastStudioPanel = dynamic(() => import("@/components/media/BroadcastStudioPanel"), { ssr: false });
 const UmayBossTerminal = dynamic(() => import("@/components/umay/UmayBossTerminal"), { ssr: false });
 const HoldingEcosystemPanel = dynamic(() => import("@/components/holding/HoldingEcosystemPanel"), { ssr: false });
 const TatarFinansPanel = dynamic(() => import("@/components/tatar/TatarFinansPanel"), { ssr: false });
 const NurKidsPanel = dynamic(() => import("@/components/kids/NurKidsPanel"), { ssr: false });
+const NurEducationPanel = dynamic(() => import("@/components/education/NurEducationPanel"), { ssr: false });
+const ComputeForAccessPanel = dynamic(() => import("@/components/compute/ComputeForAccessPanel"), { ssr: false });
+const PricingPanel = dynamic(() => import("@/components/pricing/PricingPanel"), { ssr: false });
+const VerificationPanel = dynamic(() => import("@/components/pricing/VerificationPanel"), { ssr: false });
+const EncyclopediaPanel = dynamic(() => import("@/components/encyclopedia/EncyclopediaPanel"), { ssr: false });
+const NewsFeedPanel = dynamic(() => import("@/components/news/NewsFeedPanel"), { ssr: false });
+const MarketBriefsPanel = dynamic(() => import("@/components/nfs/MarketBriefsPanel"), { ssr: false });
+const RiskAlertsPanel = dynamic(() => import("@/components/nfs/RiskAlertsPanel"), { ssr: false });
+const ResearchPanel = dynamic(() => import("@/components/nfs/ResearchPanel"), { ssr: false });
+const LiveBroadcast = dynamic(() => import("@/components/media/LiveBroadcast"), { ssr: false });
+const MediaPanel = dynamic(() => import("@/components/media/MediaPanel"), { ssr: false });
 const ChartsPanel = dynamic(() => import("@/components/dashboard/ChartsPanel"), { ssr: false });
 const OMSEMSPanel = dynamic(() => import("@/components/trading/OMSEMSPanel"), { ssr: false });
 const AIQuantCopilot = dynamic(() => import("@/components/ai/AIQuantCopilot"), { ssr: false });
@@ -48,6 +63,8 @@ export default function FloatingWindowManager() {
         return <NurEarth3DGlobe />;
       case "geophysics-resources":
         return <GeophysicsResourcesPanel />;
+      case "resource-intelligence":
+        return <ResourceIntelligencePanel />;
       case "institutional-suite":
         return <InstitutionalSuitePanel />;
       case "orbital-telemetry":
@@ -56,6 +73,12 @@ export default function FloatingWindowManager() {
         return <ProfessionalAIHubPanel />;
       case "professional-social":
         return <FinancialSocialPanel />;
+      case "user-profile":
+        return <UserProfilePanel />;
+      case "profession-hub":
+        return <ProfessionHubPanel />;
+      case "wish-framework":
+        return <WISHFrameworkPanel />;
       case "broadcast-studio":
         return <BroadcastStudioPanel />;
       case "umay-boss":
@@ -66,6 +89,28 @@ export default function FloatingWindowManager() {
         return <TatarFinansPanel />;
       case "nur-kids":
         return <NurKidsPanel />;
+      case "nur-education":
+        return <NurEducationPanel />;
+      case "compute-access":
+        return <ComputeForAccessPanel />;
+      case "pricing":
+        return <PricingPanel />;
+      case "verification-portal":
+        return <VerificationPanel />;
+      case "encyclopedia":
+        return <EncyclopediaPanel />;
+      case "news-feed":
+        return <NewsFeedPanel />;
+      case "news":
+        return <MarketBriefsPanel />;
+      case "alerts":
+        return <RiskAlertsPanel />;
+      case "research":
+        return <ResearchPanel />;
+      case "live-tv":
+        return <LiveBroadcast />;
+      case "media":
+        return <MediaPanel />;
       case "charts":
         return <ChartsPanel />;
       case "oms-ems":
