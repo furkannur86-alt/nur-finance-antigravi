@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import EagleCrest from "@/components/ui/EagleCrest";
+import { useIDEStore } from "@/stores/useIDEStore";
+import type { PanelView } from "@/types";
 
 interface TickerItem {
   symbol: string;
@@ -156,13 +158,178 @@ function generateCommentaryItem(): Commentary {
   };
 }
 
+// ── Bloomberg-style command registry ─────────────────────────────────────────
+interface NurCommand {
+  aliases: string[];
+  view?: string;
+  description: string;
+  category: string;
+  output?: string[];
+}
+
+const NUR_COMMANDS: NurCommand[] = [
+  // Market Intelligence
+  { aliases: ["DASH", "HOME"], view: "dashboard", description: "Main dashboard — live market overview", category: "MARKET" },
+  { aliases: ["CHART", "GP", "GPC"], view: "charts", description: "Interactive charting — equity, FX, commodities", category: "MARKET" },
+  { aliases: ["SCR", "SCRN", "EQS"], view: "screener", description: "Equity & asset screener with quant filters", category: "MARKET" },
+  { aliases: ["GLB", "WEI", "GMKT"], view: "global-markets", description: "Global markets — indices, FX, bonds, commodities", category: "MARKET" },
+  { aliases: ["ECO", "ECON", "WECO"], view: "economic-data", description: "Economic indicators — GDP, CPI, PMI, NFP", category: "MACRO" },
+  { aliases: ["RSK", "RISK", "MRSK"], view: "macro-risk", description: "Macro risk monitor — geopolitical, credit, vol", category: "MACRO" },
+  { aliases: ["GEO", "GEOP", "GPOL"], view: "geopolitics", description: "Geopolitical intelligence — nuclear, sanctions, conflicts", category: "MACRO" },
+  { aliases: ["FUND", "FA", "CFS"], view: "fundamentals", description: "Company fundamentals — P/E, EV/EBITDA, DCF", category: "EQUITY" },
+  // Trading & Portfolio
+  { aliases: ["PORT", "PRTU", "PRTF"], view: "portfolio", description: "Portfolio manager — positions, P&L, attribution", category: "PORTFOLIO" },
+  { aliases: ["OMS", "EMS", "OEMS"], view: "oms-ems", description: "Order & execution management — trade blotter", category: "TRADING" },
+  { aliases: ["OPT", "OMON", "OVDV"], view: "options", description: "Options analytics — vol surface, Greeks, strats", category: "DERIVATIVES" },
+  { aliases: ["BT", "BACK", "BTST"], view: "backtest", description: "Strategy backtesting engine — Sharpe, drawdown", category: "QUANT" },
+  { aliases: ["WISH"], view: "wish-framework", description: "WISH Framework — NUR's core trading strategy", category: "QUANT" },
+  // AI & Research
+  { aliases: ["AI", "QUANT", "QC", "COPILOT"], view: "quant-copilot", description: "AI Quant Strategist — alpha signals, factor models", category: "AI" },
+  { aliases: ["AITOOLS", "MODELS"], view: "ai-tools", description: "Quantitative model library", category: "AI" },
+  { aliases: ["RES", "RESEARCH", "BI"], view: "research", description: "NFS Research — analyst reports, deep dives", category: "RESEARCH" },
+  { aliases: ["NI", "NEWS", "BRIEF", "TOP"], view: "news", description: "Market briefs — breaking financial news", category: "NEWS" },
+  { aliases: ["NF", "FEED", "NFEED"], view: "news-feed", description: "Live news feed — multi-source stream", category: "NEWS" },
+  { aliases: ["ALRT", "ALERTS", "RMW"], view: "alerts", description: "Risk alerts — threshold monitoring, signals", category: "ALERTS" },
+  { aliases: ["INGEST", "DATA", "DI"], view: "data-ingest", description: "Data ingest — connect APIs, feeds, databases", category: "DATA" },
+  // Media & Broadcast
+  { aliases: ["TV", "LIVE", "NTV"], view: "live-tv", description: "NUR TV Live — 24/7 financial broadcast", category: "MEDIA" },
+  { aliases: ["MEDIA", "MED"], view: "media", description: "NFS Media hub — video library, podcasts", category: "MEDIA" },
+  { aliases: ["STUDIO", "BCAST", "BRDC"], view: "broadcast-studio", description: "Broadcast Studio — produce & stream live content", category: "MEDIA" },
+  // Platform
+  { aliases: ["PLANS", "PRICE", "SUB"], view: "pricing", description: "Subscription plans — NUR Finance B & R tiers", category: "PLATFORM" },
+  { aliases: ["VERIFY", "KYC", "VER"], view: "verification-portal", description: "Identity & accreditation verification", category: "PLATFORM" },
+  { aliases: ["WALLET", "PAY", "DWG"], view: "wallet-gateway", description: "Digital wallet & payment gateway", category: "PLATFORM" },
+  { aliases: ["COIN", "NRC", "NURC"], view: "nur-coin", description: "NUR Coin ecosystem — tokenomics, staking", category: "CRYPTO" },
+  { aliases: ["COMPUTE", "GPU", "CFA"], view: "compute-access", description: "Compute for access — GPU mining participation", category: "PLATFORM" },
+  { aliases: ["EDU", "LEARN", "NURED"], view: "nur-education", description: "NUR Education — quant curriculum, courses", category: "EDUCATION" },
+  { aliases: ["KIDS", "NURK"], view: "nur-kids", description: "NUR Kids — financial literacy for youth", category: "EDUCATION" },
+  { aliases: ["HOLD", "ECOSYSTEM", "7ARM"], view: "holding-ecosystem", description: "7 Growth Arms — NUR holding ecosystem overview", category: "CORPORATE" },
+  { aliases: ["TATAR", "TATFIN"], view: "tatar-finans", description: "Tatar Finans — regional finance division", category: "CORPORATE" },
+  { aliases: ["UMAY", "BOSS", "CEO"], view: "umay-boss", description: "Umay Gül Nur — executive terminal", category: "CORPORATE" },
+  { aliases: ["ENCY", "WIKI", "ENC"], view: "encyclopedia", description: "Financial encyclopedia — glossary, concepts", category: "REFERENCE" },
+  // Terminal itself
+  { aliases: ["TERM", "NFS", "NFST", "CLI"], view: "terminal", description: "NFS Terminal — this screen", category: "SYSTEM" },
+  { aliases: ["EDITOR", "CODE", "IDE"], view: "editor", description: "Code editor — strategy IDE", category: "SYSTEM" },
+  // Special output-only commands
+  {
+    aliases: ["HEAT", "HEATMAP", "HEATUP"],
+    description: "Sector heat map — real-time color-coded performance matrix",
+    category: "MARKET",
+    output: [
+      "━━━━━━━━━━━━━━━━ SECTOR HEAT MAP ━━━━━━━━━━━━━━━━",
+      "  TECHNOLOGY    ████████░░  +2.4%  ▲ OUTPERFORM",
+      "  ENERGY        ██████░░░░  +1.8%  ▲ OUTPERFORM",
+      "  FINANCIALS    █████░░░░░  +1.1%  ▲ NEUTRAL",
+      "  HEALTHCARE    ███░░░░░░░  +0.6%  ▲ NEUTRAL",
+      "  UTILITIES     ░░░░░░░░░░  -0.2%  ▼ UNDERPERFORM",
+      "  REAL ESTATE   ░░░░░░░░░░  -0.8%  ▼ UNDERPERFORM",
+      "  MATERIALS     ░░░░░░░░░░  -1.4%  ▼ UNDERPERFORM",
+      "─────────────────────────────────────────────────",
+      "  Source: NUR Quant · Updated: " + new Date().toUTCString(),
+    ],
+  },
+];
+
+function matchCommand(input: string): NurCommand | null {
+  const token = input.trim().toUpperCase().split(/\s+/)[0];
+  return NUR_COMMANDS.find(cmd => cmd.aliases.includes(token)) ?? null;
+}
+
+interface CmdLine {
+  id: string;
+  type: "input" | "output" | "error" | "info";
+  text: string;
+  time: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function NURTerminalPanel() {
+  const { setActiveView } = useIDEStore();
   const [news, setNews] = useState<NewsItem[]>(() => Array.from({ length: 15 }, generateNewsItem));
   const [commentaries, setCommentaries] = useState<Commentary[]>(() => Array.from({ length: 5 }, generateCommentaryItem));
   const [chartTimeframe, setChartTimeframe] = useState<"1H" | "1D" | "1W">("1D");
   const [cmdInput, setCmdInput] = useState("");
+  const [cmdHistory, setCmdHistory] = useState<string[]>([]);
+  const [historyIdx, setHistoryIdx] = useState(-1);
+  const [cmdLines, setCmdLines] = useState<CmdLine[]>([
+    { id: "boot-0", type: "info", text: "NUR Finance System Terminal v3.0  ·  Type HELP <GO> for command list", time: formatTime(new Date()) },
+    { id: "boot-1", type: "info", text: "Sovereign Quantitative Engine active  ·  Ctrl+↑/↓ for history", time: formatTime(new Date()) },
+  ]);
   const newsRef = useRef<HTMLDivElement>(null);
   const commentaryRef = useRef<HTMLDivElement>(null);
+  const cmdLinesRef = useRef<HTMLDivElement>(null);
+  const cmdInputRef = useRef<HTMLInputElement>(null);
+
+  const pushLine = useCallback((line: Omit<CmdLine, "id">) => {
+    setCmdLines(prev => [...prev, { ...line, id: `l-${Date.now()}-${Math.random()}` }].slice(-200));
+  }, []);
+
+  const executeCommand = useCallback((raw: string) => {
+    const trimmed = raw.trim();
+    if (!trimmed) return;
+
+    pushLine({ type: "input", text: `> ${trimmed} <GO>`, time: formatTime(new Date()) });
+    setCmdHistory(prev => [trimmed, ...prev].slice(0, 50));
+    setHistoryIdx(-1);
+
+    const upper = trimmed.toUpperCase();
+
+    // HELP command
+    if (upper === "HELP" || upper === "?") {
+      const categories = [...new Set(NUR_COMMANDS.map(c => c.category))];
+      pushLine({ type: "info", text: "━━━━━━━━━━━━━━━━━━ NUR FINANCE COMMAND REFERENCE ━━━━━━━━━━━━━━━━━━", time: formatTime(new Date()) });
+      for (const cat of categories) {
+        pushLine({ type: "info", text: `\n  ── ${cat} ──`, time: formatTime(new Date()) });
+        NUR_COMMANDS.filter(c => c.category === cat).forEach(cmd => {
+          pushLine({ type: "output", text: `  ${cmd.aliases.join(" · ").padEnd(24)} ${cmd.description}`, time: formatTime(new Date()) });
+        });
+      }
+      pushLine({ type: "info", text: "\n  Press Enter or type <GO> after any command to execute.", time: formatTime(new Date()) });
+      return;
+    }
+
+    const matched = matchCommand(trimmed);
+
+    if (matched) {
+      if (matched.output) {
+        matched.output.forEach(line =>
+          pushLine({ type: "output", text: line, time: formatTime(new Date()) })
+        );
+      }
+      if (matched.view) {
+        pushLine({ type: "info", text: `→ Navigating to ${matched.aliases[0]}…`, time: formatTime(new Date()) });
+        setTimeout(() => setActiveView(matched.view as PanelView), 300);
+      }
+    } else {
+      pushLine({ type: "error", text: `Unknown command: "${trimmed.split(/\s+/)[0].toUpperCase()}"  ·  Type HELP for available commands`, time: formatTime(new Date()) });
+    }
+  }, [pushLine, setActiveView]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const val = cmdInput.replace(/<GO>/gi, "").trim();
+      if (val) executeCommand(val);
+      setCmdInput("");
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const idx = Math.min(historyIdx + 1, cmdHistory.length - 1);
+      setHistoryIdx(idx);
+      setCmdInput(cmdHistory[idx] ?? "");
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const idx = Math.max(historyIdx - 1, -1);
+      setHistoryIdx(idx);
+      setCmdInput(idx === -1 ? "" : cmdHistory[idx] ?? "");
+    }
+  }, [cmdInput, cmdHistory, historyIdx, executeCommand]);
+
+  // Auto-scroll command output
+  useEffect(() => {
+    if (cmdLinesRef.current) {
+      cmdLinesRef.current.scrollTop = cmdLinesRef.current.scrollHeight;
+    }
+  }, [cmdLines]);
 
   useEffect(() => {
     const newsInterval = setInterval(
@@ -301,22 +468,83 @@ export default function NURTerminalPanel() {
         </div>
       </div>
 
-      {/* Command Bar */}
-      <div className="flex items-center h-8 px-3 border-t shrink-0" style={{ borderColor: "#1e293b", background: "#0f1420" }}>
-        <span className="text-[10px] mr-2" style={{ color: "#00d4aa" }}>&#10095;</span>
-        <input
-          value={cmdInput}
-          onChange={(e) => setCmdInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && cmdInput.trim()) {
-              setCmdInput("");
-            }
+      {/* Command Output Log */}
+      <div
+        ref={cmdLinesRef}
+        onClick={() => cmdInputRef.current?.focus()}
+        className="border-t overflow-y-auto cursor-text"
+        style={{
+          height: 110,
+          borderColor: "#1e293b",
+          background: "#070b12",
+          padding: "6px 12px",
+        }}
+      >
+        {cmdLines.map(line => (
+          <div key={line.id} className="flex gap-2 font-mono text-[10px] leading-relaxed">
+            <span style={{ color: "rgba(78,98,128,0.5)", flexShrink: 0 }}>{line.time}</span>
+            <span style={{
+              color: line.type === "input" ? "#fbbf24"
+                : line.type === "error" ? "#ef4444"
+                : line.type === "info" ? "#22d3ee"
+                : "#94a3b8",
+              whiteSpace: "pre",
+            }}>
+              {line.text}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Bloomberg-style Command Bar */}
+      <div
+        className="flex items-center shrink-0 border-t"
+        style={{
+          borderColor: "rgba(251,191,36,0.25)",
+          background: "linear-gradient(90deg, #0f1008 0%, #13110a 100%)",
+          boxShadow: "0 -1px 0 rgba(251,191,36,0.08)",
+          height: 32,
+          paddingLeft: 12,
+          paddingRight: 12,
+          gap: 8,
+        }}
+      >
+        {/* Amber command-mode indicator */}
+        <span
+          className="text-[9px] font-mono font-black tracking-[0.12em] shrink-0 px-1.5 py-0.5 rounded-sm"
+          style={{
+            background: "rgba(251,191,36,0.15)",
+            border: "1px solid rgba(251,191,36,0.3)",
+            color: "#fbbf24",
           }}
-          placeholder="Type a command..."
-          className="flex-1 bg-transparent outline-none text-[11px] font-mono"
-          style={{ color: "#e2e8f0" }}
+        >
+          NFS&#62;
+        </span>
+
+        <input
+          ref={cmdInputRef}
+          value={cmdInput}
+          onChange={e => setCmdInput(e.target.value.toUpperCase())}
+          onKeyDown={handleKeyDown}
+          placeholder="TYPE COMMAND + ENTER  (e.g. RSK · HEAT · HELP · DASH)"
+          className="flex-1 bg-transparent outline-none text-[11px] font-mono tracking-wider"
+          style={{ color: "#fbbf24" }}
           spellCheck={false}
+          autoComplete="off"
+          autoCapitalize="characters"
         />
+
+        <button
+          onClick={() => { const v = cmdInput.replace(/<GO>/gi, "").trim(); if (v) executeCommand(v); setCmdInput(""); }}
+          className="shrink-0 px-2.5 py-0.5 rounded-sm font-black text-[9px] tracking-widest transition-all"
+          style={{
+            background: "rgba(34,197,94,0.15)",
+            border: "1px solid rgba(34,197,94,0.35)",
+            color: "#22c55e",
+          }}
+        >
+          &#60;GO&#62;
+        </button>
       </div>
 
       <style jsx>{`
