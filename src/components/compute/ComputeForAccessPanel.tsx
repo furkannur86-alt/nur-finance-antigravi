@@ -11,6 +11,7 @@ import {
   SovereignWalletAccount,
   WalletTransaction,
 } from "@/lib/crypto/sovereignWallet";
+import { webComputeEngine, MiningTelemetry } from "@/lib/compute/webComputeEngine";
 
 type CfaTab = "overview" | "wallet" | "schedule" | "agreement" | "dashboard";
 
