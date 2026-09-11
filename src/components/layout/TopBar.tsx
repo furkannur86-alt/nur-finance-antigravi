@@ -43,7 +43,7 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }
   "nur-kids":         { label: "Nur Kids",          icon: "👨‍👩‍👧", color: "#34d399" },
   "compute-access":   { label: "Free Access",       icon: "⛏️", color: "#34d399" },
   "umay-boss":        { label: "Umay Gül Nur",      icon: "👑", color: "#fbbf24" },
-  "holding-ecosystem":{ label: "7 Büyüme Kolu",    icon: "🏛️", color: "#fbbf24" },
+  "holding-ecosystem":{ label: "7 Growth Arms",    icon: "🏛️", color: "#fbbf24" },
   "tatar-finans":     { label: "Tatar Finans",      icon: "🛡️", color: "#fbbf24" },
   editor:             { label: "Code Editor",       icon: "⌨️", color: "#6b7280" },
 };
@@ -111,11 +111,11 @@ export default function TopBar() {
   const unreadAlertsCount = notifications.filter((n) => !n.read).length;
 
   const matrixStatusLabel =
-    matrixRainOpacity === 0 ? "Kapalı"
-    : matrixRainOpacity <= 0.05 ? "Hafif"
-    : matrixRainOpacity <= 0.08 ? "Rönesans"
-    : matrixRainOpacity <= 0.15 ? "Derin"
-    : "Yüksek";
+    matrixRainOpacity === 0 ? "Off"
+    : matrixRainOpacity <= 0.05 ? "Light"
+    : matrixRainOpacity <= 0.08 ? "Renaissance"
+    : matrixRainOpacity <= 0.15 ? "Deep"
+    : "High";
 
   const currentView = VIEW_LABELS[activeView] ?? { label: "Editor", icon: "⌨️", color: "#6b7280" };
 
@@ -140,11 +140,11 @@ export default function TopBar() {
         <div
           onClick={handleCrestClick}
           className="flex items-center gap-2 shrink-0 cursor-pointer"
-          title="NUR Finance · 3 kez tıkla: Egemen Girişi"
+          title="NUR Finance · Triple-click: Sovereign Entry"
         >
           <EagleCrest size={26} animate />
           <div className="flex flex-col">
-            <span className="text-xs font-bold tracking-wider text-amber-300 font-serif leading-none">NUR FİNANS</span>
+            <span className="text-xs font-bold tracking-wider text-amber-300 font-serif leading-none">NUR FINANCE</span>
             <span className="text-[7px] font-mono text-slate-500 tracking-wide">nurfinans.com</span>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function TopBar() {
             color: "#00d4aa",
             boxShadow: "0 0 12px rgba(0,212,170,0.08)",
           }}
-          title="Tüm modülleri aç (` tuşu)"
+          title="Open all modules (backtick key)"
         >
           {/* Grid icon */}
           <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
@@ -171,7 +171,7 @@ export default function TopBar() {
             <rect x="0" y="8.5" width="5.5" height="5.5" rx="1" />
             <rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1" />
           </svg>
-          Modüller
+          Modules
           <span
             className="text-[8px] px-1 py-0.5 rounded"
             style={{ background: "rgba(0,212,170,0.15)", color: "rgba(0,212,170,0.7)" }}
@@ -220,17 +220,17 @@ export default function TopBar() {
         <button
           onClick={() => setAccountModalOpen(true)}
           className="px-2.5 py-1 rounded text-[10px] font-mono flex items-center gap-1.5 hover:bg-white/5 border border-white/10 text-slate-300 transition-colors shrink-0"
-          title="Hesap"
+          title="Account"
         >
           <span className={user ? "text-emerald-400" : "text-slate-400"}>👤</span>
-          <span className="font-bold">{user ? user.email?.split("@")[0] : "Giriş"}</span>
+          <span className="font-bold">{user ? user.email?.split("@")[0] : "Sign In"}</span>
         </button>
 
         {/* Matrix */}
         <button
           onClick={cycleMatrixRainOpacity}
           className="px-2 py-1 rounded text-[10px] font-mono flex items-center gap-1 bg-black/40 hover:bg-black/60 border border-white/10 text-slate-300 transition-colors shrink-0"
-          title="Matriks Şelalesi"
+          title="Matrix Waterfall"
         >
           <span className="text-emerald-400">💧</span>
           <span className="font-bold text-amber-300">{matrixStatusLabel}</span>

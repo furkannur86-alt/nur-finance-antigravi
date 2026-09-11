@@ -20,7 +20,7 @@ const COURSES: Course[] = [
   { id: "math-stat", title: "Probability & Statistics", subject: "math", level: "University", lessons: 30, enrolled: 1120, icon: "📊" },
   { id: "lang-en", title: "English — Academic Writing", subject: "language", level: "Secondary", lessons: 20, enrolled: 3200, icon: "🇬🇧" },
   { id: "lang-de", title: "German — B1 Intensive", subject: "language", level: "All Levels", lessons: 28, enrolled: 1560, icon: "🇩🇪" },
-  { id: "lang-tr", title: "Türkçe — Yazılı Anlatım", subject: "language", level: "Secondary", lessons: 18, enrolled: 2400, icon: "🇹🇷" },
+  { id: "lang-tr", title: "Turkish — Written Expression", subject: "language", level: "Secondary", lessons: 18, enrolled: 2400, icon: "🇹🇷" },
   { id: "fin-lit", title: "Financial Literacy — Budgeting & Saving", subject: "finance", level: "Secondary", lessons: 16, enrolled: 890, icon: "💰" },
   { id: "fin-mkt", title: "Introduction to Capital Markets", subject: "finance", level: "University", lessons: 22, enrolled: 670, icon: "📈" },
   { id: "sci-phy", title: "Physics — Mechanics & Waves", subject: "science", level: "Secondary", lessons: 32, enrolled: 1450, icon: "⚛️" },

@@ -76,33 +76,33 @@ const SUPPORTED_NETWORKS: CryptoNetwork[] = [
 const WALLET_GUIDE_STEPS = [
   {
     step: 1,
-    title: "1. Dijital Cüzdanınızı Seçin ve Kurun",
-    desc: "Güvenli ve gözetimsiz (non-custodial) bir cüzdan tercih edin. Masaüstü için MetaMask veya Rabby Wallet (Chrome/Brave eklentisi), mobil için Trust Wallet önerilir. Kurumsal güvenlik için Ledger veya Trezor gibi donanım cüzdanları idealdir.",
-    tip: "Asla borsa hesap şifrenizi cüzdan şifresiyle aynı yapmayın.",
+    title: "1. Select and Set Up Your Digital Wallet",
+    desc: "Choose a secure, non-custodial wallet. MetaMask or Rabby Wallet (Chrome/Brave extension) is recommended for desktop, Trust Wallet for mobile. Hardware wallets such as Ledger or Trezor are ideal for institutional-grade security.",
+    tip: "Never use the same password for your exchange account and your wallet.",
   },
   {
     step: 2,
-    title: "2. 12/24 Kelimelik Gizli Kurtarma İfadesini (Seed Phrase) Saklayın",
-    desc: "Cüzdan oluşturulduğunda verilen 12 veya 24 kelimelik kurtarma anahtarını fiziki olarak bir kağıda yazın. Bu ifadeyi asla bilgisayarda ekran görüntüsü olarak tutmayın, e-posta ile göndermeyin veya kimseyle paylaşmayın.",
-    tip: "Bu kelimeler cüzdanınızın tek anahtarıdır.",
+    title: "2. Secure Your 12/24-Word Secret Recovery Phrase (Seed Phrase)",
+    desc: "When a wallet is created, write the 12 or 24-word recovery key physically on paper. Never keep this phrase as a screenshot on your computer, send it by email, or share it with anyone.",
+    tip: "These words are the sole key to your wallet.",
   },
   {
     step: 3,
-    title: "3. Cüzdanınıza Bakiye (USDT / USDC) Yükleyin",
-    desc: "Kullandığınız borsadan (ör. Binance, Kraken, OKX) cüzdanınızın genel adresine (0x... ile başlayan adres) USDT veya USDC çekimi yapın.",
-    tip: "Düşük transfer ücreti için Polygon veya Arbitrum ağını tercih edebilirsiniz.",
+    title: "3. Fund Your Wallet (USDT / USDC)",
+    desc: "Withdraw USDT or USDC from your exchange (e.g. Binance, Kraken, OKX) to your wallet's public address (the address starting with 0x...).",
+    tip: "You can choose the Polygon or Arbitrum network for lower transfer fees.",
   },
   {
     step: 4,
-    title: "4. Doğru Ağı (Network) ve Adresi Seçin",
-    desc: "Ödeme yapacağınız para birimi ve ağı (örneğin Polygon USDC) seçin. Çekim yaparken ağın gönderici ve alıcı tarafta birebir aynı olduğundan emin olun.",
-    tip: "Ağ uyumsuzluğu durumunda transferler askıda kalabilir.",
+    title: "4. Select the Correct Network and Address",
+    desc: "Select the currency and network you will pay with (e.g. Polygon USDC). When withdrawing, make sure the network is exactly the same on both the sender and recipient sides.",
+    tip: "Transfers may get stuck in case of network mismatch.",
   },
   {
     step: 5,
-    title: "5. Transferi Gerçekleştirin ve TXID Kodunu Girin",
-    desc: "Ödeme tutarını yukarıdaki kurum cüzdan adresimize gönderdikten sonra işlem özetinde yer alan İşlem Kodu (TXID / Transaction Hash) bilgisini forma yapıştırarak anonim erişimi anında aktif edin.",
-    tip: "Terminaliniz blokzincir onayının ardından 60 saniye içinde otomatik açılır.",
+    title: "5. Complete the Transfer and Enter the TXID",
+    desc: "After sending the payment amount to our institutional wallet address above, paste the Transaction ID (TXID / Transaction Hash) from the transaction summary into the form to instantly activate anonymous access.",
+    tip: "Your terminal will automatically open within 60 seconds after blockchain confirmation.",
   },
 ];
 
@@ -127,31 +127,30 @@ export default function DigitalWalletGateway() {
 
   const connectMetaMask = useCallback(async () => {
     if (!window.ethereum) {
-      setMmError("MetaMask bulunamadı. Lütfen MetaMask eklentisini yükleyin.");
+      setMmError("MetaMask not found. Please install the MetaMask extension.");
       return;
     }
     setMmConnecting(true);
     setMmError(null);
     try {
       const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[];
-      if (!accounts.length) throw new Error("Hesap bulunamadı");
+      if (!accounts.length) throw new Error("No account found");
       const addr = accounts[0];
       setMmAddress(addr);
 
-      // Fetch ETH balance
       const balHex = (await window.ethereum.request({ method: "eth_getBalance", params: [addr, "latest"] })) as string;
       const balWei = parseInt(balHex, 16);
       const balEth = (balWei / 1e18).toFixed(4);
       setMmBalance(balEth);
 
       addNotification({
-        title: "MetaMask Bağlandı",
-        message: `Adres: ${addr.slice(0, 6)}...${addr.slice(-4)} | ETH: ${balEth}`,
+        title: "MetaMask Connected",
+        message: `Address: ${addr.slice(0, 6)}...${addr.slice(-4)} | ETH: ${balEth}`,
         severity: "SUCCESS",
         category: "SETTLEMENT",
       });
     } catch (e) {
-      setMmError(e instanceof Error ? e.message : "Bağlantı başarısız");
+      setMmError(e instanceof Error ? e.message : "Connection failed");
     } finally {
       setMmConnecting(false);
     }
@@ -159,17 +158,14 @@ export default function DigitalWalletGateway() {
 
   const sendViaMetaMask = useCallback(async () => {
     if (!window.ethereum || !mmAddress) return;
-    // Only EVM networks support direct MetaMask send
     if (selectedNetwork.id === "btc-native" || selectedNetwork.id === "tron-usdt") {
-      setMmError("Bu ağ MetaMask ile uyumlu değil. Manuel transfer yapın.");
+      setMmError("This network is not compatible with MetaMask. Please transfer manually.");
       return;
     }
     setMmSending(true);
     setMmError(null);
     try {
-      // Send 0 ETH as a placeholder trigger — real USDT/USDC transfer requires contract call
-      // We prompt the user to send the correct token amount; here we request a tx to get the hash
-      const AMOUNT_USDT_HEX = "0x0"; // User sends manually; we capture the TXID
+      const AMOUNT_USDT_HEX = "0x0";
       const txHashResult = (await window.ethereum.request({
         method: "eth_sendTransaction",
         params: [
@@ -177,19 +173,18 @@ export default function DigitalWalletGateway() {
             from: mmAddress,
             to: selectedNetwork.depositAddress,
             value: AMOUNT_USDT_HEX,
-            // gas suggested by MetaMask
           },
         ],
       })) as string;
       setTxHash(txHashResult);
       addNotification({
-        title: "İşlem Gönderildi",
-        message: `TXID otomatik dolduruldu: ${txHashResult.slice(0, 10)}...`,
+        title: "Transaction Sent",
+        message: `TXID auto-filled: ${txHashResult.slice(0, 10)}...`,
         severity: "SUCCESS",
         category: "SETTLEMENT",
       });
     } catch (e) {
-      setMmError(e instanceof Error ? e.message : "İşlem iptal edildi");
+      setMmError(e instanceof Error ? e.message : "Transaction cancelled");
     } finally {
       setMmSending(false);
     }
@@ -198,9 +193,6 @@ export default function DigitalWalletGateway() {
   const planAmount = selectedPlan === "R" ? "100,000 USDT" : "100,000 USDT (VIP Verified)";
   const selectedTierId = selectedPlan === "R" ? "NUR_FINANCE_R" : "NUR_FINANCE_B";
 
-  // This gateway only collects payment. Eligibility (Reuters/Bloomberg history +
-  // leadership invitation for Tier B) must already have cleared the Verification
-  // Portal — payment can never be used to bypass that eligibility check.
   const isEligible = verification.tier === selectedTierId && verification.overallStatus !== "NOT_STARTED" && verification.overallStatus !== "REJECTED";
 
   const handleCopyAddress = () => {
@@ -234,13 +226,10 @@ export default function DigitalWalletGateway() {
           overallStatus: "VERIFIED",
           activatedAt: new Date().toISOString(),
         });
-        // Best-effort persistence to the signed-in user's real profile row. Silently
-        // no-ops if Supabase isn't configured or no one is signed in — the app still
-        // works purely from in-memory state either way.
         updateMyTier(selectedTierId).catch(() => {});
         addNotification({
-          title: "Ödeme Zincir Üzerinde Doğrulandı",
-          message: `${selectedNetwork.name} üzerindeki işlem doğrulandı. NUR Finance ${selectedPlan} terminal erişimi aktifleştirildi.`,
+          title: "Payment Verified On-Chain",
+          message: `Transaction on ${selectedNetwork.name} verified. NUR Finance ${selectedPlan} terminal access activated.`,
           severity: "SUCCESS",
           category: "SETTLEMENT",
         });
@@ -248,23 +237,23 @@ export default function DigitalWalletGateway() {
       } else if (result.status === "UNVERIFIABLE") {
         updateVerification({ tier: selectedTierId, overallStatus: "UNDER_REVIEW" });
         addNotification({
-          title: "Ödeme İncelemeye Alındı",
-          message: `Otomatik zincir doğrulaması şu an kullanılamıyor (${result.detail}). Uyum ekibimiz işlemi manuel olarak inceleyecek.`,
+          title: "Payment Under Review",
+          message: `Automatic on-chain verification is currently unavailable (${result.detail}). Our compliance team will review the transaction manually.`,
           severity: "WARNING",
           category: "COMPLIANCE",
         });
       } else {
         addNotification({
-          title: "Ödeme Doğrulanamadı",
-          message: result.detail || "İşlem zincir üzerinde doğrulanamadı.",
+          title: "Payment Could Not Be Verified",
+          message: result.detail || "Transaction could not be verified on-chain.",
           severity: "CRITICAL",
           category: "COMPLIANCE",
         });
       }
     } catch {
       addNotification({
-        title: "Doğrulama Hatası",
-        message: "Doğrulama servisine ulaşılamadı. Lütfen tekrar deneyin veya destek ile iletişime geçin.",
+        title: "Verification Error",
+        message: "Verification service unreachable. Please try again or contact support.",
         severity: "CRITICAL",
         category: "COMPLIANCE",
       });
@@ -286,11 +275,11 @@ export default function DigitalWalletGateway() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-[var(--ag-accent)]">NUR Terminal Digital Wallet Settlement Gateway</span>
               <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-400">
-                KYC/AML UYUMLU &bull; KİMLİK DOĞRULAMALI
+                KYC/AML COMPLIANT &bull; IDENTITY VERIFIED
               </span>
             </div>
             <p className="text-[11px] text-[var(--ag-muted)]">
-              Zincir Üzerinde Doğrulanmış Kripto Ödeme &bull; Kimlik Bilgisi Gerekli &bull; Multi-Chain USDT/USDC Gateway
+              On-Chain Verified Crypto Payment &bull; Identity Required &bull; Multi-Chain USDT/USDC Gateway
             </p>
           </div>
         </div>
@@ -305,7 +294,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            Ödeme ve Transfer
+            Payment & Transfer
           </button>
           <button
             onClick={() => setActiveTab("guide")}
@@ -315,7 +304,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            Cüzdan Açma & Fonlama Rehberi
+            Wallet Setup & Funding Guide
           </button>
           <button
             onClick={() => setActiveTab("security")}
@@ -325,7 +314,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            Gizlilik ve Güvenlik Protokolü
+            Privacy & Security Protocol
           </button>
         </div>
       </div>
@@ -337,9 +326,8 @@ export default function DigitalWalletGateway() {
           <div className="max-w-3xl mx-auto flex flex-col gap-5">
             {/* AML/KYC Compliance Notice */}
             <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-950/20 text-[11px] text-amber-200 leading-relaxed">
-              &#9888; Bu, yüksek tutarlı (&euro;100K/yıl) kurumsal bir ödeme kanalıdır ve AML/KYC uyum politikamıza tabidir. Ad-soyad ve e-posta
-              bilgileriniz kayıt altına alınır, ödemeler zincir üzerinde bağımsız olarak doğrulanır ve gerektiğinde uyum ekibimiz tarafından
-              manuel incelemeye alınabilir.
+              &#9888; This is a high-value (&euro;100K/year) institutional payment channel subject to our AML/KYC compliance policy. Full name
+              and email are recorded, payments are independently verified on-chain, and may be subject to manual review by our compliance team.
             </div>
 
             {/* MetaMask Connection Panel */}
@@ -360,10 +348,10 @@ export default function DigitalWalletGateway() {
                     <polygon fill="#E4751F" points="138.8,193.5 110.6,185.2 130.5,176.1"/>
                     <polygon fill="#E4751F" points="179.7,193.5 188.9,176.1 208.9,185.2"/>
                   </svg>
-                  <span className="text-xs font-bold text-white">MetaMask Cüzdan Bağlantısı</span>
+                  <span className="text-xs font-bold text-white">MetaMask Wallet Connection</span>
                   {mmAddress && (
                     <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">
-                      BAĞLI
+                      CONNECTED
                     </span>
                   )}
                 </div>
@@ -374,7 +362,7 @@ export default function DigitalWalletGateway() {
                     disabled={mmConnecting}
                     className="px-4 py-1.5 rounded text-xs font-bold bg-orange-500 hover:bg-orange-400 text-white transition-colors disabled:opacity-50"
                   >
-                    {mmConnecting ? "Bağlanıyor..." : "MetaMask Bağla"}
+                    {mmConnecting ? "Connecting..." : "Connect MetaMask"}
                   </button>
                 ) : (
                   <button
@@ -382,7 +370,7 @@ export default function DigitalWalletGateway() {
                     onClick={() => { setMmAddress(null); setMmBalance(null); }}
                     className="px-3 py-1 rounded text-[10px] font-bold bg-white/10 hover:bg-white/20 text-[var(--ag-muted)] transition-colors"
                   >
-                    Bağlantıyı Kes
+                    Disconnect
                   </button>
                 )}
               </div>
@@ -404,11 +392,11 @@ export default function DigitalWalletGateway() {
                       disabled={mmSending}
                       className="w-full py-2 rounded text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white transition-all disabled:opacity-50"
                     >
-                      {mmSending ? "MetaMask İmzası Bekleniyor..." : `MetaMask ile ${selectedNetwork.name} Ağında Gönder → TXID Otomatik Doldurulsun`}
+                      {mmSending ? "Waiting for MetaMask Signature..." : `Send via MetaMask on ${selectedNetwork.name} → Auto-fill TXID`}
                     </button>
                   )}
                   <p className="text-[10px] text-[var(--ag-muted)]">
-                    Gönder butonuna tıkladığınızda MetaMask işlem onay ekranı açılır; onayladıktan sonra TXID aşağıdaki forma otomatik yapıştırılır.
+                    When you click Send, MetaMask&apos;s transaction confirmation screen opens; after approval, the TXID is automatically pasted into the form below.
                   </p>
                 </div>
               )}
@@ -424,15 +412,14 @@ export default function DigitalWalletGateway() {
             {!isEligible && (
               <div className="p-4 rounded-lg border border-red-500/30 bg-red-950/20 flex items-center justify-between gap-4">
                 <p className="text-xs text-red-300 leading-relaxed">
-                  Ödeme yapmadan önce seçtiğiniz katman için ön koşulları (kullanım geçmişi{selectedPlan === "B" ? " ve davet kodu" : ""})
-                  Doğrulama Portalı üzerinden tamamlamanız gerekir.
+                  Before making payment, you must complete the prerequisites for your selected tier (usage history{selectedPlan === "B" ? " and invitation code" : ""}) through the Verification Portal.
                 </p>
                 <button
                   type="button"
                   onClick={() => setActiveView("verification-portal")}
                   className="px-3 py-1.5 rounded text-xs font-bold bg-red-400 hover:bg-red-300 text-black shrink-0 transition-colors"
                 >
-                  Doğrulama Portalı &rarr;
+                  Verification Portal &rarr;
                 </button>
               </div>
             )}
@@ -449,10 +436,10 @@ export default function DigitalWalletGateway() {
               >
                 <div className="flex justify-between items-center text-xs font-bold mb-1">
                   <span>NUR Finance R (Reuters Tier)</span>
-                  <span className="text-[var(--ag-accent)] font-mono">100,000 USDT / Yıl</span>
+                  <span className="text-[var(--ag-accent)] font-mono">100,000 USDT / Year</span>
                 </div>
                 <p className="text-[11px] text-[var(--ag-muted)]">
-                  Reuters Eikon muadili tam teşekküllü terminal. İsimsiz, doğrudan cüzdandan ödeme.
+                  Full-featured terminal equivalent to Reuters Eikon. Anonymous, direct wallet payment.
                 </p>
               </div>
 
@@ -466,10 +453,10 @@ export default function DigitalWalletGateway() {
               >
                 <div className="flex justify-between items-center text-xs font-bold mb-1">
                   <span>NUR Finance B (Bloomberg Tier - VIP)</span>
-                  <span className="text-[var(--ag-accent2)] font-mono">100,000 USDT / Yıl</span>
+                  <span className="text-[var(--ag-accent2)] font-mono">100,000 USDT / Year</span>
                 </div>
                 <p className="text-[11px] text-[var(--ag-muted)]">
-                  Bloomberg Terminal muadili amiral gemisi. Doğrulanmış VIP davetiye ile anında açılır.
+                  Flagship terminal equivalent to Bloomberg Terminal. Opens instantly with a verified VIP invitation.
                 </p>
               </div>
             </div>
@@ -477,7 +464,7 @@ export default function DigitalWalletGateway() {
             {/* Network Selector */}
             <div>
               <label className="text-[11px] font-semibold text-[var(--ag-muted)] uppercase block mb-1.5">
-                Ödeme Ağı (Blokzincir Seçimi)
+                Payment Network (Blockchain Selection)
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {SUPPORTED_NETWORKS.map((net) => (
@@ -494,12 +481,12 @@ export default function DigitalWalletGateway() {
                       <span>{net.name}</span>
                       {net.recommended && (
                         <span className="text-[8px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-sans font-bold">
-                          ÖNERİLEN
+                          RECOMMENDED
                         </span>
                       )}
                     </div>
                     <div className="text-[10px] text-[var(--ag-accent)] mt-0.5">{net.currency}</div>
-                    <div className="text-[9px] text-[var(--ag-muted)] mt-0.5">Ücret: {net.feeEstimate}</div>
+                    <div className="text-[9px] text-[var(--ag-muted)] mt-0.5">Fee: {net.feeEstimate}</div>
                   </button>
                 ))}
               </div>
@@ -509,12 +496,11 @@ export default function DigitalWalletGateway() {
             <div className="p-5 rounded-lg border bg-black/40 space-y-3" style={{ borderColor: "var(--ag-border)" }}>
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-white uppercase">
-                  Kurumsal Transfer Adresi ({selectedNetwork.name})
+                  Institutional Transfer Address ({selectedNetwork.name})
                 </span>
-                <span className="text-[10px] text-[var(--ag-accent)] font-mono">Tutar: {planAmount}</span>
+                <span className="text-[10px] text-[var(--ag-accent)] font-mono">Amount: {planAmount}</span>
               </div>
 
-              {/* Copyable Address Bar */}
               <div className="flex items-center gap-2 p-2 rounded bg-black/60 border border-[var(--ag-border)] font-mono text-xs text-emerald-300 break-all">
                 <span className="flex-1 select-all">{selectedNetwork.depositAddress}</span>
                 <button
@@ -522,14 +508,14 @@ export default function DigitalWalletGateway() {
                   onClick={handleCopyAddress}
                   className="px-3 py-1 rounded bg-[var(--ag-accent)] text-black font-bold text-xs shrink-0 transition-colors hover:bg-[var(--ag-accent)]/80"
                 >
-                  {copied ? "KOPYALANDI!" : "KOPYALA"}
+                  {copied ? "COPIED!" : "COPY"}
                 </button>
               </div>
 
               <div className="flex items-center gap-4 text-[10px] text-[var(--ag-muted)] font-mono">
-                <span>&bull; Gerekli Onay: {selectedNetwork.confirmationsRequired} blok</span>
-                <span>&bull; Minimum Yatırma: 1,000 USDT</span>
-                <span>&bull; Otomatik Tanıma: Aktif</span>
+                <span>&bull; Required Confirmations: {selectedNetwork.confirmationsRequired} blocks</span>
+                <span>&bull; Minimum Deposit: 1,000 USDT</span>
+                <span>&bull; Auto Detection: Active</span>
               </div>
             </div>
 
@@ -537,19 +523,19 @@ export default function DigitalWalletGateway() {
             <form onSubmit={handleVerifyPayment} className="p-5 rounded-lg border bg-black/40 space-y-3" style={{ borderColor: "var(--ag-border)" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-white block mb-1">Ad Soyad</label>
+                  <label className="text-xs font-bold text-white block mb-1">Full Name</label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Fatura/uyum kaydı için tam ad"
+                    placeholder="Full name for invoice/compliance record"
                     required
                     className="w-full p-2.5 rounded text-xs bg-black/60 border text-white font-mono focus:outline-none focus:border-[var(--ag-accent)]"
                     style={{ borderColor: "var(--ag-border)" }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-white block mb-1">Kurumsal E-posta</label>
+                  <label className="text-xs font-bold text-white block mb-1">Corporate Email</label>
                   <input
                     type="email"
                     value={email}
@@ -564,19 +550,18 @@ export default function DigitalWalletGateway() {
 
               <div>
                 <label className="text-xs font-bold text-white block mb-1">
-                  İşlem Kodu (TXID / Transaction Hash)
+                  Transaction ID (TXID / Transaction Hash)
                 </label>
                 <input
                   type="text"
                   value={txHash}
                   onChange={(e) => setTxHash(e.target.value)}
-                  placeholder="Transfer sonrası aldığınız 0x... işlem kodunu buraya yapıştırın"
+                  placeholder="Paste the 0x... transaction code received after transfer here"
                   className="w-full p-2.5 rounded text-xs bg-black/60 border text-white font-mono focus:outline-none focus:border-[var(--ag-accent)]"
                   style={{ borderColor: "var(--ag-border)" }}
                 />
                 <span className="text-[10px] text-[var(--ag-muted)] mt-1 block">
-                  İşlem kodunuz girildikten sonra blokzincir tarayıcısı üzerinden bağımsız olarak doğrulanır. Otomatik doğrulama başarısız
-                  olursa işleminiz uyum ekibimiz tarafından manuel incelemeye alınır — anında onay garanti edilmez.
+                  Your transaction ID is independently verified against the blockchain after entry. If automatic verification fails, your transaction will be manually reviewed by our compliance team — instant approval is not guaranteed.
                 </span>
               </div>
 
@@ -585,7 +570,7 @@ export default function DigitalWalletGateway() {
                 disabled={isVerifyingTx || !txHash.trim() || !fullName.trim() || !email.trim() || !isEligible}
                 className="w-full py-3 rounded text-xs font-bold uppercase tracking-wider bg-[var(--ag-accent)] hover:bg-[var(--ag-accent)]/80 text-black transition-all disabled:opacity-40 shadow-lg shadow-[rgba(0,212,170,0.15)]"
               >
-                {isVerifyingTx ? "BLOKZİNCİR DOĞRULANIYOR..." : "ÖDEMEYİ DOĞRULA VE TERMİNALİ AÇ"}
+                {isVerifyingTx ? "VERIFYING ON-CHAIN..." : "VERIFY PAYMENT & OPEN TERMINAL"}
               </button>
             </form>
           </div>
@@ -596,11 +581,10 @@ export default function DigitalWalletGateway() {
           <div className="max-w-3xl mx-auto space-y-4">
             <div className="p-4 rounded-lg border bg-black/30 mb-4" style={{ borderColor: "var(--ag-border)" }}>
               <h3 className="text-sm font-bold text-[var(--ag-accent)] mb-1">
-                Adım Adım Dijital Cüzdan Kurulum ve Fonlama Kılavuzu
+                Step-by-Step Digital Wallet Setup and Funding Guide
               </h3>
               <p className="text-xs text-[var(--ag-muted)] leading-relaxed">
-                NUR Terminal, küresel kurumsal yatırımcılar için Web3 cüzdanından doğrudan ödemeyi destekler (KYC/AML kimlik bilgisi ile birlikte).
-                Aşağıdaki 5 adımı takip ederek 5 dakika içinde cüzdanınızı hazırlayabilirsiniz:
+                NUR Terminal supports direct Web3 wallet payment for global institutional investors (with KYC/AML identity). Follow the 5 steps below to set up your wallet in 5 minutes:
               </p>
             </div>
 
@@ -617,7 +601,7 @@ export default function DigitalWalletGateway() {
                     {s.desc}
                   </p>
                   <div className="pl-7 text-[10px] text-[var(--ag-accent)] font-mono">
-                    &bull; Güvenlik İpucu: {s.tip}
+                    &bull; Security Tip: {s.tip}
                   </div>
                 </div>
               ))}
@@ -629,23 +613,22 @@ export default function DigitalWalletGateway() {
         {activeTab === "security" && (
           <div className="max-w-3xl mx-auto space-y-4">
             <div className="p-4 rounded-lg border bg-black/30" style={{ borderColor: "var(--ag-border)" }}>
-              <h3 className="text-sm font-bold text-white mb-2">KYC/AML Uyumlu Ödeme Mimarisi</h3>
+              <h3 className="text-sm font-bold text-white mb-2">KYC/AML Compliant Payment Architecture</h3>
               <p className="text-xs text-[var(--ag-muted)] leading-relaxed mb-3">
-                Bu kurumsal ödeme kanalı, yürürlükteki AML/KYC yükümlülüklerine tabidir. Ad-soyad ve e-posta bilgisi her ödemede zorunludur;
-                işlemler blokzincir üzerinde bağımsız olarak doğrulanır ve uyum ekibi tarafından denetlenebilir.
+                This institutional payment channel is subject to applicable AML/KYC obligations. Full name and email are required for every payment; transactions are independently verified on the blockchain and can be audited by the compliance team.
               </p>
               <ul className="text-xs text-[var(--ag-muted)] space-y-2">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--ag-accent)]" />
-                  <span><strong>Ödeme Doğrulama:</strong> Her TXID, beklenen adrese ve tutara karşı zincir üzerinde bağımsız olarak kontrol edilir.</span>
+                  <span><strong>Payment Verification:</strong> Every TXID is independently checked on-chain against the expected address and amount.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--ag-accent)]" />
-                  <span><strong>Terminal Erişim Anahtarı:</strong> Cüzdan adresinize özel şifrelenmiş bir JWT oturum belirteci atanır.</span>
+                  <span><strong>Terminal Access Key:</strong> An encrypted JWT session token is assigned specific to your wallet address.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--ag-accent)]" />
-                  <span><strong>Manuel İnceleme:</strong> Otomatik doğrulama başarısız olursa işlem, kimliğiniz ve ödeme kaydınızla birlikte uyum ekibine düşer.</span>
+                  <span><strong>Manual Review:</strong> If automatic verification fails, the transaction is forwarded to the compliance team along with your identity and payment record.</span>
                 </li>
               </ul>
             </div>

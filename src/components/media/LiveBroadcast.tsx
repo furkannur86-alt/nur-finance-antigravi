@@ -16,7 +16,7 @@ const LIVE_CHANNELS = [
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
     fallbackPoster: "/images/studio/anchor-female.jpg",
     category: "GLOBAL MACRO",
-    badge: "CANLI 4K",
+    badge: "LIVE 4K",
   },
   {
     id: "cnbc",
@@ -24,7 +24,7 @@ const LIVE_CHANNELS = [
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     fallbackPoster: "/images/studio/anchor-male.jpg",
     category: "QUANT & EQUITIES",
-    badge: "CANLI HD",
+    badge: "LIVE HD",
   },
   {
     id: "nur_global",
@@ -32,7 +32,7 @@ const LIVE_CHANNELS = [
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     fallbackPoster: "/images/studio/executive-office.jpg",
     category: "SOVEREIGN VAULT",
-    badge: "ÖZEL YAYIN",
+    badge: "EXCLUSIVE STREAM",
   },
 ];
 
@@ -41,10 +41,10 @@ const MARKET_DATA = [
   { symbol: "S&P 500", price: "5,742.80", change: "+0.85%", up: true },
   { symbol: "NASDAQ", price: "18,120.30", change: "+1.15%", up: true },
   { symbol: "DAX 40", price: "18,890.10", change: "+0.52%", up: true },
-  { symbol: "Brent Petrol", price: "$82.40", change: "+0.58%", up: true },
-  { symbol: "Altın / Ons", price: "$2,418.50", change: "+1.22%", up: true },
+  { symbol: "Brent Crude", price: "$82.40", change: "+0.58%", up: true },
+  { symbol: "Gold / Oz", price: "$2,418.50", change: "+1.22%", up: true },
   { symbol: "Bitcoin", price: "$67,420", change: "+2.84%", up: true },
-  { symbol: "VIX Korku", price: "14.20", change: "-3.40%", up: false },
+  { symbol: "VIX Fear", price: "14.20", change: "-3.40%", up: false },
 ];
 
 export default function LiveBroadcast() {
@@ -152,7 +152,7 @@ export default function LiveBroadcast() {
           {/* LIVE Pulsing Badge */}
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/90 text-white font-bold text-xs shadow-[0_0_15px_rgba(220,38,38,0.6)] animate-pulse">
             <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-            <span>CANLI YAYIN</span>
+            <span>LIVE BROADCAST</span>
           </div>
 
           {/* Channel Selector */}
@@ -177,17 +177,17 @@ export default function LiveBroadcast() {
           >
             {isSpeaking ? (
               <>
-                <span>⏹️ SESLİ SPİKERİ DURDUR</span>
+                <span>⏹️ STOP VOICE ANCHOR</span>
               </>
             ) : (
               <>
-                <span>🎙️ AI SPİKER SESLENDİRME ({selectedLang.flag})</span>
+                <span>🎙️ AI ANCHOR VOICE ({selectedLang.flag})</span>
               </>
             )}
           </button>
 
           <div className="hidden lg:flex items-center gap-4 text-slate-300 bg-black/50 px-3 py-1 rounded-lg border border-white/10">
-            <span>İST: <strong className="text-amber-400">{formatTime(currentTime, "Europe/Istanbul")}</strong></span>
+            <span>IST: <strong className="text-amber-400">{formatTime(currentTime, "Europe/Istanbul")}</strong></span>
             <span>LON: <strong className="text-cyan-400">{formatTime(currentTime, "Europe/London")}</strong></span>
             <span>NYC: <strong className="text-emerald-400">{formatTime(currentTime, "America/New_York")}</strong></span>
           </div>
@@ -197,7 +197,7 @@ export default function LiveBroadcast() {
       {/* Channel Picker Dropdown */}
       {showChannelPicker && (
         <div className="absolute top-16 left-4 z-50 p-3 rounded-2xl bg-slate-950/95 border border-cyan-500/40 backdrop-blur-2xl shadow-2xl space-y-2 w-80">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">KÜRESEL FİNANS YAYIN KANALLARI</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">GLOBAL FINANCE BROADCAST CHANNELS</div>
           {LIVE_CHANNELS.map((ch) => (
             <button
               key={ch.id}
@@ -233,7 +233,7 @@ export default function LiveBroadcast() {
           </div>
           <div className="p-4 rounded-b-2xl rounded-r-2xl bg-black/85 backdrop-blur-xl border border-amber-500/30 text-xs font-mono text-slate-200 max-w-md space-y-2 shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
-              <span className="text-amber-300 font-bold tracking-wider">KÜRESEL MAKRO VE QUANT MASASI</span>
+              <span className="text-amber-300 font-bold tracking-wider">GLOBAL MACRO & QUANT DESK</span>
               <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">{selectedLang.city}</span>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
@@ -242,7 +242,7 @@ export default function LiveBroadcast() {
             {isSpeaking && (
               <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-bold animate-pulse pt-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span>CANLI AKUSTİK SES SENTEZLEYİCİ AKTİF...</span>
+                <span>LIVE ACOUSTIC VOICE SYNTHESIZER ACTIVE...</span>
               </div>
             )}
           </div>
@@ -251,7 +251,7 @@ export default function LiveBroadcast() {
         {/* Right Side: Live Market Depth Board */}
         <div className="w-64 p-4 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-xs font-mono space-y-3 pointer-events-auto shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <span className="text-[10px] font-extrabold text-amber-300 uppercase tracking-widest">CANLI PİYASA METRİKLERİ</span>
+            <span className="text-[10px] font-extrabold text-amber-300 uppercase tracking-widest">LIVE MARKET METRICS</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           </div>
           <div className="space-y-2">
@@ -272,7 +272,7 @@ export default function LiveBroadcast() {
         {/* Breaking News Red Ticker */}
         <div className="flex items-center h-9 bg-gradient-to-r from-red-600 via-red-700 to-red-600 px-4 text-xs font-bold text-white tracking-wider shadow-lg">
           <span className="px-2.5 py-0.5 rounded bg-white text-red-700 font-extrabold text-[10px] mr-3 shrink-0 uppercase tracking-widest shadow">
-            SON DAKİKA
+            BREAKING
           </span>
           <span className="truncate font-sans font-semibold text-slate-100">
             {selectedLang.headlines[headlineIdx] || selectedLang.headlines[0]}
@@ -286,16 +286,16 @@ export default function LiveBroadcast() {
             <button
               onClick={togglePlay}
               className="hover:text-amber-400 transition-colors text-sm"
-              title={isPlaying ? "Durdur" : "Oynat"}
+              title={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? "⏸️" : "▶️"}
             </button>
             <button
               onClick={toggleMute}
               className="hover:text-amber-400 transition-colors text-sm"
-              title={isMuted ? "Sesi Aç" : "Sesi Kapat"}
+              title={isMuted ? "Unmute" : "Mute"}
             >
-              {isMuted ? "🔇 SES KAPALI" : "🔊 SES AÇIK"}
+              {isMuted ? "🔇 MUTED" : "🔊 SOUND ON"}
             </button>
           </div>
 

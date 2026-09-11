@@ -61,7 +61,7 @@ const MODULES: Module[] = [
 
   // SOVEREIGN (admin only)
   { id: "umay-boss",         label: "Umay Gül Nur",     icon: "👑", desc: "Sovereign boss terminal",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
-  { id: "holding-ecosystem", label: "7 Büyüme Kolu",    icon: "🏛️", desc: "Holding ecosystem panel",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
+  { id: "holding-ecosystem", label: "7 Growth Arms",    icon: "🏛️", desc: "Holding ecosystem panel",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "tatar-finans",      label: "Tatar Finans",     icon: "🛡️", desc: "Tatar financial network",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
 ];
 
@@ -144,12 +144,12 @@ export default function ModuleLauncher({ open, onClose }: Props) {
             ref={inputRef}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Modül ara…  (Esc ile kapat)"
+            placeholder="Search modules…  (Esc to close)"
             className="flex-1 bg-transparent outline-none text-sm"
             style={{ color: "rgba(255,255,255,0.9)", caretColor: "#00d4aa" }}
           />
           <span className="text-[10px] px-2 py-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.35)" }}>
-            {filtered.length} modül
+            {filtered.length} modules
           </span>
           <button
             onClick={onClose}
@@ -233,13 +233,13 @@ export default function ModuleLauncher({ open, onClose }: Props) {
           style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.3)" }}
         >
           <div className="flex items-center gap-3 text-[9px]" style={{ color: "rgba(255,255,255,0.25)" }}>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↑↓</kbd> Gezin</span>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↵</kbd> Aç</span>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Esc</kbd> Kapat</span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↑↓</kbd> Navigate</span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↵</kbd> Open</span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Esc</kbd> Close</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4aa" }} />
-            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Modül Aktif</span>
+            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Modules Active</span>
           </div>
         </div>
       </div>

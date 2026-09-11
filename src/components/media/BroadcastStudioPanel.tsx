@@ -13,9 +13,9 @@ import {
 import { cyberSound } from "@/lib/audio/sound-synth";
 
 const STUDIO_BACKGROUNDS = [
-  { id: "anchor-female", name: "Elit Kadın Spiker (Stüdyo A)", path: "/images/studio/anchor-female.jpg" },
-  { id: "anchor-male", name: "Kıdemli Stratejist (Stüdyo B)", path: "/images/studio/anchor-male.jpg" },
-  { id: "executive-office", name: "Yönetici Ofisi & Masası (Gökdelen)", path: "/images/studio/executive-office.jpg" },
+  { id: "anchor-female", name: "Elite Female Anchor (Studio A)", path: "/images/studio/anchor-female.jpg" },
+  { id: "anchor-male", name: "Senior Strategist (Studio B)", path: "/images/studio/anchor-male.jpg" },
+  { id: "executive-office", name: "Executive Office & Desk (Skyscraper)", path: "/images/studio/executive-office.jpg" },
 ];
 
 export default function BroadcastStudioPanel() {
@@ -51,11 +51,11 @@ export default function BroadcastStudioPanel() {
   const handleInjectBanner = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customHeadline.trim()) return;
-    const fullBanner = `[${selectedLang.name.toUpperCase()} TV] SON DAKİKA: ${customHeadline.trim()}`;
+    const fullBanner = `[${selectedLang.name.toUpperCase()} TV] BREAKING NEWS: ${customHeadline.trim()}`;
     setBreakingNewsTicker(fullBanner);
     addNotification({
-      title: "Canlı Yayın Bandı Güncellendi",
-      message: `Son dakika haberi tüm terminallere basıldı: "${customHeadline}"`,
+      title: "Live Ticker Updated",
+      message: `Breaking news pushed to all terminals: "${customHeadline}"`,
       severity: "INFO",
       category: "NUR_TV",
     });
@@ -88,8 +88,8 @@ export default function BroadcastStudioPanel() {
       setIsPrompting(true);
       handleSpeakScript();
       addNotification({
-        title: "🔴 YouTube & NUR TV Canlı Yayını Başlatıldı",
-        message: `${selectedLang.nativeName} dilinde canlı kuantum bülteni yayına girdi.`,
+        title: "🔴 YouTube & NUR TV Live Broadcast Started",
+        message: `Live quantum bulletin is now on air in ${selectedLang.nativeName}.`,
         severity: "SUCCESS",
         category: "NUR_TV",
       });
@@ -111,19 +111,19 @@ export default function BroadcastStudioPanel() {
           <EagleCrest size={28} animate={isLiveBroadcasting} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-amber-300 font-serif">NUR TV 2126 Stüdyo & YouTube Yayın Merkezi</span>
+              <span className="text-sm font-bold text-amber-300 font-serif">NUR TV 2126 Studio & YouTube Broadcast Center</span>
               {isLiveBroadcasting ? (
                 <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-red-600 text-white animate-pulse">
-                  ● CANLI YAYINDA (ON-AIR)
+                  ● LIVE (ON-AIR)
                 </span>
               ) : (
                 <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-slate-800 text-slate-400">
-                  BEKLEMEDE (STANDBY)
+                  STANDBY
                 </span>
               )}
             </div>
             <p className="text-[11px] text-[var(--ag-muted)]">
-              Gerçek İnsan Spikerler &bull; Doğal Ana Dil Sentezi &bull; YouTube RTMP Entegrasyonu
+              Real Human Anchors &bull; Natural Native Language Synthesis &bull; YouTube RTMP Integration
             </p>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function BroadcastStudioPanel() {
             onClick={() => setShowYoutubeModal(true)}
             className="px-3 py-1.5 rounded text-xs font-mono font-bold bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 transition-colors flex items-center gap-1.5"
           >
-            <span>📺 YouTube RTMP Ayarları</span>
+            <span>📺 YouTube RTMP Settings</span>
           </button>
 
           <button
@@ -148,11 +148,11 @@ export default function BroadcastStudioPanel() {
             {isLiveBroadcasting ? (
               <>
                 <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span>YAYINI DURDUR</span>
+                <span>STOP BROADCAST</span>
               </>
             ) : (
               <>
-                <span>🔴 CANLI YAYINI BAŞLAT</span>
+                <span>🔴 GO LIVE</span>
               </>
             )}
           </button>
@@ -169,7 +169,7 @@ export default function BroadcastStudioPanel() {
           {/* Language Selector */}
           <div>
             <div className="text-[10px] font-bold text-cyan-400 font-mono uppercase tracking-wider mb-2">
-              Yayın Dili ({BROADCAST_LANGUAGES.length})
+              Broadcast Language ({BROADCAST_LANGUAGES.length})
             </div>
             <div className="space-y-1">
               {BROADCAST_LANGUAGES.map((lang) => (
@@ -204,7 +204,7 @@ export default function BroadcastStudioPanel() {
           {/* Studio Camera Switcher */}
           <div>
             <div className="text-[10px] font-bold text-amber-400 font-mono uppercase tracking-wider mb-2">
-              Stüdyo & Kamera Açısı
+              Studio & Camera Angle
             </div>
             <div className="space-y-1.5">
               {STUDIO_BACKGROUNDS.map((bg) => (
@@ -259,7 +259,7 @@ export default function BroadcastStudioPanel() {
                 {selectedLang.defaultAnchorName}
               </div>
               <div className="bg-black/80 backdrop-blur border border-amber-500/40 text-white px-3 py-1 text-[11px] font-mono rounded-b rounded-r">
-                Nur Finans Küresel Baş Analisti &bull; {selectedLang.city}
+                Nur Finance Global Chief Analyst &bull; {selectedLang.city}
               </div>
             </div>
 
@@ -267,7 +267,7 @@ export default function BroadcastStudioPanel() {
             {isVoiceSpeaking && (
               <div className="absolute top-3 right-3 z-10 px-3 py-1 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-300 text-xs font-mono font-bold flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>CANLI SPİKER YAYINDA...</span>
+                <span>ANCHOR ON AIR...</span>
               </div>
             )}
           </div>
@@ -280,11 +280,11 @@ export default function BroadcastStudioPanel() {
             <div className="flex items-center gap-1">
               {(
                 [
-                  { id: "opening", label: "Giriş" },
-                  { id: "macro", label: "Makro" },
-                  { id: "quant", label: "Kantitatif" },
-                  { id: "breaking", label: "Son Dakika" },
-                  { id: "closing", label: "Kapanış" },
+                  { id: "opening", label: "Opening" },
+                  { id: "macro", label: "Macro" },
+                  { id: "quant", label: "Quantitative" },
+                  { id: "breaking", label: "Breaking" },
+                  { id: "closing", label: "Closing" },
                 ] as const
               ).map((seg) => (
                 <button
@@ -313,7 +313,7 @@ export default function BroadcastStudioPanel() {
                     : "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30"
                 }`}
               >
-                {isVoiceSpeaking ? "⏹️ SESİ DURDUR" : "🔊 SESİ DİNLE / TEST ET"}
+                {isVoiceSpeaking ? "⏹️ STOP AUDIO" : "🔊 LISTEN / TEST AUDIO"}
               </button>
 
               <button
@@ -322,11 +322,11 @@ export default function BroadcastStudioPanel() {
                   isPrompting ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"
                 }`}
               >
-                {isPrompting ? "DURAKLAT" : "KAYDIR"}
+                {isPrompting ? "PAUSE" : "SCROLL"}
               </button>
 
               <div className="flex items-center gap-1 text-[var(--ag-muted)]">
-                <span className="text-[10px]">Hız:</span>
+                <span className="text-[10px]">Speed:</span>
                 <input
                   type="range"
                   min={1}
@@ -359,7 +359,7 @@ export default function BroadcastStudioPanel() {
           {/* Audio Spectrum Visualizer */}
           <div>
             <div className="text-[10px] font-bold text-cyan-400 font-mono uppercase mb-1.5 flex justify-between">
-              <span>Canlı Ses Spektrumu</span>
+              <span>Live Audio Spectrum</span>
               <span className="text-emerald-400 font-mono">48.0 kHz HD</span>
             </div>
             <AudioSpectrumVisualizer height={54} isPlaying={isVoiceSpeaking || isLiveBroadcasting} />
@@ -369,14 +369,14 @@ export default function BroadcastStudioPanel() {
           <div className="p-3.5 rounded-xl border bg-black/40 space-y-2.5" style={{ borderColor: "var(--ag-border)" }}>
             <div className="text-xs font-bold text-white flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span>Canlı Alt Bant Yazısı Gönder</span>
+              <span>Push Live Lower-Third Ticker</span>
             </div>
             <form onSubmit={handleInjectBanner} className="space-y-2">
               <textarea
                 rows={2}
                 value={customHeadline}
                 onChange={(e) => setCustomHeadline(e.target.value)}
-                placeholder="Canlı yayına anlık son dakika bülteni yazın..."
+                placeholder="Write a live breaking news bulletin to push on air..."
                 className="w-full p-2 rounded-lg text-xs bg-black/60 border text-white font-mono focus:outline-none focus:border-red-500"
                 style={{ borderColor: "var(--ag-border)" }}
               />
@@ -385,30 +385,30 @@ export default function BroadcastStudioPanel() {
                 disabled={!customHeadline.trim()}
                 className="w-full py-2 rounded-lg text-xs font-bold bg-red-600 hover:bg-red-700 text-white uppercase tracking-wider transition-colors disabled:opacity-40"
               >
-                BANTI YAYINA VER
+                PUSH TICKER LIVE
               </button>
             </form>
           </div>
 
           {/* YouTube Streaming Broadcast Specs */}
           <div className="p-3.5 rounded-xl border bg-black/30 text-xs font-mono space-y-2" style={{ borderColor: "var(--ag-border)" }}>
-            <div className="text-[10px] text-amber-300 font-bold uppercase">Yayın & Kodlayıcı Telemetrisi</div>
+            <div className="text-[10px] text-amber-300 font-bold uppercase">Broadcast & Encoder Telemetry</div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Protokol:</span>
+              <span className="text-slate-400">Protocol:</span>
               <span className="text-white font-bold">RTMP / WebRTC</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Çözünürlük:</span>
-              <span className="text-cyan-300 font-bold">1080p60 (4K Hazır)</span>
+              <span className="text-slate-400">Resolution:</span>
+              <span className="text-cyan-300 font-bold">1080p60 (4K Ready)</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Ses Motoru:</span>
-              <span className="text-emerald-400 font-bold">Stüdyo Canlı Ses Hattı</span>
+              <span className="text-slate-400">Audio Engine:</span>
+              <span className="text-emerald-400 font-bold">Studio Live Audio Line</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Yayın Durumu:</span>
+              <span className="text-slate-400">Broadcast Status:</span>
               <span className={isLiveBroadcasting ? "text-red-400 font-bold" : "text-slate-500"}>
-                {isLiveBroadcasting ? "🔴 CANLI AKTİF" : "⚪ STANDBY"}
+                {isLiveBroadcasting ? "🔴 LIVE ACTIVE" : "⚪ STANDBY"}
               </span>
             </div>
           </div>
@@ -421,7 +421,7 @@ export default function BroadcastStudioPanel() {
           <div className="w-full max-w-md p-6 rounded-2xl border border-red-500/40 bg-slate-950 text-white space-y-4">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
               <h3 className="text-sm font-bold text-red-400 flex items-center gap-2">
-                <span>📺 YouTube Live RTMP Ayarları</span>
+                <span>📺 YouTube Live RTMP Settings</span>
               </h3>
               <button
                 onClick={() => setShowYoutubeModal(false)}
@@ -433,7 +433,7 @@ export default function BroadcastStudioPanel() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-slate-400 block mb-1">Sunucu URL (RTMP Server):</label>
+                <label className="text-slate-400 block mb-1">Server URL (RTMP Server):</label>
                 <input
                   type="text"
                   readOnly
@@ -443,7 +443,7 @@ export default function BroadcastStudioPanel() {
               </div>
 
               <div>
-                <label className="text-slate-400 block mb-1">Yayın Anahtarı (Stream Key):</label>
+                <label className="text-slate-400 block mb-1">Stream Key:</label>
                 <input
                   type="password"
                   value={youtubeStreamKey}
@@ -453,7 +453,7 @@ export default function BroadcastStudioPanel() {
               </div>
 
               <div className="p-3 rounded-lg bg-red-950/30 border border-red-500/30 text-[11px] text-slate-300 leading-relaxed">
-                OBS veya harici yayın yazılımınıza bu bilgileri girerek YouTube üzerinde 7/24 kesintisiz Nur Finans küresel piyasa bültenini yayınlayabilirsiniz.
+                Enter these details into OBS or your external broadcast software to stream the Nur Finance global market bulletin 24/7 on YouTube.
               </div>
             </div>
 
@@ -461,15 +461,15 @@ export default function BroadcastStudioPanel() {
               onClick={() => {
                 setShowYoutubeModal(false);
                 addNotification({
-                  title: "YouTube Ayarları Kaydedildi",
-                  message: "Canlı yayın parametreleri güncellendi.",
+                  title: "YouTube Settings Saved",
+                  message: "Live broadcast parameters updated.",
                   severity: "SUCCESS",
                   category: "NUR_TV",
                 });
               }}
               className="w-full py-2.5 rounded-xl font-bold bg-red-600 hover:bg-red-500 text-white text-xs font-mono transition-colors"
             >
-              KAYDET VE KAPAT
+              SAVE AND CLOSE
             </button>
           </div>
         </div>

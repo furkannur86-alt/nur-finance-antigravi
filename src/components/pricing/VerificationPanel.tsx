@@ -25,8 +25,8 @@ export default function VerificationPanel() {
     e.preventDefault();
     if (!fullName.trim() || !uploadFileName) {
       addNotification({
-        title: "Eksik Bilgi",
-        message: "Ad-soyad ve kullanım geçmişi kanıt belgesi (fatura/ekstre) başvuru için zorunludur.",
+        title: "Missing Information",
+        message: "Full name and proof of usage document (invoice/statement) are required for your application.",
         severity: "WARNING",
         category: "COMPLIANCE",
       });
@@ -58,8 +58,8 @@ export default function VerificationPanel() {
         });
 
         addNotification({
-          title: "Başvuru İncelemeye Alındı: NUR Finance R",
-          message: "1 yıllık Reuters kullanım geçmişi ön koşulu karşılandı. Ekibimiz kanıt belgenizi 24-48 saat içinde inceleyip son onayı verecek.",
+          title: "Application Under Review: NUR Finance R",
+          message: "1-year Reuters usage prerequisite satisfied. Our team will review your proof document within 24-48 hours and grant final approval.",
           severity: "INFO",
           category: "COMPLIANCE",
         });
@@ -105,8 +105,8 @@ export default function VerificationPanel() {
         });
 
         addNotification({
-          title: "Başvuru İncelemeye Alındı: NUR Finance B",
-          message: "Davet kodu doğrulandı ve Bloomberg geçmişi ön koşulu karşılandı. E-posta doğrulaması ve kanıt belgesi incelemesi tamamlandığında hesabınız aktifleştirilecek.",
+          title: "Application Under Review: NUR Finance B",
+          message: "Invitation code verified and Bloomberg history prerequisite satisfied. Your account will be activated once email verification and proof document review are complete.",
           severity: "INFO",
           category: "COMPLIANCE",
         });
@@ -218,12 +218,12 @@ export default function VerificationPanel() {
 
             {/* Full Name */}
             <div>
-              <label className="text-[11px] font-semibold text-[var(--ag-muted)] uppercase block mb-1">Ad Soyad</label>
+              <label className="text-[11px] font-semibold text-[var(--ag-muted)] uppercase block mb-1">Full Name</label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Uyum kaydı için tam ad"
+                placeholder="Full name for compliance record"
                 required
                 className="w-full p-2 rounded text-xs bg-black/50 border text-white font-mono focus:outline-none focus:border-[var(--ag-accent)]"
                 style={{ borderColor: "var(--ag-border)" }}
@@ -273,7 +273,7 @@ export default function VerificationPanel() {
                     style={{ borderColor: "var(--ag-border)" }}
                   />
                   <span className="text-[10px] text-[var(--ag-muted)] mt-1 block">
-                    Kod, yalnızca NUR Finance liderliği tarafından el ile seçilen davetlilere iletilir ve sunucu tarafında doğrulanır.
+                    Code is issued only to hand-selected invitees by NUR Finance leadership and verified server-side.
                   </span>
                 </div>
 
@@ -308,7 +308,7 @@ export default function VerificationPanel() {
                   />
                 </label>
                 <span className="text-xs text-[var(--ag-muted)] font-mono">
-                  {uploadFileName || "Belge seçilmedi — başvuru için zorunlu"}
+                  {uploadFileName || "No document selected — required for application"}
                 </span>
               </div>
             </div>
@@ -329,11 +329,11 @@ export default function VerificationPanel() {
               <div className="text-xs font-bold text-emerald-400 flex items-center gap-2">
                 <span>&#128274; Digital Wallet Settlement & Client Academy</span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">
-                  KYC/AML UYUMLU
+                  KYC/AML COMPLIANT
                 </span>
               </div>
               <p className="text-[11px] text-[var(--ag-muted)]">
-                Zincir üzerinde doğrulanan çok zincirli USDT/USDC ödemesi (Ethereum, Polygon, Arbitrum, TRON, BTC) — kimlik bilgisi ve adım adım cüzdan kurulum rehberi ile.
+                On-chain verified multi-chain USDT/USDC settlement (Ethereum, Polygon, Arbitrum, TRON, BTC) — with identity verification and step-by-step wallet setup guide.
               </p>
             </div>
             <button

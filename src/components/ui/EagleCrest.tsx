@@ -276,7 +276,7 @@ export default function EagleCrest({
       <div
         onClick={() => setModalOpen(true)}
         className={`relative inline-flex flex-col items-center justify-center group cursor-pointer ${className}`}
-        title="DOMINUS ORIENTIS ET OCCIDENTIS (Doğunun ve Batının Hâkimi) — NUR Finance Master Emblem (Tıkla ve Detayları Gör)"
+        title="DOMINUS ORIENTIS ET OCCIDENTIS (Lord of East and West) — NUR Finance Master Emblem (Click for Details)"
       >
         <canvas ref={canvasRef} style={{ width: size, height: size }} />
         {showMottoBadge && (
@@ -295,7 +295,7 @@ export default function EagleCrest({
               onClick={() => setModalOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-mono"
             >
-              ✕ KAPAT
+              ✕ CLOSE
             </button>
 
             {/* Crest Hero Header */}
@@ -323,13 +323,13 @@ export default function EagleCrest({
               />
               <div>
                 <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400">
-                  Resmi Hanedan & Kuantitatif İnsignia
+                  Official Dynasty & Quantitative Insignia
                 </div>
                 <h3 className="text-xl font-serif font-bold text-amber-200">
                   DOMINUS ORIENTIS ET OCCIDENTIS
                 </h3>
                 <p className="text-xs text-emerald-400 font-medium mt-0.5">
-                  &ldquo;Doğunun ve Batının Hâkimi&rdquo; &bull; NUR Finance Sovereign Emblem
+                  &ldquo;Lord of East and West&rdquo; &bull; NUR Finance Sovereign Emblem
                 </p>
               </div>
             </div>
@@ -337,34 +337,33 @@ export default function EagleCrest({
             {/* Content description */}
             <div className="space-y-3 text-xs leading-relaxed text-slate-300">
               <div className="p-3 rounded-lg bg-amber-950/20 border border-amber-500/30 space-y-1">
-                <div className="font-bold text-amber-300 text-xs">🏛️ Çift Başlı Kartal ve Ezoterik Anlamı:</div>
+                <div className="font-bold text-amber-300 text-xs">🏛️ Double-Headed Eagle & Esoteric Meaning:</div>
                 <p>
-                  Selçuklu ve Doğu Roma / Rönesans imparatorluk mirasının simgesi olan Çift Başlı Kartal, 
-                  NUR Finance&apos;in <strong>Doğu (Asya/Ortadoğu)</strong> ve <strong>Batı (Wall Street/Londra)</strong> sermaye piyasalarına 
-                  aynı anda hükmeden kuantitatif vizyonunu temsil eder.
+                  The Double-Headed Eagle — a symbol of Seljuk and Byzantine / Renaissance imperial heritage — represents
+                  NUR Finance&apos;s quantitative vision of simultaneously commanding <strong>Eastern (Asia/Middle East)</strong> and <strong>Western (Wall Street/London)</strong> capital markets.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-[11px]">
                 <div className="p-2.5 rounded bg-black/40 border border-white/10 space-y-1">
-                  <span className="font-bold text-cyan-300">👑 Egemen Kuantitatif Mimari</span>
+                  <span className="font-bold text-cyan-300">👑 Sovereign Quantitative Architecture</span>
                   <p className="text-[10px] text-slate-400">
-                    Merkeziyetsiz, bağımsız ve sınır ötesi kuantitatif işlem protokolü. Sıfır PII (Kişisel Verisiz) ve kriptografik mutlak egemenlik standardı.
+                    Decentralized, independent, cross-border quantitative execution protocol. Zero PII (No Personal Data) and cryptographic absolute sovereignty standard.
                   </p>
                 </div>
                 <div className="p-2.5 rounded bg-black/40 border border-white/10 space-y-1">
-                  <span className="font-bold text-emerald-300">🌐 Master Çatı Domain</span>
+                  <span className="font-bold text-emerald-300">🌐 Master Domain</span>
                   <p className="text-[10px] text-slate-400">
-                    nurfinans.com üzerinden tüm iştirakler, OMS/EMS işlem motoru ve 7 Büyüme Kolu otonom olarak yönetilir.
+                    All subsidiaries, OMS/EMS execution engine and 7 Growth Arms are managed autonomously via nurfinans.com.
                   </p>
                 </div>
               </div>
 
               <div className="p-3 rounded bg-black/50 border border-emerald-500/30 text-[11px] text-slate-300">
-                <span className="font-mono text-emerald-400 font-bold">✨ Rönesans & Ezoterik Dokunuş:</span>
+                <span className="font-mono text-emerald-400 font-bold">✨ Renaissance & Esoteric Touch:</span>
                 <p className="mt-1">
-                  Arka planda süzülen hafif şelalemsi finansal matriks (Finansal Fibonacci, Kelly Kriteri ve Antik Latince Defterdarlık formülleri) 
-                  ile mekanik bir siteden ziyade yaşayan, gizemli ve elit bir finans tapınağı atmosferi sunar.
+                  The subtle cascading financial matrix in the background (Financial Fibonacci, Kelly Criterion and Ancient Latin Accounting formulas)
+                  creates the atmosphere of a living, mysterious and elite finance temple — rather than a mechanical website.
                 </p>
               </div>
             </div>
@@ -375,7 +374,7 @@ export default function EagleCrest({
                 onClick={() => setModalOpen(false)}
                 className="px-4 py-2 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-black transition-colors"
               >
-                Anladım &bull; Devam Et
+                Understood &bull; Continue
               </button>
             </div>
           </div>

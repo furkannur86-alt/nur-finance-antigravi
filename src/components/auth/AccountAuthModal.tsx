@@ -35,8 +35,8 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
         const { error: signUpError } = await signUp(email, password, fullName);
         if (signUpError) throw signUpError;
         addNotification({
-          title: "✅ Hesap Oluşturuldu",
-          message: "E-posta adresinize gönderilen bağlantıyla hesabınızı doğrulayın.",
+          title: "✅ Account Created",
+          message: "Verify your account via the link sent to your email address.",
           severity: "SUCCESS",
           category: "SYSTEM",
         });
@@ -44,11 +44,11 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
         const { error: signInError } = await signIn(email, password);
         if (signInError) throw signInError;
         cyberSound.playQuantumUnlock();
-        addNotification({ title: "✅ Giriş Yapıldı", message: `Hoş geldiniz, ${email}.`, severity: "SUCCESS", category: "SYSTEM" });
+        addNotification({ title: "✅ Signed In", message: `Welcome, ${email}.`, severity: "SUCCESS", category: "SYSTEM" });
         onClose();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Bilinmeyen bir hata oluştu.");
+      setError(err instanceof Error ? err.message : "An unknown error occurred.");
     } finally {
       setSubmitting(false);
     }
@@ -56,7 +56,7 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
 
   const handleSignOut = async () => {
     await signOut();
-    addNotification({ title: "🔓 Çıkış Yapıldı", message: "Oturumunuz kapatıldı.", severity: "INFO", category: "SYSTEM" });
+    addNotification({ title: "🔓 Signed Out", message: "Your session has been closed.", severity: "INFO", category: "SYSTEM" });
     onClose();
   };
 
@@ -67,36 +67,36 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-mono"
         >
-          ✕ KAPAT
+          ✕ CLOSE
         </button>
 
         <div className="flex items-center gap-3.5 border-b border-cyan-500/20 pb-4">
           <EagleCrest size={36} animate={true} />
           <div>
-            <h3 className="text-base font-serif font-bold text-white">Nur Finance Hesabı</h3>
-            <p className="text-[11px] text-slate-400">Terminal aboneliğinizi ve profilinizi yönetin</p>
+            <h3 className="text-base font-serif font-bold text-white">NUR Finance Account</h3>
+            <p className="text-[11px] text-slate-400">Manage your terminal subscription and profile</p>
           </div>
         </div>
 
         {!configured ? (
           <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 text-xs text-amber-200 leading-relaxed">
-            ⚠️ Supabase henüz yapılandırılmadı. <code className="text-white">.env.local</code> dosyasına{" "}
-            <code className="text-white">NEXT_PUBLIC_SUPABASE_URL</code> ve <code className="text-white">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>{" "}
-            eklendiğinde hesap oluşturma/giriş burada aktif olacaktır.
+            ⚠️ Supabase is not yet configured. Add{" "}
+            <code className="text-white">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="text-white">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>{" "}
+            to <code className="text-white">.env.local</code> to enable account creation and sign-in.
           </div>
         ) : loading ? (
-          <div className="text-xs text-slate-400 font-mono text-center py-4">Yükleniyor...</div>
+          <div className="text-xs text-slate-400 font-mono text-center py-4">Loading...</div>
         ) : user ? (
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1 text-center">
-              <span className="text-emerald-400 font-bold text-xs uppercase">✅ Giriş Yapıldı</span>
+              <span className="text-emerald-400 font-bold text-xs uppercase">✅ Signed In</span>
               <p className="text-[11px] text-slate-300">{user.email}</p>
             </div>
             <button
               onClick={handleSignOut}
               className="w-full py-3 rounded-xl text-xs font-bold bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 transition-all font-mono"
             >
-              ÇIKIŞ YAP
+              SIGN OUT
             </button>
           </div>
         ) : (
@@ -107,14 +107,14 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
                 onClick={() => setMode("signin")}
                 className={`flex-1 py-1.5 rounded-md font-bold transition-colors ${mode === "signin" ? "bg-cyan-500 text-black" : "text-slate-400"}`}
               >
-                Giriş Yap
+                Sign In
               </button>
               <button
                 type="button"
                 onClick={() => setMode("signup")}
                 className={`flex-1 py-1.5 rounded-md font-bold transition-colors ${mode === "signup" ? "bg-cyan-500 text-black" : "text-slate-400"}`}
               >
-                Hesap Oluştur
+                Create Account
               </button>
             </div>
 
@@ -123,7 +123,7 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Ad Soyad"
+                placeholder="Full Name"
                 required
                 className="w-full p-2.5 rounded-lg bg-black/70 border border-white/10 text-sm text-white focus:outline-none focus:border-cyan-400"
               />
@@ -132,7 +132,7 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="E-posta"
+              placeholder="Email"
               required
               className="w-full p-2.5 rounded-lg bg-black/70 border border-white/10 text-sm text-white focus:outline-none focus:border-cyan-400"
             />
@@ -140,7 +140,7 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Şifre (en az 6 karakter)"
+              placeholder="Password (min 6 characters)"
               minLength={6}
               required
               className="w-full p-2.5 rounded-lg bg-black/70 border border-white/10 text-sm text-white focus:outline-none focus:border-cyan-400"
@@ -153,7 +153,7 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
               disabled={submitting}
               className="w-full py-3 rounded-xl text-xs font-bold font-mono tracking-wider bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-black transition-all disabled:opacity-50"
             >
-              {submitting ? "İŞLENİYOR..." : mode === "signin" ? "GİRİŞ YAP" : "HESAP OLUŞTUR"}
+              {submitting ? "PROCESSING..." : mode === "signin" ? "SIGN IN" : "CREATE ACCOUNT"}
             </button>
           </form>
         )}

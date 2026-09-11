@@ -37,20 +37,20 @@ export default function Quantum2126Ticker() {
       <div className="flex-1 overflow-hidden whitespace-nowrap mx-3">
         <div className="inline-flex items-center gap-6 animate-[scroll-left_35s_linear_infinite]">
           <span className="text-white font-medium">⚡ {breakingNewsTicker}</span>
-          <span className="text-amber-300">🛢️ BRENT CRUDE OIL: $78.40 ▲ +1.8% (Hürmüz Boğazı Tanker Trafiği İzleniyor)</span>
+          <span className="text-amber-300">🛢️ BRENT CRUDE OIL: $78.40 ▲ +1.8% (Strait of Hormuz Tanker Traffic Monitored)</span>
           <span className="text-emerald-400">📈 S&P 500 QUANTUM ARB: 5,742.8 ▲ +0.85%</span>
-          <span className="text-purple-300">📊 QUANT ROTATION DESK: Sharpe 3.42 &bull; 100% Piyasa Nötr Emtia ve Hisse Arbitrajı</span>
-          <span className="text-cyan-300">🌐 NUR EARTH 3D: Canlı Uçuş ve Petrol Tanker Radarı Aktif</span>
+          <span className="text-purple-300">📊 QUANT ROTATION DESK: Sharpe 3.42 &bull; 100% Market Neutral Commodity and Equity Arbitrage</span>
+          <span className="text-cyan-300">🌐 NUR EARTH 3D: Live Flight and Oil Tanker Radar Active</span>
         </div>
       </div>
 
       {/* Live Quantum Diagnostics Telemetry */}
       <div className="flex items-center gap-3 shrink-0 pl-3 border-l border-white/10 text-[9px]">
         <span className="text-slate-400">
-          GECİKME: <strong className="text-emerald-400">{quantumMetrics.latency}</strong>
+          LATENCY: <strong className="text-emerald-400">{quantumMetrics.latency}</strong>
         </span>
         <span className="text-slate-400">
-          AKIŞ: <strong className="text-cyan-300">{quantumMetrics.darkPoolFlow}</strong>
+          FLOW: <strong className="text-cyan-300">{quantumMetrics.darkPoolFlow}</strong>
         </span>
 
         {/* Sovereign Lock Status Indicator */}
@@ -60,7 +60,7 @@ export default function Quantum2126Ticker() {
             className="px-2 py-0.2 rounded font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-colors"
             title="Sovereign Executive Mode Active (Click to manage)"
           >
-            👑 SOVEREIGN AKTİF
+            👑 SOVEREIGN ACTIVE
           </button>
         ) : (
           <button

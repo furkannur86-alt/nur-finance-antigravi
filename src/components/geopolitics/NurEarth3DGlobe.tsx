@@ -53,7 +53,7 @@ const LIVE_FLIGHTS: GeoEntity[] = [
     speed: "Mach 0.85 (920 km/h)",
     origin: "London Heathrow (LHR)",
     destination: "New York (JFK)",
-    details: "Kuzey Atlantik Ana Uçuş Koridoru. Kurumsal Finans & Diplomatik Transit Rotası.",
+    details: "North Atlantic Main Flight Corridor. Corporate Finance & Diplomatic Transit Route.",
     correlatedAssets: ["BA", "DAL", "LHR=F"],
   },
   {
@@ -69,7 +69,7 @@ const LIVE_FLIGHTS: GeoEntity[] = [
     speed: "Mach 0.86 (940 km/h)",
     origin: "Tokyo Haneda (HND)",
     destination: "San Francisco (SFO)",
-    details: "Asya-Silikon Vadisi yarı iletken ve yüksek teknoloji kargo uçağı.",
+    details: "Asia-Silicon Valley semiconductor and high-tech cargo flight.",
     correlatedAssets: ["NVDA", "TSM", "AAPL"],
   },
   {
@@ -85,7 +85,7 @@ const LIVE_FLIGHTS: GeoEntity[] = [
     speed: "Mach 0.84 (905 km/h)",
     origin: "Istanbul (IST)",
     destination: "Singapore Changi (SIN)",
-    details: "Avrasya-Güneydoğu Asya finansal köprü hattı. Körfez hava sahası optimizasyonu.",
+    details: "Eurasia-Southeast Asia financial bridge route. Gulf airspace optimization.",
     correlatedAssets: ["THYAO", "SIA", "BIST100"],
   },
   {
@@ -101,7 +101,7 @@ const LIVE_FLIGHTS: GeoEntity[] = [
     speed: "Mach 0.83 (890 km/h)",
     origin: "Dubai Intl (DXB)",
     destination: "Frankfurt Main (FRA)",
-    details: "Körfez sermaye fonları ve Avrupa Merkez Bankası eksenli finansal uçuş.",
+    details: "Gulf sovereign wealth funds and European Central Bank axis financial flight.",
     correlatedAssets: ["DAX", "EZB", "DUB=F"],
   },
   {
@@ -117,7 +117,7 @@ const LIVE_FLIGHTS: GeoEntity[] = [
     speed: "Mach 0.84 (915 km/h)",
     origin: "São Paulo (GRU)",
     destination: "Lisbon (LIS)",
-    details: "Güney Amerika - Avrupa tarım ve emtia ticaret heyeti hava köprüsü.",
+    details: "South America - Europe agriculture and commodity trade delegation air bridge.",
     correlatedAssets: ["EWZ", "BRL=X", "VALE"],
   },
 ];
@@ -134,14 +134,14 @@ const LIVE_TANKERS: GeoEntity[] = [
     targetLat: 29.8,
     targetLon: 121.5,
     speed: "14.2 knots (26 km/h)",
-    cargo: "2,100,000 Varil Arab Light Ham Petrol",
+    cargo: "2,100,000 Barrels Arab Light Crude Oil",
     cargoValueUSD: "$164,640,000 USD",
-    origin: "Ras Tanura Terminal (Suudi Arabistan)",
-    destination: "Ningbo Port (Çin)",
+    origin: "Ras Tanura Terminal (Saudi Arabia)",
+    destination: "Ningbo Port (China)",
     riskScore: 78,
     riskLevel: "HIGH",
-    details: "Hürmüz Boğazı çıkışında. Hürmüz'den geçen günlük 21 milyon varillik kritik petrol koridorunda seyrediyor.",
-    correlatedAssets: ["BZ=F (Brent Petrol)", "CL=F (WTI)", "ZIM", "FRO"],
+    details: "Exiting the Strait of Hormuz. Navigating the critical oil corridor of 21 million barrels per day through Hormuz.",
+    correlatedAssets: ["BZ=F (Brent Crude)", "CL=F (WTI)", "ZIM", "FRO"],
   },
   {
     id: "tk-2",
@@ -153,14 +153,14 @@ const LIVE_TANKERS: GeoEntity[] = [
     targetLat: 51.9,
     targetLon: 4.4,
     speed: "17.8 knots (33 km/h)",
-    cargo: "174,000 m³ Sıvılaştırılmış Doğal Gaz (LNG)",
+    cargo: "174,000 m³ Liquefied Natural Gas (LNG)",
     cargoValueUSD: "$88,200,000 USD",
-    origin: "Ras Laffan (Katar)",
-    destination: "Rotterdam Energy Hub (Hollanda)",
+    origin: "Ras Laffan (Qatar)",
+    destination: "Rotterdam Energy Hub (Netherlands)",
     riskScore: 92,
     riskLevel: "CRITICAL",
-    details: "Babülmendep Boğazı ve Kızıldeniz geçişinde askeri fırkateyn refakatinde intikal halinde.",
-    correlatedAssets: ["NG=F (Doğalgaz)", "TTF=F (Avrupa Gaz)", "SHEL", "TTE"],
+    details: "In transit through the Bab-el-Mandeb Strait and Red Sea under military frigate escort.",
+    correlatedAssets: ["NG=F (Natural Gas)", "TTF=F (European Gas)", "SHEL", "TTE"],
   },
   {
     id: "tk-3",
@@ -172,13 +172,13 @@ const LIVE_TANKERS: GeoEntity[] = [
     targetLat: 35.4,
     targetLon: 139.7,
     speed: "13.5 knots (25 km/h)",
-    cargo: "3,000,000 Varil Brent Ham Petrol",
+    cargo: "3,000,000 Barrels Brent Crude Oil",
     cargoValueUSD: "$235,500,000 USD",
-    origin: "Basra Port (Irak)",
-    destination: "Yokohama (Japonya)",
+    origin: "Basra Port (Iraq)",
+    destination: "Yokohama (Japan)",
     riskScore: 45,
     riskLevel: "ELEVATED",
-    details: "Malakka Boğazı dar geçişinde. Doğu Asya'nın enerji arzının %80'inin aktığı hatta.",
+    details: "In the narrow passage of the Strait of Malacca. On the route carrying 80% of East Asia's energy supply.",
     correlatedAssets: ["BZ=F", "NIKKEI225", "JPY=X"],
   },
   {
@@ -191,13 +191,13 @@ const LIVE_TANKERS: GeoEntity[] = [
     targetLat: 36.8,
     targetLon: 34.6,
     speed: "10.0 knots (18 km/h)",
-    cargo: "750,000 Varil Ham Petrol & Akaryakıt",
+    cargo: "750,000 Barrels Crude Oil & Fuel",
     cargoValueUSD: "$58,500,000 USD",
-    origin: "Novorossiysk (Karadeniz)",
-    destination: "Ceyhan / Akdeniz Rafinerileri",
+    origin: "Novorossiysk (Black Sea)",
+    destination: "Ceyhan / Mediterranean Refineries",
     riskScore: 84,
     riskLevel: "HIGH",
-    details: "İstanbul ve Çanakkale Boğazları geçişinde. Karadeniz jeopolitik mayın ve seyrüsefer risk zonunda.",
+    details: "In transit through the Istanbul and Dardanelles Straits. In the Black Sea geopolitical mine and navigation risk zone.",
     correlatedAssets: ["BIST100", "TUPRS", "BZ=F"],
   },
 ];
@@ -207,35 +207,35 @@ const CHOKEPOINTS: GeoEntity[] = [
   {
     id: "cp-1",
     type: "CHOKEPOINT",
-    name: "Hürmüz Boğazı (Strait of Hormuz)",
+    name: "Strait of Hormuz",
     code: "GLOBAL CHOKEPOINT #1",
     lat: 26.56,
     lon: 56.25,
-    details: "Dünya petrol tüketiminin %21'i (günlük 21M varil) bu boğazdan geçer. Basra Körfezi'nin tek çıkış kapısı.",
+    details: "21% of world oil consumption (21M barrels/day) passes through this strait. The only exit gate of the Persian Gulf.",
     riskScore: 88,
     riskLevel: "HIGH",
-    correlatedAssets: ["BZ=F (+%40 Sıçrama Riski)", "XAU/USD", "USO"],
+    correlatedAssets: ["BZ=F (+40% Spike Risk)", "XAU/USD", "USO"],
   },
   {
     id: "cp-2",
     type: "CHOKEPOINT",
-    name: "Babülmendep & Kızıldeniz (Bab-el-Mandeb)",
+    name: "Bab-el-Mandeb & Red Sea",
     code: "GLOBAL CHOKEPOINT #2",
     lat: 12.58,
     lon: 43.33,
-    details: "Süveyş Kanalı'nın güney kilidi. Asya-Avrupa konteyner ticaretinin %12'si ve LNG sevkiyat rotası.",
+    details: "Southern lock of the Suez Canal. 12% of Asia-Europe container trade and LNG shipping route.",
     riskScore: 94,
     riskLevel: "CRITICAL",
-    correlatedAssets: ["Konteyner Navlun (FBX)", "ZIM", "MAERSK", "BRENT"],
+    correlatedAssets: ["Container Freight (FBX)", "ZIM", "MAERSK", "BRENT"],
   },
   {
     id: "cp-3",
     type: "CHOKEPOINT",
-    name: "Malakka Boğazı (Strait of Malacca)",
+    name: "Strait of Malacca",
     code: "GLOBAL CHOKEPOINT #3",
     lat: 2.5,
     lon: 101.5,
-    details: "Çin, Japonya ve G. Kore'nin petrol ithalatının %80'inin geçtiği dünyanın en yoğun deniz koridoru.",
+    details: "The world's busiest maritime corridor through which 80% of oil imports to China, Japan and South Korea pass.",
     riskScore: 65,
     riskLevel: "ELEVATED",
     correlatedAssets: ["HANG SENG", "SHANGHAI COMPOSITE", "BRENT"],
@@ -243,11 +243,11 @@ const CHOKEPOINTS: GeoEntity[] = [
   {
     id: "cp-4",
     type: "CHOKEPOINT",
-    name: "Süveyş Kanalı (Suez Canal)",
+    name: "Suez Canal",
     code: "GLOBAL CHOKEPOINT #4",
     lat: 30.5,
     lon: 32.3,
-    details: "Akdeniz ile Kızıldeniz'i bağlayan küresel ticaret omurgası. Yılda 22.000 gemi geçişi.",
+    details: "Global trade backbone connecting the Mediterranean and Red Sea. 22,000 ship transits per year.",
     riskScore: 82,
     riskLevel: "HIGH",
     correlatedAssets: ["EGP=X", "BRENT", "GLOBAL FREIGHT INDEX"],
@@ -259,38 +259,38 @@ const DEFENSE_HOTSPOTS: GeoEntity[] = [
   {
     id: "hs-1",
     type: "HOTSPOT",
-    name: "Tayvan Boğazı & Doğu Asya Radarı",
+    name: "Taiwan Strait & East Asia Radar",
     code: "DEFENSE ZONE: TAIWAN STRAIT",
     lat: 24.0,
     lon: 119.5,
     riskScore: 89,
     riskLevel: "CRITICAL",
-    details: "Yarı iletken fabrikaları (TSMC), askeri deniz tatbikatları ve küresel çip tedarik zinciri kesinti riski.",
-    correlatedAssets: ["TSM (-%25 Risk)", "NVDA", "SOXX", "USD/TWD"],
+    details: "Semiconductor fabs (TSMC), military naval exercises and global chip supply chain disruption risk.",
+    correlatedAssets: ["TSM (-25% Risk)", "NVDA", "SOXX", "USD/TWD"],
   },
   {
     id: "hs-2",
     type: "HOTSPOT",
-    name: "Karadeniz & Doğu Avrupa Koridoru",
+    name: "Black Sea & Eastern Europe Corridor",
     code: "DEFENSE ZONE: BLACK SEA",
     lat: 44.5,
     lon: 35.0,
     riskScore: 95,
     riskLevel: "CRITICAL",
-    details: "Tahıl koridoru, liman güvenliği, amonyak boru hatları ve bölgesel hava sahası kapama alanları.",
-    correlatedAssets: ["WHEAT=F (Buğday)", "CORN=F", "EUR/USD", "BRENT"],
+    details: "Grain corridor, port security, ammonia pipelines and regional airspace closure zones.",
+    correlatedAssets: ["WHEAT=F", "CORN=F", "EUR/USD", "BRENT"],
   },
   {
     id: "hs-3",
     type: "HOTSPOT",
-    name: "Basra Körfezi & Hürmüz Askeri Zonu",
+    name: "Persian Gulf & Hormuz Military Zone",
     code: "DEFENSE ZONE: PERSIAN GULF",
     lat: 27.0,
     lon: 51.5,
     riskScore: 86,
     riskLevel: "HIGH",
-    details: "Tanker tacizleri, insansız deniz araçları ve hava savunma radarları kapsama alanı.",
-    correlatedAssets: ["BZ=F", "GC=F (Altın)", "LMT (Lockheed Martin)"],
+    details: "Tanker harassment, unmanned maritime vehicles and air defense radar coverage zones.",
+    correlatedAssets: ["BZ=F", "GC=F (Gold)", "LMT (Lockheed Martin)"],
   },
 ];
 
@@ -299,145 +299,145 @@ export const NUCLEAR_ZONES: GeoEntity[] = [
   {
     id: "nz-1",
     type: "NUCLEAR",
-    name: "Yongbyon Nükleer Araştırma Merkezi",
+    name: "Yongbyon Nuclear Research Center",
     code: "DPRK · YONGBYON COMPLEX",
     lat: 39.8,
     lon: 125.75,
     riskScore: 99,
     riskLevel: "CRITICAL",
-    details: "Kuzey Kore'nin nükleer silah programının kalbi. 5MW reaktör aktif, plütonyum üretimi devam ediyor. IAEA denetimi yok.",
+    details: "Heart of North Korea's nuclear weapons program. 5MW reactor active, plutonium production ongoing. No IAEA oversight.",
     correlatedAssets: ["KOSPI", "JPY=X", "KRW=X", "XAU/USD"],
   },
   {
     id: "nz-2",
     type: "NUCLEAR",
-    name: "Natanz Uranyum Zenginleştirme Kompleksi",
+    name: "Natanz Uranium Enrichment Complex",
     code: "IRAN · NATANZ UNDERGROUND",
     lat: 33.72,
     lon: 51.73,
     riskScore: 96,
     riskLevel: "CRITICAL",
-    details: "İran'ın gizli yeraltı uranyum zenginleştirme kompleksi. %60+ zenginleştirme kapasitesi. İsrail & ABD hedef listesinde.",
+    details: "Iran's covert underground uranium enrichment complex. 60%+ enrichment capacity. On Israel & US target list.",
     correlatedAssets: ["BZ=F", "XAU/USD", "TASE", "USD/ILS"],
   },
   {
     id: "nz-3",
     type: "NUCLEAR",
-    name: "Bushehr Nükleer Santrali",
+    name: "Bushehr Nuclear Power Plant",
     code: "IRAN · BUSHEHR NPP",
     lat: 28.83,
     lon: 50.88,
     riskScore: 91,
     riskLevel: "CRITICAL",
-    details: "İran'ın tek işletmedeki nükleer reaktörü. İsrail, ABD ve Suudi Arabistan'ın birincil hedef listesinde. Körfez krizine doğrudan bağlantı.",
+    details: "Iran's only operating nuclear reactor. On the primary target list of Israel, the US, and Saudi Arabia. Direct link to Gulf crisis.",
     correlatedAssets: ["BZ=F", "XAU/USD", "GC=F", "USD/SAR"],
   },
   {
     id: "nz-4",
     type: "NUCLEAR",
-    name: "Severodvinsk Nükleer Denizaltı Tersanesi",
+    name: "Severodvinsk Nuclear Submarine Shipyard",
     code: "RUSSIA · SEVERODVINSK NAVAL",
     lat: 64.55,
     lon: 39.83,
     riskScore: 88,
     riskLevel: "HIGH",
-    details: "Rusya'nın en büyük nükleer denizaltı üretim ve bakım tesisi. 30+ stratejik nükleer denizaltı barındırıyor. Bulava ICBM test sahası.",
+    details: "Russia's largest nuclear submarine production and maintenance facility. Houses 30+ strategic nuclear submarines. Bulava ICBM test site.",
     correlatedAssets: ["RTS", "BRENT", "XAU/USD", "RUBUSD"],
   },
   {
     id: "nz-5",
     type: "NUCLEAR",
-    name: "Sarov Federal Nükleer Silah Merkezi",
+    name: "Sarov Federal Nuclear Weapons Center",
     code: "RUSSIA · SAROV CLOSED CITY",
     lat: 54.93,
     lon: 43.33,
     riskScore: 85,
     riskLevel: "HIGH",
-    details: "Rusya'nın kapalı nükleer şehri 'Arzamas-16'. Sovyet döneminden kalma tüm nükleer başlık tasarım ve üretim merkezi.",
+    details: "Russia's closed nuclear city 'Arzamas-16'. All nuclear warhead design and production center inherited from the Soviet era.",
     correlatedAssets: ["RTS", "RUBUSD", "XAU/USD", "NG=F"],
   },
   {
     id: "nz-6",
     type: "NUCLEAR",
-    name: "Dimona Nükleer Araştırma Merkezi",
+    name: "Dimona Nuclear Research Center",
     code: "ISRAEL · NEGEV NUCLEAR",
     lat: 30.97,
     lon: 35.14,
     riskScore: 82,
     riskLevel: "HIGH",
-    details: "İsrail'in resmi olarak kabul etmediği nükleer silah programı merkezi. Tahmin: 90-400 nükleer başlık. 'Belirsizlik politikası' aktif.",
+    details: "Center of Israel's officially unacknowledged nuclear weapons program. Estimated 90-400 nuclear warheads. 'Ambiguity policy' active.",
     correlatedAssets: ["TASE", "USD/ILS", "XAU/USD", "BZ=F"],
   },
   {
     id: "nz-7",
     type: "NUCLEAR",
-    name: "Lop Nor Nükleer Test Sahası",
+    name: "Lop Nor Nuclear Test Site",
     code: "CHINA · LOP NOR XINJIANG",
     lat: 40.77,
     lon: 89.55,
     riskScore: 78,
     riskLevel: "HIGH",
-    details: "Çin'in nükleer test ve silah geliştirme bölgesi. 300+ nükleer başlık. DF-41 ICBM tünel depolarına yakın. Sürekli modernizasyon.",
+    details: "China's nuclear test and weapons development zone. 300+ nuclear warheads. Near DF-41 ICBM tunnel storage. Continuous modernization.",
     correlatedAssets: ["CSI300", "CNY=X", "SHCOMP", "XAU/USD"],
   },
   {
     id: "nz-8",
     type: "NUCLEAR",
-    name: "Kahuta Nükleer Araştırma Laboratuvarı",
+    name: "Kahuta Nuclear Research Laboratory",
     code: "PAKISTAN · KAHUTA KRL",
     lat: 33.68,
     lon: 73.38,
     riskScore: 88,
     riskLevel: "HIGH",
-    details: "Pakistan'ın nükleer silah programı merkezi. Yaklaşık 165 nükleer başlık. Hindistan ile nükleer gerilim bölgesi. En yüksek proliferasyon riski.",
+    details: "Center of Pakistan's nuclear weapons program. Approximately 165 nuclear warheads. Zone of nuclear tension with India. Highest proliferation risk.",
     correlatedAssets: ["EPI", "INR=X", "PKR=X", "XAU/USD"],
   },
   {
     id: "nz-9",
     type: "NUCLEAR",
-    name: "Trombay Bhabha Atom Araştırma Merkezi",
+    name: "Trombay Bhabha Atomic Research Center",
     code: "INDIA · BARC MUMBAI",
     lat: 19.02,
     lon: 72.92,
     riskScore: 72,
     riskLevel: "HIGH",
-    details: "Hindistan'ın nükleer silah araştırma merkezi. Pakistan ve Çin sınırındaki nükleer denge. 160+ başlık. MIRV geliştirme programı aktif.",
+    details: "India's nuclear weapons research center. Nuclear balance on the Pakistan and China border. 160+ warheads. MIRV development program active.",
     correlatedAssets: ["SENSEX", "INR=X", "NIFTY50", "XAU/USD"],
   },
   {
     id: "nz-10",
     type: "NUCLEAR",
-    name: "Pantex Nükleer Silah Montaj Kompleksi",
+    name: "Pantex Nuclear Weapons Assembly Complex",
     code: "USA · PANTEX TEXAS",
     lat: 35.27,
     lon: -101.5,
     riskScore: 65,
     riskLevel: "ELEVATED",
-    details: "ABD'nin birincil nükleer silah montaj ve bakım tesisi. Tüm ABD nükleer başlıklarının depolama ve modernizasyon merkezi.",
+    details: "The US's primary nuclear weapons assembly and maintenance facility. Storage and modernization center for all US nuclear warheads.",
     correlatedAssets: ["LMT", "RTX", "NOC", "DXY"],
   },
   {
     id: "nz-11",
     type: "NUCLEAR",
-    name: "Aldermaston AWE Silah Araştırma Üssü",
+    name: "Aldermaston AWE Weapons Research Base",
     code: "UK · ALDERMASTON AWE",
     lat: 51.38,
     lon: -1.28,
     riskScore: 60,
     riskLevel: "ELEVATED",
-    details: "Birleşik Krallık'ın nükleer silah araştırma ve üretim merkezi. Trident nükleer caydırıcı programının kalbi. 225 aktif başlık.",
+    details: "The United Kingdom's nuclear weapons research and production center. Heart of the Trident nuclear deterrent program. 225 active warheads.",
     correlatedAssets: ["FTSE100", "GBP/USD", "BAE.L", "XAU/USD"],
   },
   {
     id: "nz-12",
     type: "NUCLEAR",
-    name: "CESTA CEA Nükleer Silah Merkezi",
+    name: "CESTA CEA Nuclear Weapons Center",
     code: "FRANCE · CESTA LE BARP",
     lat: 44.65,
     lon: -0.83,
     riskScore: 58,
     riskLevel: "ELEVATED",
-    details: "Fransa'nın nükleer silah araştırma merkezi. 290 nükleer başlık ile NATO'nun en büyük bağımsız nükleer gücü. ASMP-A füze programı.",
+    details: "France's nuclear weapons research center. With 290 nuclear warheads, NATO's largest independent nuclear power. ASMP-A missile program.",
     correlatedAssets: ["CAC40", "EUR/USD", "AIR.PA", "XAU/USD"],
   },
 ];
@@ -879,7 +879,7 @@ export default function NurEarth3DGlobe() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold font-serif text-cyan-300 tracking-wide">
-                NUR EARTH 3D — UYDU & JEOPOLİTİK RADAR
+                NUR EARTH 3D — SATELLITE & GEOPOLITICAL RADAR
               </span>
               <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
                 LIVE ORBIT
@@ -891,7 +891,7 @@ export default function NurEarth3DGlobe() {
               )}
             </div>
             <p className="text-[10px] text-[var(--ag-muted)]">
-              Uydu Görüntüleri &bull; Nükleer Bölgeler &bull; Çatışma Zonları &bull; Petrol Tankerleri &bull; Boğaz Geçişleri
+              Satellite Imagery &bull; Nuclear Zones &bull; Conflict Zones &bull; Oil Tankers &bull; Strait Crossings
             </p>
           </div>
         </div>
@@ -905,7 +905,7 @@ export default function NurEarth3DGlobe() {
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            ✈️ Uçuşlar ({LIVE_FLIGHTS.length})
+            ✈️ Flights ({LIVE_FLIGHTS.length})
           </button>
           <button
             onClick={() => setActiveLayers((l) => ({ ...l, tankers: !l.tankers }))}
@@ -915,7 +915,7 @@ export default function NurEarth3DGlobe() {
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            🚢 Tankerler ({LIVE_TANKERS.length})
+            🚢 Tankers ({LIVE_TANKERS.length})
           </button>
           <button
             onClick={() => setActiveLayers((l) => ({ ...l, hotspots: !l.hotspots }))}
@@ -925,7 +925,7 @@ export default function NurEarth3DGlobe() {
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            ⚔️ Çatışma ({DEFENSE_HOTSPOTS.length})
+            ⚔️ Conflict ({DEFENSE_HOTSPOTS.length})
           </button>
           <button
             onClick={() => setActiveLayers((l) => ({ ...l, chokepoints: !l.chokepoints }))}
@@ -935,7 +935,7 @@ export default function NurEarth3DGlobe() {
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            🛢️ Boğazlar ({CHOKEPOINTS.length})
+            🛢️ Chokepoints ({CHOKEPOINTS.length})
           </button>
           <button
             onClick={() => setActiveLayers((l) => ({ ...l, nuclear: !l.nuclear }))}
@@ -945,7 +945,7 @@ export default function NurEarth3DGlobe() {
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            ☢️ Nükleer ({NUCLEAR_ZONES.length})
+            ☢️ Nuclear ({NUCLEAR_ZONES.length})
           </button>
           <button
             onClick={() => {
@@ -960,7 +960,7 @@ export default function NurEarth3DGlobe() {
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            {autoEventMode ? "⚡ OTO-EVENT" : "⏸ MANUEL"}
+            {autoEventMode ? "⚡ AUTO-EVENT" : "⏸ MANUAL"}
           </button>
         </div>
       </div>
@@ -978,16 +978,16 @@ export default function NurEarth3DGlobe() {
 
         {/* Control hint */}
         <div className="absolute top-4 left-4 pointer-events-none text-[10px] font-mono text-slate-400 bg-black/60 backdrop-blur-sm px-2.5 py-1.5 rounded border border-white/10 space-y-0.5">
-          <div>🌐 <strong>Sürükle:</strong> 3D Küreyi Döndür</div>
-          <div>🔍 <strong>Tekerlek:</strong> Yakınlaş / Uzaklaş</div>
-          <div>⚡ <strong>Auto-Event:</strong> Her 8s yeni zone</div>
+          <div>🌐 <strong>Drag:</strong> Rotate 3D Globe</div>
+          <div>🔍 <strong>Wheel:</strong> Zoom In / Out</div>
+          <div>⚡ <strong>Auto-Event:</strong> New zone every 8s</div>
         </div>
 
         {/* Auto-event ticker strip */}
         {autoEventMode && (
           <div className="absolute bottom-16 left-4 right-4 z-10 flex items-center gap-3 bg-black/80 border border-yellow-500/30 rounded-lg px-4 py-2 backdrop-blur-sm pointer-events-none">
             <span className="text-[9px] font-mono font-bold text-yellow-400 uppercase tracking-widest shrink-0">
-              ⚡ CANLI OLAY
+              ⚡ LIVE EVENT
             </span>
             <span className="text-[11px] font-bold text-white truncate">{currentZone?.name}</span>
             <span
@@ -1035,7 +1035,7 @@ export default function NurEarth3DGlobe() {
             <div className="flex items-start justify-between border-b border-white/10 pb-3 shrink-0">
               <div>
                 <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                  {selectedEntity.type === "NUCLEAR" ? "☢ NÜKLEER RİSK RADARI" : `${selectedEntity.type} TELEMETRİ`}
+                  {selectedEntity.type === "NUCLEAR" ? "☢ NUCLEAR RISK RADAR" : `${selectedEntity.type} TELEMETRY`}
                 </div>
                 <h3 className="text-sm font-bold text-white mt-0.5">{selectedEntity.name}</h3>
                 <p className="text-[11px] font-mono text-amber-300">{selectedEntity.code}</p>
@@ -1059,7 +1059,7 @@ export default function NurEarth3DGlobe() {
             <div className="shrink-0">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-mono font-bold text-yellow-400 uppercase tracking-wider">
-                  🛰 ESRI UYDU GÖRÜNTÜLERİ
+                  🛰 ESRI SATELLITE IMAGERY
                 </span>
                 <span className="text-[9px] font-mono text-slate-500">
                   {selectedEntity.lat.toFixed(2)}°, {selectedEntity.lon.toFixed(2)}°
@@ -1091,20 +1091,20 @@ export default function NurEarth3DGlobe() {
             {/* Coordinates */}
             <div className="grid grid-cols-2 gap-2 text-xs shrink-0">
               <div className="p-2.5 rounded bg-black/40 border border-white/5">
-                <span className="text-[10px] text-slate-400 block font-mono">KONUM:</span>
+                <span className="text-[10px] text-slate-400 block font-mono">LOCATION:</span>
                 <span className="font-mono font-bold text-cyan-300">
                   {selectedEntity.lat.toFixed(2)}°, {selectedEntity.lon.toFixed(2)}°
                 </span>
               </div>
               {selectedEntity.speed && (
                 <div className="p-2.5 rounded bg-black/40 border border-white/5">
-                  <span className="text-[10px] text-slate-400 block font-mono">HIZ:</span>
+                  <span className="text-[10px] text-slate-400 block font-mono">SPEED:</span>
                   <span className="font-mono font-bold text-emerald-300">{selectedEntity.speed}</span>
                 </div>
               )}
               {selectedEntity.riskScore && (
                 <div className="p-2.5 rounded bg-black/40 border border-white/5">
-                  <span className="text-[10px] text-slate-400 block font-mono">RİSK SKORU:</span>
+                  <span className="text-[10px] text-slate-400 block font-mono">RISK SCORE:</span>
                   <span
                     className={`font-mono font-bold text-lg ${
                       selectedEntity.riskScore >= 90
@@ -1123,7 +1123,7 @@ export default function NurEarth3DGlobe() {
             {/* Cargo */}
             {selectedEntity.cargo && (
               <div className="p-3 rounded bg-amber-950/20 border border-amber-500/30 space-y-1 shrink-0">
-                <span className="text-[10px] text-amber-400 block font-bold uppercase">Kargo:</span>
+                <span className="text-[10px] text-amber-400 block font-bold uppercase">Cargo:</span>
                 <p className="text-xs text-white font-semibold">{selectedEntity.cargo}</p>
                 {selectedEntity.cargoValueUSD && (
                   <p className="text-xs font-mono font-bold text-emerald-400">{selectedEntity.cargoValueUSD}</p>
@@ -1135,11 +1135,11 @@ export default function NurEarth3DGlobe() {
             {selectedEntity.origin && selectedEntity.destination && (
               <div className="p-3 rounded bg-black/40 border border-white/5 space-y-1.5 text-xs shrink-0">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Kalkış:</span>
+                  <span className="text-slate-400">Departure:</span>
                   <span className="font-bold text-white">{selectedEntity.origin}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Varış:</span>
+                  <span className="text-slate-400">Arrival:</span>
                   <span className="font-bold text-cyan-300">{selectedEntity.destination}</span>
                 </div>
               </div>
@@ -1148,7 +1148,7 @@ export default function NurEarth3DGlobe() {
             {/* Details */}
             <div className="space-y-1 text-xs shrink-0">
               <span className="text-[10px] text-slate-400 font-bold uppercase block">
-                {selectedEntity.type === "NUCLEAR" ? "Nükleer İstihbarat:" : "Stratejik İstihbarat:"}
+                {selectedEntity.type === "NUCLEAR" ? "Nuclear Intelligence:" : "Strategic Intelligence:"}
               </span>
               <p className="text-slate-300 leading-relaxed text-[11px] bg-white/5 p-2.5 rounded border border-white/5">
                 {selectedEntity.details}
@@ -1157,7 +1157,7 @@ export default function NurEarth3DGlobe() {
 
             {/* Correlated assets */}
             <div className="space-y-1.5 shrink-0">
-              <span className="text-[10px] text-slate-400 font-bold uppercase block">Etkilenen Varlıklar:</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase block">Affected Assets:</span>
               <div className="flex flex-wrap gap-1.5">
                 {selectedEntity.correlatedAssets.map((ast, i) => (
                   <span
@@ -1175,7 +1175,7 @@ export default function NurEarth3DGlobe() {
               onClick={() => setSelectedEntity(null)}
               className="mt-auto w-full py-2 rounded text-xs font-mono text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors shrink-0"
             >
-              ✕ PANEL KAPAT
+              ✕ CLOSE PANEL
             </button>
           </div>
         )}
