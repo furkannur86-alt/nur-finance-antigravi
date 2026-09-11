@@ -332,43 +332,147 @@ const DEFENSE_HOTSPOTS: GeoEntity[] = [
   },
 ];
 
-// Coastlines & Continents approximate polygonal 3D wireframe points (lat, lon)
-const CONTINENTS: Array<Array<[number, number]>> = [
-  // North America
-  [
-    [70, -160], [72, -130], [60, -85], [55, -55], [45, -60], [30, -80], [25, -80], [18, -95], [10, -80],
-    [8, -77], [15, -92], [22, -105], [32, -117], [48, -125], [60, -140], [65, -168], [70, -160]
-  ],
-  // South America
-  [
-    [10, -75], [5, -52], [-5, -35], [-22, -40], [-35, -55], [-55, -68], [-50, -75], [-20, -70], [-5, -80], [10, -75]
-  ],
+// Ultra-Detailed Coastlines & Continents 3D Polygons (Latitude, Longitude)
+const CONTINENTS: Array<{ name: string; labelLat: number; labelLon: number; points: Array<[number, number]> }> = [
+  // EUROPE
+  {
+    name: "EUROPE",
+    labelLat: 54,
+    labelLon: 15,
+    points: [
+      [71, 28], [70, 20], [62, 5], [58, 6], [54, 9], [53, 6], [50, 2], [48, -4], [43, -9], [37, -9],
+      [36, -5], [37, 3], [43, 4], [44, 8], [38, 16], [40, 18], [37, 22], [41, 28], [45, 29], [46, 37],
+      [55, 38], [60, 30], [65, 35], [70, 30], [71, 28]
+    ]
+  },
+  // UNITED KINGDOM & IRELAND
+  {
+    name: "UK & IRELAND",
+    labelLat: 54,
+    labelLon: -2,
+    points: [
+      [58, -5], [58, -3], [54, 0], [51, 1], [50, -5], [52, -10], [55, -8], [58, -5]
+    ]
+  },
+  // TÜRKIYE & MIDDLE EAST
+  {
+    name: "TÜRKIYE",
+    labelLat: 39,
+    labelLon: 35,
+    points: [
+      [42, 26], [41, 29], [41, 38], [41, 41], [37, 44], [37, 36], [36, 33], [36, 30], [38, 26], [40, 26], [42, 26]
+    ]
+  },
+  // NORTH AMERICA
+  {
+    name: "NORTH AMERICA",
+    labelLat: 45,
+    labelLon: -100,
+    points: [
+      [72, -165], [71, -130], [68, -110], [60, -85], [55, -60], [47, -53], [44, -66], [35, -75], [25, -80],
+      [25, -97], [18, -95], [15, -92], [16, -98], [22, -105], [32, -117], [34, -119], [48, -125], [60, -140],
+      [65, -168], [72, -165]
+    ]
+  },
+  // GREENLAND
+  {
+    name: "GREENLAND",
+    labelLat: 72,
+    labelLon: -40,
+    points: [
+      [78, -70], [82, -30], [75, -20], [60, -43], [65, -53], [78, -70]
+    ]
+  },
+  // SOUTH AMERICA
+  {
+    name: "SOUTH AMERICA",
+    labelLat: -15,
+    labelLon: -60,
+    points: [
+      [12, -73], [10, -62], [7, -50], [-5, -35], [-12, -37], [-23, -43], [-34, -53], [-42, -64], [-55, -67],
+      [-53, -74], [-40, -73], [-18, -70], [-5, -80], [4, -77], [12, -73]
+    ]
+  },
+  // AFRICA
+  {
+    name: "AFRICA",
+    labelLat: 5,
+    labelLon: 20,
+    points: [
+      [36, -5], [37, 11], [33, 33], [28, 34], [15, 39], [12, 44], [10, 51], [2, 45], [-11, 40], [-25, 33],
+      [-34, 26], [-34, 18], [-22, 14], [-12, 13], [-6, 12], [4, 9], [5, -3], [15, -17], [21, -17], [30, -10], [36, -5]
+    ]
+  },
+  // ASIA (MAINLAND & SIBERIA)
+  {
+    name: "ASIA",
+    labelLat: 48,
+    labelLon: 85,
+    points: [
+      [73, 42], [73, 80], [71, 130], [66, 170], [60, 163], [55, 160], [44, 145], [40, 120], [22, 114],
+      [10, 105], [1, 104], [10, 98], [22, 89], [8, 77], [22, 70], [25, 61], [30, 50], [40, 48], [42, 45],
+      [55, 48], [65, 55], [73, 42]
+    ]
+  },
+  // INDIA
+  {
+    name: "INDIA",
+    labelLat: 20,
+    labelLon: 78,
+    points: [
+      [25, 68], [24, 70], [15, 74], [8, 77], [13, 80], [20, 85], [26, 88], [28, 78], [25, 68]
+    ]
+  },
+  // JAPAN
+  {
+    name: "JAPAN",
+    labelLat: 36,
+    labelLon: 138,
+    points: [
+      [45, 142], [40, 140], [35, 136], [32, 130], [34, 132], [41, 141], [45, 142]
+    ]
+  },
+  // AUSTRALIA & NEW ZEALAND
+  {
+    name: "AUSTRALIA",
+    labelLat: -25,
+    labelLon: 135,
+    points: [
+      [-12, 130], [-12, 142], [-24, 153], [-37, 150], [-38, 140], [-35, 117], [-22, 114], [-12, 130]
+    ]
+  }
+];
+
+// High-Density Metropolitan City Night Lights (Spaceship Orbital Night Constellations)
+const GLOBAL_CITIES = [
   // Europe
-  [
-    [70, 25], [60, 30], [55, 20], [50, 10], [44, -1], [36, -6], [37, 0], [43, 5], [40, 18], [38, 24],
-    [41, 29], [46, 30], [55, 38], [65, 40], [70, 25]
-  ],
-  // Scandinavia & UK
-  [
-    [58, -5], [51, 1], [50, -5], [58, -5]
-  ],
-  // Africa
-  [
-    [36, -5], [37, 10], [32, 32], [28, 34], [12, 44], [-5, 40], [-25, 33], [-34, 18], [-22, 14], [0, 9], [5, 1], [15, -17], [30, -10], [36, -5]
-  ],
-  // Asia
-  [
-    [75, 40], [72, 80], [70, 130], [65, 175], [55, 160], [40, 140], [35, 120], [22, 115], [10, 105], [1, 104],
-    [15, 100], [22, 88], [8, 77], [22, 70], [25, 60], [30, 48], [40, 40], [55, 40], [75, 40]
-  ],
-  // Australia
-  [
-    [-12, 130], [-15, 145], [-28, 153], [-38, 145], [-35, 115], [-20, 115], [-12, 130]
-  ],
-  // Japan
-  [
-    [45, 142], [35, 140], [32, 130], [40, 140], [45, 142]
-  ]
+  { name: "LONDON", lat: 51.5, lon: -0.12, intensity: 1.0 },
+  { name: "PARIS", lat: 48.85, lon: 2.35, intensity: 1.0 },
+  { name: "BERLIN", lat: 52.52, lon: 13.4, intensity: 0.9 },
+  { name: "ISTANBUL", lat: 41.0, lon: 28.97, intensity: 1.0 },
+  { name: "ANKARA", lat: 39.93, lon: 32.85, intensity: 0.8 },
+  { name: "MOSCOW", lat: 55.75, lon: 37.61, intensity: 1.0 },
+  { name: "ROME", lat: 41.9, lon: 12.49, intensity: 0.9 },
+  { name: "MADRID", lat: 40.41, lon: -3.7, intensity: 0.9 },
+
+  // Americas
+  { name: "NEW YORK", lat: 40.71, lon: -74.0, intensity: 1.0 },
+  { name: "WASHINGTON", lat: 38.9, lon: -77.03, intensity: 0.9 },
+  { name: "CHICAGO", lat: 41.87, lon: -87.62, intensity: 0.9 },
+  { name: "LOS ANGELES", lat: 34.05, lon: -118.24, intensity: 1.0 },
+  { name: "SÃO PAULO", lat: -23.55, lon: -46.63, intensity: 0.9 },
+  { name: "TORONTO", lat: 43.65, lon: -79.38, intensity: 0.8 },
+
+  // Middle East & Asia
+  { name: "DUBAI", lat: 25.2, lon: 55.27, intensity: 1.0 },
+  { name: "RIYADH", lat: 24.71, lon: 46.67, intensity: 0.9 },
+  { name: "TOKYO", lat: 35.67, lon: 139.65, intensity: 1.0 },
+  { name: "SHANGHAI", lat: 31.23, lon: 121.47, intensity: 1.0 },
+  { name: "BEIJING", lat: 39.9, lon: 116.4, intensity: 1.0 },
+  { name: "SINGAPORE", lat: 1.35, lon: 103.81, intensity: 0.9 },
+  { name: "MUMBAI", lat: 19.07, lon: 72.87, intensity: 0.9 },
+  { name: "HONG KONG", lat: 22.31, lon: 114.16, intensity: 1.0 },
+  { name: "SYDNEY", lat: -33.86, lon: 151.2, intensity: 0.8 },
 ];
 
 export default function NurEarth3DGlobe() {
@@ -647,17 +751,13 @@ export default function NurEarth3DGlobe() {
         }
       }
 
-      // 4. Continents & Landmass Polygons in 3D
-      ctx.fillStyle = "rgba(0, 212, 170, 0.09)";
-      ctx.strokeStyle = "rgba(0, 212, 170, 0.4)";
-      ctx.lineWidth = 1.2;
-
-      CONTINENTS.forEach((polygon) => {
+      // 4. Continents & Landmass Polygons in 3D (Emerald Topography & Labels)
+      CONTINENTS.forEach((cont) => {
         ctx.beginPath();
         let anyVisible = false;
         let first = true;
 
-        polygon.forEach(([lat, lon]) => {
+        cont.points.forEach(([lat, lon]) => {
           const p = latLonTo3D(lat, lon, globeRadius, localYaw, localPitch);
           if (p.isVisible) {
             anyVisible = true;
@@ -672,9 +772,53 @@ export default function NurEarth3DGlobe() {
 
         if (anyVisible) {
           ctx.closePath();
+          ctx.fillStyle = "rgba(0, 212, 170, 0.14)";
           ctx.fill();
+          ctx.strokeStyle = "rgba(0, 212, 170, 0.55)";
+          ctx.lineWidth = 1.4;
           ctx.stroke();
         }
+
+        // Draw Continent Name Label on 3D Globe
+        const lp = latLonTo3D(cont.labelLat, cont.labelLon, globeRadius + 2, localYaw, localPitch);
+        if (lp.isVisible) {
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.font = "bold 10px monospace";
+          ctx.shadowColor = "rgba(0,0,0,0.8)";
+          ctx.shadowBlur = 4;
+          ctx.fillText(cont.name, cx + lp.x - 15, cy + lp.y);
+          ctx.shadowBlur = 0;
+        }
+      });
+
+      // 4.5. High-Density Metropolitan Night City Lights (ISS Orbital View)
+      GLOBAL_CITIES.forEach((city, idx) => {
+        const cp = latLonTo3D(city.lat, city.lon, globeRadius, localYaw, localPitch);
+        if (!cp.isVisible) return;
+
+        const px = cx + cp.x;
+        const py = cy + cp.y;
+        const twinkle = 0.6 + 0.4 * Math.sin(timeRef.current * 3 + idx * 7);
+
+        // Golden city light aura
+        ctx.fillStyle = `rgba(251, 191, 36, ${0.7 * twinkle})`;
+        ctx.shadowColor = "#f59e0b";
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(px, py, 2 * city.intensity, 0, Math.PI * 2);
+        ctx.fill();
+
+        // White core spark
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(px, py, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // City Tag Label
+        ctx.fillStyle = "rgba(253, 230, 138, 0.8)";
+        ctx.font = "8px monospace";
+        ctx.fillText(city.name, px + 5, py + 2);
       });
 
       // 5. Great-Circle Flight Corridors (Curved 3D Arcs + Moving Aircraft)
