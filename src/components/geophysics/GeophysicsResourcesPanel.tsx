@@ -21,11 +21,11 @@ const SAMPLE_RESOURCES: ResourceDeposit[] = [
     id: "res-1",
     name: "Gölbaşı Gold Vein & Sovereign Reserve",
     category: "GOLD",
-    location: "Doğu Anadolu Fay Hattı / Erzincan Sektörü",
+    location: "East Anatolian Fault Zone / Erzincan Sector",
     country: "Türkiye",
     coordinates: "39.7500° N, 39.5000° E",
-    estimatedReserve: "185 Ton Saf Altın",
-    marketValueUsd: "$14.2 Milyar",
+    estimatedReserve: "185 Tons Pure Gold",
+    marketValueUsd: "$14.2 Billion",
     depthMeters: 420,
     status: "ACTIVE_MINING",
   },
@@ -33,11 +33,11 @@ const SAMPLE_RESOURCES: ResourceDeposit[] = [
     id: "res-2",
     name: "Gabar & Şırnak Heavy Crude Oil Field",
     category: "OIL",
-    location: "Şırnak / Gabar Dağı Rezerv Bölgesi",
+    location: "Şırnak / Gabar Mountain Reserve Area",
     country: "Türkiye",
     coordinates: "37.5200° N, 42.4500° E",
-    estimatedReserve: "1.2 Milyar Varil",
-    marketValueUsd: "$96.0 Milyar",
+    estimatedReserve: "1.2 Billion Barrels",
+    marketValueUsd: "$96.0 Billion",
     depthMeters: 2600,
     status: "ACTIVE_MINING",
   },
@@ -45,11 +45,11 @@ const SAMPLE_RESOURCES: ResourceDeposit[] = [
     id: "res-3",
     name: "Eskişehir Beylikova Rare Earth Elements (REE)",
     category: "RARE_EARTH",
-    location: "Beylikova / Eskişehir Sahası",
+    location: "Beylikova / Eskişehir Field",
     country: "Türkiye",
     coordinates: "39.6800° N, 31.1500° E",
-    estimatedReserve: "694 Milyon Ton Cevher (Dünyanın En Büyük 2.)",
-    marketValueUsd: "$210.0 Milyar",
+    estimatedReserve: "694 Million Tons Ore (World's 2nd Largest)",
+    marketValueUsd: "$210.0 Billion",
     depthMeters: 180,
     status: "EXPLORATION",
   },
@@ -60,8 +60,8 @@ const SAMPLE_RESOURCES: ResourceDeposit[] = [
     location: "Emet / Kütahya",
     country: "Türkiye",
     coordinates: "39.3400° N, 29.2500° E",
-    estimatedReserve: "45,000 Ton Lityum Karbonat / 1.4B Ton Bor",
-    marketValueUsd: "$38.5 Milyar",
+    estimatedReserve: "45,000 Tons Lithium Carbonate / 1.4B Tons Boron",
+    marketValueUsd: "$38.5 Billion",
     depthMeters: 90,
     status: "ACTIVE_MINING",
   },
@@ -72,8 +72,8 @@ const SAMPLE_RESOURCES: ResourceDeposit[] = [
     location: "Küre / Kastamonu",
     country: "Türkiye",
     coordinates: "41.8000° N, 33.7100° E",
-    estimatedReserve: "3.4 Milyon Ton Bakır / Pirit",
-    marketValueUsd: "$28.1 Milyar",
+    estimatedReserve: "3.4 Million Tons Copper / Pyrite",
+    marketValueUsd: "$28.1 Billion",
     depthMeters: 650,
     status: "ACTIVE_MINING",
   },
@@ -87,7 +87,7 @@ export default function GeophysicsResourcesPanel() {
     ? SAMPLE_RESOURCES
     : SAMPLE_RESOURCES.filter(r => r.category === selectedCategory);
 
-  const totalReserveUsd = "$386.8 Milyar";
+  const totalReserveUsd = "$386.8 Billion";
 
   return (
     <div className="flex flex-col h-full overflow-hidden" style={{ background: "var(--ag-bg)", color: "var(--ag-text)" }}>
@@ -100,20 +100,20 @@ export default function GeophysicsResourcesPanel() {
           <EagleCrest size={32} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-amber-300">3D Jeofizik & Doğal Kaynaklar Konsolu</span>
+              <span className="text-sm font-bold text-amber-300">3D Geophysics & Strategic Resources Console</span>
               <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-400">
                 GEO-PHYSICS & SOVEREIGN MINING
               </span>
             </div>
             <p className="text-[11px] text-[var(--ag-muted)]">
-              Altın, Petrol, Nadir Toprak Elementleri & Stratejik Maden Sismik Jeofizik Veri Haritası
+              Gold, Oil, Rare Earth Elements & Strategic Minerals Seismic Geophysical Data Map
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 text-xs font-mono">
           <div className="flex flex-col text-right">
-            <span className="text-[10px] text-slate-400">Toplam Haritalanan Değer:</span>
+            <span className="text-[10px] text-slate-400">Total Mapped Value:</span>
             <span className="font-bold text-emerald-400 text-sm">{totalReserveUsd}</span>
           </div>
         </div>
@@ -175,28 +175,28 @@ export default function GeophysicsResourcesPanel() {
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 block mb-1">
-                  SEÇİLİ JEOLOJİK CEVHER SAHASI &bull; {activeDeposit.coordinates}
+                  SELECTED GEOLOGICAL ORE DEPOSIT &bull; {activeDeposit.coordinates}
                 </span>
                 <h2 className="text-xl font-bold text-white font-serif">{activeDeposit.name}</h2>
                 <p className="text-xs text-slate-400 mt-1">{activeDeposit.location} &bull; {activeDeposit.country}</p>
               </div>
               <div className="text-right font-mono">
-                <span className="text-[10px] text-slate-400 block">Piyasa Rezerv Değeri</span>
+                <span className="text-[10px] text-slate-400 block">Market Reserve Value</span>
                 <span className="text-2xl font-bold text-emerald-400">{activeDeposit.marketValueUsd}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4 pt-3 border-t border-white/10 text-xs font-mono">
               <div>
-                <span className="text-[10px] text-slate-400 block">Tahmini Rezerv Hacmi</span>
+                <span className="text-[10px] text-slate-400 block">Estimated Reserve Volume</span>
                 <span className="font-bold text-white">{activeDeposit.estimatedReserve}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block">Derinlik / Formasyon</span>
-                <span className="font-bold text-amber-300">{activeDeposit.depthMeters} Metre (Sismik Katman)</span>
+                <span className="text-[10px] text-slate-400 block">Depth / Formation</span>
+                <span className="font-bold text-amber-300">{activeDeposit.depthMeters} Meters (Seismic Layer)</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block">Operasyonel Durum</span>
+                <span className="text-[10px] text-slate-400 block">Operational Status</span>
                 <span className="font-bold text-emerald-400 uppercase">{activeDeposit.status.replace("_", " ")}</span>
               </div>
             </div>
@@ -205,26 +205,26 @@ export default function GeophysicsResourcesPanel() {
           {/* 3D Geophysical Seismic Simulator Container */}
           <div className="h-72 rounded-2xl border border-white/10 bg-black/60 p-4 relative overflow-hidden flex flex-col justify-between">
             <div className="flex justify-between items-center text-xs font-mono z-10">
-              <span className="text-amber-400 font-bold">📡 3D SİSMİK KATMAN VE TOMOGRAFİ SİMÜLASYONU</span>
-              <span className="text-[10px] text-slate-500">Çözünürlük: 0.5m Kuantum Jeofizik Radar</span>
+              <span className="text-amber-400 font-bold">📡 3D SEISMIC LAYER & TOMOGRAPHY SIMULATION</span>
+              <span className="text-[10px] text-slate-500">Resolution: 0.5m Quantum Geophysical Radar</span>
             </div>
 
             {/* Subsurface Stratum Visualizer */}
             <div className="absolute inset-0 top-10 flex flex-col justify-end opacity-40 pointer-events-none">
               <div className="h-12 bg-amber-900/30 border-t border-amber-500/20 flex items-center justify-center text-[10px] font-mono text-amber-300">
-                Formasyon 1: Alüvyon Toprak Katmanı (0m - 50m)
+                Formation 1: Alluvial Soil Layer (0m - 50m)
               </div>
               <div className="h-16 bg-amber-800/40 border-t border-amber-500/30 flex items-center justify-center text-[10px] font-mono text-amber-400 font-bold">
-                Formasyon 2: Cevher Damarı & Kireçtaşı Blokları (50m - {activeDeposit.depthMeters}m)
+                Formation 2: Ore Vein & Limestone Blocks (50m - {activeDeposit.depthMeters}m)
               </div>
               <div className="h-20 bg-emerald-950/60 border-t border-emerald-500/40 flex items-center justify-center text-[11px] font-mono text-emerald-300 font-bold animate-pulse">
-                ⚡ ANA REZERVE YATAK ({activeDeposit.category} DAMARI) - DERİNLİK: {activeDeposit.depthMeters}M
+                ⚡ PRIMARY RESERVE DEPOSIT ({activeDeposit.category} VEIN) - DEPTH: {activeDeposit.depthMeters}M
               </div>
             </div>
 
             <div className="z-10 flex justify-between items-center text-[10px] font-mono text-slate-400">
-              <span>Sismik Hız: 4.8 km/s</span>
-              <span>Anomali Yoğunluğu: %98.4 Yüksek Rezonans</span>
+              <span>Seismic Velocity: 4.8 km/s</span>
+              <span>Anomaly Density: 98.4% High Resonance</span>
             </div>
           </div>
         </div>
