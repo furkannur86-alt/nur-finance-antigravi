@@ -5,7 +5,7 @@ import EagleCrest from "@/components/ui/EagleCrest";
 
 export interface GeoEntity {
   id: string;
-  type: "FLIGHT" | "TANKER" | "HOTSPOT" | "CHOKEPOINT" | "FIBER";
+  type: "FLIGHT" | "TANKER" | "HOTSPOT" | "CHOKEPOINT" | "FIBER" | "NUCLEAR";
   name: string;
   code: string;
   lat: number;
@@ -23,6 +23,58 @@ export interface GeoEntity {
   details: string;
   correlatedAssets: string[];
 }
+
+// Nuclear Plants, Facilities & Weapons Sites
+const NUCLEAR_SITES: GeoEntity[] = [
+  {
+    id: "nuc-1",
+    type: "NUCLEAR",
+    name: "Zaporizhzhia Nuclear Power Plant",
+    code: "IAEA: ZNPP-01 &bull; UKRAINE",
+    lat: 47.51,
+    lon: 34.58,
+    riskScore: 98,
+    riskLevel: "CRITICAL",
+    details: "Avrupa'nın en büyük nükleer santrali. Aktif çatışma bölgesinde soğutma hatları ve IAEA denetimi altında.",
+    correlatedAssets: ["EUR/USD", "WHEAT=F", "ELECTRICITY_EU"],
+  },
+  {
+    id: "nuc-2",
+    type: "NUCLEAR",
+    name: "Natanz Fuel Enrichment Plant",
+    code: "IAEA: FEP-NATANZ &bull; IRAN",
+    lat: 33.72,
+    lon: 51.73,
+    riskScore: 96,
+    riskLevel: "CRITICAL",
+    details: "%60 Saflıkta Zenginleştirilmiş Uranyum üretimi. Hava savunma sistemleri ve underground sığınak kompleksi.",
+    correlatedAssets: ["BZ=F (Brent)", "GC=F (Altın)", "USO"],
+  },
+  {
+    id: "nuc-3",
+    type: "NUCLEAR",
+    name: "Yongbyon Nuclear Scientific Research Center",
+    code: "IAEA: YNG-01 &bull; NORTH KOREA",
+    lat: 39.8,
+    lon: 125.75,
+    riskScore: 91,
+    riskLevel: "CRITICAL",
+    details: "Plütonyum üretim reaktörü ve nükleer deneme tesisleri bölgesi.",
+    correlatedAssets: ["KRW=X", "NIKKEI225", "USD/JPY"],
+  },
+  {
+    id: "nuc-4",
+    type: "NUCLEAR",
+    name: "Akkuyu Nuclear Power Plant Construction",
+    code: "AKKUYU-NPP &bull; TÜRKIYE",
+    lat: 36.14,
+    lon: 33.54,
+    riskScore: 40,
+    riskLevel: "STABLE",
+    details: "4.800 MW Kapasiteli Türkiye'nin İlk Nükleer Güç Santrali. Akdeniz Enerji Arz Güvenliği Omurgası.",
+    correlatedAssets: ["BIST100", "TRY=X", "AKSEN"],
+  },
+];
 
 // Comprehensive Global Flight Corridors
 const LIVE_FLIGHTS: GeoEntity[] = [
@@ -327,16 +379,72 @@ export default function NurEarth3DGlobe() {
     tankers: true,
     hotspots: true,
     chokepoints: true,
+    nuclear: true,
     grid: true,
   });
 
   const [globeRotation, setGlobeRotation] = useState({ yaw: 0.8, pitch: 0.3 });
   const [zoom, setZoom] = useState(1.0);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [autoZoomEvents, setAutoZoomEvents] = useState(true);
+
+  // Satellite tile image cache
+  const [satTileUrl, setSatTileUrl] = useState<string | null>(null);
+
   const isDragging = useRef(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
   const animFrameRef = useRef<number | null>(null);
   const timeRef = useRef(0);
+  const targetCamRef = useRef<{ yaw: number; pitch: number; zoom: number } | null>(null);
+
+  const ALL_ENTITIES = [...DEFENSE_HOTSPOTS, ...NUCLEAR_SITES, ...LIVE_TANKERS, ...CHOKEPOINTS, ...LIVE_FLIGHTS];
+
+  // Helper to convert lat/lon to ESRI Satellite Tile URL (World Imagery)
+  const updateSatelliteTile = useCallback((lat: number, lon: number) => {
+    // Zoom level 11 for high resolution satellite imagery
+    const zoomLevel = 11;
+    const latRad = (lat * Math.PI) / 180;
+    const n = Math.pow(2, zoomLevel);
+    const xtile = Math.floor(((lon + 180) / 360) * n);
+    const ytile = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+
+    // ESRI World Imagery Tile Service (Free, No API key needed)
+    const url = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zoomLevel}/${ytile}/${xtile}`;
+    setSatTileUrl(url);
+  }, []);
+
+  // Smooth camera fly-to animation for an entity
+  const flyToEntity = useCallback((ent: GeoEntity) => {
+    setSelectedEntity(ent);
+    updateSatelliteTile(ent.lat, ent.lon);
+
+    // Convert entity lat/lon to target Yaw/Pitch angles
+    const targetYaw = -(ent.lon + 180) * (Math.PI / 180);
+    const targetPitch = (ent.lat) * (Math.PI / 180) * 0.5;
+
+    targetCamRef.current = {
+      yaw: targetYaw,
+      pitch: Math.max(-1.1, Math.min(1.1, targetPitch)),
+      zoom: 1.65, // Zoom in to focus on conflict/nuclear site
+    };
+  }, [updateSatelliteTile]);
+
+  // Auto-event rotation timer: Cycles through high-risk hotspots every 8 seconds
+  useEffect(() => {
+    if (!autoZoomEvents) return;
+
+    const criticalZones = ALL_ENTITIES.filter((e) => e.riskLevel === "CRITICAL" || e.type === "NUCLEAR");
+    let index = 0;
+
+    const interval = setInterval(() => {
+      if (isDragging.current) return;
+      const nextEnt = criticalZones[index % criticalZones.length];
+      flyToEntity(nextEnt);
+      index++;
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [autoZoomEvents, flyToEntity]);
 
   // 3D Spherical Math Helper
   const latLonTo3D = useCallback((lat: number, lon: number, radius: number, yaw: number, pitch: number) => {
@@ -411,7 +519,20 @@ export default function NurEarth3DGlobe() {
       ctx.scale(dpr, dpr);
 
       timeRef.current += 0.015;
-      if (autoRotate) {
+
+      // Smooth camera interpolation towards Target Yaw/Pitch/Zoom
+      if (targetCamRef.current) {
+        const dest = targetCamRef.current;
+        localYaw += (dest.yaw - localYaw) * 0.05;
+        localPitch += (dest.pitch - localPitch) * 0.05;
+
+        setGlobeRotation({ yaw: localYaw, pitch: localPitch });
+        setZoom((prevZ) => prevZ + (dest.zoom - prevZ) * 0.05);
+
+        if (Math.abs(dest.yaw - localYaw) < 0.01 && Math.abs(dest.pitch - localPitch) < 0.01) {
+          targetCamRef.current = null;
+        }
+      } else if (autoRotate) {
         localYaw += 0.003;
       } else {
         localYaw = globeRotation.yaw;
@@ -636,7 +757,34 @@ export default function NurEarth3DGlobe() {
         });
       }
 
-      // 8. Strategic Maritime Chokepoints
+      // 8. Nuclear Facilities & Strategic Power Plants
+      if (activeLayers.nuclear) {
+        NUCLEAR_SITES.forEach((nuc, idx) => {
+          const p = latLonTo3D(nuc.lat, nuc.lon, globeRadius, localYaw, localPitch);
+          if (!p.isVisible) return;
+          const px = cx + p.x;
+          const py = cy + p.y;
+          const pulse = (Math.sin(timeRef.current * 5 + idx) + 1) * 0.5;
+
+          // Radiation warning ring
+          ctx.strokeStyle = `rgba(250, 204, 21, ${0.5 + pulse * 0.5})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(px, py, 9 + pulse * 6, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = "#facc15";
+          ctx.beginPath();
+          ctx.arc(px, py, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#fef08a";
+          ctx.font = "bold 9px monospace";
+          ctx.fillText(`☢ ${nuc.name.split(" ")[0]}`, px + 8, py - 7);
+        });
+      }
+
+      // 9. Strategic Maritime Chokepoints
       if (activeLayers.chokepoints) {
         CHOKEPOINTS.forEach((cp) => {
           const p = latLonTo3D(cp.lat, cp.lon, globeRadius, localYaw, localPitch);
@@ -698,24 +846,14 @@ export default function NurEarth3DGlobe() {
         {/* Layer Toggles & Controls */}
         <div className="flex items-center gap-1.5 text-xs">
           <button
-            onClick={() => setActiveLayers((l) => ({ ...l, flights: !l.flights }))}
+            onClick={() => setActiveLayers((l) => ({ ...l, nuclear: !l.nuclear }))}
             className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
-              activeLayers.flights
-                ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-sm"
+              activeLayers.nuclear
+                ? "bg-yellow-500/20 border-yellow-400 text-yellow-300 shadow-sm"
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            ✈️ Uçuş Hatları ({LIVE_FLIGHTS.length})
-          </button>
-          <button
-            onClick={() => setActiveLayers((l) => ({ ...l, tankers: !l.tankers }))}
-            className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
-              activeLayers.tankers
-                ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-sm"
-                : "bg-black/40 border-white/10 text-slate-400"
-            }`}
-          >
-            🚢 Petrol Tankerleri ({LIVE_TANKERS.length})
+            ☢️ Nükleer Tesisler ({NUCLEAR_SITES.length})
           </button>
           <button
             onClick={() => setActiveLayers((l) => ({ ...l, hotspots: !l.hotspots }))}
@@ -728,24 +866,35 @@ export default function NurEarth3DGlobe() {
             ⚔️ Çatışma Zonu ({DEFENSE_HOTSPOTS.length})
           </button>
           <button
-            onClick={() => setActiveLayers((l) => ({ ...l, chokepoints: !l.chokepoints }))}
+            onClick={() => setActiveLayers((l) => ({ ...l, tankers: !l.tankers }))}
             className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
-              activeLayers.chokepoints
-                ? "bg-purple-500/20 border-purple-400 text-purple-300 shadow-sm"
+              activeLayers.tankers
+                ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-sm"
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            🛢️ Boğazlar ({CHOKEPOINTS.length})
+            🚢 Petrol Tankerleri ({LIVE_TANKERS.length})
           </button>
           <button
-            onClick={() => setAutoRotate((r) => !r)}
-            className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold transition-all border ${
-              autoRotate
-                ? "bg-emerald-500/20 border-emerald-400 text-emerald-300"
+            onClick={() => setActiveLayers((l) => ({ ...l, flights: !l.flights }))}
+            className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-all border ${
+              activeLayers.flights
+                ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-sm"
                 : "bg-black/40 border-white/10 text-slate-400"
             }`}
           >
-            {autoRotate ? "🔄 OTO DÖNÜŞ" : "⏸ MANUEL"}
+            ✈️ Uçuş Hatları ({LIVE_FLIGHTS.length})
+          </button>
+          <button
+            onClick={() => setAutoZoomEvents((r) => !r)}
+            className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold transition-all border ${
+              autoZoomEvents
+                ? "bg-purple-500/20 border-purple-400 text-purple-300 shadow-sm animate-pulse"
+                : "bg-black/40 border-white/10 text-slate-400"
+            }`}
+            title="Sıradaki olay bölgesine otomatik dön ve zoom yap (8 saniye)"
+          >
+            {autoZoomEvents ? "📡 OTO ZOOM & DÖNÜŞ (8s)" : "⏸ MANUEL"}
           </button>
         </div>
       </div>
@@ -808,6 +957,34 @@ export default function NurEarth3DGlobe() {
                   >
                     {selectedEntity.riskLevel}
                   </span>
+                )}
+              </div>
+
+              {/* Real Satellite Photo Feed (Esri World Imagery) */}
+              <div className="space-y-1.5 p-3 rounded-lg bg-black/60 border border-cyan-500/30">
+                <div className="flex justify-between items-center text-[10px] font-mono">
+                  <span className="font-bold text-cyan-300 uppercase flex items-center gap-1">
+                    <span>📡 CANLI UYDU GÖRÜNTÜSÜ (ESRI WORLD IMAGERY)</span>
+                  </span>
+                  <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300">HIGH-RES</span>
+                </div>
+                {satTileUrl ? (
+                  <div className="relative h-44 rounded overflow-hidden border border-white/10 group">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={satTileUrl}
+                      alt="Uydu Görüntüsü"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+                    <div className="absolute bottom-2 left-2 text-[9px] font-mono text-cyan-300 bg-black/70 px-2 py-0.5 rounded">
+                      UYDU ZOOM: 11x &bull; LAT: {selectedEntity.lat.toFixed(2)}°
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-36 rounded bg-slate-900 flex items-center justify-center text-xs text-slate-500 font-mono">
+                    Uydu Akışı Yükleniyor...
+                  </div>
                 )}
               </div>
 

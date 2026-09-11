@@ -105,7 +105,8 @@ export type PanelView =
   | "nur-kids"
   | "umay-boss"
   | "nur-education"
-  | "compute-access";
+  | "compute-access"
+  | "geophysics-resources";
 
 export interface GlobalMarketQuote {
   symbol: string;

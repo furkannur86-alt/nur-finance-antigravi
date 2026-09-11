@@ -40,6 +40,7 @@ const MODULES: Module[] = [
   { id: "macro-risk",        label: "Macro Risk",       icon: "⚠️", desc: "Systemic risk dashboard",    color: "#f59e0b", group: "ANALYSIS" },
   { id: "ai-tools",          label: "Quant Models",     icon: "🧮", desc: "ML & quantitative models",   color: "#f59e0b", group: "ANALYSIS" },
   { id: "geopolitics",       label: "NUR Earth 3D",     icon: "🌐", desc: "Geopolitical risk globe",    color: "#f59e0b", group: "ANALYSIS" },
+  { id: "geophysics-resources", label: "Jeofizik & Maden", icon: "⛏️", desc: "3D Jeofizik doğal kaynak haritası", color: "#f59e0b", group: "ANALYSIS" },
   { id: "data-ingest",       label: "Data Ingest",      icon: "📥", desc: "Pipeline & data ingestion",  color: "#f59e0b", group: "ANALYSIS" },
   { id: "encyclopedia",      label: "Wiki",             icon: "📚", desc: "Financial encyclopedia",     color: "#f59e0b", group: "ANALYSIS" },
 

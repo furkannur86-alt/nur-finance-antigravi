@@ -2,11 +2,14 @@
   "name": "nur-finance-antigravi",
   "version": "3.0.0",
   "private": true,
+  "main": "electron-main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "desktop": "concurrently \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "desktop:build": "next build && electron-builder"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",
@@ -25,9 +28,13 @@
     "@types/prismjs": "^1.26.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^10.0.5",
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^9.1.0"
   }
 }

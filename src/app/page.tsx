@@ -44,6 +44,7 @@ import TatarFinansPanel from "@/components/tatar/TatarFinansPanel";
 import NurKidsPanel from "@/components/kids/NurKidsPanel";
 import NurEducationPanel from "@/components/education/NurEducationPanel";
 import ComputeForAccessPanel from "@/components/compute/ComputeForAccessPanel";
+import GeophysicsResourcesPanel from "@/components/geophysics/GeophysicsResourcesPanel";
 import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
 import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
@@ -127,6 +128,8 @@ export default function Home() {
         return <NurEducationPanel />;
       case "compute-access":
         return <ComputeForAccessPanel />;
+      case "geophysics-resources":
+        return <GeophysicsResourcesPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":

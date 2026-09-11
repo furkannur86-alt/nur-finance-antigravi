@@ -246,6 +246,24 @@ export default function DigitalWalletGateway() {
         {/* PAYMENT TAB */}
         {activeTab === "pay" && (
           <div className="max-w-3xl mx-auto flex flex-col gap-5">
+            {/* Sovereign Desktop Wallet Vault Mode — Active only for Desktop App / Furkan */}
+            <div className="p-4 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-950/40 via-black to-slate-950 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-amber-300">👑 FURKAN SOVEREIGN DESKTOP RECOVERY & VAULT</span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-400 text-black font-bold">
+                    MASAÜSTÜ UYGULAMASI ÖZEL
+                  </span>
+                </div>
+                <span className="text-xs font-mono font-bold text-emerald-400">
+                  Toplam Rezerv: $47,700,000 USDT
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Bu masaüstü uygulaması sizin kişisel terminalinizdir. Kendi masaüstünüzdeki Bloomberg ve Reuters terminallerinden tüm rezerv ve cüzdanlarınızı doğrudan yönetebilirsiniz. Kamusal web sitesine erişen kullanıcılar yalnızca kendi cüzdan ödeme kapılarını görür.
+              </p>
+            </div>
+
             {/* AML/KYC Compliance Notice */}
             <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-950/20 text-[11px] text-amber-200 leading-relaxed">
               &#9888; Bu, yüksek tutarlı (&euro;100K/yıl) kurumsal bir ödeme kanalıdır ve AML/KYC uyum politikamıza tabidir. Ad-soyad ve e-posta
