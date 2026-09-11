@@ -46,6 +46,8 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }
   "tatar-finans":       { label: "Tatar Finans",       icon: "🛡️", color: "#fbbf24" },
   "resource-intelligence": { label: "Resource Intel",   icon: "⛏️", color: "#f59e0b" },
   "institutional-suite":  { label: "Institutional Suite", icon: "🏛", color: "#a78bfa" },
+  "user-profile":         { label: "My Profile",          icon: "👤", color: "#00d4aa" },
+  "profession-hub":       { label: "Profession Hub",      icon: "🎯", color: "#34d399" },
   editor:               { label: "Code Editor",        icon: "⌨️", color: "#6b7280" },
 };
 

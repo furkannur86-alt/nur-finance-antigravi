@@ -58,6 +58,8 @@ const MODULES: Module[] = [
   { id: "nur-education",     label: "Education",        icon: "🎓", desc: "Financial education hub",    color: "#34d399", group: "SOCIAL" },
   { id: "nur-kids",          label: "Nur Kids",         icon: "👨‍👩‍👧", desc: "Family finance platform",   color: "#34d399", group: "SOCIAL" },
   { id: "compute-access",    label: "Free Access",      icon: "⛏️", desc: "Compute-for-access mining",  color: "#34d399", group: "SOCIAL" },
+  { id: "user-profile",      label: "My Profile",       icon: "👤", desc: "Social finance identity, KYC, achievements & community", color: "#00d4aa", group: "SOCIAL" },
+  { id: "profession-hub",    label: "Profession Hub",   icon: "🎯", desc: "Tailored financial tools for doctors, teachers, lawyers, tech, military & more", color: "#34d399", group: "SOCIAL" },
 
   // RESOURCE INTELLIGENCE
   { id: "resource-intelligence", label: "Resource Intel", icon: "⛏️", desc: "Oil, gas, gold, critical minerals & geological survey intelligence — €27K/mo sovereign tier", color: "#f59e0b", group: "RESOURCES" },

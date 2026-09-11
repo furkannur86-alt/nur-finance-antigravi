@@ -52,6 +52,8 @@ import CockpitFrame from "@/components/layout/CockpitFrame";
 import PanelExpander from "@/components/layout/PanelExpander";
 import ResourceIntelligencePanel from "@/components/resources/ResourceIntelligencePanel";
 import InstitutionalSuitePanel from "@/components/institutional/InstitutionalSuitePanel";
+import UserProfilePanel from "@/components/social/UserProfilePanel";
+import ProfessionHubPanel from "@/components/social/ProfessionHubPanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -73,6 +75,8 @@ const FULLSCREEN_VIEWS = [
   "wallet-gateway", "nur-coin",
   "resource-intelligence",
   "institutional-suite",
+  "user-profile",
+  "profession-hub",
 ];
 
 export default function Home() {
@@ -138,6 +142,10 @@ export default function Home() {
         return <ResourceIntelligencePanel />;
       case "institutional-suite":
         return <InstitutionalSuitePanel />;
+      case "user-profile":
+        return <UserProfilePanel />;
+      case "profession-hub":
+        return <ProfessionHubPanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":

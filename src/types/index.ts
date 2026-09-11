@@ -108,7 +108,9 @@ export type PanelView =
   | "compute-access"
   | "wish-framework"
   | "resource-intelligence"
-  | "institutional-suite";
+  | "institutional-suite"
+  | "user-profile"
+  | "profession-hub";
 
 export interface GlobalMarketQuote {
   symbol: string;
