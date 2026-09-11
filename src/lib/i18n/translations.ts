@@ -9,18 +9,30 @@ export type Locale =
 export const RTL_LOCALES: Locale[] = ["ar", "he", "fa", "ur"];
 
 export const LOCALE_NAMES: Record<Locale, string> = {
-  en: "English", tr: "Türkçe", de: "Deutsch", fr: "Français",
-  es: "Español", pt: "Português", it: "Italiano", nl: "Nederlands",
-  ar: "العربية", zh: "中文", ja: "日本語", ko: "한국어",
-  ru: "Русский", hi: "हिन्दी", id: "Bahasa Indonesia", ms: "Bahasa Melayu",
-  th: "ไทย", vi: "Tiếng Việt", pl: "Polski", sv: "Svenska",
-  no: "Norsk", da: "Dansk", fi: "Suomi", el: "Ελληνικά",
-  he: "עברית", cs: "Čeština", ro: "Română", hu: "Magyar",
-  uk: "Українська", bg: "Български", hr: "Hrvatski", sk: "Slovenčina",
-  sl: "Slovenščina", sr: "Српски", lt: "Lietuvių", lv: "Latviešu",
-  et: "Eesti", sw: "Kiswahili", bn: "বাংলা", ur: "اردو",
-  fa: "فارسی", fil: "Filipino", ta: "தமிழ்", te: "తెలుగు",
-  ml: "മലയാളം", kn: "ಕನ್ನಡ", mr: "मराठी", gu: "ગુજરાતી",
+  // Rank 1: English (Primary Native System Language)
+  en: "English",
+  // Rank 2: Deutsch (German)
+  de: "Deutsch",
+  // Rank 3: 中文 (Chinese)
+  zh: "中文",
+  // Rank 4: Español (Spanish)
+  es: "Español",
+  // Rank 5: العربية (Arabic)
+  ar: "العربية",
+  // Rank 6: Türkçe (Turkish)
+  tr: "Türkçe",
+  // Rank 7+: Global Population & Usage Hierarchy
+  hi: "हिन्दी", id: "Bahasa Indonesia", pt: "Português", ru: "Русский",
+  ja: "日本語", fr: "Français", ko: "한국어", bn: "বাংলা",
+  ur: "اردو", fa: "فارسی", ms: "Bahasa Melayu", th: "ไทย",
+  vi: "Tiếng Việt", it: "Italiano", nl: "Nederlands", pl: "Polski",
+  sv: "Svenska", no: "Norsk", da: "Dansk", fi: "Suomi",
+  el: "Ελληνικά", he: "עברית", cs: "Čeština", ro: "Română",
+  hu: "Magyar", uk: "Українська", bg: "Български", hr: "Hrvatski",
+  sk: "Slovenčina", sl: "Slovenščina", sr: "Српски", lt: "Lietuvių",
+  lv: "Latviešu", et: "Eesti", sw: "Kiswahili", fil: "Filipino",
+  ta: "தமிழ்", te: "తెలుగు", ml: "മലയാളം", kn: "ಕನ್ನಡ",
+  mr: "मराठी", gu: "ગુજરાતી",
 };
 
 export const COUNTRY_TO_LOCALE: Record<string, Locale> = {
