@@ -59,13 +59,16 @@ const MODULES: Module[] = [
   { id: "nur-kids",          label: "Nur Kids",         icon: "👨‍👩‍👧", desc: "Family finance platform",   color: "#34d399", group: "SOCIAL" },
   { id: "compute-access",    label: "Free Access",      icon: "⛏️", desc: "Compute-for-access mining",  color: "#34d399", group: "SOCIAL" },
 
+  // RESOURCE INTELLIGENCE
+  { id: "resource-intelligence", label: "Resource Intel", icon: "⛏️", desc: "Oil, gas, gold, critical minerals & geological survey intelligence — €27K/mo sovereign tier", color: "#f59e0b", group: "RESOURCES" },
+
   // SOVEREIGN (admin only)
   { id: "umay-boss",         label: "Umay Gül Nur",     icon: "👑", desc: "Sovereign boss terminal",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "holding-ecosystem", label: "7 Growth Arms",    icon: "🏛️", desc: "Holding ecosystem panel",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "tatar-finans",      label: "Tatar Finans",     icon: "🛡️", desc: "Tatar financial network",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
 ];
 
-const GROUP_ORDER = ["CORE", "MARKETS", "TRADING", "ANALYSIS", "MEDIA", "SOCIAL", "SOVEREIGN"];
+const GROUP_ORDER = ["CORE", "MARKETS", "TRADING", "ANALYSIS", "RESOURCES", "MEDIA", "SOCIAL", "SOVEREIGN"];
 
 interface Props {
   open: boolean;

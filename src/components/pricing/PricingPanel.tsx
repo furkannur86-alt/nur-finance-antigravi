@@ -98,6 +98,31 @@ const platformTiers: PlatformTier[] = [
     ],
     color: "#6366f1",
   },
+  {
+    id: "resource-intelligence",
+    name: "Resource Intelligence Engine",
+    price: "€27,000",
+    period: "/month",
+    description: "Sovereign-grade geological, oil & gas, and critical mineral intelligence for mining majors, NOCs, sovereign wealth funds, defense ministries, and strategic commodity trading desks.",
+    features: [
+      "Global oil & gas basin reserve database (USGS · Rystad · WoodMac)",
+      "Gold & precious metals deposit registry — 500+ projects JORC/NI 43-101",
+      "Critical minerals supply chain risk matrix — 30 commodities",
+      "LME base metals real-time intelligence + fiscal regime database",
+      "Global geological survey aggregator (BGS · GA · USGS · BRGM · GSC)",
+      "Mineral prospectivity AI mapping — terrane-level ranking",
+      "Peer-reviewed publication feed (SEG · AAPG · Nature Energy · Elsevier)",
+      "M&A deal flow tracker — junior/mid-cap resource sector",
+      "Royalty, tax & permitting regime database — 80+ jurisdictions",
+      "ESG / social license to operate risk scoring",
+      "Satellite NDVI crop/vegetation + thermal anomaly overlays",
+      "Critical mineral export control & trade flow alerts",
+      "Dedicated resource analyst team (48h bespoke report SLA)",
+      "Broadcast-ready commodity briefing deck (Nur Finans Medya ready)",
+    ],
+    badge: "€27K/mo · Enterprise",
+    color: "#f59e0b",
+  },
 ];
 
 const managedTiers = [

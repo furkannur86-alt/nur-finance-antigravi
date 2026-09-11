@@ -50,6 +50,7 @@ import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 import CockpitFrame from "@/components/layout/CockpitFrame";
 import PanelExpander from "@/components/layout/PanelExpander";
+import ResourceIntelligencePanel from "@/components/resources/ResourceIntelligencePanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -69,6 +70,7 @@ const FULLSCREEN_VIEWS = [
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
   "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
   "wallet-gateway", "nur-coin",
+  "resource-intelligence",
 ];
 
 export default function Home() {
@@ -130,6 +132,8 @@ export default function Home() {
         return <NurEducationPanel />;
       case "compute-access":
         return <ComputeForAccessPanel />;
+      case "resource-intelligence":
+        return <ResourceIntelligencePanel />;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":

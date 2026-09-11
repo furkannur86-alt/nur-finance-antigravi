@@ -106,7 +106,8 @@ export type PanelView =
   | "umay-boss"
   | "nur-education"
   | "compute-access"
-  | "wish-framework";
+  | "wish-framework"
+  | "resource-intelligence";
 
 export interface GlobalMarketQuote {
   symbol: string;
