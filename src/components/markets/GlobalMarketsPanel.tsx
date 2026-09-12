@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { cyberSound } from "@/lib/audio/sound-synth";
 
 interface MarketItem {
   symbol: string;
@@ -162,7 +163,10 @@ export default function GlobalMarketsPanel() {
         {TABS.map((t) => (
           <button
             key={t.id}
-            onClick={() => setActiveTab(t.id)}
+            onClick={() => {
+              cyberSound.playClick();
+              setActiveTab(t.id);
+            }}
             className="px-2.5 py-1 text-xs rounded transition-colors"
             style={{
               background: activeTab === t.id ? "rgba(0,212,170,0.15)" : "transparent",
