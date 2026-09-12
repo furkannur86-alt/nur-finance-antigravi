@@ -13,8 +13,8 @@ interface Command {
 }
 
 const views: { id: PanelView; label: string; num?: number; group: string }[] = [
-  { id: "umay-boss", label: "👑 Umay Gül Nur Patron Terminali (100.000 €)", group: "Core" },
-  { id: "holding-ecosystem", label: "🏛️ Umay Gül Nur Holding — 7 Büyüme Kolu", group: "Core" },
+  { id: "umay-boss", label: "👑 Umay Gül Nur Boss Terminal (100,000 €)", group: "Core" },
+  { id: "holding-ecosystem", label: "🏛️ Umay Gül Nur Holding — 7 Growth Arms", group: "Core" },
   { id: "tatar-finans", label: "🛡️ Tatar Finans", group: "Core" },
   { id: "editor", label: "Editor", num: 1, group: "Core" },
   { id: "dashboard", label: "Dashboard", num: 2, group: "Core" },

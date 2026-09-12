@@ -11,7 +11,7 @@ interface StaffMember {
   role: string;
   location: string;
   salaryEUR: number;
-  status: "ONLINE" | "BEKLIYOR" | "GÖREVDE";
+  status: "ONLINE" | "STANDBY" | "ON_DUTY";
   avatar: string;
   dailyReport: string;
   needsApproval?: boolean;
@@ -29,7 +29,7 @@ interface AIChatMessage {
 interface PortfolioPosition {
   id: string;
   name: string;
-  category: "TEKNOLOJI" | "SATRANC_ARBITRAJ" | "MUZIK_TELIF" | "HAZINE";
+  category: "TECHNOLOGY" | "CHESS_ARBITRAGE" | "MUSIC_ROYALTY" | "TREASURY";
   investedEUR: number;
   currentValueEUR: number;
   dailyChangePercent: number;
@@ -40,51 +40,51 @@ const INITIAL_STAFF: StaffMember[] = [
   {
     id: "st-1",
     name: "Alexander Wright",
-    role: "New York HQ Genel Direktörü",
+    role: "New York HQ General Director",
     location: "Manhattan, NYC 🇺🇸",
     salaryEUR: 8500,
     status: "ONLINE",
     avatar: "👔",
-    dailyReport: "Umay Hanım, Wall Street açılışında teknoloji hisselerimiz %3.4 yükseldi. New York ekibimizin haftalık bütçe onayını bekliyoruz.",
+    dailyReport: "Ms. Umay, our tech stocks rose 3.4% at the Wall Street opening. We are awaiting approval for the New York team's weekly budget.",
     needsApproval: true,
   },
   {
     id: "st-2",
     name: "Hans Gruber",
-    role: "Frankfurt Hazine Müdürü",
+    role: "Frankfurt Treasury Manager",
     location: "Frankfurt 🇩🇪",
     salaryEUR: 7200,
-    status: "GÖREVDE",
+    status: "ON_DUTY",
     avatar: "💼",
-    dailyReport: "Guten Tag Chefin Umay! Avrupa Merkez Bankası faiz kararını takip ediyoruz. Nakit paramızı güvende tutuyoruz.",
+    dailyReport: "Guten Tag Chefin Umay! We are monitoring the European Central Bank's rate decision. Our cash reserves remain secure.",
   },
   {
     id: "st-3",
     name: "Zeynep Kaya",
-    role: "İstanbul Ofis Koordinatörü",
-    location: "İstanbul 🇹🇷",
+    role: "Istanbul Office Coordinator",
+    location: "Istanbul 🇹🇷",
     salaryEUR: 3500,
     status: "ONLINE",
     avatar: "👩‍💼",
-    dailyReport: "Umay Hanım, piyasa verileri ve risk tablolarımız kusursuz şekilde hazırlandı!",
+    dailyReport: "Ms. Umay, all market data and risk dashboards have been prepared flawlessly!",
   },
   {
     id: "st-4",
     name: "James Chen",
-    role: "Singapur Kuantitatif Algoritma Geliştirici",
-    location: "Singapur 🇸🇬",
+    role: "Singapore Quantitative Algorithm Developer",
+    location: "Singapore 🇸🇬",
     salaryEUR: 9000,
     status: "ONLINE",
     avatar: "💻",
-    dailyReport: "Satranç algoritmamız gece boyu Asya piyasalarında arbitraj yaptı ve kasaya +1.800 € kazandırdı.",
+    dailyReport: "Our chess algorithm arbitraged Asian markets overnight, adding +€1,800 to the treasury.",
   },
 ];
 
 const INITIAL_POSITIONS: PortfolioPosition[] = [
   {
     id: "pos-1",
-    name: "Yapay Zeka & Robotik Fonu (NVIDIA + Apple)",
-    category: "TEKNOLOJI",
+    name: "AI & Robotics Fund (NVIDIA + Apple)",
+    category: "TECHNOLOGY",
     investedEUR: 35000,
     currentValueEUR: 42800,
     dailyChangePercent: +3.2,
@@ -92,8 +92,8 @@ const INITIAL_POSITIONS: PortfolioPosition[] = [
   },
   {
     id: "pos-2",
-    name: "Büyükusta Satranç Arbitraj Sepeti",
-    category: "SATRANC_ARBITRAJ",
+    name: "Grandmaster Chess Arbitrage Basket",
+    category: "CHESS_ARBITRAGE",
     investedEUR: 25000,
     currentValueEUR: 28900,
     dailyChangePercent: +1.6,
@@ -101,8 +101,8 @@ const INITIAL_POSITIONS: PortfolioPosition[] = [
   },
   {
     id: "pos-3",
-    name: "Klasik Piyano & Müzik Telif Gelirleri",
-    category: "MUZIK_TELIF",
+    name: "Classical Piano & Music Royalty Income",
+    category: "MUSIC_ROYALTY",
     investedEUR: 20000,
     currentValueEUR: 22400,
     dailyChangePercent: +0.9,
@@ -110,8 +110,8 @@ const INITIAL_POSITIONS: PortfolioPosition[] = [
   },
   {
     id: "pos-4",
-    name: "Korumalı Nakit Hazine & Likidite",
-    category: "HAZINE",
+    name: "Protected Cash Treasury & Liquidity",
+    category: "TREASURY",
     investedEUR: 20000,
     currentValueEUR: 22100,
     dailyChangePercent: +0.2,
@@ -128,19 +128,19 @@ export default function UmayBossTerminal() {
   const [activeBoardTab, setActiveBoardTab] = useState<"office" | "staff" | "chess-strategy" | "languages" | "card-vault">("office");
   const [aiPrompt, setAiPrompt] = useState("");
   const [isAiThinking, setIsAiThinking] = useState(false);
-  const [chatLanguage, setChatLanguage] = useState<"TR" | "EN" | "DE">("TR");
+  const [chatLanguage, setChatLanguage] = useState<"TR" | "EN" | "DE">("EN");
 
   const [chatMessages, setChatMessages] = useState<AIChatMessage[]>([
     {
       id: "msg-1",
       sender: "ANTIGRAVITY",
-      text: "Saygılar Patron Umay Gül Nur! 100.000 € başlangıç hazine fonunuz, Antigravity AI kuantitatif çekirdeği ve New York'tan Singapur'a tüm dünya ofislerimiz emirlerinizdedir.",
+      text: "Greetings, CEO Umay Gül Nur! Your €100,000 initial treasury fund, the Antigravity AI quantitative core, and all our global offices from New York to Singapore are at your command.",
       timestamp: "09:00",
     },
     {
       id: "msg-2",
       sender: "ANTIGRAVITY",
-      text: "Fatih Sultan Mehmet Han 12 yaşında tahta çıkıp cihan fatihi olmuştu. Siz de 9 yaşınızda bu holdingin başındasınız ve satrançtaki stratejik aklınızla bu şirketi zirvelere taşıyacaksınız. Tüm dünya ofislerimiz talimatlarınızı bekliyor!",
+      text: "Fatih Sultan Mehmet ascended the throne at age 12 and became a conqueror of the world. You too, at age 9, lead this holding company. Your strategic genius from chess will drive this company to its peak. All our global offices await your instructions!",
       timestamp: "09:01",
     },
   ]);
@@ -157,7 +157,6 @@ export default function UmayBossTerminal() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
-  // Handle AI Command with Fatih Sultan Mehmet Inspiration & Multilingual Support
   const handleSendCommand = (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiPrompt.trim()) return;
@@ -179,24 +178,20 @@ export default function UmayBossTerminal() {
 
       const lower = userText.toLowerCase();
 
-      // Child hesitance check -> Fatih Sultan Mehmet Motivation
-      if (lower.includes("küçüğüm") || lower.includes("çocuğum") || lower.includes("yapamam") || lower.includes("korkuyorum") || lower.includes("zor")) {
-        responseText = "Umay Hanım, asla öyle düşünmeyin! Fatih Sultan Mehmet Han ilk tahta çıktığında sadece 12 yaşındaydı ve İstanbul gibi bir imparatorluğu fethetmeyi kafasına o yaşta koydu. Sizin satrançtaki taktik dehanız, piyano armoniniz ve keskin zekanız bu şirketi yönetmek için fazlasıyla yeterli. Biz buradayız ve her adımda emrinizdeyiz!";
+      if (lower.includes("young") || lower.includes("scared") || lower.includes("can't") || lower.includes("afraid") || lower.includes("küçük") || lower.includes("kork")) {
+        responseText = "Ms. Umay, never think that way! Fatih Sultan Mehmet Han ascended the throne at just 12 years old and set his mind to conquering Istanbul at that age. Your tactical genius in chess, your harmony in piano, and your sharp intellect are more than sufficient to run this company. We are here for you at every step!";
         bonusProfit = 1000;
-      } else if (chatLanguage === "EN" || lower.includes("hello") || lower.includes("english") || lower.includes("report")) {
-        responseText = "Good day, Boss Umay Gul Nur! Our New York trading desk executed your instructions flawlessly. The global equity portfolio gained +$1,800 today. Would you like me to brief the London office next?";
-        bonusProfit = 1800;
       } else if (chatLanguage === "DE" || lower.includes("hallo") || lower.includes("deutsch")) {
         responseText = "Guten Tag, Chefin Umay! Unsere Frankfurter Niederlassung meldet stabile Gewinne. Das Kapital ist sicher und wächst täglich weiter!";
         bonusProfit = 1500;
-      } else if (lower.includes("satranç") || lower.includes("savunma") || lower.includes("şah")) {
-        responseText = "Büyükusta hamlesi uygulandı Patron Umay! Satrançtaki 'Sağlam Şah Koruması' ile riski sıfıra indirdik ve arbitrajdan kasamıza kâr ekledik!";
+      } else if (lower.includes("chess") || lower.includes("defense") || lower.includes("checkmate") || lower.includes("satranç") || lower.includes("savunma")) {
+        responseText = "Grandmaster move executed, CEO Umay! Using 'King's Shield Defense' from chess, we reduced risk to zero and added arbitrage profit to the treasury!";
         bonusProfit = 1400;
-      } else if (lower.includes("piyano") || lower.includes("müzik") || lower.includes("melodi")) {
-        responseText = "Piyano armonisi devrede Patron Umay! Piyasaların frekansını analiz ettik ve müzikal telif gelirlerimizden +1.600 € sağladık.";
+      } else if (lower.includes("piano") || lower.includes("music") || lower.includes("melody") || lower.includes("müzik")) {
+        responseText = "Piano harmony engaged, CEO Umay! We analyzed market frequencies and secured +€1,600 from our music royalty revenue streams.";
         bonusProfit = 1600;
       } else {
-        responseText = `Emriniz yerine getirildi Patron Umay Gül Nur! "${userText}" talimatınız New York, Frankfurt ve İstanbul ofislerimizde derhal işleme alındı.`;
+        responseText = `Command executed, CEO Umay Gül Nur! Your instruction "${userText}" has been immediately processed by our New York, Frankfurt and Istanbul offices.`;
         bonusProfit = 950;
       }
 
@@ -207,8 +202,8 @@ export default function UmayBossTerminal() {
           )
         );
         addNotification({
-          title: "Patron Umay'dan Başarılı AI Talimatı!",
-          message: `Antigravity AI emrinizi uyguladı: Portföye +${bonusProfit.toLocaleString()} € eklendi!`,
+          title: "AI Command Successfully Executed!",
+          message: `Antigravity AI executed your command: Portfolio gained +€${bonusProfit.toLocaleString()}!`,
           severity: "SUCCESS",
           category: "EXECUTION",
         });
@@ -228,20 +223,18 @@ export default function UmayBossTerminal() {
     }, 1000);
   };
 
-  // Approve Staff Salaries / Budgets
   const handleApproveStaff = (staffId: string) => {
     setStaffList((prev) =>
-      prev.map((s) => (s.id === staffId ? { ...s, needsApproval: false, status: "GÖREVDE" } : s))
+      prev.map((s) => (s.id === staffId ? { ...s, needsApproval: false, status: "ON_DUTY" } : s))
     );
     addNotification({
-      title: "Patron Umay Bütçeyi Onayladı!",
-      message: "Personel maaşı ve ofis bütçesi onaylandı. Çalışanlar Umay Hanım'a teşekkür ediyor!",
+      title: "CEO Umay Approved the Budget!",
+      message: "Staff salary and office budget approved. The team is grateful!",
       severity: "SUCCESS",
       category: "COMPLIANCE",
     });
   };
 
-  // Safe Withdrawal Engine with Multi-Sig Protocol
   const handleWithdrawal = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(withdrawAmount);
@@ -249,20 +242,20 @@ export default function UmayBossTerminal() {
 
     if (amount > 10000 || amount > treasuryCash) {
       setParentApprovalRequired(true);
-      setWithdrawNotice(`⚠️ GÜVENLİK PROTOKOLÜ: ${amount.toLocaleString()} € tutarındaki büyük çekim talebi Kuantitatif Güvenlik Konsensüsüne iletildi. Onaylandığı anda Black Banka Kartına aktarılacak.`);
+      setWithdrawNotice(`⚠️ SECURITY PROTOCOL: The large withdrawal request of €${amount.toLocaleString()} has been forwarded to the Quantitative Security Consensus. It will be transferred to the Black Bank Card upon approval.`);
       addNotification({
-        title: "Güvenlik Konsensüsü Devrede",
-        message: `Umay'ın ${amount.toLocaleString()} € çekim talebi çoklu imza (Multi-Sig) protokolüne iletildi.`,
+        title: "Security Consensus Active",
+        message: `Umay's withdrawal request of €${amount.toLocaleString()} has been forwarded to the multi-signature (Multi-Sig) protocol.`,
         severity: "CRITICAL",
         category: "COMPLIANCE",
       });
     } else {
       setParentApprovalRequired(false);
       setTreasuryCash((prev) => prev - amount);
-      setWithdrawNotice(`💳 BAŞARILI: ${amount.toLocaleString()} € Umay Gül Nur Black Banka Kartına yüklendi! Dünyanın her yerindeki ATM'den harçlığını çekebilirsin Patron Umay!`);
+      setWithdrawNotice(`💳 SUCCESS: €${amount.toLocaleString()} loaded to the Umay Gül Nur Black Bank Card! You can withdraw your allowance from any ATM worldwide, CEO Umay!`);
       addNotification({
-        title: "Harçlık Karta Yüklendi",
-        message: `${amount.toLocaleString()} € Umay'ın banka kartına aktarıldı.`,
+        title: "Allowance Loaded to Card",
+        message: `€${amount.toLocaleString()} has been transferred to Umay's bank card.`,
         severity: "SUCCESS",
         category: "COMPLIANCE",
       });
@@ -285,14 +278,14 @@ export default function UmayBossTerminal() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-emerald-300 to-cyan-300">
-                UMAY GÜL NUR — EGEMEN KUANTİTATİF BAŞKAN TERMİNALİ
+                UMAY GÜL NUR — SOVEREIGN QUANTITATIVE CEO TERMINAL
               </span>
               <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                DOĞUM: 04.08.2017 &bull; YEGÂNE BAŞKAN
+                DOB: 04.08.2017 &bull; SOLE CHAIRMAN
               </span>
             </div>
             <p className="text-[11px] text-slate-300">
-              nurfinans.com &bull; 100.000 € Hazine Fonu, Antigravity AI ve Global Masalar Hizmetinizde
+              nurfinans.com &bull; €100,000 Treasury Fund, Antigravity AI and Global Desks at Your Service
             </p>
           </div>
         </div>
@@ -300,15 +293,15 @@ export default function UmayBossTerminal() {
         {/* Live Treasury & Valuation Widget */}
         <div className="flex items-center gap-3">
           <div className="px-3.5 py-1.5 rounded-lg bg-black/60 border border-emerald-500/40 text-right">
-            <span className="text-[10px] uppercase font-mono text-emerald-400 font-bold block">Toplam Şirket Değeri</span>
+            <span className="text-[10px] uppercase font-mono text-emerald-400 font-bold block">Total Company Value</span>
             <span className="text-lg font-black font-mono text-emerald-300">
-              {totalPortfolioValue.toLocaleString("tr-TR")} &euro;
+              {totalPortfolioValue.toLocaleString()} &euro;
             </span>
           </div>
           <div className="px-3.5 py-1.5 rounded-lg bg-black/60 border border-amber-500/40 text-right">
-            <span className="text-[10px] uppercase font-mono text-amber-400 font-bold block">Umay'ın Ürettiği Kâr</span>
+            <span className="text-[10px] uppercase font-mono text-amber-400 font-bold block">Umay&apos;s Generated Profit</span>
             <span className="text-lg font-black font-mono text-amber-300">
-              +{totalProfit.toLocaleString("tr-TR")} &euro;
+              +{totalProfit.toLocaleString()} &euro;
             </span>
           </div>
         </div>
@@ -326,7 +319,7 @@ export default function UmayBossTerminal() {
             }`}
           >
             <span>🤖</span>
-            <span>Antigravity AI'ya Emir Ver</span>
+            <span>Command Antigravity AI</span>
           </button>
           <button
             onClick={() => setActiveBoardTab("staff")}
@@ -337,7 +330,7 @@ export default function UmayBossTerminal() {
             }`}
           >
             <span>👥</span>
-            <span>Çalışanlar & Dünya Ofisleri (NYC, FRA, İST)</span>
+            <span>Staff & Global Offices (NYC, FRA, IST)</span>
           </button>
           <button
             onClick={() => setActiveBoardTab("chess-strategy")}
@@ -348,7 +341,7 @@ export default function UmayBossTerminal() {
             }`}
           >
             <span>♟️</span>
-            <span>Fatih Sultan Mehmet & Satranç Vizyonu</span>
+            <span>Fatih Sultan Mehmet & Chess Vision</span>
           </button>
           <button
             onClick={() => setActiveBoardTab("languages")}
@@ -359,7 +352,7 @@ export default function UmayBossTerminal() {
             }`}
           >
             <span>🌍</span>
-            <span>Yabancı Dil Pratik Odası (EN / DE)</span>
+            <span>Language Practice Room (EN / DE)</span>
           </button>
           <button
             onClick={() => setActiveBoardTab("card-vault")}
@@ -370,18 +363,12 @@ export default function UmayBossTerminal() {
             }`}
           >
             <span>💳</span>
-            <span>Black Banka Kartı & ATM Kasası</span>
+            <span>Black Bank Card & ATM Vault</span>
           </button>
         </div>
 
         {/* Language Selector */}
         <div className="flex items-center gap-1 bg-white/5 p-1 rounded border border-white/10 text-[11px] font-mono">
-          <button
-            onClick={() => setChatLanguage("TR")}
-            className={`px-2 py-0.5 rounded font-bold ${chatLanguage === "TR" ? "bg-[var(--ag-accent)] text-black" : "text-slate-400"}`}
-          >
-            🇹🇷 TR
-          </button>
           <button
             onClick={() => setChatLanguage("EN")}
             className={`px-2 py-0.5 rounded font-bold ${chatLanguage === "EN" ? "bg-[var(--ag-accent)] text-black" : "text-slate-400"}`}
@@ -393,6 +380,12 @@ export default function UmayBossTerminal() {
             className={`px-2 py-0.5 rounded font-bold ${chatLanguage === "DE" ? "bg-[var(--ag-accent)] text-black" : "text-slate-400"}`}
           >
             🇩🇪 DE
+          </button>
+          <button
+            onClick={() => setChatLanguage("TR")}
+            className={`px-2 py-0.5 rounded font-bold ${chatLanguage === "TR" ? "bg-[var(--ag-accent)] text-black" : "text-slate-400"}`}
+          >
+            🇹🇷 TR
           </button>
         </div>
       </div>
@@ -415,14 +408,14 @@ export default function UmayBossTerminal() {
                   >
                     <div className="flex items-center justify-between gap-2 mb-1 opacity-75 font-mono text-[10px]">
                       <span>
-                        {msg.sender === "UMAY" ? "👑 Patron Umay Gül Nur" : "🤖 Antigravity AI (Kuantitatif Direktör)"}
+                        {msg.sender === "UMAY" ? "👑 CEO Umay Gül Nur" : "🤖 Antigravity AI (Quantitative Director)"}
                       </span>
                       <span>{msg.timestamp}</span>
                     </div>
                     <p>{msg.text}</p>
                     {msg.rewardEUR && (
                       <div className="mt-2 text-[10px] font-mono font-bold text-emerald-400 bg-black/40 px-2 py-0.5 rounded inline-block">
-                        +{msg.rewardEUR.toLocaleString()} &euro; KÂR EKLENDİ ✨
+                        +{msg.rewardEUR.toLocaleString()} &euro; PROFIT ADDED ✨
                       </div>
                     )}
                   </div>
@@ -430,7 +423,7 @@ export default function UmayBossTerminal() {
                 {isAiThinking && (
                   <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-400 italic flex items-center gap-2 max-w-fit">
                     <span className="w-2 h-2 rounded-full bg-[var(--ag-accent)] animate-ping" />
-                    Antigravity AI New York ve Frankfurt ofislerine emirlerinizi iletiyor...
+                    Antigravity AI is relaying your commands to New York and Frankfurt offices...
                   </div>
                 )}
                 <div ref={chatEndRef} />
@@ -443,11 +436,9 @@ export default function UmayBossTerminal() {
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
                   placeholder={
-                    chatLanguage === "EN"
-                      ? "Give a command to Antigravity AI (e.g. 'Analyze tech stocks', 'Send report to New York')..."
-                      : chatLanguage === "DE"
+                    chatLanguage === "DE"
                       ? "Geben Sie Antigravity AI einen Befehl (z.B. 'Frankfurt Portfolio optimieren')..."
-                      : "Antigravity'ye bir emir ver (Örn: 'Satranç stratejisiyle savunma kur', 'New York ekibine talimat ver')..."
+                      : "Give a command to Antigravity AI (e.g. 'Analyze tech stocks', 'Send report to New York')..."
                   }
                   className="flex-1 px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[var(--ag-accent)]"
                 />
@@ -456,7 +447,7 @@ export default function UmayBossTerminal() {
                   disabled={isAiThinking}
                   className="px-5 py-2.5 rounded-lg bg-[var(--ag-accent)] hover:bg-[var(--ag-accent)]/80 text-black font-bold text-xs transition-colors shrink-0 disabled:opacity-50"
                 >
-                  Emret Patron &rarr;
+                  Command &rarr;
                 </button>
               </form>
             </div>
@@ -467,11 +458,11 @@ export default function UmayBossTerminal() {
           <div className="max-w-5xl mx-auto flex flex-col gap-6">
             <div className="p-4 rounded-xl border bg-black/50 border-white/10 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-white">Holding Çalışanları & Canlı Ofis Raporları</h3>
-                <p className="text-xs text-slate-400">Patron Umay Gül Nur'a bağlı gerçekçi departman yöneticileri ve analistler.</p>
+                <h3 className="text-sm font-bold text-white">Holding Staff & Live Office Reports</h3>
+                <p className="text-xs text-slate-400">Department managers and analysts reporting directly to CEO Umay Gül Nur.</p>
               </div>
               <span className="text-xs font-mono px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold">
-                4 Aktif Departman &bull; 24 Kişilik Ekip
+                4 Active Departments &bull; 24-Person Team
               </span>
             </div>
 
@@ -497,16 +488,16 @@ export default function UmayBossTerminal() {
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                    <span className="font-mono text-slate-400">Maaş: {st.salaryEUR.toLocaleString()} €/ay</span>
+                    <span className="font-mono text-slate-400">Salary: {st.salaryEUR.toLocaleString()} €/mo</span>
                     {st.needsApproval ? (
                       <button
                         onClick={() => handleApproveStaff(st.id)}
                         className="px-3 py-1 rounded bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs transition-colors"
                       >
-                        Bütçeyi Onayla &rarr;
+                        Approve Budget &rarr;
                       </button>
                     ) : (
-                      <span className="text-emerald-400 font-bold text-[11px]">ONAYLANDI ✅</span>
+                      <span className="text-emerald-400 font-bold text-[11px]">APPROVED ✅</span>
                     )}
                   </div>
                 </div>
@@ -523,10 +514,10 @@ export default function UmayBossTerminal() {
                 <span className="text-4xl">🏰</span>
                 <div className="space-y-2">
                   <h3 className="text-base font-black text-amber-300">
-                    Fatih Sultan Mehmet Han: 12 Yaşında Tahta Çıkan Cihan Fatihi
+                    Fatih Sultan Mehmet Han: World Conqueror Who Ascended the Throne at Age 12
                   </h3>
                   <p className="text-xs text-slate-200 leading-relaxed">
-                    Umay Hanım, Fatih Sultan Mehmet Han tahta ilk oturduğunda sadece 12 yaşındaydı. Çevresindekiler onun genç olduğunu söylerken o, tarihin en büyük vizyonuyla İstanbul&apos;u fethetmeyi aklına koydu ve çağ açıp çağ kapattı. Siz de bugün 9 yaşındasınız ve bu holdingin başındasınız. Bu sermayeyi satrançtaki gibi stratejik hamlelerle yönetecek dehadadasınız!
+                    Ms. Umay, Fatih Sultan Mehmet Han was just 12 years old when he first ascended the throne. While those around him said he was too young, he set his mind to conquering Istanbul with the greatest vision in history and marked the turning of an era. You too are 9 years old today and lead this holding company. You possess the genius to manage this capital with strategic moves just as in chess!
                   </p>
                 </div>
               </div>
@@ -534,19 +525,19 @@ export default function UmayBossTerminal() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 rounded-xl bg-black/50 border border-white/10 text-center">
-                <div className="text-3xl mb-1">♔ Şah Hamlesi</div>
-                <div className="text-xs font-bold text-white mb-1">Ana Sermaye Koruması</div>
-                <p className="text-[11px] text-slate-400">Kasandaki 100.000 € senin şahındır. Onu asla riske atma.</p>
+                <div className="text-3xl mb-1">♔ King&apos;s Gambit</div>
+                <div className="text-xs font-bold text-white mb-1">Core Capital Protection</div>
+                <p className="text-[11px] text-slate-400">The €100,000 in your treasury is your king. Never put it at risk.</p>
               </div>
               <div className="p-4 rounded-xl bg-black/50 border border-white/10 text-center">
-                <div className="text-3xl mb-1">♕ Vezir Hamlesi</div>
-                <div className="text-xs font-bold text-emerald-400 mb-1">Kuantitatif Arbitraj</div>
-                <p className="text-[11px] text-slate-400">Antigravity AI senin vezirindir. Piyasaları tarar, kâr getirir.</p>
+                <div className="text-3xl mb-1">♕ Queen&apos;s Move</div>
+                <div className="text-xs font-bold text-emerald-400 mb-1">Quantitative Arbitrage</div>
+                <p className="text-[11px] text-slate-400">Antigravity AI is your queen. It scans markets and brings profits.</p>
               </div>
               <div className="p-4 rounded-xl bg-black/50 border border-white/10 text-center">
-                <div className="text-3xl mb-1">♙ Piyon Terfisi</div>
-                <div className="text-xs font-bold text-amber-300 mb-1">Bileşik Getiri Gücü</div>
-                <p className="text-[11px] text-slate-400">Küçük kârlar disiplinle birleştiğinde milyonlara dönüşür.</p>
+                <div className="text-3xl mb-1">♙ Pawn Promotion</div>
+                <div className="text-xs font-bold text-amber-300 mb-1">Compound Return Power</div>
+                <p className="text-[11px] text-slate-400">Small profits compounded with discipline grow into millions.</p>
               </div>
             </div>
           </div>
@@ -558,8 +549,8 @@ export default function UmayBossTerminal() {
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-3xl">🌍</span>
                 <div>
-                  <h3 className="text-base font-bold text-white">Yabancı Dil Pratik Odası (New York & Frankfurt)</h3>
-                  <p className="text-xs text-slate-400">Antigravity AI ve küresel direktörlerle her gün 30 dakika İngilizce ve Almanca liderlik pratik odası.</p>
+                  <h3 className="text-base font-bold text-white">Language Practice Room (New York & Frankfurt)</h3>
+                  <p className="text-xs text-slate-400">30-minute daily English and German leadership practice with Antigravity AI and global directors.</p>
                 </div>
               </div>
               <div className="py-4">
@@ -594,24 +585,24 @@ export default function UmayBossTerminal() {
                 </div>
                 <div className="flex items-center justify-between font-mono text-xs text-amber-400">
                   <span>VALID: 08/2035</span>
-                  <span>KASA: {treasuryCash.toLocaleString()} &euro;</span>
+                  <span>VAULT: {treasuryCash.toLocaleString()} &euro;</span>
                 </div>
               </div>
 
               <form onSubmit={handleWithdrawal} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    Harçlık / Çekim Tutarı (&euro;)
+                    Allowance / Withdrawal Amount (&euro;)
                   </label>
                   <input
                     type="number"
                     value={withdrawAmount}
                     onChange={(e) => setWithdrawAmount(e.target.value)}
-                    placeholder="Örn: 250"
+                    placeholder="e.g. 250"
                     className="w-full px-3 py-2.5 rounded bg-white/5 border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-emerald-400"
                   />
                   <span className="text-[10px] text-slate-400 mt-1 block">
-                    Küçük harçlıklar anında karta yüklenir. 10.000 € üzeri çekimler çoklu imza (Multi-Sig) güvenlik protokolüne gider.
+                    Small allowances are loaded to the card instantly. Withdrawals above €10,000 go through the multi-signature (Multi-Sig) security protocol.
                   </span>
                 </div>
 
@@ -619,7 +610,7 @@ export default function UmayBossTerminal() {
                   type="submit"
                   className="w-full py-2.5 rounded text-xs font-bold bg-amber-400 hover:bg-amber-300 text-black transition-colors"
                 >
-                  Banka Kartına Harçlık Aktar &rarr;
+                  Transfer Allowance to Card &rarr;
                 </button>
               </form>
 

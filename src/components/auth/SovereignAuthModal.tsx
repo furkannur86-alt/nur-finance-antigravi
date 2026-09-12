@@ -42,7 +42,7 @@ export default function SovereignAuthModal() {
 
         addNotification({
           title: "👑 SOVEREIGN VAULT UNLOCKED",
-          message: "Yönetici Egemen Modu devrede. Umay Gül Nur, 7 Büyüme Kolu ve Tatar Finans terminalleri açıldı.",
+          message: "Sovereign Executive Mode active. Umay Gül Nur, 7 Growth Arms and Tatar Finance terminals unlocked.",
           severity: "SUCCESS",
           category: "COMPLIANCE",
         });
@@ -64,8 +64,8 @@ export default function SovereignAuthModal() {
     cyberSound.playClick();
 
     addNotification({
-      title: "🔒 Kamu Gizlilik Modu Kilitlendi",
-      message: "Tüm iç yönetim ve gölge modüller kamu görünümünden tamamen gizlendi.",
+      title: "🔒 Public Stealth Mode Locked",
+      message: "All internal management and shadow modules are fully hidden from public view.",
       severity: "INFO",
       category: "COMPLIANCE",
     });
@@ -79,7 +79,7 @@ export default function SovereignAuthModal() {
           onClick={() => setSovereignAuthModalOpen(false)}
           className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-mono"
         >
-          ✕ KAPAT
+          ✕ CLOSE
         </button>
 
         {/* Modal Header */}
@@ -91,10 +91,10 @@ export default function SovereignAuthModal() {
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
             </div>
             <h3 className="text-base font-serif font-bold text-white">
-              Egemen Yönetici Kimlik Doğrulama
+              Sovereign Executive Authentication
             </h3>
             <p className="text-[11px] text-slate-400">
-              Patron & Umay Gül Nur Master Konsolu
+              Patron & Umay Gül Nur Master Console
             </p>
           </div>
         </div>
@@ -104,10 +104,10 @@ export default function SovereignAuthModal() {
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1.5 text-center">
               <span className="text-emerald-400 font-bold text-xs uppercase flex items-center justify-center gap-1.5">
-                <span>✅ OTURUM AKTİF (SOVEREIGN MODE)</span>
+                <span>✅ SESSION ACTIVE (SOVEREIGN MODE)</span>
               </span>
               <p className="text-[11px] text-slate-300">
-                Umay Gül Nur Boss Terminali, 7 Büyüme Kolu ve Tatar Finans kasası şu anda sadece sizin ekranınızda görünür durumdadır.
+                Umay Gül Nur Boss Terminal, 7 Growth Arms and Tatar Finance vault are currently visible only on your screen.
               </p>
             </div>
 
@@ -119,25 +119,25 @@ export default function SovereignAuthModal() {
                 }}
                 className="py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-black transition-all font-mono"
               >
-                👑 Umay Konsoluna Git
+                👑 Go to Umay Console
               </button>
               <button
                 onClick={handleLockSession}
                 className="py-2.5 rounded-xl text-xs font-bold bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 transition-all font-mono"
               >
-                🔒 Oturumu Gizle & Kilitle
+                🔒 Hide & Lock Session
               </button>
             </div>
           </div>
         ) : (
           <form onSubmit={handleAuthSubmit} className="space-y-4">
             <div className="p-3.5 rounded-xl bg-black/50 border border-white/10 text-xs text-slate-300 leading-relaxed">
-              Bu alan kamuya kapalıdır. Tatar Finans, Gölge Holding ekosistemi ve Umay Gül Nur yönetim konsolunu açmak için kriptografik egemen anahtarınızı girin.
+              This area is restricted from public access. Enter your cryptographic sovereign key to unlock Tatar Finance, Shadow Holding ecosystem and Umay Gül Nur management console.
             </div>
 
             <div>
               <label className="text-[11px] font-mono font-bold text-cyan-300 uppercase block mb-1.5">
-                Kriptografik Geçiş Anahtarı (Sovereign Passkey)
+                Cryptographic Passkey (Sovereign Key)
               </label>
               <input
                 type="password"
@@ -152,7 +152,7 @@ export default function SovereignAuthModal() {
               />
               {error && (
                 <span className="text-[11px] text-red-400 font-mono mt-1.5 block">
-                  ⚠️ Geçersiz Yetki Kodu.
+                  ⚠️ Invalid Authorization Code.
                 </span>
               )}
             </div>
@@ -165,17 +165,17 @@ export default function SovereignAuthModal() {
               {isAuthenticating ? (
                 <>
                   <span className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  <span>KUANTUM ŞİFRE ÇÖZÜLÜYOR...</span>
+                  <span>DECRYPTING QUANTUM CIPHER...</span>
                 </>
               ) : (
-                <span>⚡ DOĞRULA VE YÖNETİCİ MODUNU AÇ</span>
+                <span>⚡ VERIFY & UNLOCK EXECUTIVE MODE</span>
               )}
             </button>
           </form>
         )}
 
         <div className="text-[10px] font-mono text-center text-slate-500 border-t border-white/5 pt-2">
-          Kısayol: <code className="text-cyan-400">Ctrl + Shift + S</code> veya Kartala 3 Kez Tıklama
+          Shortcut: <code className="text-cyan-400">Ctrl + Shift + S</code> or Triple-click the Eagle Crest
         </div>
       </div>
     </div>

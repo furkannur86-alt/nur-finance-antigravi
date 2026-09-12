@@ -75,7 +75,6 @@ export default function PortfolioIntelligenceBar({
   }, []);
 
   const pnlColor = totalPnL >= 0 ? "#00d4aa" : "#ef4444";
-  const returnColor = totalReturn >= 0 ? "#00d4aa" : "#ef4444";
 
   const topMovers = useMemo(() =>
     [...portfolio]

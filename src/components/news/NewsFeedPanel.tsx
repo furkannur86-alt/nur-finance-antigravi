@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 interface NewsArticle {
   title: string;
@@ -37,28 +37,29 @@ export default function NewsFeedPanel() {
   const [activeQuery, setActiveQuery] = useState("markets");
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
-  const fetchNews = useCallback(async (queryId: string) => {
-    setLoading(true);
-    setError("");
-    const query = QUERIES.find((q) => q.id === queryId);
-    try {
-      const res = await fetch(`/api/news-feed?q=${encodeURIComponent(query?.q || "finance")}&limit=30`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setArticles(data.articles || []);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to fetch");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { fetchNews(activeQuery); }, [activeQuery, fetchNews]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => fetchNews(activeQuery), 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [activeQuery, fetchNews]);
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setError("");
+      const query = QUERIES.find((q) => q.id === activeQuery);
+      try {
+        const res = await fetch(`/api/news-feed?q=${encodeURIComponent(query?.q || "finance")}&limit=30`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) setArticles(data.articles || []);
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to fetch");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    const interval = setInterval(load, 5 * 60 * 1000);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, [activeQuery, refreshKey]);
 
   return (
     <div className="flex flex-col h-full" style={{ background: "var(--ag-bg)" }}>
@@ -92,7 +93,7 @@ export default function NewsFeedPanel() {
         </div>
 
         <div className="flex-1" />
-        <button onClick={() => fetchNews(activeQuery)} disabled={loading}
+        <button onClick={() => setRefreshKey((k) => k + 1)} disabled={loading}
           className="px-2.5 py-1 text-[10px] rounded"
           style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}>
           {loading ? "..." : "Refresh"}

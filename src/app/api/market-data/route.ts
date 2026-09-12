@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchEODHDQuotes, fetchEODHDHistory } from "@/lib/market/eodhd";
 import { fetchQuotes, fetchHistory, historyToChartData } from "@/lib/market/yahoo-finance";
 import { generateWatchlistPrices, generatePriceHistory } from "@/lib/data/mockMarketData";
 
@@ -11,15 +12,27 @@ export async function GET(request: NextRequest) {
   const symbol = searchParams.get("symbol");
   const range = searchParams.get("range") || "3mo";
 
+  const eodhKey = process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+
   try {
     if (type === "quotes") {
       const symbols = symbolsParam ? symbolsParam.split(",") : DEFAULT_SYMBOLS;
-      const quotes = await fetchQuotes(symbols);
 
-      if (quotes.length > 0) {
-        return NextResponse.json({ source: "live", data: quotes });
+      // Try EODHD first (if API key is configured)
+      if (eodhKey) {
+        const quotes = await fetchEODHDQuotes(symbols, eodhKey);
+        if (quotes.length > 0) {
+          return NextResponse.json({ source: "live", provider: "eodhd", data: quotes });
+        }
       }
 
+      // Fall back to Yahoo Finance
+      const yqQuotes = await fetchQuotes(symbols);
+      if (yqQuotes.length > 0) {
+        return NextResponse.json({ source: "live", provider: "yahoo", data: yqQuotes });
+      }
+
+      // Final fallback: mock data
       const mock = generateWatchlistPrices();
       const fallback = Object.entries(mock).map(([sym, info]) => ({
         symbol: sym,
@@ -37,29 +50,40 @@ export async function GET(request: NextRequest) {
     }
 
     if (type === "history" && symbol) {
-      const bars = await fetchHistory(symbol, range);
+      // Try EODHD first
+      if (eodhKey) {
+        const bars = await fetchEODHDHistory(symbol, range, eodhKey);
+        if (bars.length > 0) {
+          return NextResponse.json({
+            source: "live",
+            provider: "eodhd",
+            symbol,
+            bars,
+            chart: historyToChartData(bars),
+          });
+        }
+      }
 
+      // Fall back to Yahoo Finance
+      const bars = await fetchHistory(symbol, range);
       if (bars.length > 0) {
         return NextResponse.json({
           source: "live",
+          provider: "yahoo",
           symbol,
           bars,
           chart: historyToChartData(bars),
         });
       }
 
+      // Mock fallback
       const baseMap: Record<string, number> = {
         AAPL: 198, MSFT: 425, GOOGL: 176, NVDA: 875, TSLA: 248, META: 505,
         "BTC-USD": 67500, "ETH-USD": 3450, SPY: 525,
       };
       const days = range === "1mo" ? 30 : range === "6mo" ? 180 : range === "1y" ? 365 : 90;
       const mockChart = generatePriceHistory(symbol, days, baseMap[symbol] || 100);
-      return NextResponse.json({
-        source: "mock",
-        symbol,
-        bars: [],
-        chart: mockChart,
-      });
+      return NextResponse.json({ source: "mock", symbol, bars: [], chart: mockChart });
     }
 
     return NextResponse.json({ error: "Invalid request. Use type=quotes or type=history&symbol=AAPL" }, { status: 400 });

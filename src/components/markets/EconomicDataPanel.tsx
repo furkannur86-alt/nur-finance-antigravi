@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -47,30 +47,38 @@ export default function EconomicDataPanel() {
   const [loading, setLoading] = useState(false);
   const [showYield, setShowYield] = useState(false);
 
-  const fetchCategory = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/economic-data?type=category&category=${category}`);
-      const json = await res.json();
-      setData(json.data || []);
-    } catch {
-      setData([]);
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/economic-data?type=category&category=${category}`);
+        const json = await res.json();
+        if (!cancelled) setData(json.data || []);
+      } catch {
+        if (!cancelled) setData([]);
+      }
+      if (!cancelled) setLoading(false);
     }
-    setLoading(false);
+    load();
+    return () => { cancelled = true; };
   }, [category]);
 
-  const fetchYieldCurve = useCallback(async () => {
-    try {
-      const res = await fetch("/api/economic-data?type=yield-curve");
-      const json = await res.json();
-      setYieldCurve(json.data || []);
-    } catch {
-      setYieldCurve([]);
+  useEffect(() => {
+    if (category !== "rates") return;
+    let cancelled = false;
+    async function loadYield() {
+      try {
+        const res = await fetch("/api/economic-data?type=yield-curve");
+        const json = await res.json();
+        if (!cancelled) setYieldCurve(json.data || []);
+      } catch {
+        if (!cancelled) setYieldCurve([]);
+      }
     }
-  }, []);
-
-  useEffect(() => { fetchCategory(); }, [fetchCategory]);
-  useEffect(() => { if (category === "rates") fetchYieldCurve(); }, [category, fetchYieldCurve]);
+    loadYield();
+    return () => { cancelled = true; };
+  }, [category]);
 
   const yieldChart = yieldCurve.length > 0
     ? {
