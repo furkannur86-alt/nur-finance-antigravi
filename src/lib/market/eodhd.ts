@@ -91,16 +91,47 @@ export async function searchEODHDSymbols(query: string, exchange?: string, apiKe
   } catch { return []; }
 }
 
-export const GLOBAL_EXCHANGES = [
-  { code: "US",  name: "NYSE/NASDAQ", country: "United States", currency: "USD", region: "Americas" },
-  { code: "LSE", name: "London SE",   country: "United Kingdom",currency: "GBP", region: "Europe"   },
-  { code: "XETRA",name:"XETRA",      country: "Germany",        currency: "EUR", region: "Europe"   },
-  { code: "TSE", name: "Tokyo SE",    country: "Japan",          currency: "JPY", region: "Asia"     },
-  { code: "BIST",name: "Borsa Istanbul",country:"Turkey",        currency: "TRY", region: "Europe"   },
-  { code: "CC",  name: "Crypto",      country: "Global",         currency: "USD", region: "Global"   },
-];
+export const GLOBAL_EXCHANGES: Record<
+  string,
+  Array<{ code: string; name: string; country: string; currency: string }>
+> = {
+  Americas: [
+    { code: "US", name: "NYSE / NASDAQ", country: "United States", currency: "USD" },
+    { code: "TO", name: "Toronto Stock Exchange", country: "Canada", currency: "CAD" },
+    { code: "SA", name: "B3 - Brasil Bolsa", country: "Brazil", currency: "BRL" },
+    { code: "MX", name: "Bolsa Mexicana", country: "Mexico", currency: "MXN" },
+  ],
+  Europe: [
+    { code: "LSE", name: "London Stock Exchange", country: "United Kingdom", currency: "GBP" },
+    { code: "XETRA", name: "Deutsche Boerse XETRA", country: "Germany", currency: "EUR" },
+    { code: "PA", name: "Euronext Paris", country: "France", currency: "EUR" },
+    { code: "AS", name: "Euronext Amsterdam", country: "Netherlands", currency: "EUR" },
+    { code: "SW", name: "SIX Swiss Exchange", country: "Switzerland", currency: "CHF" },
+    { code: "MI", name: "Borsa Italiana", country: "Italy", currency: "EUR" },
+    { code: "MC", name: "Bolsa de Madrid", country: "Spain", currency: "EUR" },
+    { code: "BIST", name: "Borsa Istanbul", country: "Turkey", currency: "TRY" },
+  ],
+  Asia: [
+    { code: "TSE", name: "Tokyo Stock Exchange", country: "Japan", currency: "JPY" },
+    { code: "HK", name: "Hong Kong Stock Exchange", country: "Hong Kong", currency: "HKD" },
+    { code: "SHG", name: "Shanghai Stock Exchange", country: "China", currency: "CNY" },
+    { code: "SHE", name: "Shenzhen Stock Exchange", country: "China", currency: "CNY" },
+    { code: "NSE", name: "National Stock Exchange", country: "India", currency: "INR" },
+    { code: "BSE", name: "Bombay Stock Exchange", country: "India", currency: "INR" },
+    { code: "KRX", name: "Korea Exchange", country: "South Korea", currency: "KRW" },
+    { code: "SGX", name: "Singapore Exchange", country: "Singapore", currency: "SGD" },
+    { code: "AU", name: "Australian Securities Exchange", country: "Australia", currency: "AUD" },
+  ],
+  MiddleEast: [
+    { code: "SR", name: "Saudi Stock Exchange (Tadawul)", country: "Saudi Arabia", currency: "SAR" },
+    { code: "DFM", name: "Dubai Financial Market", country: "UAE", currency: "AED" },
+    { code: "ADX", name: "Abu Dhabi Securities Exchange", country: "UAE", currency: "AED" },
+    { code: "QSE", name: "Qatar Stock Exchange", country: "Qatar", currency: "QAR" },
+    { code: "TA", name: "Tel Aviv Stock Exchange", country: "Israel", currency: "ILS" },
+  ],
+};
 
-export async function fetchExchangeSymbols(exchange: string, apiKey?: string): Promise<unknown[]> {
+export async function fetchExchangeSymbols(exchange: string, apiKey?: string): Promise<any[]> {
   const key = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
   if (!key) return [];
   try {
@@ -133,14 +164,15 @@ interface EODHDRealTime {
 
 export async function fetchEODHDQuotes(
   symbols: string[],
-  apiKey: string
+  apiKey?: string
 ): Promise<MarketQuote[]> {
-  if (!symbols.length || !apiKey) return [];
+  const token = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
+  if (!symbols.length || !token) return [];
 
   // EODHD bulk real-time: primary symbol + extra via &s=
   const [first, ...rest] = symbols.map(toEODHD);
   const extra = rest.length ? `&s=${rest.join(",")}` : "";
-  const url = `${BASE}/real-time/${first}?api_token=${apiKey}&fmt=json${extra}`;
+  const url = `${BASE}/real-time/${first}?api_token=${token}&fmt=json${extra}`;
 
   try {
     const res = await fetch(url, { next: { revalidate: 30 } });
@@ -172,27 +204,33 @@ export async function fetchEODHDQuotes(
 
 export async function fetchEODHDHistory(
   symbol: string,
-  range: string,
-  apiKey: string
+  rangeOrFrom: string = "1y",
+  apiKey?: string,
+  to?: string
 ): Promise<HistoricalBar[]> {
+  const token = apiKey || process.env.EODHD_API_TOKEN || process.env.EODHD_API_KEY || "";
   const eodSymbol = toEODHD(symbol);
-  const to = new Date().toISOString().split("T")[0];
-  const days = range === "1mo" ? 30 : range === "6mo" ? 180 : range === "1y" ? 365 : 90;
-  const fromDate = new Date(Date.now() - days * 86400_000);
-  const from = fromDate.toISOString().split("T")[0];
+  const toDate = to || new Date().toISOString().split("T")[0];
+  let from = rangeOrFrom;
+  if (["1mo", "3mo", "6mo", "1y", "2y", "5y"].includes(rangeOrFrom)) {
+    const days = rangeOrFrom === "1mo" ? 30 : rangeOrFrom === "6mo" ? 180 : rangeOrFrom === "2y" ? 730 : 365;
+    from = new Date(Date.now() - days * 86400_000).toISOString().split("T")[0];
+  }
 
-  const url = `${BASE}/eod/${eodSymbol}?api_token=${apiKey}&fmt=json&from=${from}&to=${to}`;
+  const url = `${BASE}/eod/${eodSymbol}?api_token=${token}&fmt=json&from=${from}&to=${toDate}`;
 
   try {
     const res = await fetch(url, { next: { revalidate: 300 } });
     if (!res.ok) throw new Error(`EODHD history ${res.status}`);
-    const data: Array<{ date: string; open: number; high: number; low: number; close: number; volume: number }> = await res.json();
+    const data: Array<{ date: string; open: number; high: number; low: number; close: number; adjusted_close?: number; volume: number }> = await res.json();
+    if (!Array.isArray(data)) return [];
     return data.map((b) => ({
       date: b.date,
       open: b.open,
       high: b.high,
       low: b.low,
       close: b.close,
+      adjusted_close: b.adjusted_close ?? b.close,
       volume: b.volume,
     }));
   } catch {
