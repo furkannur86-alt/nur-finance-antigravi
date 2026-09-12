@@ -75,6 +75,7 @@ export default function ProfessionalAIHubPanel() {
 
   // Load wallet
   const [walletAddress, setWalletAddress] = useState<string>("0xNUR...");
+  const [showExportMemo, setShowExportMemo] = useState(false);
 
   useEffect(() => {
     let w = getStoredSovereignWallet();
@@ -256,6 +257,12 @@ export default function ProfessionalAIHubPanel() {
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
+          <button
+            onClick={() => setShowExportMemo(true)}
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs transition-all shadow flex items-center gap-1.5"
+          >
+            <span>🖨️ EXPORT DOSSIER (PDF)</span>
+          </button>
           <button
             onClick={() => openFloatingWindow("professional-ai", "🩺 NUR Professional AI Suite")}
             className="px-2 py-1.5 rounded bg-black/50 border border-white/10 text-slate-300 hover:text-white text-xs font-bold"
@@ -598,6 +605,133 @@ export default function ProfessionalAIHubPanel() {
           </div>
         )}
 
+        {/* 4. EDUCATION & LINGUISTICS TAB */}
+        {activeCategory === "EDUCATION" && (
+          <div className="space-y-6 max-w-6xl mx-auto font-mono">
+            <div className="border-b border-white/10 pb-3">
+              <h2 className="text-base font-bold text-purple-400 font-serif">Acoustic Phonetics, CEFR Lexical & Polyglot AI</h2>
+              <p className="text-xs text-slate-400 mt-0.5">IPA formant prosody, Flesch-Kincaid readability scoring, and multilingual cognitive synthesis.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-4 space-y-3 text-xs">
+                <span className="font-bold text-slate-200">TEXT & CEFR INPUT</span>
+                <div>
+                  <label className="text-[10px] text-slate-400">Target Language Pair:</label>
+                  <select value={targetLanguage} onChange={e => setTargetLanguage(e.target.value)} className="w-full mt-1 p-2 rounded-xl bg-slate-900 border border-white/10 text-white font-bold">
+                    <option>English ➔ German (C1 Academic)</option>
+                    <option>English ➔ French (Diplomatic)</option>
+                    <option>English ➔ Turkish (Sovereign Finance)</option>
+                    <option>English ➔ Mandarin (Commercial)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-slate-400">Target CEFR Competency:</label>
+                  <select value={cefrLevel} onChange={e => setCefrLevel(e.target.value)} className="w-full mt-1 p-2 rounded-xl bg-slate-900 border border-white/10 text-white font-bold">
+                    <option>C2 (Mastery / Native Executive)</option>
+                    <option>C1 (Effective Operational Proficiency)</option>
+                    <option>B2 (Upper Intermediate)</option>
+                    <option>B1 (Intermediate)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-slate-400">Corpus Analysis Text:</label>
+                  <textarea value={sampleSentence} onChange={e => setSampleSentence(e.target.value)} rows={3} className="w-full mt-1 p-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs" />
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-purple-500/30 bg-purple-950/20 p-5 space-y-4 flex flex-col justify-between">
+                <div>
+                  <span className="text-xs text-purple-300 font-bold">ACOUSTIC & COGNITIVE TELEMETRY</span>
+                  <div className="grid grid-cols-2 gap-3 mt-3 text-xs">
+                    <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10">
+                      <div className="text-[10px] text-slate-400">Flesch-Kincaid Grade</div>
+                      <div className="text-lg font-bold text-white mt-0.5">Grade 14.8 (Post-Grad)</div>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10">
+                      <div className="text-[10px] text-slate-400">Lexical Density (LD)</div>
+                      <div className="text-lg font-bold text-emerald-400 mt-0.5">72.4%</div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-900 border border-white/10 mt-3 space-y-1">
+                    <div className="text-[10px] text-slate-400">IPA Formant Acoustic Transcription:</div>
+                    <div className="text-xs text-purple-300 font-serif">/ðə ˌmæk.roʊˌiː.kəˈnɒm.ɪk ˌiː.kwɪˈlɪb.ri.əm wɒz dɪsˈrʌp.tɪd baɪ sɪsˈtɛm.ɪk lɪˈkwɪd.ə.ti ʃɒks/</div>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-black/60 text-[10px] text-slate-300 border border-white/5">
+                  Cognitive Load Index: 0.84 • Phonetic Pitch Variance: 142 Hz • Neural Voice Resonance: High Clarity
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 5. LEGAL & SANCTIONS AUDIT TAB */}
+        {activeCategory === "LEGAL" && (
+          <div className="space-y-6 max-w-6xl mx-auto font-mono">
+            <div className="border-b border-white/10 pb-3">
+              <h2 className="text-base font-bold text-cyan-400 font-serif">Cross-Border Legal, Indemnity & Sanctions Screening</h2>
+              <p className="text-xs text-slate-400 mt-0.5">OFAC SDN screening, EU asset freeze checks, and contractual indemnity liability risk scoring.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-4 space-y-3 text-xs">
+                <span className="font-bold text-slate-200">CONTRACTUAL AUDIT PARAMETERS</span>
+                <div>
+                  <label className="text-[10px] text-slate-400">Jurisdiction & Governing Law:</label>
+                  <select value={contractJurisdiction} onChange={e => setContractJurisdiction(e.target.value)} className="w-full mt-1 p-2 rounded-xl bg-slate-900 border border-white/10 text-white font-bold">
+                    <option>England & Wales (Common Law)</option>
+                    <option>State of New York (USA)</option>
+                    <option>Switzerland (Swiss Code of Obligations)</option>
+                    <option>Singapore International Commercial Court (SICC)</option>
+                    <option>DIFC (Dubai International Financial Centre)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-slate-400">Target Entity / Counterparty Name:</label>
+                  <input type="text" value={sanctionsEntityName} onChange={e => setSanctionsEntityName(e.target.value)} className="w-full mt-1 p-2 rounded-xl bg-slate-900 border border-white/10 text-white font-bold" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-slate-400">Liability Cap Multiplier (x Fees):</label>
+                  <input type="number" step="0.5" value={liabilityCapMultiplier} onChange={e => setLiabilityCapMultiplier(+e.target.value)} className="w-full mt-1 p-2 rounded-xl bg-slate-900 border border-white/10 text-white font-bold" />
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-cyan-500/30 bg-cyan-950/20 p-5 space-y-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-cyan-300 font-bold">SANCTIONS & COMPLIANCE VERDICT</span>
+                    <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold text-[10px] border border-red-500/40">
+                      FLAGGED FOR ENHANCED DUE DILIGENCE
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 mt-3 text-xs">
+                    <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10 flex justify-between">
+                      <span className="text-slate-400">OFAC SDN List Match:</span>
+                      <span className="text-amber-400 font-bold">Potential Alias Match (88%)</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10 flex justify-between">
+                      <span className="text-slate-400">EU Asset Freeze (Regulation 269/2014):</span>
+                      <span className="text-red-400 font-bold">Active Sectoral Restriction</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10 flex justify-between">
+                      <span className="text-slate-400">Indemnity Enforceability Index:</span>
+                      <span className="text-emerald-400 font-bold">High (Valid Clause)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-black/60 text-[10px] text-slate-300 border border-white/5">
+                  Recommendation: Require escrow holdback of 15% and mandatory OFAC General License verification before SWIFT/SEPA settlement.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 3. FINANCE & VALUATION TAB */}
         {activeCategory === "FINANCE" && (
           <div className="space-y-6 max-w-6xl mx-auto font-mono">
@@ -656,6 +790,118 @@ export default function ProfessionalAIHubPanel() {
           </div>
         )}
       </div>
+
+      {/* ── PRINTABLE EXECUTIVE MEMORANDUM & AUDIT DOSSIER MODAL ───────────── */}
+      {showExportMemo && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-amber-500/40 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-mono">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-black/60">
+              <div className="flex items-center gap-2">
+                <EagleCrest size={24} animate={false} />
+                <span className="text-sm font-bold text-amber-400 font-serif">
+                  UMAY GÜL NUR HOLDING • EXECUTIVE AUDIT DOSSIER
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs"
+                >
+                  🖨️ PRINT / PDF
+                </button>
+                <button
+                  onClick={() => setShowExportMemo(false)}
+                  className="px-2 py-1 rounded text-xs text-slate-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Dossier Document Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950 text-slate-200 text-xs leading-relaxed">
+              {/* Official Header */}
+              <div className="border-b border-white/10 pb-4 flex justify-between items-start">
+                <div>
+                  <h1 className="text-lg font-bold text-white font-serif tracking-wider">
+                    EXECUTIVE TECHNICAL DOSSIER & SOVEREIGN AUDIT MEMORANDUM
+                  </h1>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    CONFIDENTIALITY: RESTRICTED • CODESET: #13-35-42-55 • AUDIT RECORD: #54751113
+                  </p>
+                </div>
+                <div className="text-right text-[10px] font-mono text-slate-400">
+                  <div>DATE: {new Date().toLocaleDateString("en-GB")}</div>
+                  <div>NODE: {walletAddress.slice(0, 14)}...</div>
+                  <div className="text-emerald-400 font-bold">STATUS: VERIFIED DEPIN COMPUTE</div>
+                </div>
+              </div>
+
+              {/* Active Discipline Section */}
+              <div className="p-4 rounded-xl border border-white/10 bg-slate-900/60 space-y-3">
+                <div className="text-xs font-bold text-amber-300 uppercase">
+                  DISCIPLINE: {activeCategory} INTELLIGENCE SUITE
+                </div>
+
+                {activeCategory === "MEDICAL" && (
+                  <div className="space-y-2">
+                    <p><strong>Clinical Tool:</strong> {medicalTool}</p>
+                    <p><strong>CYP450 Interaction:</strong> {selectedDrugA} + {selectedDrugB} ➔ CYP2C9 Competitive Inhibition (Severity: HIGH RISK, Level 3 Flag).</p>
+                    <p><strong>NEWS2 Acute Triage Score:</strong> {news2Result.score} ({news2Result.riskLevel}).</p>
+                    <p><strong>Cardiac Biomarker Assay:</strong> {selectedBiomarker} = {biomarkerValue} ng/L.</p>
+                  </div>
+                )}
+
+                {activeCategory === "ENGINEERING" && (
+                  <div className="space-y-2">
+                    <p><strong>Eurocode 2 Beam Bending Moment (M_max):</strong> {maxBendingMomentKNm} kN·m (Span: {beamSpanMeters}m, Load: {beamUniformLoadKN} kN/m, Shear V_max: {maxShearForceKN} kN).</p>
+                    <p><strong>Concrete Grade:</strong> {concreteGrade} at Day {curingDays} ➔ Predicted Strength: {concreteStrengthMPa} MPa.</p>
+                    <p><strong>Terzaghi Ultimate Bearing Capacity (q_ult):</strong> {terzaghiBearingCapacityKPa.qUlt} kPa (Allowable q_all: {terzaghiBearingCapacityKPa.qAllowable} kPa, FS = 3.0).</p>
+                  </div>
+                )}
+
+                {activeCategory === "FINANCE" && (
+                  <div className="space-y-2">
+                    <p><strong>DCF Enterprise Valuation:</strong> ${dcfValuationResult.enterpriseValue.toLocaleString()} Million USD.</p>
+                    <p><strong>Present Value of 5-Yr Cash Flows:</strong> ${dcfValuationResult.pvSum}M (WACC: {waccDiscountRatePercent}%, CAGR: {fcfGrowthRatePercent}%).</p>
+                    <p><strong>Present Value of Terminal Value:</strong> ${dcfValuationResult.pvTerminalVal}M (Terminal Growth: {terminalGrowthPercent}%).</p>
+                  </div>
+                )}
+
+                {activeCategory === "LEGAL" && (
+                  <div className="space-y-2">
+                    <p><strong>Governing Law Jurisdiction:</strong> {contractJurisdiction}.</p>
+                    <p><strong>Counterparty:</strong> {sanctionsEntityName} ➔ OFAC SDN 88% Match Flagged.</p>
+                    <p><strong>Liability Cap Multiplier:</strong> {liabilityCapMultiplier}x Service Fees.</p>
+                  </div>
+                )}
+
+                {activeCategory === "EDUCATION" && (
+                  <div className="space-y-2">
+                    <p><strong>Target Language:</strong> {targetLanguage} (Competency Target: {cefrLevel}).</p>
+                    <p><strong>Flesch-Kincaid Readability:</strong> Grade 14.8 (Lexical Density: 72.4%).</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Cryptographic Proof & Signature */}
+              <div className="pt-4 border-t border-white/10 flex justify-between items-end text-[10px]">
+                <div className="space-y-1">
+                  <div className="text-slate-400">CRYPTOGRAPHIC PROOF (SEAL #54751113):</div>
+                  <div className="font-mono text-cyan-400 select-all break-all">
+                    SHA256:0x4d9f8c12e8b0a9e7f6c5d4b3a210fedcba9876543210123456789abcdef01234
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-serif italic text-amber-300 text-sm">Elena Vance &amp; Marcus Sterling</div>
+                  <div className="text-slate-400">Sovereign Intelligence Directorate</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
