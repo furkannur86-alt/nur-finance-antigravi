@@ -28,10 +28,10 @@ export const BROADCAST_LANGUAGES: LanguageBroadcastProfile[] = [
     langCode: "tr-TR",
     flag: "🇹🇷",
     city: "İstanbul / Londra",
-    defaultAnchorName: "Elif Nur & Emre Kaya",
-    anchorAvatar: "/images/studio/anchor-female.jpg",
+    defaultAnchorName: "Umay Nur",
+    anchorAvatar: "/images/characters/umay_nur.jpg",
     scripts: {
-      opening: `İyi günler sayın seyirciler. Nur Finans Küresel Piyasa Masası'ndan canlı yayınımız başlıyor. Ben Elif Nur. Bugün dünya borsalarında teknoloji hisselerinin öncülüğünde güçlü bir yükseliş dalgası izleniyor. BIST-100 endeksi ve Türkiye Cumhuriyet Merkez Bankası para politikası kararları masamızın ana gündem maddesi.`,
+      opening: `İyi günler sayın seyirciler. Nur Finans Küresel Piyasa Masası'ndan canlı yayınımız başlıyor. Ben Umay Nur. Bugün dünya borsalarında teknoloji hisselerinin öncülüğünde güçlü bir yükseliş dalgası izleniyor. BIST-100 endeksi ve Türkiye Cumhuriyet Merkez Bankası para politikası kararları masamızın ana gündem maddesi.`,
       macro: `Makroekonomik cephede küresel hizmet sektörü aktivite endeksi elli dört virgül sekiz seviyesine yükselerek güçlü büyümeyi teyit etti. Enflasyon beklentilerindeki ılımlı seyir, merkez bankalarının faiz indirim döngüsünü destekliyor. Hürmüz Boğazı ve Kızıldeniz tanker hatlarında emtia lojistiği analistlerimiz tarafından anlık olarak taranmaktadır.`,
       quant: `Kantitatif modellerimiz teknoloji ve finansal hizmetler sektörlerinde pozitif momentum sinyalleri üretiyor. Risk motorumuz VIX korku endeksinin on yedi seviyesinin altında dengelendiğini ve piyasa nötr arbitraj stratejilerimizin yıllık yüzde otuz sekiz getiri oranını koruduğunu gösteriyor.`,
       breaking: `SON DAKİKA GELİŞMESİ: Küresel enerji koridorlarında ham petrol arz güvenliği teyit edildi. Brent petrol seksen iki dolar bandında dengelenirken vadeli piyasalarda likidite akışı hızlandı.`,

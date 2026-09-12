@@ -6,10 +6,11 @@ import { channels, hosts, guests, shows, type NURChannel, type NURHost, type NUR
 import EagleCrest from "@/components/ui/EagleCrest";
 import { useIDEStore } from "@/stores/useIDEStore";
 import { BROADCAST_LANGUAGES, hdVoiceEngine } from "@/lib/broadcast/multilingual-broadcast";
+import CharacterStudioGallery from "@/components/media/CharacterStudioGallery";
 
 const NurEarth3DGlobe = dynamic(() => import("@/components/geopolitics/NurEarth3DGlobe"), { ssr: false });
 
-type TabId = "channels" | "hosts" | "schedule" | "social";
+type TabId = "characters" | "channels" | "hosts" | "schedule" | "social";
 type VideoStageMode = "3D_GLOBE" | "RADAR" | "TELEPROMPTER";
 
 const STATUS_COLORS: Record<string, string> = { live: "#00d4aa", upcoming: "#f0b429", "pre-launch": "#6366f1" };
@@ -201,12 +202,13 @@ function ShowCard({ show }: { show: NURShow }) {
 
 export default function MediaPanel() {
   const { openFloatingWindow, popoutToNativeWindow, setActiveView } = useIDEStore();
-  const [tab, setTab] = useState<TabId>("channels");
+  const [tab, setTab] = useState<TabId>("characters");
   const [selectedChannel, setSelectedChannel] = useState<NURChannel | null>(channels[0]);
   const [videoStageMode, setVideoStageMode] = useState<VideoStageMode>("3D_GLOBE");
   const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
 
   const tabs: { id: TabId; label: string; count?: number }[] = [
+    { id: "characters", label: "🌟 Characters & Studios" },
     { id: "channels", label: "Channels", count: channels.length },
     { id: "hosts", label: "On-Air Team", count: hosts.length + guests.length },
     { id: "schedule", label: "Schedule", count: shows.length },
@@ -301,6 +303,9 @@ export default function MediaPanel() {
             </button>
           ))}
         </div>
+
+        {/* CHARACTERS & STUDIOS TAB */}
+        {tab === "characters" && <CharacterStudioGallery />}
 
         {/* CHANNELS TAB */}
         {tab === "channels" && (

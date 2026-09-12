@@ -327,40 +327,40 @@ export const hosts: NURHost[] = [
 
   // ── NUR TURKEY (Istanbul) ──
   {
-    id: "host-defne", channelId: "nur-turkey",
-    firstName: "Defne", lastName: "Karataş", displayName: "Defne",
+    id: "host-umay-nur", channelId: "nur-turkey",
+    firstName: "Umay", lastName: "Nur", displayName: "Umay Nur",
     gender: "female", heightCm: 185, eyeColor: "green",
     hairColor: "dark-brown", hairStyle: "wavy-long", skinTone: "olive",
-    ageRange: "31-35", nationality: "Turkish",
-    languages: ["Turkish", "English", "German"],
+    ageRange: "28-32", nationality: "Turkish",
+    languages: ["Turkish", "English", "French"],
     education: [
-      { degree: "MBA", field: "International Finance", institution: "Koç Üniversitesi", year: 2015 },
-      { degree: "Lisans", field: "Ekonomi", institution: "Boğaziçi Üniversitesi", year: 2013 }
+      { degree: "MBA", field: "International Finance", institution: "Koç Üniversitesi", year: 2017 },
+      { degree: "Lisans", field: "Ekonomi", institution: "Boğaziçi Üniversitesi", year: 2015 }
     ],
-    certifications: ["CFA Charterholder", "SPK Lisansı"],
-    previousEmployers: ["Bloomberg HT", "Garanti BBVA (Hazine)"],
-    specializations: ["BIST analizi", "TCMB politikası", "Gelişen piyasalar"],
-    bio: "NUR Finans Türkiye'nin ana yüzü. Bloomberg HT'de 5 yıl deneyim. Borsa İstanbul açılış ve kapanış saatlerinde canlı yayın sunuyor.",
+    certifications: ["CFA Charterholder", "SPK İleri Düzey"],
+    previousEmployers: ["Bloomberg TV", "Sovereign Asset Management"],
+    specializations: ["BIST & Global Macro", "Sovereign Liquidity", "Quant Arbitrage"],
+    bio: "Chief Anchor for NUR Finans. Renowned for authoritative macroeconomic analysis, sovereign financial modeling, and captivating market open broadcasts.",
     status: "active",
-    imagePrompt: "Professional female news anchor, 31-35 years old, 185cm tall, green eyes, dark brown wavy long hair, olive skin, wearing elegant burgundy blazer with cream silk blouse, modern Istanbul skyline visible through studio window, Bosphorus view, photorealistic Turkish broadcast quality"
+    imagePrompt: "Stunning Turkish female lead anchor Umay Nur, 28-32 years old, 185cm tall, striking luminous emerald green eyes (#00C853), dark brown cascading wavy hair, olive skin, glamorous athletic feminine hourglass silhouette, wearing tailored cream-white designer blazer with subtle tasteful decollete and matching mini skirt, seated at futuristic obsidian glass news desk with Bosphorus Bridge sunset visible behind, 8k photorealistic broadcast quality"
   },
   {
-    id: "host-zeynep", channelId: "nur-turkey",
-    firstName: "Zeynep", lastName: "Aydın", displayName: "Zeynep",
+    id: "host-umay-gul", channelId: "nur-turkey",
+    firstName: "Umay", lastName: "Gül", displayName: "Umay Gül",
     gender: "female", heightCm: 186, eyeColor: "green",
     hairColor: "chestnut", hairStyle: "shoulder-length", skinTone: "light",
-    ageRange: "28-32", nationality: "Turkish",
-    languages: ["Turkish", "English", "Arabic"],
+    ageRange: "27-31", nationality: "Turkish",
+    languages: ["Turkish", "English", "German"],
     education: [
-      { degree: "Yüksek Lisans", field: "Finans Mühendisliği", institution: "Sabancı Üniversitesi", year: 2018 },
-      { degree: "Lisans", field: "İşletme", institution: "ODTÜ", year: 2016 }
+      { degree: "MSc", field: "Financial Engineering", institution: "ETH Zürich / Sabancı", year: 2018 },
+      { degree: "BSc", field: "Industrial Engineering", institution: "ODTÜ", year: 2016 }
     ],
-    certifications: ["CFA Level III", "SPK İleri Düzey"],
-    previousEmployers: ["CNBC-e", "İş Yatırım"],
-    specializations: ["Teknik analiz", "Döviz piyasaları", "Emtia"],
-    bio: "Akşam yayınları sunucusu. Teknik analiz ve döviz piyasalarında uzman. Yatırımcılara pratik stratejiler sunuyor.",
+    certifications: ["CFA Level III", "SPK Türev Araçlar"],
+    previousEmployers: ["Deutsche Bank (Equity Research)", "İş Portföy"],
+    specializations: ["Türev Piyasalar", "Döviz Likiditesi", "Emtia Stratejileri"],
+    bio: "Evening Anchor for NUR Finans. Expert in derivatives architecture, FX volatility surface modeling, and institutional liquidity flows.",
     status: "active",
-    imagePrompt: "Professional female news anchor, 28-32 years old, 186cm tall, green eyes, chestnut shoulder-length hair, light skin, wearing deep navy blazer with gold button details, seated at sleek news desk with Turkish market data screens, warm lighting, photorealistic"
+    imagePrompt: "Stunning female financial anchor Umay Gül, 27-31 years old, 186cm tall, intense luminous emerald green eyes, rich chestnut styled hair, fair skin, beautiful feminine curves, wearing deep navy tailored luxury blazer with elegant neckline and pencil skirt, modern broadcast studio with holographic candlesticks and neon telemetry, 8k photorealistic"
   },
 
   // ── NUR ARABIC (Dubai) ──

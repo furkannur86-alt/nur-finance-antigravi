@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUR FINANCE — Karakter, Sunucu & Stüdyo Vitrini</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06090e;
+      --card-bg: rgba(13, 20, 32, 0.85);
+      --card-border: rgba(0, 212, 170, 0.25);
+      --accent: #00d4aa;
+      --gold: #f5a623;
+      --emerald: #00C853;
+      --text: #f0f4f8;
+      --muted: #8899a6;
+      --glass: rgba(18, 28, 44, 0.7);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at top center, #0f1c2e 0%, var(--bg) 80%);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 40px 24px 80px;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 40px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 212, 170, 0.2);
+      padding-bottom: 30px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 212, 170, 0.1);
+      border: 1px solid var(--accent);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 38px;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto 50px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 24px 50px rgba(0, 212, 170, 0.2);
+    }
+    .img-container {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: #0b111a;
+      overflow: hidden;
+    }
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      transition: transform 0.6s ease;
+    }
+    .card:hover .img-container img {
+      transform: scale(1.04);
+    }
+    .tag {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(6, 9, 14, 0.85);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      backdrop-filter: blur(8px);
+    }
+    .eye-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: rgba(0, 200, 83, 0.2);
+      border: 1px solid var(--emerald);
+      color: #69f0ae;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+    }
+    .eye-indicator {
+      width: 10px;
+      height: 10px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--emerald);
+    }
+    .content {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .char-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .char-role {
+      font-size: 13px;
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(0,0,0,0.3);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .spec-label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .spec-val {
+      color: #fff;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .bio {
+      font-size: 13px;
+      color: #b0bec5;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .filepath {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #80cbc4;
+      word-break: break-all;
+    }
+    .section-divider {
+      max-width: 1400px;
+      margin: 40px auto 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .section-divider h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .section-divider .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(245, 166, 35, 0.4), transparent);
+    }
+    .studio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo-badge">SOVEREIGN AI BROADCAST & CHARACTER ROSTER</div>
+    <h1>NUR MEDIA CHARACTER & STUDIO DIRECTORY</h1>
+    <p class="subtitle">
+      Tüm küresel ekranlarda uluslararası anonim kimlikler, 1.90m+ maskülen kaslı erkek direktörler, büyüleyici feminen zarafete sahip kadın sunucular ve %100 saf zümrüt yeşili göz standardı (#00C853).
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ELENA VANCE -->
+    <div class="card">
+      <div class="img-container">
+        <img src="/images/characters/elena_vance.jpg" alt="Elena Vance" />
+        <div class="tag">GENEVA / GLOBAL</div>
+        <div class="eye-badge"><div class="eye-indicator"></div> Zümrüt Yeşili (#00C853)</div>
+      </div>
+      <div class="content">
+        <div>
+          <div class="char-title">Elena Vance</div>
+          <div class="char-role">Senior Global Macro & Sovereign Wealth Anchor</div>
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Boy / Fizik</span>
+              <span class="spec-val">185 cm · Feminen Kum Saati</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Yaş / Fenotip</span>
+              <span class="spec-val">30 · İsviçre / Kuzey Avrupa</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Kıyafet</span>
+              <span class="spec-val">Zümrüt Yeşil Blazer & Kalem Etek</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Ses Modeli</span>
+              <span class="spec-val">Google Journey-F (Genève)</span>
+            </div>
+          </div>
+          <p class="bio">
+            Cenevre Gölü ve Alpler manzaralı özel bankacılık süitinden küresel makroekonomik kararları, faiz politikalarını ve merkez bankası rezervlerini sunar.
+          </p>
+        </div>
+        <div class="filepath">
+          Dosya: public/images/characters/elena_vance.jpg
+        </div>
+      </div>
+    </div>
+
+    <!-- UMAY NUR -->
+    <div class="card">
+      <div class="img-container">
+        <img src="/images/characters/umay_nur.jpg" alt="Umay Nur" />
+        <div class="tag">ISTANBUL / TR DESK</div>
+        <div class="eye-badge"><div class="eye-indicator"></div> Zümrüt Yeşili (#00C853)</div>
+      </div>
+      <div class="content">
+        <div>
+          <div class="char-title">Umay Nur</div>
+          <div class="char-role">Başekonomist & Canlı Yayın Masası Lideri</div>
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Boy / Fizik</span>
+              <span class="spec-val">185 cm · Feminen Zarafet</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Yaş / Fenotip</span>
+              <span class="spec-val">29 · Akdeniz / Avrasya</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Kıyafet</span>
+              <span class="spec-val">Krem-Beyaz Kruvaze Blazer & Mini Etek</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Ses Modeli</span>
+              <span class="spec-val">Google Wavenet-B (TR-İstanbul)</span>
+            </div>
+          </div>
+          <p class="bio">
+            İstanbul Boğazı gün batımı fonunda finansal veri hologramları eşliğinde BIST-100 açılışlarını, küresel likidite rotasyonunu ve egemen portföy stratejilerini yönetir.
+          </p>
+        </div>
+        <div class="filepath">
+          Dosya: public/images/characters/umay_nur.jpg
+        </div>
+      </div>
+    </div>
+
+    <!-- MARCUS STERLING -->
+    <div class="card">
+      <div class="img-container">
+        <img src="/images/characters/marcus_sterling.jpg" alt="Marcus Sterling" />
+        <div class="tag">WALL STREET / LONDON</div>
+        <div class="eye-badge"><div class="eye-indicator"></div> Zümrüt Yeşili (#00C853)</div>
+      </div>
+      <div class="content">
+        <div>
+          <div class="char-title">Marcus Sterling</div>
+          <div class="char-role">Chief Quantitative Strategist & DePIN Director</div>
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Boy / Fizik</span>
+              <span class="spec-val">193 cm · Kaslı Atletik / Güçlü Jawline</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Yaş / Fenotip</span>
+              <span class="spec-val">28 · Anglo-Sakson / Wall Street</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Kıyafet</span>
+              <span class="spec-val">Savile Row Özel Dikim 3 Parça Lacivert Takım</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Ses Modeli</span>
+              <span class="spec-val">Google Journey-D (Derin Bariton)</span>
+            </div>
+          </div>
+          <p class="bio">
+            Wall Street ve Londra finans merkezlerinde yüksek frekanslı kantitatif algoritmaları, Black-Scholes opsiyon yüzeylerini ve DePIN donanım hashrate telemetrisini aktarır.
+          </p>
+        </div>
+        <div class="filepath">
+          Dosya: public/images/characters/marcus_sterling.jpg
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-divider">
+    <h2>YAYIN STÜDYOLARI & EGEMEN OFİSLER</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="studio-grid">
+
+    <!-- BROADCAST STUDIO 2126 -->
+    <div class="card">
+      <div class="img-container" style="height: 380px;">
+        <img src="/images/studio/broadcast_studio.jpg" alt="NUR TV 2126 Studio" />
+        <div class="tag">NUR TV 2126 STÜDYO</div>
+      </div>
+      <div class="content">
+        <div class="char-title">NUR TV 2126 4K Canlı Yayın Sahnesi</div>
+        <div class="char-role">Holografik Dönen Dünya & Kavisli Obsidian Masa</div>
+        <p class="bio">
+          Geniş açılı kavisli LED duvarlar, gerçek zamanlı mum grafikleri, 3D Geopolitik Yörünge Radarı ve altın çift başlı kartal mühürlü 24/7 kesintisiz yayın platformu.
+        </p>
+        <div class="filepath">
+          Dosya: public/images/studio/broadcast_studio.jpg
+        </div>
+      </div>
+    </div>
+
+    <!-- EXECUTIVE OFFICE -->
+    <div class="card">
+      <div class="img-container" style="height: 380px;">
+        <img src="/images/studio/executive-office.jpg" alt="Executive Office" />
+        <div class="tag">CENEVRE & LONDRA OFİSLERİ</div>
+      </div>
+      <div class="content">
+        <div class="char-title">Sovereign Executive Penthouse & Boardroom</div>
+        <div class="char-role">Alpler & Finans Merkezi Panoramik Görünümü</div>
+        <p class="bio">
+          Siyah mermer masalar, altın akçaağaç kaplamalar, şeffaf likidite panelleri ve egemen varlık yönetim toplantı odası.
+        </p>
+        <div class="filepath">
+          Dosya: public/images/studio/executive-office.jpg
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
