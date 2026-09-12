@@ -167,13 +167,21 @@ export default function AIAvatarStudio() {
               }}
             />
 
-            {/* Avatar Graphics */}
-            <div className="relative z-10 text-7xl md:text-8xl mb-3 filter drop-shadow-2xl transition-transform duration-200"
+            {/* Real Photorealistic Avatar Graphics */}
+            <div className="relative z-10 w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-cyan-400/60 mb-2 shadow-xl shadow-cyan-500/20 transition-transform duration-200"
               style={{
-                transform: isSpeaking ? `scale(${1 + audioLevel * 0.08}) translateY(${-audioLevel * 4}px)` : "scale(1)",
+                transform: isSpeaking ? `scale(${1 + audioLevel * 0.06})` : "scale(1)",
               }}
             >
-              {profile.gender === "FEMALE" ? "👩‍💼" : "👨‍💼"}
+              <img
+                src={profile.id === "elena" ? "/images/studio/elena_vance.jpg" : "/images/studio/marcus_sterling.jpg"}
+                alt={profile.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to stylized emoji if image loading fails
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
             </div>
 
             <div className="relative z-10 text-center space-y-1">
