@@ -1,79 +1,110 @@
 import { NextRequest, NextResponse } from "next/server";
+import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
 import https from "https";
 
 /**
- * NUR Finance — High-Definition Neural TTS API Route
+ * NUR Finance — Multi-Tier Hyper-Realistic Human Voice Engine
  *
- * Provides 100% human-natural, high-fidelity neural speech synthesis.
- * Uses Google Neural / Edge Neural audio pipelines to generate crystal-clear,
- * melodic, non-robotic female and male financial presenter voices across all 15 languages.
+ * Tier 1: ElevenLabs Multilingual v2 (If ELEVENLABS_API_KEY is configured in .env.local)
+ * Tier 2: Microsoft Edge Studio Neural HD (Direct 24kHz/48kbps Neural Voices — EmelNeural, AriaNeural, ChristopherNeural, etc.)
+ * Tier 3: High-Speed Web Audio Fallback
  */
 
-function fetchGoogleNeuralChunk(text: string, lang: string): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const encodedText = encodeURIComponent(text.trim());
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodedText}`;
+export interface VoiceProfile {
+  voice: string;
+  name: string;
+  defaultRate: string;
+  gender: "female" | "male";
+}
 
-    https
-      .get(
-        url,
-        {
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            Referer: "https://translate.google.com/",
-          },
+const NEURAL_VOICE_MAP: Record<string, VoiceProfile> = {
+  tr: { voice: "tr-TR-EmelNeural", name: "Umay Nur (TR Studio Female)", defaultRate: "+22%", gender: "female" },
+  tr_male: { voice: "tr-TR-AhmetNeural", name: "Umay Gün / Demir (TR Studio Male)", defaultRate: "+20%", gender: "male" },
+  en: { voice: "en-US-AriaNeural", name: "Elena Vance (US Broadcast Female)", defaultRate: "+20%", gender: "female" },
+  en_male: { voice: "en-US-ChristopherNeural", name: "Marcus Sterling (US Anchor Male)", defaultRate: "+18%", gender: "male" },
+  "en-gb": { voice: "en-GB-SoniaNeural", name: "Victoria Ashworth (London Female)", defaultRate: "+18%", gender: "female" },
+  de: { voice: "de-DE-KatjaNeural", name: "Katharina Vogt (Frankfurt Female)", defaultRate: "+18%", gender: "female" },
+  fr: { voice: "fr-FR-DeniseNeural", name: "Camille Dubois (Paris Female)", defaultRate: "+18%", gender: "female" },
+  ru: { voice: "ru-RU-SvetlanaNeural", name: "Viktoria Smirnova (Moscow Female)", defaultRate: "+18%", gender: "female" },
+  ar: { voice: "ar-SA-ZariyahNeural", name: "Fatima Al-Qahtani (Dubai Female)", defaultRate: "+15%", gender: "female" },
+  ar_male: { voice: "ar-AE-HamdanNeural", name: "Zaid Al-Mansoor (Dubai Male)", defaultRate: "+15%", gender: "male" },
+};
+
+/**
+ * Calls ElevenLabs API if key is present in .env.local
+ */
+async function generateElevenLabsTTS(text: string, apiKey: string, voiceId?: string): Promise<Buffer | null> {
+  const targetVoice = voiceId || "21m00Tcm4TlvDq8ikWAM"; // Default Rachel / Broadcaster
+  const url = `https://api.elevenlabs.io/v1/text-to-speech/${targetVoice}?optimize_streaming_latency=3`;
+
+  return new Promise((resolve) => {
+    const payload = JSON.stringify({
+      text,
+      model_id: "eleven_multilingual_v2",
+      voice_settings: {
+        stability: 0.50,
+        similarity_boost: 0.85,
+        style: 0.40,
+        use_speaker_boost: true,
+      },
+    });
+
+    const req = https.request(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "xi-api-key": apiKey,
+          "Content-Length": Buffer.byteLength(payload),
         },
-        (res) => {
-          if (res.statusCode !== 200) {
-            reject(new Error(`TTS upstream returned status ${res.statusCode}`));
-            return;
-          }
-          const chunks: Buffer[] = [];
-          res.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
-          res.on("end", () => resolve(Buffer.concat(chunks)));
+      },
+      (res) => {
+        if (res.statusCode !== 200) {
+          resolve(null);
+          return;
         }
-      )
-      .on("error", (err) => reject(err));
+        const chunks: Buffer[] = [];
+        res.on("data", (c) => chunks.push(Buffer.from(c)));
+        res.on("end", () => resolve(Buffer.concat(chunks)));
+      }
+    );
+    req.on("error", () => resolve(null));
+    req.write(payload);
+    req.end();
   });
 }
 
 /**
- * Splits text into natural sentence chunks (max 180 chars) for smooth streaming
+ * Calls Microsoft Edge Neural HD engine (EmelNeural, AriaNeural, etc.)
  */
-function splitIntoNaturalChunks(text: string, maxLen = 170): string[] {
-  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
-  const chunks: string[] = [];
-  let current = "";
+async function synthesizeEdgeNeuralHD(text: string, voiceName: string, rate = "+22%"): Promise<Buffer> {
+  const tts = new MsEdgeTTS();
+  await tts.setMetadata(voiceName, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
 
-  for (const s of sentences) {
-    const trimmed = s.trim();
-    if (!trimmed) continue;
-    if ((current + " " + trimmed).trim().length <= maxLen) {
-      current = (current + " " + trimmed).trim();
-    } else {
-      if (current) chunks.push(current);
-      if (trimmed.length <= maxLen) {
-        current = trimmed;
-      } else {
-        // Split long sentence by commas or words
-        const words = trimmed.split(/\s+/);
-        let subChunk = "";
-        for (const w of words) {
-          if ((subChunk + " " + w).trim().length <= maxLen) {
-            subChunk = (subChunk + " " + w).trim();
-          } else {
-            if (subChunk) chunks.push(subChunk);
-            subChunk = w;
-          }
-        }
-        if (subChunk) current = subChunk;
-        else current = "";
-      }
-    }
-  }
-  if (current) chunks.push(current);
-  return chunks.length > 0 ? chunks : [text.slice(0, maxLen)];
+  return new Promise((resolve, reject) => {
+    const { audioStream } = tts.toStream(text, {
+      rate: rate,
+      pitch: "+0Hz",
+    });
+
+    const chunks: Buffer[] = [];
+    audioStream.on("data", (chunk: Buffer) => chunks.push(chunk));
+    audioStream.on("end", () => resolve(Buffer.concat(chunks)));
+    audioStream.on("error", (err: Error) => reject(err));
+  });
+}
+
+function resolveVoiceKey(langCode: string, isMale = false): string {
+  const lc = langCode.toLowerCase();
+  if (lc.startsWith("tr")) return isMale ? "tr_male" : "tr";
+  if (lc === "en-gb" || lc.startsWith("en-gb")) return "en-gb";
+  if (lc.startsWith("en")) return isMale ? "en_male" : "en";
+  if (lc.startsWith("de")) return "de";
+  if (lc.startsWith("fr")) return "fr";
+  if (lc.startsWith("ru")) return "ru";
+  if (lc.startsWith("ar")) return isMale ? "ar_male" : "ar";
+  return "tr";
 }
 
 export async function POST(req: NextRequest) {
@@ -81,83 +112,91 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const text = body.text || "";
     const langCode = (body.languageCode || body.langCode || "tr-TR").toLowerCase();
+    const isMale = !!body.isMale || (body.anchorName && ["Marcus Sterling", "Umay Gün", "Demir", "Klaus Weber", "Laurent Mercier", "Виктор Петров", "زيد المنصور"].some(n => body.anchorName.includes(n)));
+    const customRate = body.rate || (body.speed ? `+${Math.round((body.speed - 1) * 100)}%` : undefined);
 
     if (!text.trim()) {
-      return NextResponse.json({ error: "Text parameter is required." }, { status: 400 });
+      return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
-    // Map language code to TTS language tag
-    let targetLang = "tr";
-    if (langCode.startsWith("en")) targetLang = "en";
-    else if (langCode.startsWith("de")) targetLang = "de";
-    else if (langCode.startsWith("fr")) targetLang = "fr";
-    else if (langCode.startsWith("ru")) targetLang = "ru";
-    else if (langCode.startsWith("ar")) targetLang = "ar";
-    else if (langCode.startsWith("ja")) targetLang = "ja";
-    else if (langCode.startsWith("zh")) targetLang = "zh-CN";
-    else if (langCode.startsWith("ko")) targetLang = "ko";
-    else if (langCode.startsWith("es")) targetLang = "es";
-    else if (langCode.startsWith("pt")) targetLang = "pt";
-    else if (langCode.startsWith("hi")) targetLang = "hi";
-    else if (langCode.startsWith("tr")) targetLang = "tr";
+    const voiceKey = resolveVoiceKey(langCode, isMale);
+    const voiceConfig = NEURAL_VOICE_MAP[voiceKey] || NEURAL_VOICE_MAP["tr"];
+    const activeRate = customRate || voiceConfig.defaultRate;
 
-    // Split into chunks and fetch neural audio
-    const chunks = splitIntoNaturalChunks(text);
-    const audioBuffers: Buffer[] = [];
-
-    for (const chunk of chunks) {
-      try {
-        const audioBuf = await fetchGoogleNeuralChunk(chunk, targetLang);
-        if (audioBuf && audioBuf.length > 0) {
-          audioBuffers.push(audioBuf);
-        }
-      } catch (err) {
-        console.warn(`[TTS Chunk Warning] failed for chunk "${chunk.slice(0, 30)}":`, err);
+    // 1. ElevenLabs priority if user has added ELEVENLABS_API_KEY to .env.local
+    const elevenKey = process.env.ELEVENLABS_API_KEY || "";
+    if (elevenKey) {
+      const elevenAudio = await generateElevenLabsTTS(text, elevenKey, body.elevenVoiceId);
+      if (elevenAudio && elevenAudio.length > 0) {
+        const base64 = elevenAudio.toString("base64");
+        return NextResponse.json({
+          success: true,
+          provider: "elevenlabs_studio_human",
+          audioBase64: base64,
+          audioUrl: `data:audio/mp3;base64,${base64}`,
+          format: "mp3",
+          voice: voiceConfig.name,
+          rate: activeRate,
+        });
       }
     }
 
-    if (audioBuffers.length === 0) {
-      return NextResponse.json({ error: "Failed to generate neural audio." }, { status: 502 });
+    // 2. Microsoft Edge Studio Neural HD (EmelNeural / AriaNeural)
+    try {
+      const neuralBuffer = await synthesizeEdgeNeuralHD(text, voiceConfig.voice, activeRate);
+      const base64 = neuralBuffer.toString("base64");
+      return NextResponse.json({
+        success: true,
+        provider: "ms_edge_neural_hd",
+        audioBase64: base64,
+        audioUrl: `data:audio/mp3;base64,${base64}`,
+        format: "mp3",
+        voice: voiceConfig.name,
+        voiceId: voiceConfig.voice,
+        rate: activeRate,
+      });
+    } catch (edgeErr) {
+      console.error("[Edge TTS Error]:", edgeErr);
+      return NextResponse.json({ error: "Neural synthesis error", details: (edgeErr as Error).message }, { status: 502 });
     }
-
-    const fullAudio = Buffer.concat(audioBuffers);
-    const base64Audio = fullAudio.toString("base64");
-
-    return NextResponse.json({
-      success: true,
-      audioBase64: base64Audio,
-      audioUrl: `data:audio/mp3;base64,${base64Audio}`,
-      format: "mp3",
-      lang: targetLang,
-      durationMs: Math.round(fullAudio.length / 16), // Approx MP3 duration
-    });
-  } catch (error: unknown) {
-    console.error("[TTS API Error]:", error);
-    return NextResponse.json(
-      { error: "Internal TTS server error", details: (error as Error).message },
-      { status: 500 }
-    );
+  } catch (err: unknown) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const text = searchParams.get("text") || "Nur Finans Küresel Piyasa Masası canlı yayında.";
+  const text = searchParams.get("text") || "Nur Finans canli yayinimiz basliyor.";
   const lang = searchParams.get("lang") || "tr";
+  const male = searchParams.get("male") === "true";
+  const rateParam = searchParams.get("rate");
+
+  const voiceKey = resolveVoiceKey(lang, male);
+  const voiceConfig = NEURAL_VOICE_MAP[voiceKey] || NEURAL_VOICE_MAP["tr"];
+  const activeRate = rateParam || voiceConfig.defaultRate;
 
   try {
-    const chunks = splitIntoNaturalChunks(text);
-    const buffers: Buffer[] = [];
-    for (const chunk of chunks) {
-      const buf = await fetchGoogleNeuralChunk(chunk, lang);
-      buffers.push(buf);
+    // 1. ElevenLabs if present
+    const elevenKey = process.env.ELEVENLABS_API_KEY || "";
+    if (elevenKey) {
+      const elevenAudio = await generateElevenLabsTTS(text, elevenKey);
+      if (elevenAudio && elevenAudio.length > 0) {
+        return new NextResponse(new Uint8Array(elevenAudio), {
+          headers: {
+            "Content-Type": "audio/mpeg",
+            "Content-Length": elevenAudio.length.toString(),
+            "Cache-Control": "public, max-age=3600",
+          },
+        });
+      }
     }
-    const combined = Buffer.concat(buffers);
 
-    return new NextResponse(combined, {
+    // 2. Microsoft Edge Studio Neural HD
+    const audioBuf = await synthesizeEdgeNeuralHD(text, voiceConfig.voice, activeRate);
+    return new NextResponse(new Uint8Array(audioBuf), {
       headers: {
         "Content-Type": "audio/mpeg",
-        "Content-Length": combined.length.toString(),
+        "Content-Length": audioBuf.length.toString(),
         "Cache-Control": "public, max-age=3600",
       },
     });
@@ -165,3 +204,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
+

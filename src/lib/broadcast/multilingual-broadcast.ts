@@ -166,7 +166,7 @@ export const BROADCAST_LANGUAGES: LanguageBroadcastProfile[] = [
   },
 ];
 
-// High-Definition Neural Audio Engine (HTML5 Audio + Server-side Neural Pipeline)
+// High-Definition Neural Audio Engine (HTML5 Audio + Server-side Studio Neural HD Pipeline)
 export class HighDefinitionVoiceSynthesizer {
   private currentAudio: HTMLAudioElement | null = null;
   private isSpeaking = false;
@@ -176,7 +176,8 @@ export class HighDefinitionVoiceSynthesizer {
     langCode: string,
     onStart?: () => void,
     onEnd?: () => void,
-    onError?: (err: Error) => void
+    onError?: (err: Error) => void,
+    options?: { isMale?: boolean; anchorName?: string; rate?: string }
   ): void {
     this.stop();
 
@@ -187,8 +188,11 @@ export class HighDefinitionVoiceSynthesizer {
 
     // Use our server-side neural TTS streaming API
     const langPrefix = langCode.split("-")[0].toLowerCase();
+    const isMale = !!options?.isMale || (options?.anchorName && ["Marcus Sterling", "Umay Gün", "Demir", "Klaus Weber", "Laurent Mercier", "Виктор Петров", "زيد المنصور"].some(n => options.anchorName?.includes(n)));
+    const rate = options?.rate || (langPrefix === "tr" ? "+22%" : "+20%");
+
     const encodedText = encodeURIComponent(trimmedText);
-    const audioUrl = `/api/ai/tts?text=${encodedText}&lang=${langPrefix}`;
+    const audioUrl = `/api/ai/tts?text=${encodedText}&lang=${langPrefix}&male=${isMale}&rate=${encodeURIComponent(rate)}`;
 
     const audio = new Audio(audioUrl);
     this.currentAudio = audio;
@@ -205,7 +209,7 @@ export class HighDefinitionVoiceSynthesizer {
     };
 
     audio.onerror = (e) => {
-      console.warn("[Neural TTS Error] falling back to browser voice:", e);
+      console.warn("[Neural TTS Error]:", e);
       this.isSpeaking = false;
       this.currentAudio = null;
       if (onError) onError(new Error("Neural audio playback error"));
@@ -237,3 +241,4 @@ export class HighDefinitionVoiceSynthesizer {
 }
 
 export const hdVoiceEngine = new HighDefinitionVoiceSynthesizer();
+

@@ -16,6 +16,7 @@
     "@types/three": "^0.185.4",
     "chart.js": "^4.5.1",
     "lucide-react": "^1.35.0",
+    "msedge-tts": "^2.0.7",
     "next": "16.3.3",
     "prismjs": "^1.30.0",
     "react": "19.2.8",
