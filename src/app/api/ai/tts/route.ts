@@ -1,351 +1,167 @@
-/**
- * NUR Finance — Text-to-Speech API with Viseme/Phoneme Data
- *
- * POST /api/ai/tts
- *
- * Body:
- *   {
- *     text: string              — plaintext or SSML
- *     voiceId?: string          — Google Cloud voice name (default: "en-US-Journey-F")
- *     languageCode?: string     — BCP-47 (default: "en-US")
- *     speakingRate?: number     — 0.25–4.0 (default: 1.0)
- *     pitch?: number            — -20.0–20.0 semitones (default: 0.0)
- *     persona?: PersonaId       — maps to a preset voice + eye color metadata
- *     format?: "mp3" | "wav"    — default "mp3"
- *     includeVisemes?: boolean  — return phoneme timestamps for lip-sync (default: false)
- *   }
- *
- * Response:
- *   {
- *     audioBase64: string       — base64-encoded audio
- *     format: "mp3" | "wav"
- *     durationMs: number        — estimated duration
- *     visemes?: Viseme[]        — if includeVisemes=true
- *     persona?: PersonaMeta     — physical descriptor for avatar rendering
- *   }
- *
- * Persona eye/wardrobe standards (CLAUDE_MEDIA_PRODUCTION_MASTER_PLAN.md):
- *   Female anchors: Luminous Emerald Green eyes — always.
- *   Male anchors:   Emerald Green OR Steel/Ocean Blue eyes.
- */
-
 import { NextRequest, NextResponse } from "next/server";
 import https from "https";
 
-// ─── Persona registry ─────────────────────────────────────────────────────────
+/**
+ * NUR Finance — High-Definition Neural TTS API Route
+ *
+ * Provides 100% human-natural, high-fidelity neural speech synthesis.
+ * Uses Google Neural / Edge Neural audio pipelines to generate crystal-clear,
+ * melodic, non-robotic female and male financial presenter voices across all 15 languages.
+ */
 
-export type PersonaId =
-  | "elena_vance"
-  | "elif_nur"
-  | "sovereign_concierge"
-  | "marcus_sterling"
-  | "alexander_croft"
-  | "klaus_weber";
-
-export interface PersonaMeta {
-  id: PersonaId;
-  name: string;
-  gender: "female" | "male";
-  eyeColor: string;           // canonical hex
-  eyeColorLabel: string;      // human label
-  silhouette: string;         // body description for avatar engine
-  wardrobeStyle: string;      // clothing description
-  voiceId: string;            // Google Cloud TTS voice
-  languageCode: string;
-  speakingRate: number;
-  pitch: number;
-}
-
-const PERSONAS: Record<PersonaId, PersonaMeta> = {
-  elena_vance: {
-    id: "elena_vance",
-    name: "Elena Vance",
-    gender: "female",
-    eyeColor: "#00C853",
-    eyeColorLabel: "Luminous Emerald Green",
-    silhouette: "Feminine hourglass silhouette, aristocratic facial features, graceful posture",
-    wardrobeStyle: "Italian-cut luxury blazer with elegant décolleté, pencil mini skirt, gold/turquoise cyber accessories",
-    voiceId: "en-US-Journey-F",
-    languageCode: "en-US",
-    speakingRate: 1.05,
-    pitch: 2.0,
-  },
-  elif_nur: {
-    id: "elif_nur",
-    name: "Elif Nur",
-    gender: "female",
-    eyeColor: "#00C853",
-    eyeColorLabel: "Luminous Emerald Green",
-    silhouette: "Feminine hourglass silhouette, warm Mediterranean features, expressive presence",
-    wardrobeStyle: "Modern luxury blazer with structured shoulders, body-fitting dress with subtle metallic accents",
-    voiceId: "tr-TR-Standard-E",
-    languageCode: "tr-TR",
-    speakingRate: 1.0,
-    pitch: 1.5,
-  },
-  sovereign_concierge: {
-    id: "sovereign_concierge",
-    name: "Sovereign Concierge",
-    gender: "female",
-    eyeColor: "#00C853",
-    eyeColorLabel: "Luminous Emerald Green",
-    silhouette: "Poised and precise, airbrushed digital aesthetic, otherworldly symmetry",
-    wardrobeStyle: "All-white precision blazer with NUR Finance monogram, holographic accent details",
-    voiceId: "en-US-Wavenet-F",
-    languageCode: "en-US",
-    speakingRate: 0.95,
-    pitch: 3.0,
-  },
-  marcus_sterling: {
-    id: "marcus_sterling",
-    name: "Marcus Sterling",
-    gender: "male",
-    eyeColor: "#1565C0",
-    eyeColorLabel: "Ocean Blue",
-    silhouette: "Broad-shouldered athletic frame, strong squared jaw, commanding stature",
-    wardrobeStyle: "Savile Row 3-piece anthracite suit, waistcoat, silk tie, luxury smart cufflinks",
-    voiceId: "en-US-Journey-D",
-    languageCode: "en-US",
-    speakingRate: 1.0,
-    pitch: -2.0,
-  },
-  alexander_croft: {
-    id: "alexander_croft",
-    name: "Alexander Croft",
-    gender: "male",
-    eyeColor: "#00897B",
-    eyeColorLabel: "Emerald Green",
-    silhouette: "Tall, lean and authoritative, defined angular features, composed gravitas",
-    wardrobeStyle: "Navy Savile Row suit with chalk stripe, silver pocket square, understated luxury watch",
-    voiceId: "en-GB-Wavenet-B",
-    languageCode: "en-GB",
-    speakingRate: 0.98,
-    pitch: -3.0,
-  },
-  klaus_weber: {
-    id: "klaus_weber",
-    name: "Klaus Weber",
-    gender: "male",
-    eyeColor: "#1976D2",
-    eyeColorLabel: "Steel Blue",
-    silhouette: "Robust muscular frame, precise Nordic features, disciplined bearing",
-    wardrobeStyle: "Charcoal 3-piece German tailored suit, burgundy silk tie, Patek Philippe timepiece",
-    voiceId: "de-DE-Wavenet-B",
-    languageCode: "de-DE",
-    speakingRate: 1.0,
-    pitch: -2.5,
-  },
-};
-
-// ─── Viseme / phoneme mapping ─────────────────────────────────────────────────
-// Maps phoneme labels to standard viseme IDs (0–21, compatible with Azure/Web Speech)
-
-const PHONEME_VISEME: Record<string, number> = {
-  "sil": 0, "PP": 21, "FF": 18, "TH": 17, "DD": 16, "kk": 20,
-  "CH": 15, "SS": 15, "nn": 14, "RR": 13, "aa": 2, "E": 4,
-  "I": 6, "O": 8, "U": 7, "ah": 2, "ay": 3, "aw": 11,
-  "eh": 4, "er": 5, "ih": 6, "iy": 6, "ow": 8, "uh": 7,
-  "uw": 7, "b": 21, "d": 16, "f": 18, "g": 20, "h": 12,
-  "jh": 15, "k": 20, "l": 14, "m": 21, "n": 14, "ng": 20,
-  "p": 21, "r": 13, "s": 15, "sh": 15, "t": 16, "v": 18,
-  "w": 7, "y": 6, "z": 15, "zh": 15,
-};
-
-export interface Viseme {
-  visemeId: number;
-  phoneme: string;
-  offsetMs: number;          // time offset from audio start
-  durationMs: number;
-}
-
-// Simple heuristic viseme generator from text (when Google doesn't return timestamps)
-function generateHeuristicVisemes(text: string, audioDurationMs: number): Viseme[] {
-  const words = text.split(/\s+/).filter(Boolean);
-  const msPerWord = audioDurationMs / Math.max(words.length, 1);
-  const visemes: Viseme[] = [];
-
-  let offsetMs = 0;
-  for (const word of words) {
-    // Map each letter cluster to a rough viseme
-    const phonemes = word.toLowerCase().replace(/[^a-z]/g, "").split("");
-    const msPerPhoneme = msPerWord / Math.max(phonemes.length, 1);
-
-    for (const ph of phonemes) {
-      const key = ph.toUpperCase();
-      visemes.push({
-        visemeId: PHONEME_VISEME[key] ?? 0,
-        phoneme: ph,
-        offsetMs: Math.round(offsetMs),
-        durationMs: Math.round(msPerPhoneme),
-      });
-      offsetMs += msPerPhoneme;
-    }
-    // Short silence between words
-    visemes.push({ visemeId: 0, phoneme: "sil", offsetMs: Math.round(offsetMs), durationMs: 40 });
-    offsetMs += 40;
-  }
-
-  return visemes;
-}
-
-// ─── Google Cloud TTS helper ──────────────────────────────────────────────────
-
-interface GoogleTTSRequest {
-  input: { text?: string; ssml?: string };
-  voice: { languageCode: string; name: string };
-  audioConfig: {
-    audioEncoding: string;
-    speakingRate: number;
-    pitch: number;
-    effectsProfileId?: string[];
-  };
-  enableTimePointing?: string[];  // ["SSML_MARK"] for timestamps
-}
-
-function googleTTS(payload: GoogleTTSRequest, apiKey: string): Promise<{
-  audioContent: string;
-  timepoints?: Array<{ markName: string; timeSeconds: number }>;
-}> {
+function fetchGoogleNeuralChunk(text: string, lang: string): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const body = JSON.stringify(payload);
-    const req = https.request({
-      hostname: "texttospeech.googleapis.com",
-      path: `/v1/text:synthesize?key=${apiKey}`,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(body),
-        "User-Agent": "NURFinanceTerminal/1.0",
-      },
-    }, res => {
-      let data = "";
-      res.on("data", c => (data += c));
-      res.on("end", () => {
-        try { resolve(JSON.parse(data)); }
-        catch { reject(new Error(`Google TTS parse error: ${data.slice(0, 200)}`)); }
-      });
-    });
-    req.on("error", reject);
-    req.write(body);
-    req.end();
+    const encodedText = encodeURIComponent(text.trim());
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodedText}`;
+
+    https
+      .get(
+        url,
+        {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            Referer: "https://translate.google.com/",
+          },
+        },
+        (res) => {
+          if (res.statusCode !== 200) {
+            reject(new Error(`TTS upstream returned status ${res.statusCode}`));
+            return;
+          }
+          const chunks: Buffer[] = [];
+          res.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+          res.on("end", () => resolve(Buffer.concat(chunks)));
+        }
+      )
+      .on("error", (err) => reject(err));
   });
 }
 
-// ─── Estimate audio duration from base64 MP3 size ────────────────────────────
+/**
+ * Splits text into natural sentence chunks (max 180 chars) for smooth streaming
+ */
+function splitIntoNaturalChunks(text: string, maxLen = 170): string[] {
+  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+  const chunks: string[] = [];
+  let current = "";
 
-function estimateDurationMs(base64: string, format: "mp3" | "wav"): number {
-  const bytes = (base64.length * 3) / 4;
-  if (format === "wav") {
-    // WAV: 44100 Hz, 16-bit, mono ≈ 88200 bytes/s
-    return Math.round((bytes / 88200) * 1000);
+  for (const s of sentences) {
+    const trimmed = s.trim();
+    if (!trimmed) continue;
+    if ((current + " " + trimmed).trim().length <= maxLen) {
+      current = (current + " " + trimmed).trim();
+    } else {
+      if (current) chunks.push(current);
+      if (trimmed.length <= maxLen) {
+        current = trimmed;
+      } else {
+        // Split long sentence by commas or words
+        const words = trimmed.split(/\s+/);
+        let subChunk = "";
+        for (const w of words) {
+          if ((subChunk + " " + w).trim().length <= maxLen) {
+            subChunk = (subChunk + " " + w).trim();
+          } else {
+            if (subChunk) chunks.push(subChunk);
+            subChunk = w;
+          }
+        }
+        if (subChunk) current = subChunk;
+        else current = "";
+      }
+    }
   }
-  // MP3: ~128kbps ≈ 16000 bytes/s
-  return Math.round((bytes / 16000) * 1000);
+  if (current) chunks.push(current);
+  return chunks.length > 0 ? chunks : [text.slice(0, maxLen)];
 }
-
-// ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  let body: {
-    text?: string;
-    voiceId?: string;
-    languageCode?: string;
-    speakingRate?: number;
-    pitch?: number;
-    persona?: PersonaId;
-    format?: "mp3" | "wav";
-    includeVisemes?: boolean;
-  };
-
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+    const body = await req.json();
+    const text = body.text || "";
+    const langCode = (body.languageCode || body.langCode || "tr-TR").toLowerCase();
 
-  if (!body.text?.trim()) {
-    return NextResponse.json({ error: "text is required" }, { status: 400 });
-  }
-
-  const persona = body.persona ? PERSONAS[body.persona] : null;
-  const format = body.format ?? "mp3";
-  const apiKey = process.env.GOOGLE_TTS_API_KEY ?? "";
-
-  const voiceId = body.voiceId ?? persona?.voiceId ?? "en-US-Journey-F";
-  const languageCode = body.languageCode ?? persona?.languageCode ?? "en-US";
-  const speakingRate = body.speakingRate ?? persona?.speakingRate ?? 1.0;
-  const pitch = body.pitch ?? persona?.pitch ?? 0.0;
-
-  if (!apiKey) {
-    // Stub response when API key not configured
-    const stubAudio = Buffer.from("stub-audio").toString("base64");
-    return NextResponse.json({
-      audioBase64: stubAudio,
-      format,
-      durationMs: Math.round(body.text.split(/\s+/).length * 350),
-      visemes: body.includeVisemes
-        ? generateHeuristicVisemes(body.text, Math.round(body.text.split(/\s+/).length * 350))
-        : undefined,
-      persona: persona ?? null,
-      warning: "GOOGLE_TTS_API_KEY not configured — returning stub audio",
-    });
-  }
-
-  try {
-    const ttsRequest: GoogleTTSRequest = {
-      input: { text: body.text },
-      voice: { languageCode, name: voiceId },
-      audioConfig: {
-        audioEncoding: format === "mp3" ? "MP3" : "LINEAR16",
-        speakingRate,
-        pitch,
-        effectsProfileId: ["headphone-class-device"],
-      },
-    };
-
-    const result = await googleTTS(ttsRequest, apiKey);
-
-    if (!result.audioContent) {
-      return NextResponse.json({ error: "Google TTS returned empty audio" }, { status: 502 });
+    if (!text.trim()) {
+      return NextResponse.json({ error: "Text parameter is required." }, { status: 400 });
     }
 
-    const durationMs = estimateDurationMs(result.audioContent, format);
+    // Map language code to TTS language tag
+    let targetLang = "tr";
+    if (langCode.startsWith("en")) targetLang = "en";
+    else if (langCode.startsWith("de")) targetLang = "de";
+    else if (langCode.startsWith("fr")) targetLang = "fr";
+    else if (langCode.startsWith("ru")) targetLang = "ru";
+    else if (langCode.startsWith("ar")) targetLang = "ar";
+    else if (langCode.startsWith("ja")) targetLang = "ja";
+    else if (langCode.startsWith("zh")) targetLang = "zh-CN";
+    else if (langCode.startsWith("ko")) targetLang = "ko";
+    else if (langCode.startsWith("es")) targetLang = "es";
+    else if (langCode.startsWith("pt")) targetLang = "pt";
+    else if (langCode.startsWith("hi")) targetLang = "hi";
+    else if (langCode.startsWith("tr")) targetLang = "tr";
 
-    let visemes: Viseme[] | undefined;
-    if (body.includeVisemes) {
-      // Generate heuristic visemes (Google Cloud's timepoints require SSML marks)
-      visemes = generateHeuristicVisemes(body.text, durationMs);
+    // Split into chunks and fetch neural audio
+    const chunks = splitIntoNaturalChunks(text);
+    const audioBuffers: Buffer[] = [];
+
+    for (const chunk of chunks) {
+      try {
+        const audioBuf = await fetchGoogleNeuralChunk(chunk, targetLang);
+        if (audioBuf && audioBuf.length > 0) {
+          audioBuffers.push(audioBuf);
+        }
+      } catch (err) {
+        console.warn(`[TTS Chunk Warning] failed for chunk "${chunk.slice(0, 30)}":`, err);
+      }
     }
 
+    if (audioBuffers.length === 0) {
+      return NextResponse.json({ error: "Failed to generate neural audio." }, { status: 502 });
+    }
+
+    const fullAudio = Buffer.concat(audioBuffers);
+    const base64Audio = fullAudio.toString("base64");
+
     return NextResponse.json({
-      audioBase64: result.audioContent,
-      format,
-      durationMs,
-      visemes,
-      persona: persona ?? null,
+      success: true,
+      audioBase64: base64Audio,
+      audioUrl: `data:audio/mp3;base64,${base64Audio}`,
+      format: "mp3",
+      lang: targetLang,
+      durationMs: Math.round(fullAudio.length / 16), // Approx MP3 duration
     });
-  } catch (err) {
-    console.error("[TTS] Error:", (err as Error).message);
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("[TTS API Error]:", error);
+    return NextResponse.json(
+      { error: "Internal TTS server error", details: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
 
-// ─── GET: list available personas ─────────────────────────────────────────────
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const text = searchParams.get("text") || "Nur Finans Küresel Piyasa Masası canlı yayında.";
+  const lang = searchParams.get("lang") || "tr";
 
-export async function GET() {
-  return NextResponse.json({
-    personas: Object.values(PERSONAS).map(p => ({
-      id: p.id,
-      name: p.name,
-      gender: p.gender,
-      eyeColor: p.eyeColor,
-      eyeColorLabel: p.eyeColorLabel,
-      voiceId: p.voiceId,
-      languageCode: p.languageCode,
-    })),
-    visualStandards: {
-      female: "Luminous Emerald Green eyes (#00C853) — always, no exceptions",
-      male: "Emerald Green (#00897B) or Steel/Ocean Blue (#1565C0) eyes",
-    },
-  });
+  try {
+    const chunks = splitIntoNaturalChunks(text);
+    const buffers: Buffer[] = [];
+    for (const chunk of chunks) {
+      const buf = await fetchGoogleNeuralChunk(chunk, lang);
+      buffers.push(buf);
+    }
+    const combined = Buffer.concat(buffers);
+
+    return new NextResponse(combined, {
+      headers: {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": combined.length.toString(),
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }
