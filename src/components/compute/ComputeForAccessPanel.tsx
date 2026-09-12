@@ -12,6 +12,7 @@ import {
   WalletTransaction,
 } from "@/lib/crypto/sovereignWallet";
 import { webComputeEngine, MiningTelemetry } from "@/lib/compute/webComputeEngine";
+import { isDesktop, nurBridge } from "@/lib/electron/bridge";
 
 type CfaTab = "overview" | "wallet" | "schedule" | "agreement" | "dashboard";
 
@@ -151,6 +152,18 @@ export default function ComputeForAccessPanel() {
     const slot = region.schedule.find(s => h >= s.start && h < s.end);
     setIsOptimalNow(!!slot?.active);
   }, [region]);
+
+  useEffect(() => {
+    if (miningActive) {
+      if (isDesktop) {
+        nurBridge.miningStart();
+      }
+    } else {
+      if (isDesktop) {
+        nurBridge.miningStop();
+      }
+    }
+  }, [miningActive]);
 
   useEffect(() => {
     if (!miningActive) return;
