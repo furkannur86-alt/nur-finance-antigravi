@@ -6,15 +6,17 @@
 ## 🎯 Executive Overview & Vision
 NUR Finance produces a 24/7 autonomous financial television broadcast, AI-powered executive avatar concierges, dynamic market video generation, and sovereign virtual headquarters.
 
-### 👥 Aesthetic Character & Persona Directives
+### 👥 Aesthetic Character & Persona Directives (Strict Sovereign Standard)
 1. **Male Characters (e.g. Marcus Sterling, Alexander Croft, Klaus Weber)**:
-   - **Visual Identity**: High-masculinity, athletic/muscular physique, sharp chiseled jawline, commanding posture.
+   - **Eye Color**: Exclusively **Emerald Green** or **Steel / Ocean Blue** (Striking, intense, piercing gaze).
+   - **Physique**: High-masculinity, muscular athletic build, broad shoulders, chiseled jawline, commanding posture.
    - **Wardrobe**: Savile Row tailored 3-piece charcoal/navy suits with athletic taper, fitted shirts, silk ties, subtle cybernetic/smart luxury cufflinks and earpieces.
    - **Voice & Tone**: Deep baritone, authoritative institutional delivery, confident market precision.
 
 2. **Female Characters (e.g. Elena Vance, Elif Nur, Sovereign Concierges)**:
-   - **Visual Identity**: Striking feminine elegance, sophisticated refined facial features, poised and charismatic presence.
-   - **Wardrobe**: High-fashion executive styling, tailored blazers with subtle feminine neckline cuts, elegant fitted pencil/mini skirt silhouettes, discrete glowing cybernetic ear adornments, bespoke gold/cyan accessories.
+   - **Eye Color**: Exclusively **Luminous Emerald Green** (Captivating, crystal-clear green eyes across all female anchors and concierges).
+   - **Physique**: Striking feminine elegance, pronounced feminine curves and silhouette, refined aristocratic facial features, poised presence.
+   - **Wardrobe**: High-fashion executive styling, tailored luxury blazers with subtle tasteful decollete, elegant mini skirts / fitted pencil skirts, discrete glowing cybernetic ear adornments, bespoke gold/cyan accessories.
    - **Voice & Tone**: Melodic, crystalline articulate cadence, warm yet mathematically incisive private banker delivery.
 
 3. **Virtual Studios & Headquarters**:
