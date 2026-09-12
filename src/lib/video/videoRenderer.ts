@@ -1,16 +1,19 @@
 /**
  * NUR Finance Video Render Engine
- * Canvas 2D → MediaRecorder → WebM/MP4 pipeline
- * Renders market bulletins, stock analysis, and DePIN metrics at 1080p 60fps.
+ * Canvas 2D → ffmpeg pipe → MP4/WebM at 1080p 60fps
  *
- * Server-side: runs in Node.js via canvas npm package (install: npm i canvas)
- * Client-side: runs in browser with HTMLCanvasElement
+ * Server-side: Node.js via node-canvas + ffmpeg subprocess
+ * Client-side: HTMLCanvasElement + MediaRecorder
  *
  * Template types:
  *   - market_bulletin: live prices, indices snapshot
  *   - stock_analysis:  OHLCV candles + RSI + MACD
  *   - depin_metrics:   mining pool stats, NUR earnings
  *   - nur_digest:      daily NUR Finance digest card
+ *
+ * Persona wardrobe standards:
+ *   Female (Elena Vance, Elif Nur, Sovereign Concierge): Luminous Emerald Green eyes.
+ *   Male   (Marcus Sterling, Alexander Croft, Klaus Weber): Emerald Green or Steel Blue eyes.
  */
 
 export type TemplateType = "market_bulletin" | "stock_analysis" | "depin_metrics" | "nur_digest";
@@ -750,4 +753,125 @@ export async function generateThumbnail(opts: ThumbnailOptions): Promise<Thumbna
   renderFrame(ctx, renderOpts, 5000, 1);
 
   return { dataUrl: canvas.toDataURL("image/png"), width: w, height: h };
+}
+
+// ─── FFmpeg Video Encoder (server-side only) ──────────────────────────────────
+// Pipes raw PNG frames directly into ffmpeg stdin — no temp files needed.
+// Requires: ffmpeg in PATH and `npm i canvas`
+
+export interface VideoEncodeOptions extends RenderOptions {
+  outputPath: string;   // absolute path to write the output file
+  audioPath?: string;   // optional pre-rendered audio track (mp3/wav)
+  crf?: number;         // H.264 CRF quality (0=lossless, 23=default, 51=worst)
+  preset?: "ultrafast" | "superfast" | "veryfast" | "faster" | "fast" | "medium" | "slow";
+  onProgress?: (frameN: number, total: number) => void;
+}
+
+export interface VideoEncodeResult {
+  outputPath: string;
+  width: number;
+  height: number;
+  fps: number;
+  totalFrames: number;
+  durationMs: number;
+  fileSizeBytes: number;
+}
+
+export async function renderToVideo(opts: VideoEncodeOptions): Promise<VideoEncodeResult> {
+  // Dynamic imports — server-side only
+  const [{ createCanvas }, { spawn }, { statSync }] = await Promise.all([
+    (async () => {
+      try { return await import("canvas" as string) as { createCanvas: (w: number, h: number) => HTMLCanvasElement }; }
+      catch { throw new Error("'canvas' package required: npm i canvas"); }
+    })(),
+    import("child_process"),
+    import("fs"),
+  ]);
+
+  const fullOpts: Required<Omit<VideoEncodeOptions, "audioPath" | "onProgress" | "outputPath" | "crf" | "preset">> = {
+    template: opts.template,
+    data: opts.data,
+    width: opts.width ?? 1920,
+    height: opts.height ?? 1080,
+    fps: opts.fps ?? 60,
+    durationMs: opts.durationMs ?? 8000,
+    outputFormat: opts.outputFormat ?? "mp4",
+    bitrate: opts.bitrate ?? 8_000_000,
+    watermark: opts.watermark ?? "nur.finance",
+  };
+
+  const totalFrames = Math.round(fullOpts.fps * fullOpts.durationMs / 1000);
+  const frameMs = 1000 / fullOpts.fps;
+
+  // Build ffmpeg args — raw PNG pipe → H.264 → output
+  const ffArgs: string[] = [
+    "-y",                              // overwrite
+    "-f", "image2pipe",
+    "-vcodec", "png",
+    "-framerate", String(fullOpts.fps),
+    "-i", "pipe:0",                    // read frames from stdin
+  ];
+
+  if (opts.audioPath) {
+    ffArgs.push("-i", opts.audioPath, "-shortest");
+  }
+
+  ffArgs.push(
+    "-vf", `scale=${fullOpts.width}:${fullOpts.height}`,
+    "-c:v", "libx264",
+    "-pix_fmt", "yuv420p",
+    "-crf", String(opts.crf ?? 18),
+    "-preset", opts.preset ?? "fast",
+    "-movflags", "+faststart",
+    "-b:v", `${Math.round(fullOpts.bitrate / 1000)}k`,
+    opts.outputPath,
+  );
+
+  const ffmpeg = spawn("ffmpeg", ffArgs, { stdio: ["pipe", "pipe", "pipe"] });
+
+  const encodeErrors: string[] = [];
+  ffmpeg.stderr?.on("data", (chunk: Buffer) => {
+    const line = chunk.toString();
+    if (line.includes("Error") || line.includes("error")) encodeErrors.push(line.trim());
+  });
+
+  // Render and pipe frames
+  const canvas = createCanvas(fullOpts.width, fullOpts.height);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ctx = canvas.getContext("2d") as unknown as CanvasRenderingContext2D;
+
+  for (let f = 0; f < totalFrames; f++) {
+    renderFrame(ctx, fullOpts, f * frameMs, f);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pngBuf: Buffer = (canvas as any).toBuffer("image/png");
+    const canWrite = ffmpeg.stdin?.write(pngBuf);
+    if (!canWrite) {
+      // Backpressure — wait for drain
+      await new Promise<void>(res => ffmpeg.stdin?.once("drain", res));
+    }
+    opts.onProgress?.(f + 1, totalFrames);
+  }
+
+  ffmpeg.stdin?.end();
+
+  // Wait for ffmpeg to finish
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`ffmpeg exited ${code}: ${encodeErrors.slice(-3).join(" | ")}`));
+    });
+    ffmpeg.on("error", reject);
+  });
+
+  const stat = statSync(opts.outputPath);
+
+  return {
+    outputPath: opts.outputPath,
+    width: fullOpts.width,
+    height: fullOpts.height,
+    fps: fullOpts.fps,
+    totalFrames,
+    durationMs: fullOpts.durationMs,
+    fileSizeBytes: stat.size,
+  };
 }
