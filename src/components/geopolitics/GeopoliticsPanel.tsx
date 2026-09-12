@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import NurEarth3DGlobe from "./NurEarth3DGlobe";
+import SatelliteCrisisOrbitPanel from "./SatelliteCrisisOrbitPanel";
 import EagleCrest from "@/components/ui/EagleCrest";
 
 interface ConflictEvent {
@@ -278,7 +279,7 @@ export default function GeopoliticsPanel() {
   const [data, setData] = useState<ConflictSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"earth-3d" | "overview" | "events" | "assets">("earth-3d");
+  const [activeTab, setActiveTab] = useState<"earth-3d" | "sar-radar" | "overview" | "events" | "assets">("earth-3d");
 
   const fetchData = useCallback(async () => {
     try {
@@ -350,8 +351,9 @@ export default function GeopoliticsPanel() {
         <div className="flex items-center gap-1">
           {(
             [
-              { id: "earth-3d" as const, label: "🌐 NUR Earth 3D (Flights & Oil)" },
-              { id: "overview" as const, label: "📊 Risk Overview & Charts" },
+              { id: "earth-3d" as const, label: "🌐 NUR Earth 3D" },
+              { id: "sar-radar" as const, label: "📡 SAR Radar & Chokepoints" },
+              { id: "overview" as const, label: "📊 Risk Overview" },
               { id: "events" as const, label: "⚔ Event Log" },
               { id: "assets" as const, label: "📈 Asset Impact" },
             ] as const
@@ -384,6 +386,9 @@ export default function GeopoliticsPanel() {
       <div className="flex-1 overflow-hidden">
         {activeTab === "earth-3d" && (
           <NurEarth3DGlobe />
+        )}
+        {activeTab === "sar-radar" && (
+          <SatelliteCrisisOrbitPanel />
         )}
         {activeTab === "overview" && (
           <div className="p-4 space-y-4">
