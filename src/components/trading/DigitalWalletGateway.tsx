@@ -5,6 +5,8 @@ import { useIDEStore } from "@/stores/useIDEStore";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { updateMyTier } from "@/lib/auth/supabase-auth";
 
+import SovereignVaultPOSPanel from "@/components/crypto/SovereignVaultPOSPanel";
+
 interface CryptoNetwork {
   id: string;
   name: string;
@@ -104,7 +106,7 @@ export default function DigitalWalletGateway() {
   const [txHash, setTxHash] = useState("");
   const [isVerifyingTx, setIsVerifyingTx] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"pay" | "guide" | "security">("pay");
+  const [activeTab, setActiveTab] = useState<"pay" | "pos_vault" | "guide" | "security">("pay");
 
   const planAmount = selectedPlan === "R" ? "100,000 USDT" : "100,000 USDT (VIP Verified)";
   const selectedTierId = selectedPlan === "R" ? "NUR_FINANCE_R" : "NUR_FINANCE_B";
@@ -217,6 +219,16 @@ export default function DigitalWalletGateway() {
             }`}
           >
             Ödeme ve Transfer
+          </button>
+          <button
+            onClick={() => setActiveTab("pos_vault")}
+            className={`px-3 py-1 rounded transition-colors ${
+              activeTab === "pos_vault"
+                ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40"
+                : "text-[var(--ag-muted)] hover:text-white"
+            }`}
+          >
+            💳 POS &amp; Soğuk Cüzdan Kasası
           </button>
           <button
             onClick={() => setActiveTab("guide")}
@@ -551,6 +563,13 @@ export default function DigitalWalletGateway() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* POS & PAPER VAULT TAB */}
+        {activeTab === "pos_vault" && (
+          <div className="h-full">
+            <SovereignVaultPOSPanel />
           </div>
         )}
 
