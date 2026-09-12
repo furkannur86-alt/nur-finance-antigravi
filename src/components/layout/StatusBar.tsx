@@ -124,7 +124,7 @@ export default function StatusBar() {
         <span style={{ color: "rgba(0,212,170,0.2)" }}>│</span>
 
         {/* Clock */}
-        <span style={{ color: "rgba(0,212,170,0.55)", letterSpacing: "0.1em" }}>
+        <span suppressHydrationWarning style={{ color: "rgba(0,212,170,0.55)", letterSpacing: "0.1em" }}>
           {clock} UTC
         </span>
       </div>

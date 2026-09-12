@@ -195,12 +195,17 @@ export default function ModuleLauncher({ open, onClose }: Props) {
                 {modules.map((m) => {
                   const isHovered = hovered === m.id;
                   return (
-                    <button
+                    <div
                       key={m.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => handleSelect(m.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") handleSelect(m.id);
+                      }}
                       onMouseEnter={() => setHovered(m.id)}
                       onMouseLeave={() => setHovered(null)}
-                      className="flex flex-col items-center gap-2 p-3 rounded-xl text-center transition-all duration-150"
+                      className="flex flex-col items-center gap-2 p-3 rounded-xl text-center transition-all duration-150 cursor-pointer select-none"
                       style={{
                         background: isHovered
                           ? `linear-gradient(135deg, ${m.color}18, ${m.color}08)`
@@ -230,6 +235,7 @@ export default function ModuleLauncher({ open, onClose }: Props) {
                       <div className="flex items-center justify-between w-full mt-1">
                         <span className="text-[8px] text-slate-500">{m.group}</span>
                         <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             useIDEStore.getState().openFloatingWindow(m.id, m.label);
@@ -241,7 +247,7 @@ export default function ModuleLauncher({ open, onClose }: Props) {
                           ⤢ FLOATING
                         </button>
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
