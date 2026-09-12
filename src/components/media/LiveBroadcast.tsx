@@ -127,21 +127,22 @@ export default function LiveBroadcast() {
     setVideoProgress(10);
     handleSpeak();
 
+    let current = 10;
     const interval = setInterval(() => {
-      setVideoProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsRecordingVideo(false);
-          addNotification({
-            title: "🎬 1080p MP4 Video Üretildi",
-            message: `${selectedLang.name} bülteni (${activeSegment.toUpperCase()}) video çıktısı başarıyla hazırlandı.`,
-            severity: "SUCCESS",
-            category: "MEDIA",
-          });
-          return 0;
-        }
-        return prev + 20;
-      });
+      current += 20;
+      if (current >= 100) {
+        clearInterval(interval);
+        setVideoProgress(0);
+        setIsRecordingVideo(false);
+        addNotification({
+          title: "🎬 1080p MP4 Video Üretildi",
+          message: `${selectedLang.name} bülteni (${activeSegment.toUpperCase()}) video çıktısı başarıyla hazırlandı.`,
+          severity: "SUCCESS",
+          category: "MEDIA",
+        });
+      } else {
+        setVideoProgress(current);
+      }
     }, 1200);
   };
 
