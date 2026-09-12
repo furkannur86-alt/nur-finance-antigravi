@@ -12,6 +12,7 @@ import { cyberSound } from "@/lib/audio/sound-synth";
 import { useIDEStore } from "@/stores/useIDEStore";
 
 export type StudioBackdropMode =
+  | "NUR_STUDIO_2126"
   | "3D_GLOBE"
   | "ORBITAL_RADAR"
   | "FINANCIAL_BOURSES"
@@ -86,7 +87,20 @@ export default function LiveBroadcast() {
     <div className="relative w-full h-full bg-slate-950 overflow-hidden select-none font-sans text-white flex flex-col justify-between">
       {/* ── BACKGROUND STUDIO VIDEO WALL ──────────────────────────────────── */}
       <div className="absolute inset-0 z-0 bg-slate-950 overflow-hidden">
-        {backdropMode === "3D_GLOBE" ? (
+        {backdropMode === "NUR_STUDIO_2126" ? (
+          <div className="w-full h-full relative overflow-hidden">
+            <img
+              src="/images/studio/broadcast_studio.jpg"
+              alt="NUR TV 2126 Studio Set"
+              className="w-full h-full object-cover opacity-90 scale-105 transform animate-pulse duration-1000"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/60 pointer-events-none" />
+            <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/80 text-white font-mono text-[10px] font-bold tracking-widest uppercase shadow-lg border border-red-400/40 animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+              <span>NUR TV 2126 4K HDR BROADCAST HUB</span>
+            </div>
+          </div>
+        ) : backdropMode === "3D_GLOBE" ? (
           <div className="w-full h-full relative">
             <NurEarth3DGlobe />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/70 pointer-events-none" />
@@ -175,6 +189,7 @@ export default function LiveBroadcast() {
           {/* Studio Video Wall Selector */}
           <div className="hidden md:flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-[10px]">
             {[
+              { id: "NUR_STUDIO_2126", label: "📺 NUR 2126 STUDIO" },
               { id: "3D_GLOBE", label: "🌐 3D GLOBE" },
               { id: "ORBITAL_RADAR", label: "📡 ORBIT RADAR" },
               { id: "FINANCIAL_BOURSES", label: "📊 BOURSES" },
@@ -316,9 +331,22 @@ export default function LiveBroadcast() {
                 ))}
               </div>
 
-              <p className="text-[11px] text-slate-300 leading-relaxed max-h-24 overflow-y-auto">
-                {selectedLang.scripts[activeSegment]}
-              </p>
+              {/* Anchor Photo & Script */}
+              <div className="flex items-start gap-3">
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-amber-400/50 shrink-0 shadow-md">
+                  <img
+                    src={selectedLang.id === "tr" ? "/images/studio/elena_vance.jpg" : "/images/studio/marcus_sterling.jpg"}
+                    alt={selectedLang.defaultAnchorName}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-0 inset-x-0 bg-black/70 text-[7px] font-mono text-center text-emerald-400 font-bold">
+                    {selectedLang.id === "tr" ? "🟢 GREEN EYES" : "🔵 BLUE EYES"}
+                  </div>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed max-h-24 overflow-y-auto flex-1">
+                  {selectedLang.scripts[activeSegment]}
+                </p>
+              </div>
 
               {isSpeaking && (
                 <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-bold animate-pulse pt-1 border-t border-white/10">
