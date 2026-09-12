@@ -8,18 +8,25 @@ NUR Finance produces a 24/7 autonomous financial television broadcast, AI-powere
 
 ### 👥 Aesthetic Character & Persona Directives (Strict Sovereign Standard)
 1. **Male Characters (e.g. Marcus Sterling, Alexander Croft, Klaus Weber)**:
-   - **Eye Color**: Exclusively **Emerald Green** or **Steel / Ocean Blue** (Striking, intense, piercing gaze).
-   - **Physique**: High-masculinity, muscular athletic build, broad shoulders, chiseled jawline, commanding posture.
-   - **Wardrobe**: Savile Row tailored 3-piece charcoal/navy suits with athletic taper, fitted shirts, silk ties, subtle cybernetic/smart luxury cufflinks and earpieces.
+   - **Eye Color**: Exclusively **Luminous Emerald Green** (`#00C853`).
+   - **Physique**: High-masculinity, muscular athletic build, 1.90m+ height, 20s youthful vitality, chiseled sharp jawline, commanding posture.
+   - **Wardrobe & Timepiece**: Savile Row tailored 3-piece charcoal/navy suits with athletic taper, silk ties, skeletonized titanium / rose gold Swiss Haute Horlogerie chronographs.
    - **Voice & Tone**: Deep baritone, authoritative institutional delivery, confident market precision.
 
-2. **Female Characters (e.g. Elena Vance, Elif Nur, Sovereign Concierges)**:
-   - **Eye Color**: Exclusively **Luminous Emerald Green** (Captivating, crystal-clear green eyes across all female anchors and concierges).
-   - **Physique**: Striking feminine elegance, pronounced feminine curves and silhouette, refined aristocratic facial features, poised presence.
-   - **Wardrobe**: High-fashion executive styling, tailored luxury blazers with subtle tasteful decollete, elegant mini skirts / fitted pencil skirts, discrete glowing cybernetic ear adornments, bespoke gold/cyan accessories.
+2. **Female Characters (General: Elena Vance, Victoria Ashworth, Camille Dubois, Sovereign Concierges)**:
+   - **Eye Color**: Exclusively **Luminous Emerald Green** (`#00C853`).
+   - **Physique**: Minimum 90 bust size, 185cm tall, striking feminine hourglass silhouette, alluring screen presence within high-end financial broadcasting standards.
+   - **Wardrobe & Timepiece**: Haute couture tailored luxury blazers with tasteful broadcast-compliant decollete, fitted pencil/mini skirts, prestigious Swiss rose gold luxury timepieces, discrete glowing cybernetic ear adornments.
    - **Voice & Tone**: Melodic, crystalline articulate cadence, warm yet mathematically incisive private banker delivery.
 
-3. **Virtual Studios & Headquarters**:
+3. **Umay Nur Specific Sovereign Anchor Protocol (Strict Exception)**:
+   - **Decollete & Skirt Rule**: **ZERO DECOLLETE, ZERO MINI SKIRT**.
+   - **Aesthetic**: Highest seriousness, aristocratic gravity, sophisticated elegance.
+   - **Wardrobe**: High-neck bespoke cream-white designer double-breasted suit with structured shoulders and tailored trousers / elegant knee-length skirt.
+   - **Timepiece**: Classic Swiss Yellow Gold Perpetual Calendar.
+   - **Eye Color**: Exclusively **Luminous Emerald Green** (`#00C853`).
+
+4. **Virtual Studios & Headquarters**:
    - **NUR TV Main Studio (Year 2126)**: Curved obsidian glass desk, holographic rotating Earth globe, real-time LED candlestick walls, dynamic lower-third data crawl.
    - **Umay Gül Nur Holding & Tatar Finans Headquarters**: Penthouse executive suites overlooking twilight skylines (Istanbul, Zurich, London, Geneva), black marble tables, gold double-headed eagle sovereign crests.
 

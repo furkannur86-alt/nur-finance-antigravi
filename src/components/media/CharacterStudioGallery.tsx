@@ -13,10 +13,13 @@ interface CharacterProfile {
   location: string;
   age: number;
   heightCm: number;
+  bustSize: string;
   eyeColor: string;
   eyeHex: string;
   physique: string;
   wardrobe: string;
+  decolletePolicy: string;
+  watchModel: string;
   voiceName: string;
   voiceSample: string;
   imagePath: string;
@@ -31,30 +34,36 @@ const CHARACTERS: CharacterProfile[] = [
     location: "Genève Private Suite / Zurich",
     age: 30,
     heightCm: 185,
-    eyeColor: "Luminous Emerald Green",
+    bustSize: "90D (Feminen Kum Saati)",
+    eyeColor: "Işıltılı Zümrüt Yeşili",
     eyeHex: "#00C853",
-    physique: "Hourglass silhouette, elegant posture, captivating screen presence",
-    wardrobe: "Emerald-green tailored designer blazer with subtle neckline & pencil skirt",
+    physique: "185 cm · Belirgin feminen hatlar ve kıvrımlar · Çekici ekran duruşu",
+    wardrobe: "Milano tasarımı zümrüt yeşili lüks kruvaze blazer ve kalem etek",
+    decolletePolicy: "Şık ve televizyon yayın sınırlarında estetik dekolte",
+    watchModel: "Swiss Haute Horlogerie Rose Gold Royal Chronograph",
     voiceName: "Google Journey-F (Genève Institutional)",
     voiceSample: "Good morning. From the Geneva sovereign wealth desk, global central bank reserves and liquidity channels remain robust with continuous surveillance.",
     imagePath: "/images/characters/elena_vance.jpg",
-    bio: "Chief strategist for sovereign institutional accounts. Manages macroeconomic allocation forecasts and cross-border currency reserves."
+    bio: "Cenevre Gölü ve Alpler manzaralı özel bankacılık süitinden küresel makroekonomik kararları, faiz politikalarını ve merkez bankası rezervlerini sunar. Şık yayın dekoltesi ve lüks İsviçre saatiyle zenginliği yansıtır."
   },
   {
     id: "umay_nur",
     name: "Umay Nur",
-    role: "Lead Anchor & Chief Financial Presenter",
+    role: "Başekonomist & Canlı Yayın Masası Lideri",
     location: "Istanbul Bosphorus Desk / London",
     age: 29,
     heightCm: 185,
-    eyeColor: "Luminous Emerald Green",
+    bustSize: "90 (Zarif ve Asil)",
+    eyeColor: "Işıltılı Zümrüt Yeşili",
     eyeHex: "#00C853",
-    physique: "Striking feminine curves, poised aristocratic features",
-    wardrobe: "Tailored cream-white double-breasted blazer with tasteful decollete & mini skirt",
-    voiceName: "Google Wavenet-B (TR-Istanbul Direct)",
+    physique: "185 cm · Asil, vakur, son derece ciddi ve aristokrat finans lideri",
+    wardrobe: "Yüksek yaka (High-Neck) krem-beyaz lüks kruvaze takım elbise",
+    decolletePolicy: "SIFIR DEKOLTE · SIFIR MİNİ ETEK (Tamamen Kapalı ve Ciddi)",
+    watchModel: "Klasik İsviçre Sarı Altın Nautilus Perpetual Calendar",
+    voiceName: "Google Wavenet-B (TR-İstanbul)",
     voiceSample: "İyi günler. Nur Finans Küresel Piyasa Masası'ndan canlı yayınımız başlıyor. BIST-100 ve küresel sermaye hareketlerini aktarıyoruz.",
     imagePath: "/images/characters/umay_nur.jpg",
-    bio: "Head presenter for Turkish and Mediterranean financial coverage. Known for lightning-fast earnings breakdown and macroeconomic depth."
+    bio: "Kanalın en saygın ve otoriter lideri. Yüksek yaka asil krem-beyaz takım elbisesiyle tam ciddiyet ve kurumsal ağırlık sergiler. Kesinlikle dekolte veya mini etek giymez; zarafeti asaletindedir."
   },
   {
     id: "marcus_sterling",
@@ -63,14 +72,17 @@ const CHARACTERS: CharacterProfile[] = [
     location: "Wall Street Hudson Yards / London",
     age: 28,
     heightCm: 193,
-    eyeColor: "Luminous Emerald Green",
+    bustSize: "Geniş Omuz / Atletik Göğüs",
+    eyeColor: "Işıltılı Zümrüt Yeşili",
     eyeHex: "#00C853",
-    physique: "Muscular athletic build, broad shoulders, chiseled sharp jawline",
-    wardrobe: "Savile Row bespoke 3-piece navy suit with silk tie and smart cufflinks",
-    voiceName: "Google Journey-D (Deep Authoritative Baritone)",
+    physique: "193 cm · Kaslı atletik gövde, geniş omuzlar, keskin çene hattı (jawline)",
+    wardrobe: "Savile Row özel dikim 3 parça lacivert takım elbise ve ipek kravat",
+    decolletePolicy: "Maskülen Güç & Atletik Duruş",
+    watchModel: "Skeleton Titanyum Tourbillon Chronograph",
+    voiceName: "Google Journey-D (Derin Otoriter Bariton)",
     voiceSample: "The quantitative arbitrage engine has confirmed high-frequency dark pool volume with institutional Kelly allocations locked.",
     imagePath: "/images/characters/marcus_sterling.jpg",
-    bio: "Wall Street quantitative strategist overseeing high-frequency market-neutral algorithmic execution and distributed WebGPU mining clusters."
+    bio: "Wall Street ve Londra finans merkezlerinde yüksek frekanslı kantitatif algoritmaları, Black-Scholes opsiyon yüzeylerini ve DePIN donanım hashrate telemetrisini yönetir."
   }
 ];
 
@@ -99,15 +111,15 @@ export default function CharacterStudioGallery() {
   return (
     <div className="flex flex-col h-full bg-[#070b12] text-[#f0f4f8] overflow-y-auto p-6 font-sans">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#00d4aa]/20 pb-5 mb-6">
+      <div className="flex flex-wrap items-center justify-between border-b border-[#00d4aa]/20 pb-5 mb-6 gap-4">
         <div className="flex items-center gap-4">
           <EagleCrest size={40} />
           <div>
             <div className="text-[11px] font-mono tracking-widest text-[#00d4aa] uppercase">
-              Sovereign Production Roster
+              Sovereign Production Roster & Luxury Styling
             </div>
             <h2 className="text-2xl font-bold tracking-wider text-white font-serif">
-              CHARACTER & STUDIO ROSTER
+              SOVEREIGN CHARACTER & LUXURY DIRECTORY
             </h2>
           </div>
         </div>
@@ -116,10 +128,23 @@ export default function CharacterStudioGallery() {
             href="/characters_showcase.html"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 bg-[#00d4aa]/10 border border-[#00d4aa] text-[#00d4aa] rounded-lg text-xs font-mono hover:bg-[#00d4aa]/20 transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-[#00d4aa]/10 border border-[#00d4aa] text-[#00d4aa] rounded-lg text-xs font-mono hover:bg-[#00d4aa]/20 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(0,212,170,0.15)]"
           >
             <span>🔗</span> Tam Ekran Vitrin (HTML)
           </a>
+        </div>
+      </div>
+
+      {/* Rules Notice */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 bg-[#00C853]/10 border border-[#00C853]/30 rounded-xl text-xs font-mono text-[#b9f6ca] mb-6">
+        <div className="flex items-center gap-2">
+          <span>👁️</span> <strong>Gözler:</strong> %100 Zümrüt Yeşili (#00C853)
+        </div>
+        <div className="flex items-center gap-2">
+          <span>⌚</span> <strong>Saatler:</strong> İsviçre Haute Horlogerie
+        </div>
+        <div className="flex items-center gap-2">
+          <span>👗</span> <strong>Umay Nur:</strong> SIFIR Dekolte · En Ciddi Duruş
         </div>
       </div>
 
@@ -165,16 +190,22 @@ export default function CharacterStudioGallery() {
                     <h3 className="text-xl font-bold font-serif text-white">{char.name}</h3>
                     <span className="text-xs font-mono text-[#f5a623]">{char.heightCm} cm</span>
                   </div>
-                  <div className="text-xs font-medium text-[#00d4aa] mb-4">{char.role}</div>
+                  <div className="text-xs font-medium text-[#00d4aa] mb-3">{char.role}</div>
 
-                  <div className="grid grid-cols-2 gap-2 text-[11px] bg-black/30 p-3 rounded-lg border border-white/5 mb-4">
-                    <div>
-                      <span className="text-[#8899a6] block text-[9px] uppercase tracking-wider">Yaş / Fizik</span>
-                      <span className="text-white font-medium">{char.age} · {char.physique.split(",")[0]}</span>
+                  <div className="space-y-2 bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-[#8899a6]">Fizik & Göğüs:</span>
+                      <span className="text-white font-medium">{char.bustSize}</span>
                     </div>
-                    <div>
-                      <span className="text-[#8899a6] block text-[9px] uppercase tracking-wider">Kıyafet</span>
-                      <span className="text-white font-medium line-clamp-1">{char.wardrobe.split("&")[0]}</span>
+                    <div className="flex justify-between">
+                      <span className="text-[#8899a6]">Dekolte Durumu:</span>
+                      <span className={`font-semibold ${char.id === "umay_nur" ? "text-amber-400" : "text-[#69f0ae]"}`}>
+                        {char.decolletePolicy}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#8899a6]">Lüks Kol Saati:</span>
+                      <span className="text-[#ffd54f] font-mono line-clamp-1">{char.watchModel}</span>
                     </div>
                   </div>
 
@@ -187,9 +218,9 @@ export default function CharacterStudioGallery() {
                       e.stopPropagation();
                       handlePlayVoice(char);
                     }}
-                    className={`w-full py-2.5 px-4 rounded-lg text-xs font-mono font-semibold flex items-center justify-center gap-2 transition-all ${
+                    className={`w-full py-2.5 px-4 rounded-xl text-xs font-mono font-semibold flex items-center justify-center gap-2 transition-all ${
                       isPlayingVoice && selectedChar.id === char.id
-                        ? "bg-red-500/20 border border-red-500 text-red-400 animate-pulse"
+                        ? "bg-red-600/20 border border-red-500 text-red-400 animate-pulse"
                         : "bg-[#00d4aa]/15 border border-[#00d4aa]/60 text-[#00d4aa] hover:bg-[#00d4aa]/25"
                     }`}
                   >

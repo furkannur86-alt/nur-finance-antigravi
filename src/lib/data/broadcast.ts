@@ -340,9 +340,9 @@ export const hosts: NURHost[] = [
     certifications: ["CFA Charterholder", "SPK İleri Düzey"],
     previousEmployers: ["Bloomberg TV", "Sovereign Asset Management"],
     specializations: ["BIST & Global Macro", "Sovereign Liquidity", "Quant Arbitrage"],
-    bio: "Chief Anchor for NUR Finans. Renowned for authoritative macroeconomic analysis, sovereign financial modeling, and captivating market open broadcasts.",
+    bio: "Chief Anchor for NUR Finans. Renowned for authoritative macroeconomic analysis, sovereign financial modeling, and captivating market open broadcasts. Epitome of serious, high-institution financial leadership.",
     status: "active",
-    imagePrompt: "Stunning Turkish female lead anchor Umay Nur, 28-32 years old, 185cm tall, striking luminous emerald green eyes (#00C853), dark brown cascading wavy hair, olive skin, glamorous athletic feminine hourglass silhouette, wearing tailored cream-white designer blazer with subtle tasteful decollete and matching mini skirt, seated at futuristic obsidian glass news desk with Bosphorus Bridge sunset visible behind, 8k photorealistic broadcast quality"
+    imagePrompt: "Stunning Turkish female lead anchor Umay Nur, 28-32 years old, 185cm tall, 90 bust size, striking luminous emerald green eyes (#00C853), dark brown cascading styled hair, olive skin, highly serious aristocratic financial posture. ZERO DECOLLETE, ZERO MINI SKIRT. Wearing an elegant high-neck cream-white bespoke designer tailored suit with structured shoulders and tailored trousers, prestigious Swiss yellow-gold luxury timepiece on wrist, seated at obsidian glass news desk with Bosphorus Bridge sunset visible behind, 8k photorealistic broadcast quality"
   },
   {
     id: "host-umay-gul", channelId: "nur-turkey",
@@ -360,7 +360,7 @@ export const hosts: NURHost[] = [
     specializations: ["Türev Piyasalar", "Döviz Likiditesi", "Emtia Stratejileri"],
     bio: "Evening Anchor for NUR Finans. Expert in derivatives architecture, FX volatility surface modeling, and institutional liquidity flows.",
     status: "active",
-    imagePrompt: "Stunning female financial anchor Umay Gül, 27-31 years old, 186cm tall, intense luminous emerald green eyes, rich chestnut styled hair, fair skin, beautiful feminine curves, wearing deep navy tailored luxury blazer with elegant neckline and pencil skirt, modern broadcast studio with holographic candlesticks and neon telemetry, 8k photorealistic"
+    imagePrompt: "Stunning female financial anchor Umay Gül, 27-31 years old, 186cm tall, 90 bust size, intense luminous emerald green eyes, rich chestnut styled hair, fair skin, highly serious professional posture with high-neck navy tailored luxury suit and Swiss gold timepiece, modern broadcast studio with holographic candlesticks, 8k photorealistic"
   },
 
   // ── NUR ARABIC (Dubai) ──

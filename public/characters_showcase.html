@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NUR FINANCE — Karakter, Sunucu & Stüdyo Vitrini</title>
+  <title>NUR FINANCE — Karakter, Sunucu & Lüks Gardırop Vitrini</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -17,7 +17,6 @@
       --emerald: #00C853;
       --text: #f0f4f8;
       --muted: #8899a6;
-      --glass: rgba(18, 28, 44, 0.7);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -60,9 +59,29 @@
     .subtitle {
       color: var(--muted);
       font-size: 15px;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       line-height: 1.6;
+    }
+    .rules-banner {
+      max-width: 1400px;
+      margin: 0 auto 30px;
+      background: rgba(0, 200, 83, 0.08);
+      border: 1px solid rgba(0, 200, 83, 0.3);
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 13px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-around;
+      color: #b9f6ca;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .grid {
       display: grid;
@@ -188,6 +207,18 @@
       font-weight: 500;
       font-family: 'JetBrains Mono', monospace;
     }
+    .watch-badge {
+      background: rgba(245, 166, 35, 0.1);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #ffd54f;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .bio {
       font-size: 13px;
       color: #b0bec5;
@@ -235,11 +266,19 @@
 <body>
 
   <div class="header">
-    <div class="logo-badge">SOVEREIGN AI BROADCAST & CHARACTER ROSTER</div>
-    <h1>NUR MEDIA CHARACTER & STUDIO DIRECTORY</h1>
+    <div class="logo-badge">SOVEREIGN HAUTE HORLOGERIE & LUXURY WARDROBE</div>
+    <h1>NUR MEDIA CHARACTER & LUXURY DIRECTORY</h1>
     <p class="subtitle">
-      Tüm küresel ekranlarda uluslararası anonim kimlikler, 1.90m+ maskülen kaslı erkek direktörler, büyüleyici feminen zarafete sahip kadın sunucular ve %100 saf zümrüt yeşili göz standardı (#00C853).
+      İsviçre Haute Horlogerie lüks saatleri, Savile Row & Milano özel dikim kıyafetleri, %100 Zümrüt Yeşili gözler (#00C853) ve özel karakter protokolleri.
     </p>
+  </div>
+
+  <div class="rules-banner">
+    <div class="rule-item"><span>👁️</span> <strong>Göz Standardı:</strong> %100 Zümrüt Yeşili (#00C853)</div>
+    <div class="rule-item"><span>⌚</span> <strong>Saatler:</strong> İsviçre Haute Horlogerie & Rose Gold / Titanyum</div>
+    <div class="rule-item"><span>👗</span> <strong>Umay Nur:</strong> Sıfır Dekolte · Sıfır Mini Etek · Asil Ciddi Lüks Takım</div>
+    <div class="rule-item"><span>💃</span> <strong>Global Kadınlar:</strong> 90+ Göğüs Ölçüsü · Şık Yayın Dekoltesi · Kalem/Mini Etek</div>
+    <div class="rule-item"><span>👔</span> <strong>Erkekler:</strong> 1.90m+ · Kaslı Atletik · Belirgin Jawline · Savile Row 3 Parça</div>
   </div>
 
   <div class="grid">
@@ -254,27 +293,30 @@
       <div class="content">
         <div>
           <div class="char-title">Elena Vance</div>
-          <div class="char-role">Senior Global Macro & Sovereign Wealth Anchor</div>
+          <div class="char-role">Senior Global Macro & Sovereign Wealth Strategist</div>
           <div class="specs-grid">
             <div class="spec-item">
-              <span class="spec-label">Boy / Fizik</span>
-              <span class="spec-val">185 cm · Feminen Kum Saati</span>
+              <span class="spec-label">Boy / Göğüs / Fizik</span>
+              <span class="spec-val">185 cm · 90D · Feminen Kum Saati</span>
             </div>
             <div class="spec-item">
               <span class="spec-label">Yaş / Fenotip</span>
               <span class="spec-val">30 · İsviçre / Kuzey Avrupa</span>
             </div>
             <div class="spec-item">
-              <span class="spec-label">Kıyafet</span>
-              <span class="spec-val">Zümrüt Yeşil Blazer & Kalem Etek</span>
+              <span class="spec-label">Kıyafet & Dekolte</span>
+              <span class="spec-val">Zümrüt Yeşil Lüks Blazer, Şık Dekolte & Etek</span>
             </div>
             <div class="spec-item">
               <span class="spec-label">Ses Modeli</span>
               <span class="spec-val">Google Journey-F (Genève)</span>
             </div>
           </div>
+          <div class="watch-badge">
+            <span>⌚</span> <strong>Kol Saati:</strong> İsviçre Haute Horlogerie Rose Gold Royal Chronograph
+          </div>
           <p class="bio">
-            Cenevre Gölü ve Alpler manzaralı özel bankacılık süitinden küresel makroekonomik kararları, faiz politikalarını ve merkez bankası rezervlerini sunar.
+            Cenevre Gölü ve Alpler manzaralı özel bankacılık süitinden küresel makroekonomik kararları ve merkez bankası rezervlerini aktarır. Şık yayın dekoltesi ve haute couture zümrüt ceketiyle lüksü yansıtır.
           </p>
         </div>
         <div class="filepath">
@@ -296,24 +338,27 @@
           <div class="char-role">Başekonomist & Canlı Yayın Masası Lideri</div>
           <div class="specs-grid">
             <div class="spec-item">
-              <span class="spec-label">Boy / Fizik</span>
-              <span class="spec-val">185 cm · Feminen Zarafet</span>
+              <span class="spec-label">Boy / Göğüs / Fizik</span>
+              <span class="spec-val">185 cm · 90 · Asil Ciddi Duruş</span>
             </div>
             <div class="spec-item">
-              <span class="spec-label">Yaş / Fenotip</span>
-              <span class="spec-val">29 · Akdeniz / Avrasya</span>
+              <span class="spec-label">Protokol</span>
+              <span class="spec-val">SIFIR DEKOLTE · SIFIR MİNİ ETEK</span>
             </div>
             <div class="spec-item">
               <span class="spec-label">Kıyafet</span>
-              <span class="spec-val">Krem-Beyaz Kruvaze Blazer & Mini Etek</span>
+              <span class="spec-val">Yüksek Yaka Krem-Beyaz Lüks Kruvaze Takım</span>
             </div>
             <div class="spec-item">
               <span class="spec-label">Ses Modeli</span>
               <span class="spec-val">Google Wavenet-B (TR-İstanbul)</span>
             </div>
           </div>
+          <div class="watch-badge">
+            <span>⌚</span> <strong>Kol Saati:</strong> Klasik İsviçre Sarı Altın Nautilus Perpetual Calendar
+          </div>
           <p class="bio">
-            İstanbul Boğazı gün batımı fonunda finansal veri hologramları eşliğinde BIST-100 açılışlarını, küresel likidite rotasyonunu ve egemen portföy stratejilerini yönetir.
+            Kanalın en saygın ve otoriter yüzü. Yüksek yaka asil krem-beyaz lüks takım elbisesiyle tam ciddiyet, kurumsal ağırlık ve sofistike zarafet sergiler. Kesinlikle dekolte veya mini etek giymez.
           </p>
         </div>
         <div class="filepath">
@@ -336,7 +381,7 @@
           <div class="specs-grid">
             <div class="spec-item">
               <span class="spec-label">Boy / Fizik</span>
-              <span class="spec-val">193 cm · Kaslı Atletik / Güçlü Jawline</span>
+              <span class="spec-val">193 cm · Kaslı Atletik · Keskin Jawline</span>
             </div>
             <div class="spec-item">
               <span class="spec-label">Yaş / Fenotip</span>
@@ -344,15 +389,18 @@
             </div>
             <div class="spec-item">
               <span class="spec-label">Kıyafet</span>
-              <span class="spec-val">Savile Row Özel Dikim 3 Parça Lacivert Takım</span>
+              <span class="spec-val">Savile Row 3 Parça Özel Dikim Lacivert Takım</span>
             </div>
             <div class="spec-item">
               <span class="spec-label">Ses Modeli</span>
               <span class="spec-val">Google Journey-D (Derin Bariton)</span>
             </div>
           </div>
+          <div class="watch-badge">
+            <span>⌚</span> <strong>Kol Saati:</strong> Skeleton Titanyum Tourbillon Chronograph
+          </div>
           <p class="bio">
-            Wall Street ve Londra finans merkezlerinde yüksek frekanslı kantitatif algoritmaları, Black-Scholes opsiyon yüzeylerini ve DePIN donanım hashrate telemetrisini aktarır.
+            Geniş omuzları, atletik kaslı yapısı, keskin maskülen çene hattı ve Savile Row takım elbisesiyle yüksek frekanslı kantitatif algoritmaları ve DePIN bilişim gücünü yönetir.
           </p>
         </div>
         <div class="filepath">
