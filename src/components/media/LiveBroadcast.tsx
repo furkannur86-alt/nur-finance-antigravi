@@ -37,8 +37,8 @@ const MARKET_MATRIX = [
 export default function LiveBroadcast() {
   const { openFloatingWindow, popoutToNativeWindow } = useIDEStore();
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[2]); // Default English
-  const [backdropMode, setBackdropMode] = useState<StudioBackdropMode>("3D_GLOBE");
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
+  const [backdropMode, setBackdropMode] = useState<StudioBackdropMode>("NUR_STUDIO_2126");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [headlineIdx, setHeadlineIdx] = useState(0);
   const [isAudioMuted, setIsAudioMuted] = useState(true);
@@ -335,12 +335,18 @@ export default function LiveBroadcast() {
               <div className="flex items-start gap-3">
                 <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-amber-400/50 shrink-0 shadow-md">
                   <img
-                    src={selectedLang.id === "tr" ? "/images/studio/elena_vance.jpg" : "/images/studio/marcus_sterling.jpg"}
+                    src={
+                      selectedLang.id === "tr"
+                        ? "/images/characters/umay_nur.jpg"
+                        : selectedLang.id === "en"
+                        ? "/images/characters/marcus_sterling.jpg"
+                        : "/images/characters/elena_vance.jpg"
+                    }
                     alt={selectedLang.defaultAnchorName}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                   />
-                  <div className="absolute bottom-0 inset-x-0 bg-black/70 text-[7px] font-mono text-center text-emerald-400 font-bold">
-                    {selectedLang.id === "tr" ? "🟢 GREEN EYES" : "🔵 BLUE EYES"}
+                  <div className="absolute bottom-0 inset-x-0 bg-black/80 text-[8px] font-mono text-center text-[#69f0ae] font-bold">
+                    🟢 GREEN EYES
                   </div>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed max-h-24 overflow-y-auto flex-1">

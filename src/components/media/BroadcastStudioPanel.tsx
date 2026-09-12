@@ -22,18 +22,17 @@ export type StudioStageType =
   | "executive-office";
 
 const STUDIO_STAGES: { id: StudioStageType; name: string; path?: string }[] = [
-  { id: "3d-globe", name: "🌐 3D Planetary Earth & Geopolitical Globe" },
-  { id: "orbital-radar", name: "📡 Starship Orbital Radar & Space Telemetry" },
+  { id: "anchor-female", name: "Studio A — NUR TV 2126 4K Main Stage", path: "/images/studio/broadcast_studio.jpg" },
+  { id: "executive-office", name: "Studio B — Sovereign Executive Suite", path: "/images/studio/executive-office.jpg" },
   { id: "financial-bourses", name: "📊 Global Financial Bourses Matrix" },
-  { id: "anchor-female", name: "Studio A — Global Anchor Stage", path: "/images/studio/anchor-female.jpg" },
-  { id: "anchor-male", name: "Studio B — Senior Geopolitical Strategist", path: "/images/studio/anchor-male.jpg" },
-  { id: "executive-office", name: "Studio C — Sovereign Executive Suite", path: "/images/studio/executive-office.jpg" },
+  { id: "orbital-radar", name: "📡 Starship Orbital Radar & Space Telemetry" },
+  { id: "3d-globe", name: "🌐 3D Planetary Earth & Geopolitical Globe" },
 ];
 
 export default function BroadcastStudioPanel() {
   const { setBreakingNewsTicker, addNotification, openFloatingWindow, popoutToNativeWindow } = useIDEStore();
 
-  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[2]); // Default English
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
   const [selectedStudio, setSelectedStudio] = useState(STUDIO_STAGES[0]);
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");
   const [teleprompterSpeed, setTeleprompterSpeed] = useState(2);

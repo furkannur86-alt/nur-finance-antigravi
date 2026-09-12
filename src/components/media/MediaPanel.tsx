@@ -1,532 +1,532 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { channels, hosts, guests, shows, type NURChannel, type NURHost, type NURGuest, type NURShow } from "@/lib/data/broadcast";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { useIDEStore } from "@/stores/useIDEStore";
-import { BROADCAST_LANGUAGES, hdVoiceEngine } from "@/lib/broadcast/multilingual-broadcast";
+import { BROADCAST_LANGUAGES, LanguageBroadcastProfile, hdVoiceEngine } from "@/lib/broadcast/multilingual-broadcast";
+import { cyberSound } from "@/lib/audio/sound-synth";
 import CharacterStudioGallery from "@/components/media/CharacterStudioGallery";
 
 const NurEarth3DGlobe = dynamic(() => import("@/components/geopolitics/NurEarth3DGlobe"), { ssr: false });
 
-type TabId = "characters" | "channels" | "hosts" | "schedule" | "social";
-type VideoStageMode = "3D_GLOBE" | "RADAR" | "TELEPROMPTER";
+type ActiveMediaTab = "characters" | "live-studio" | "channels" | "hosts-guests" | "schedule";
+type StageBackdrop = "studio-2126" | "executive-office" | "market-matrix" | "3d-globe";
 
-const STATUS_COLORS: Record<string, string> = { live: "#00d4aa", upcoming: "#f0b429", "pre-launch": "#6366f1" };
-
-const socialPlatforms = [
-  { name: "YouTube", url: "https://youtube.com/@nurfinance", icon: "YT", color: "#ff0000", followers: "Coming Soon" },
-  { name: "X (Twitter)", url: "https://x.com/nurfinance", icon: "X", color: "#1da1f2", followers: "Coming Soon" },
-  { name: "Instagram", url: "https://instagram.com/nurfinance", icon: "IG", color: "#e1306c", followers: "Coming Soon" },
-  { name: "TikTok", url: "https://tiktok.com/@nurfinance", icon: "TT", color: "#00f2ea", followers: "Coming Soon" },
-  { name: "LinkedIn", url: "https://linkedin.com/company/nurfinance", icon: "LI", color: "#0077b5", followers: "Coming Soon" },
-  { name: "Telegram", url: "https://t.me/nurfinance", icon: "TG", color: "#0088cc", followers: "Coming Soon" },
-  { name: "Discord", url: "https://discord.gg/nurfinance", icon: "DC", color: "#5865f2", followers: "Coming Soon" },
-  { name: "WeChat", url: "#", icon: "WC", color: "#07c160", followers: "Coming Soon" },
-  { name: "Xiaohongshu", url: "#", icon: "XHS", color: "#ff2442", followers: "Coming Soon" },
-  { name: "Reddit", url: "https://reddit.com/r/nurfinance", icon: "RD", color: "#ff4500", followers: "Coming Soon" },
+const MARKET_TICKER_ITEMS = [
+  { s: "BIST 100", p: "10,240.80", c: "+2.14%", up: true },
+  { s: "S&P 500", p: "5,864.20", c: "+0.92%", up: true },
+  { s: "NASDAQ", p: "20,418.50", c: "+1.35%", up: true },
+  { s: "DAX 40", p: "19,120.40", c: "+0.64%", up: true },
+  { s: "BRENT", p: "$82.40", c: "+0.85%", up: true },
+  { s: "GOLD", p: "$2,648.50", c: "+1.42%", up: true },
+  { s: "BITCOIN", p: "$68,450", c: "+3.15%", up: true },
 ];
 
-function HostCard({ host, channel }: { host: NURHost; channel?: NURChannel }) {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <div
-      className="rounded-lg border p-3 cursor-pointer transition-all hover:scale-[1.005]"
-      style={{ borderColor: expanded ? "var(--ag-accent)" : "var(--ag-border)", background: "var(--ag-surface)" }}
-      onClick={() => setExpanded(!expanded)}
-    >
-      <div className="flex items-start gap-3">
-        <div
-          className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-          style={{ background: (channel?.brandColor ?? "var(--ag-accent)") + "22", color: channel?.brandColor ?? "var(--ag-accent)" }}
-        >
-          {host.displayName.charAt(0)}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] font-semibold" style={{ color: "var(--ag-text)" }}>{host.displayName} {host.lastName}</span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.1)", color: "var(--ag-accent)" }}>
-              {host.status}
-            </span>
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            {channel?.flag} {channel?.nameLocal} · {host.languages.join(", ")}
-          </div>
-          <div className="text-[10px] mt-0.5" style={{ color: "var(--ag-muted)" }}>
-            {host.specializations.slice(0, 3).join(" · ")}
-          </div>
-        </div>
-      </div>
-
-      {expanded && (
-        <div className="mt-3 pt-3 space-y-2" style={{ borderTop: "1px solid var(--ag-border)" }}>
-          <div className="grid grid-cols-2 gap-2 text-[10px]">
-            <div>
-              <span style={{ color: "var(--ag-muted)" }}>Height:</span>{" "}
-              <span style={{ color: "var(--ag-text)" }}>{host.heightCm}cm</span>
-            </div>
-            <div>
-              <span style={{ color: "var(--ag-muted)" }}>Eyes:</span>{" "}
-              <span style={{ color: "var(--ag-text)" }}>{host.eyeColor}</span>
-            </div>
-            <div>
-              <span style={{ color: "var(--ag-muted)" }}>Hair:</span>{" "}
-              <span style={{ color: "var(--ag-text)" }}>{host.hairColor} / {host.hairStyle}</span>
-            </div>
-            <div>
-              <span style={{ color: "var(--ag-muted)" }}>Nationality:</span>{" "}
-              <span style={{ color: "var(--ag-text)" }}>{host.nationality}</span>
-            </div>
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            <span className="font-semibold" style={{ color: "var(--ag-text)" }}>Education:</span>
-            {host.education.map((e, i) => (
-              <div key={i} className="ml-2">{e.degree} {e.field} — {e.institution} ({e.year})</div>
-            ))}
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            <span className="font-semibold" style={{ color: "var(--ag-text)" }}>Certifications:</span> {host.certifications.join(", ")}
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            <span className="font-semibold" style={{ color: "var(--ag-text)" }}>Previous:</span> {host.previousEmployers.join(", ")}
-          </div>
-          <p className="text-[10px] italic" style={{ color: "var(--ag-muted)" }}>{host.bio}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function GuestCard({ guest }: { guest: NURGuest }) {
-  const [expanded, setExpanded] = useState(false);
-  const guestChannels = channels.filter(c => guest.channelIds.includes(c.id));
-  return (
-    <div
-      className="rounded-lg border p-3 cursor-pointer transition-all hover:scale-[1.005]"
-      style={{ borderColor: expanded ? "#f59e0b" : "var(--ag-border)", background: "var(--ag-surface)" }}
-      onClick={() => setExpanded(!expanded)}
-    >
-      <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-          style={{ background: "#f59e0b22", color: "#f59e0b" }}>
-          {guest.displayName.charAt(0)}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] font-semibold" style={{ color: "var(--ag-text)" }}>{guest.displayName}</span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "#f59e0b22", color: "#f59e0b" }}>
-              {guest.title}
-            </span>
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            {guest.currentPosition} · {guest.institution}
-          </div>
-          <div className="text-[10px] mt-0.5" style={{ color: "var(--ag-muted)" }}>
-            {guestChannels.map(c => c.flag).join(" ")} · {guest.typicalSegmentMinutes}min segments · {guest.publications} publications
-          </div>
-        </div>
-      </div>
-
-      {expanded && (
-        <div className="mt-3 pt-3 space-y-2" style={{ borderTop: "1px solid var(--ag-border)" }}>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            <span className="font-semibold" style={{ color: "var(--ag-text)" }}>Channels:</span> {guestChannels.map(c => c.nameLocal).join(", ")}
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            <span className="font-semibold" style={{ color: "var(--ag-text)" }}>Education:</span>
-            {guest.education.map((e, i) => (
-              <div key={i} className="ml-2">{e.degree} {e.field} — {e.institution} ({e.year})</div>
-            ))}
-          </div>
-          <div className="text-[10px]" style={{ color: "var(--ag-muted)" }}>
-            <span className="font-semibold" style={{ color: "var(--ag-text)" }}>Specializations:</span> {guest.specializations.join(", ")}
-          </div>
-          <p className="text-[10px] italic" style={{ color: "var(--ag-muted)" }}>{guest.bio}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ShowCard({ show }: { show: NURShow }) {
-  const channel = channels.find(c => c.id === show.channelId);
-  const showHosts = hosts.filter(h => show.hostIds.includes(h.id));
-  const showGuests = guests.filter(g => show.recurringGuestIds.includes(g.id));
-
-  const FORMAT_COLORS: Record<string, string> = {
-    "market-open": "#22c55e", "market-close": "#ef4444", "breaking-news": "#dc2626",
-    "weekend-review": "#6366f1", "panel-discussion": "#8b5cf6", "interview": "#06b6d4",
-    "deep-dive": "#f59e0b", "live-desk": "#00d4aa"
-  };
-
-  return (
-    <div className="rounded-lg border p-3" style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}>
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold" style={{ color: "var(--ag-text)" }}>{show.nameLocal}</span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: (FORMAT_COLORS[show.format] ?? "#666") + "22", color: FORMAT_COLORS[show.format] ?? "#666" }}>
-            {show.format}
-          </span>
-        </div>
-        <span className="text-[9px]" style={{ color: "var(--ag-muted)" }}>
-          {show.durationMinutes > 0 ? `${show.durationMinutes}min` : "24/7"}
-        </span>
-      </div>
-      <div className="text-[10px] mb-1.5" style={{ color: "var(--ag-muted)" }}>
-        {channel?.flag} {channel?.nameLocal} · {show.schedule.days.join(", ")} · {show.schedule.startUTC}–{show.schedule.endUTC} UTC
-      </div>
-      <p className="text-[10px] mb-2" style={{ color: "var(--ag-muted)" }}>{show.description}</p>
-      <div className="flex flex-wrap gap-1 mb-2">
-        {show.segments.map(s => (
-          <span key={s} className="text-[8px] px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.08)", color: "var(--ag-accent)" }}>{s}</span>
-        ))}
-      </div>
-      <div className="flex items-center gap-2 text-[10px]">
-        <span style={{ color: "var(--ag-muted)" }}>Hosts:</span>
-        {showHosts.map(h => (
-          <span key={h.id} className="px-1.5 py-0.5 rounded" style={{ background: "var(--ag-bg)", color: "var(--ag-text)" }}>{h.displayName}</span>
-        ))}
-        {showGuests.length > 0 && (
-          <>
-            <span style={{ color: "var(--ag-muted)" }}>Guests:</span>
-            {showGuests.map(g => (
-              <span key={g.id} className="px-1.5 py-0.5 rounded" style={{ background: "#f59e0b15", color: "#f59e0b" }}>{g.displayName}</span>
-            ))}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function MediaPanel() {
-  const { openFloatingWindow, popoutToNativeWindow, setActiveView } = useIDEStore();
-  const [tab, setTab] = useState<TabId>("characters");
-  const [selectedChannel, setSelectedChannel] = useState<NURChannel | null>(channels[0]);
-  const [videoStageMode, setVideoStageMode] = useState<VideoStageMode>("3D_GLOBE");
+  const { openFloatingWindow, popoutToNativeWindow, setBreakingNewsTicker, addNotification } = useIDEStore();
+
+  const [activeTab, setActiveTab] = useState<ActiveMediaTab>("characters");
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
+  const [selectedChannel, setSelectedChannel] = useState<NURChannel>(channels[2]); // Default Turkey
+  const [stageBackdrop, setStageBackdrop] = useState<StageBackdrop>("studio-2126");
+  const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");
   const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
+  const [isLiveOnAir, setIsLiveOnAir] = useState(false);
+  const [customHeadline, setCustomHeadline] = useState("");
+  const [hostSearch, setHostSearch] = useState("");
 
-  const tabs: { id: TabId; label: string; count?: number }[] = [
-    { id: "characters", label: "🌟 Characters & Studios" },
-    { id: "channels", label: "Channels", count: channels.length },
-    { id: "hosts", label: "On-Air Team", count: hosts.length + guests.length },
-    { id: "schedule", label: "Schedule", count: shows.length },
-    { id: "social", label: "Social" },
-  ];
-
-  const channelHosts = selectedChannel ? hosts.filter(h => h.channelId === selectedChannel.id) : [];
-  const channelShows = selectedChannel ? shows.filter(s => s.channelId === selectedChannel.id) : [];
-  const channelGuests = selectedChannel
-    ? guests.filter(g => g.channelIds.includes(selectedChannel.id))
-    : [];
-
-  const handleSpeakSample = () => {
+  const handleSpeak = (text?: string) => {
+    cyberSound.playClick();
     if (isVoiceSpeaking) {
       hdVoiceEngine.stop();
       setIsVoiceSpeaking(false);
       return;
     }
-    const sampleText = selectedChannel 
-      ? `This is NUR Finance ${selectedChannel.nameLocal}, broadcasting live from ${selectedChannel.city}. Delivering real-time sovereign quantitative market intelligence.`
-      : "Welcome to NUR Finance Global Media Network.";
+    const textToSpeak = text || selectedLang.scripts[activeSegment];
     hdVoiceEngine.speak(
-      sampleText,
-      selectedChannel?.language === "Turkish" ? "tr-TR" : "en-US",
+      textToSpeak,
+      selectedLang.langCode,
       () => setIsVoiceSpeaking(true),
       () => setIsVoiceSpeaking(false),
       () => setIsVoiceSpeaking(false)
     );
   };
 
+  const handleToggleLive = () => {
+    cyberSound.playClick();
+    if (isLiveOnAir) {
+      setIsLiveOnAir(false);
+      hdVoiceEngine.stop();
+      setIsVoiceSpeaking(false);
+    } else {
+      setIsLiveOnAir(true);
+      handleSpeak();
+      addNotification({
+        title: "🔴 NUR TV Canlı Yayında (On-Air)",
+        message: `${selectedLang.nativeName} Masası (${selectedLang.defaultAnchorName}) yayını başlattı.`,
+        severity: "SUCCESS",
+        category: "NUR_TV",
+      });
+    }
+  };
+
+  const handlePushBreaking = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customHeadline.trim()) return;
+    const banner = `[${selectedLang.name.toUpperCase()} TV] SON DAKİKA: ${customHeadline.trim()}`;
+    setBreakingNewsTicker(banner);
+    addNotification({
+      title: "Altyazı Güncellendi",
+      message: `Bülten bandına eklendi: "${customHeadline}"`,
+      severity: "INFO",
+      category: "NUR_TV",
+    });
+    setCustomHeadline("");
+  };
+
+  const filteredHosts = hosts.filter(
+    (h) =>
+      h.displayName.toLowerCase().includes(hostSearch.toLowerCase()) ||
+      h.nationality.toLowerCase().includes(hostSearch.toLowerCase()) ||
+      h.specializations.some((s) => s.toLowerCase().includes(hostSearch.toLowerCase()))
+  );
+
   return (
-    <div className="h-full overflow-y-auto" style={{ background: "var(--ag-bg)" }}>
-      <div className="p-4">
-        {/* Header with Title & Popout Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
-            <EagleCrest size={24} animate={true} />
-            <h1 className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>NUR Finance Media Network</h1>
-            <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.15)", color: "var(--ag-accent)" }}>
-              {channels.filter(c => c.status === "live").length} Live Channels
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveView("broadcast-studio")}
-              className="px-2.5 py-1 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-bold transition-all flex items-center gap-1.5"
-            >
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span>🎬 STUDIO ON-AIR</span>
-            </button>
-
-            <button
-              onClick={() => setActiveView("live-tv")}
-              className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all"
-            >
-              📺 NUR TV LIVE
-            </button>
-
-            <button
-              onClick={() => openFloatingWindow("media", "📡 NUR Finance Media Network")}
-              className="px-2 py-1 rounded bg-black/50 border border-white/10 text-slate-300 hover:text-white text-xs font-bold"
-              title="Open in floating window"
-            >
-              ⤢ FLOAT
-            </button>
-
-            <button
-              onClick={() => popoutToNativeWindow("media")}
-              className="px-2 py-1 rounded bg-black/50 border border-white/10 text-slate-300 hover:text-white text-xs font-bold"
-              title="Pop out to separate window"
-            >
-              ↗ DUAL-SCREEN
-            </button>
+    <div className="flex flex-col h-full bg-[#070b12] text-[#f0f4f8] overflow-hidden font-sans select-none">
+      {/* ── TOP NAVIGATION BAR ────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center justify-between px-5 py-3 border-b border-[#00d4aa]/20 bg-[#0c121d] shrink-0 gap-3 shadow-lg">
+        <div className="flex items-center gap-3">
+          <EagleCrest size={32} animate={isLiveOnAir} />
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-base font-bold font-serif text-white tracking-wide">
+                NUR MEDIA & BROADCAST HUB
+              </h1>
+              {isLiveOnAir ? (
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-600 text-white animate-pulse">
+                  ● CANLI YAYIN (LIVE)
+                </span>
+              ) : (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-white/5">
+                  HAZIR (STANDBY)
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-[#8899a6]">
+              24/7 Çok Dilli Küresel Finans Televizyonu & Egemen Yapay Zeka Sunucuları
+            </p>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 mb-4">
-          {tabs.map(t => (
+        {/* Action & Window Controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => openFloatingWindow("media", "📡 NUR Media & TV Studio")}
+            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-mono font-semibold border border-white/10 transition-all"
+            title="Yüzen Pencere Olarak Aç"
+          >
+            ⤢ YÜZEN PENCERE
+          </button>
+          <button
+            onClick={() => popoutToNativeWindow("media")}
+            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-mono font-semibold border border-white/10 transition-all"
+            title="Ayrı Ekrana Çıkar"
+          >
+            ↗ ÇİFT EKRAN
+          </button>
+          <button
+            onClick={handleToggleLive}
+            className={`px-4 py-1.5 rounded-lg text-xs font-mono font-bold transition-all shadow-lg flex items-center gap-2 ${
+              isLiveOnAir
+                ? "bg-red-600 hover:bg-red-700 text-white shadow-red-600/30 animate-pulse"
+                : "bg-gradient-to-r from-[#00d4aa] to-emerald-500 hover:from-[#00c29b] hover:to-emerald-400 text-black font-extrabold shadow-[0_0_15px_rgba(0,212,170,0.3)]"
+            }`}
+          >
+            <span>{isLiveOnAir ? "⏹ YAYINI DURDUR" : "🔴 CANLI YAYINI BAŞLAT"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── SUB-HEADER TAB SWITCHER ───────────────────────────────── */}
+      <div className="flex items-center gap-2 px-5 py-2.5 bg-[#090e17] border-b border-white/5 shrink-0 overflow-x-auto">
+        {[
+          { id: "characters", label: "🌟 Karakterler & Stüdyo Vitrini", badge: "3 Ana Karakter" },
+          { id: "live-studio", label: "🎙️ Canlı Yayın & Seslendirme Testi", badge: "HD Studio" },
+          { id: "channels", label: "🌍 15 Küresel TV Kanalı", badge: `${channels.length} Kanal` },
+          { id: "hosts-guests", label: "👥 Sunucular & Konuklar", badge: `${hosts.length + guests.length} Kişi` },
+          { id: "schedule", label: "📅 Yayın Akışı & Programlar", badge: `${shows.length} Program` },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
             <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className="text-[10px] px-2.5 py-1.5 rounded-md font-medium transition-all"
-              style={{
-                background: tab === t.id ? "var(--ag-accent)" : "var(--ag-surface)",
-                color: tab === t.id ? "#000" : "var(--ag-muted)",
-                border: `1px solid ${tab === t.id ? "var(--ag-accent)" : "var(--ag-border)"}`,
+              key={tab.id}
+              onClick={() => {
+                cyberSound.playClick();
+                setActiveTab(tab.id as ActiveMediaTab);
               }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 shrink-0 ${
+                isActive
+                  ? "bg-[#00d4aa]/15 border border-[#00d4aa] text-[#00d4aa] font-semibold shadow-[0_0_10px_rgba(0,212,170,0.2)]"
+                  : "bg-white/5 border border-white/5 text-[#8899a6] hover:text-white hover:bg-white/10"
+              }`}
             >
-              {t.label}{t.count != null && ` (${t.count})`}
+              <span>{tab.label}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? "bg-[#00d4aa]/20 text-[#00d4aa]" : "bg-black/30 text-slate-400"}`}>
+                {tab.badge}
+              </span>
             </button>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
-        {/* CHARACTERS & STUDIOS TAB */}
-        {tab === "characters" && <CharacterStudioGallery />}
+      {/* ── TAB CONTENT (SCROLLABLE & RESPONSIVE) ─────────────────── */}
+      <div className="flex-1 overflow-y-auto p-5">
+        {/* 1. CHARACTERS & STUDIO GALLERY */}
+        {activeTab === "characters" && <CharacterStudioGallery />}
 
-        {/* CHANNELS TAB */}
-        {tab === "channels" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              {selectedChannel ? (
-                <div className="rounded-xl border overflow-hidden shadow-2xl" style={{ borderColor: "var(--ag-border)" }}>
-                  {/* Dynamic Studio Stage Selector Bar */}
-                  <div className="flex items-center justify-between px-3 py-2 bg-black/80 border-b border-white/10 text-xs font-mono">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] text-slate-400 font-bold">STAGE:</span>
-                      {[
-                        { id: "3D_GLOBE", label: "🌐 3D GLOBE" },
-                        { id: "RADAR", label: "📡 ORBITAL RADAR" },
-                        { id: "TELEPROMPTER", label: "🎙️ TELEPROMPTER" },
-                      ].map((m) => (
+        {/* 2. LIVE STUDIO & PROMPTER WORKSPACE */}
+        {activeTab === "live-studio" && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-[1500px] mx-auto">
+            {/* Left: 16:9 Studio Monitor Viewport (7 Cols) */}
+            <div className="lg:col-span-7 flex flex-col gap-4">
+              <div className="bg-[#0d1420] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+                {/* Viewport Top Bar */}
+                <div className="flex items-center justify-between px-4 py-2 bg-black/60 border-b border-white/10 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#8899a6]">STÜDYO FONU:</span>
+                    <select
+                      value={stageBackdrop}
+                      onChange={(e) => setStageBackdrop(e.target.value as StageBackdrop)}
+                      className="bg-black/80 border border-white/10 text-white rounded px-2 py-1 text-xs focus:outline-none focus:border-[#00d4aa]"
+                    >
+                      <option value="studio-2126">NUR TV 2126 Holografik Stüdyo Seti</option>
+                      <option value="executive-office">Cenevre Sovereign Penthouse</option>
+                      <option value="market-matrix">Küresel Borsa Likidite Matrisi</option>
+                      <option value="3d-globe">3D Geopolitik Gezegen Modeli</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleSpeak()}
+                      className={`px-3 py-1 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+                        isVoiceSpeaking
+                          ? "bg-red-600 text-white animate-pulse"
+                          : "bg-[#00d4aa]/20 border border-[#00d4aa]/60 text-[#00d4aa] hover:bg-[#00d4aa]/30"
+                      }`}
+                    >
+                      <span>{isVoiceSpeaking ? "⏹ DURDUR" : "🔊 METNİ SESLENDİR"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 16:9 Stage Area */}
+                <div className="aspect-video relative bg-black flex items-center justify-center overflow-hidden">
+                  {stageBackdrop === "studio-2126" && (
+                    <Image
+                      src="/images/studio/broadcast_studio.jpg"
+                      alt="NUR TV 2126 Studio"
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  )}
+                  {stageBackdrop === "executive-office" && (
+                    <Image
+                      src="/images/studio/executive-office.jpg"
+                      alt="Executive Office"
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  )}
+                  {stageBackdrop === "market-matrix" && (
+                    <div className="w-full h-full p-6 grid grid-cols-2 sm:grid-cols-3 gap-3 bg-[#0a0f18] overflow-y-auto">
+                      {MARKET_TICKER_ITEMS.map((item, idx) => (
+                        <div key={idx} className="p-3 bg-black/60 rounded-xl border border-white/5 flex flex-col justify-between font-mono">
+                          <span className="text-xs text-slate-400">{item.s}</span>
+                          <span className="text-lg font-bold text-cyan-300 mt-1">{item.p}</span>
+                          <span className="text-xs text-emerald-400 font-semibold mt-1">{item.c}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {stageBackdrop === "3d-globe" && (
+                    <div className="w-full h-full relative">
+                      <NurEarth3DGlobe />
+                    </div>
+                  )}
+
+                  {/* On-Screen Anchor Avatar Picture-in-Picture (Bottom Right) */}
+                  <div className="absolute bottom-12 right-4 w-36 h-48 rounded-xl border-2 border-[#00d4aa] overflow-hidden shadow-2xl bg-black/80 backdrop-blur-md">
+                    <Image
+                      src={selectedLang.anchorAvatar}
+                      alt={selectedLang.defaultAnchorName}
+                      fill
+                      className="object-cover object-top"
+                    />
+                    <div className="absolute bottom-0 inset-x-0 bg-black/80 text-[10px] text-center font-mono py-1 text-[#00d4aa] font-bold">
+                      {selectedLang.defaultAnchorName.split("&")[0]}
+                    </div>
+                  </div>
+
+                  {/* Live Lower-Third News Ticker */}
+                  <div className="absolute bottom-0 inset-x-0 bg-black/90 border-t border-[#00d4aa]/40 p-2.5 flex items-center gap-3 backdrop-blur-md z-10 font-mono">
+                    <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-extrabold shrink-0 animate-pulse">
+                      FLAŞ HABER
+                    </span>
+                    <div className="text-xs text-[#69f0ae] truncate font-medium">
+                      {selectedLang.headlines[0]}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lower-Third Custom Headline Form */}
+              <form onSubmit={handlePushBreaking} className="flex gap-2">
+                <input
+                  type="text"
+                  value={customHeadline}
+                  onChange={(e) => setCustomHeadline(e.target.value)}
+                  placeholder="Canlı yayın alt bandına anlık altyazı / haber metni gönder..."
+                  className="flex-1 bg-[#0d1420] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00d4aa]"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2.5 bg-[#00d4aa]/15 border border-[#00d4aa] text-[#00d4aa] rounded-xl text-xs font-mono font-bold hover:bg-[#00d4aa]/25 transition-all shrink-0"
+                >
+                  BANDA YANSIT
+                </button>
+              </form>
+            </div>
+
+            {/* Right: Teleprompter, Script & Language Control (5 Cols) */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              {/* Language Selector */}
+              <div className="bg-[#0d1420] border border-white/10 rounded-2xl p-4 shadow-xl">
+                <div className="text-xs font-mono font-bold text-[#00d4aa] mb-2.5 uppercase tracking-wider">
+                  Yayın Dili ve Masası Seçimi
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {BROADCAST_LANGUAGES.map((lang) => {
+                    const isSelected = selectedLang.id === lang.id;
+                    return (
+                      <button
+                        key={lang.id}
+                        onClick={() => {
+                          cyberSound.playClick();
+                          setSelectedLang(lang);
+                          if (isVoiceSpeaking) hdVoiceEngine.stop();
+                        }}
+                        className={`p-2 rounded-xl border text-left transition-all ${
+                          isSelected
+                            ? "bg-[#00d4aa]/20 border-[#00d4aa] text-white font-bold shadow-[0_0_12px_rgba(0,212,170,0.2)]"
+                            : "bg-black/30 border-white/5 text-[#8899a6] hover:text-white hover:bg-black/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 text-sm">
+                          <span>{lang.flag}</span>
+                          <span className="text-xs truncate">{lang.nativeName}</span>
+                        </div>
+                        <div className="text-[9px] text-[#8899a6] truncate mt-0.5">{lang.defaultAnchorName.split("&")[0]}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Segment Selector & Teleprompter Text */}
+              <div className="bg-[#0d1420] border border-white/10 rounded-2xl p-4 shadow-xl flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="text-xs font-mono font-bold text-[#f5a623] uppercase tracking-wider">
+                      Teleprompter Metni ({activeSegment.toUpperCase()})
+                    </div>
+                    <div className="flex gap-1">
+                      {(["opening", "macro", "quant", "breaking", "closing"] as const).map((seg) => (
                         <button
-                          key={m.id}
-                          onClick={() => setVideoStageMode(m.id as VideoStageMode)}
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${
-                            videoStageMode === m.id
-                              ? "bg-amber-500 text-black border-amber-400"
-                              : "bg-black/50 border-white/10 text-slate-400 hover:text-white"
+                          key={seg}
+                          onClick={() => {
+                            cyberSound.playClick();
+                            setActiveSegment(seg);
+                            if (isVoiceSpeaking) hdVoiceEngine.stop();
+                          }}
+                          className={`text-[10px] font-mono px-2 py-1 rounded transition-all ${
+                            activeSegment === seg
+                              ? "bg-[#f5a623] text-black font-bold"
+                              : "bg-black/40 text-slate-400 hover:text-white"
                           }`}
                         >
-                          {m.label}
+                          {seg.slice(0, 4).toUpperCase()}
                         </button>
                       ))}
                     </div>
-
-                    <button
-                      onClick={handleSpeakSample}
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center gap-1 ${
-                        isVoiceSpeaking
-                          ? "bg-red-600 text-white border-red-500 animate-pulse"
-                          : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                      }`}
-                    >
-                      <span>{isVoiceSpeaking ? "⏹️ STOP" : "🔊 AI ANCHOR VOICE"}</span>
-                    </button>
                   </div>
 
-                  {/* Video Stage Viewport */}
-                  <div className="aspect-video relative overflow-hidden bg-black flex items-center justify-center">
-                    {videoStageMode === "3D_GLOBE" ? (
-                      <div className="w-full h-full relative">
-                        <NurEarth3DGlobe />
-                        <div className="absolute top-3 left-3 flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 pointer-events-none z-10">
-                          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                          <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                            {selectedChannel.flag} {selectedChannel.nameLocal} • LIVE 4K
-                          </span>
-                        </div>
-                      </div>
-                    ) : videoStageMode === "RADAR" ? (
-                      <div className="w-full h-full relative flex items-center justify-center bg-[radial-gradient(ellipse_at_center,#082f49_0%,#020617_70%,#000000_100%)] font-mono">
-                        <div className="w-[320px] h-[320px] rounded-full border border-cyan-500/30 relative animate-pulse flex items-center justify-center">
-                          <div className="w-[220px] h-[220px] rounded-full border border-cyan-400/20" />
-                          <div className="w-[120px] h-[120px] rounded-full border border-cyan-300/30" />
-                          <div className="w-full h-[1px] bg-cyan-500/30 absolute" />
-                          <div className="h-full w-[1px] bg-cyan-500/30 absolute" />
-                        </div>
-                        <div className="absolute top-4 left-4 text-xs text-cyan-300 font-bold">
-                          ORBITAL TELEMETRY DOWNLINK • FREQ: 54.751113 MHz [CH-13·35·42·55]
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-full h-full p-6 flex flex-col justify-center bg-slate-950 font-mono text-center space-y-3">
-                        <div className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                          LIVE TELEPROMPTER • {selectedChannel.nameLocal}
-                        </div>
-                        <p className="text-sm font-semibold text-white max-w-lg mx-auto leading-relaxed">
-                          &ldquo;This is NUR Finance {selectedChannel.nameLocal}, broadcasting live from {selectedChannel.city}. Bringing you real-time geopolitical intelligence and sovereign quant strategies.&rdquo;
-                        </p>
-                      </div>
-                    )}
+                  <div className="bg-black/50 p-4 rounded-xl border border-white/5 text-sm leading-relaxed text-slate-200 font-sans min-h-[160px] max-h-[260px] overflow-y-auto">
+                    {selectedLang.scripts[activeSegment]}
                   </div>
-                  <div className="p-3" style={{ background: "var(--ag-surface)" }}>
-                    <h2 className="text-sm font-semibold mb-1" style={{ color: "var(--ag-text)" }}>{selectedChannel.nameLocal}</h2>
-                    <p className="text-[11px] mb-1" style={{ color: "var(--ag-muted)" }}>{selectedChannel.descriptionLocal}</p>
-                    <div className="text-[10px] mb-2" style={{ color: "var(--ag-muted)" }}>
-                      {selectedChannel.city} · {selectedChannel.timezone} · {selectedChannel.language}
-                      {selectedChannel.secondaryLanguages.length > 0 && ` + ${selectedChannel.secondaryLanguages.join(", ")}`}
-                    </div>
-                    <div className="flex gap-1 flex-wrap mb-3">
-                      {selectedChannel.topics.map(t => (
-                        <span key={t} className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.1)", color: "var(--ag-accent)" }}>{t}</span>
-                      ))}
-                    </div>
+                </div>
 
-                    {/* Channel hosts */}
-                    {channelHosts.length > 0 && (
-                      <div className="mb-3">
-                        <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--ag-muted)" }}>Anchors</h3>
-                        <div className="space-y-2">
-                          {channelHosts.map(h => <HostCard key={h.id} host={h} channel={selectedChannel} />)}
-                        </div>
-                      </div>
-                    )}
+                <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                  <div className="text-[11px] font-mono text-[#8899a6]">
+                    Spiker: <span className="text-white font-semibold">{selectedLang.defaultAnchorName}</span> ({selectedLang.city})
+                  </div>
+                  <button
+                    onClick={() => handleSpeak()}
+                    className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                      isVoiceSpeaking
+                        ? "bg-red-600 text-white animate-pulse"
+                        : "bg-[#00d4aa] text-black hover:bg-[#00c29b]"
+                    }`}
+                  >
+                    <span>{isVoiceSpeaking ? "⏹ Durdur" : "▶ Dinle & Test Et"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-                    {/* Channel guests */}
-                    {channelGuests.length > 0 && (
-                      <div className="mb-3">
-                        <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--ag-muted)" }}>Recurring Guests</h3>
-                        <div className="space-y-2">
-                          {channelGuests.map(g => <GuestCard key={g.id} guest={g} />)}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Channel shows */}
-                    {channelShows.length > 0 && (
+        {/* 3. CHANNELS LIST & DETAILS */}
+        {activeTab === "channels" && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1500px] mx-auto">
+            {/* Channel List (5 Cols) */}
+            <div className="lg:col-span-5 bg-[#0d1420] border border-white/10 rounded-2xl p-4 shadow-xl max-h-[700px] overflow-y-auto space-y-2">
+              <div className="text-xs font-mono font-bold text-[#00d4aa] uppercase tracking-wider mb-3">
+                15 Küresel TV Ağı Kanalı
+              </div>
+              {channels.map((chan) => {
+                const isSelected = selectedChannel.id === chan.id;
+                return (
+                  <div
+                    key={chan.id}
+                    onClick={() => {
+                      cyberSound.playClick();
+                      setSelectedChannel(chan);
+                    }}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                      isSelected
+                        ? "bg-[#00d4aa]/15 border-[#00d4aa] text-white shadow-md"
+                        : "bg-black/30 border-white/5 text-[#8899a6] hover:bg-black/50 hover:text-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{chan.flag}</span>
                       <div>
-                        <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--ag-muted)" }}>Shows</h3>
-                        <div className="space-y-2">
-                          {channelShows.map(s => <ShowCard key={s.id} show={s} />)}
-                        </div>
+                        <div className="text-sm font-bold text-white">{chan.nameLocal}</div>
+                        <div className="text-[11px] text-[#8899a6]">{chan.city} · {chan.language}</div>
                       </div>
-                    )}
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">
+                      {chan.status.toUpperCase()}
+                    </span>
                   </div>
-                </div>
-              ) : (
-                <div className="aspect-video rounded-xl border flex items-center justify-center"
-                  style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}>
-                  <div className="text-center">
-                    <div className="text-2xl mb-2 opacity-30">📡</div>
-                    <p className="text-xs" style={{ color: "var(--ag-muted)" }}>Select a channel to view details</p>
-                    <p className="text-[10px] mt-1" style={{ color: "var(--ag-muted)" }}>{channels.length} channels · {hosts.length} hosts · {guests.length} experts</p>
-                  </div>
-                </div>
-              )}
+                );
+              })}
             </div>
 
-            <div className="space-y-2">
-              <h2 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--ag-muted)" }}>Channels</h2>
-              {channels.map(ch => (
-                <button
-                  key={ch.id}
-                  onClick={() => setSelectedChannel(ch)}
-                  className="w-full text-left p-2.5 rounded-lg border transition-all hover:scale-[1.01]"
-                  style={{
-                    borderColor: selectedChannel?.id === ch.id ? "var(--ag-accent)" : "var(--ag-border)",
-                    background: selectedChannel?.id === ch.id ? "rgba(0,212,170,0.05)" : "var(--ag-surface)",
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-semibold" style={{ color: "var(--ag-text)" }}>{ch.flag} {ch.nameLocal}</span>
-                    <div className="flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ background: STATUS_COLORS[ch.status] ?? "#666" }} />
-                      <span className="text-[9px] uppercase" style={{ color: STATUS_COLORS[ch.status] ?? "#666" }}>{ch.status}</span>
+            {/* Selected Channel Info & Programs (7 Cols) */}
+            <div className="lg:col-span-7 bg-[#0d1420] border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{selectedChannel.flag}</span>
+                    <div>
+                      <h3 className="text-xl font-bold text-white font-serif">{selectedChannel.name}</h3>
+                      <div className="text-xs text-[#00d4aa] font-mono">{selectedChannel.studioName} ({selectedChannel.timezone})</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px]" style={{ color: "var(--ag-muted)" }}>
-                    <span>{ch.language}</span>
-                    <span>·</span>
-                    <span>{ch.city}</span>
-                    <span>·</span>
-                    <span>{hosts.filter(h => h.channelId === ch.id).length} hosts</span>
+                  <button
+                    onClick={() => handleSpeak(`This is NUR Finance ${selectedChannel.nameLocal} live from ${selectedChannel.city}.`)}
+                    className="px-3 py-1.5 bg-[#00d4aa]/15 border border-[#00d4aa] text-[#00d4aa] rounded-lg text-xs font-mono font-bold hover:bg-[#00d4aa]/25 transition-all"
+                  >
+                    🔊 Kanal Tanıtımını Dinle
+                  </button>
+                </div>
+
+                <p className="text-sm text-slate-300 leading-relaxed mb-5">{selectedChannel.description}</p>
+
+                <div className="text-xs font-mono font-bold text-[#f5a623] uppercase tracking-wider mb-3">
+                  Kanalın Programları & Yayın Akışı
+                </div>
+                <div className="space-y-2 max-h-[360px] overflow-y-auto pr-2">
+                  {shows
+                    .filter((s) => s.channelId === selectedChannel.id)
+                    .map((s) => (
+                      <div key={s.id} className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col gap-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white">{s.nameLocal}</span>
+                          <span className="text-[10px] font-mono text-[#00d4aa]">{s.schedule.startUTC}–{s.schedule.endUTC} UTC</span>
+                        </div>
+                        <p className="text-xs text-slate-400">{s.description}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-white/10 mt-5 text-[11px] font-mono text-[#8899a6] flex items-center justify-between">
+                <span>YouTube: {selectedChannel.youtubeHandle}</span>
+                <span>Konular: {selectedChannel.topics.join(" · ")}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 4. HOSTS & GUESTS DIRECTORY */}
+        {activeTab === "hosts-guests" && (
+          <div className="max-w-[1500px] mx-auto space-y-5">
+            <div className="flex items-center justify-between gap-4">
+              <input
+                type="text"
+                value={hostSearch}
+                onChange={(e) => setHostSearch(e.target.value)}
+                placeholder="Sunucu, ülke, uzmanlık veya dil ara..."
+                className="w-full max-w-md bg-[#0d1420] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00d4aa]"
+              />
+              <div className="text-xs font-mono text-[#8899a6]">
+                Toplam {filteredHosts.length} Sunucu
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredHosts.map((h) => (
+                <div key={h.id} className="bg-[#0d1420] border border-white/10 rounded-xl p-4 shadow-lg flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-bold text-white">{h.displayName} {h.lastName}</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#00C853]/20 border border-[#00C853] text-[#69f0ae]">
+                        Zümrüt Yeşil
+                      </span>
+                    </div>
+                    <div className="text-xs text-[#00d4aa] mb-2">{h.nationality} · {h.heightCm} cm · {h.ageRange} Yaş</div>
+                    <p className="text-xs text-slate-300 line-clamp-3 mb-3">{h.bio}</p>
                   </div>
-                </button>
+                  <div className="pt-2 border-t border-white/5 text-[10px] font-mono text-slate-400">
+                    Diller: {h.languages.join(", ")}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* HOSTS & GUESTS TAB */}
-        {tab === "hosts" && (
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--ag-accent)" }}>
-                On-Air Anchors ({hosts.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {hosts.map(h => {
-                  const ch = channels.find(c => c.id === h.channelId);
-                  return <HostCard key={h.id} host={h} channel={ch} />;
-                })}
-              </div>
-            </div>
-            <div className="border-t pt-4" style={{ borderColor: "var(--ag-border)" }}>
-              <h2 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#f59e0b" }}>
-                Expert Guests ({guests.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {guests.map(g => <GuestCard key={g.id} guest={g} />)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* SCHEDULE TAB */}
-        {tab === "schedule" && (
-          <div className="space-y-2">
-            <h2 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--ag-muted)" }}>
-              Broadcast Schedule ({shows.length} shows)
-            </h2>
-            {shows.map(s => <ShowCard key={s.id} show={s} />)}
-          </div>
-        )}
-
-        {/* SOCIAL TAB */}
-        {tab === "social" && (
-          <div>
-            <h2 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--ag-muted)" }}>
-              Follow NUR Finance Everywhere
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-              {socialPlatforms.map(p => (
-                <div
-                  key={p.name}
-                  className="flex items-center gap-2 p-2.5 rounded-lg border transition-all hover:scale-[1.02] cursor-pointer"
-                  style={{ borderColor: "var(--ag-border)", background: "var(--ag-surface)" }}
-                >
-                  <div className="w-7 h-7 rounded flex items-center justify-center text-[10px] font-bold shrink-0"
-                    style={{ background: p.color + "22", color: p.color }}>
-                    {p.icon}
+        {/* 5. SCHEDULE TIMETABLE */}
+        {activeTab === "schedule" && (
+          <div className="max-w-[1500px] mx-auto bg-[#0d1420] border border-white/10 rounded-2xl p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-white font-serif mb-4">Küresel 24/7 Yayın Programı</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {shows.slice(0, 10).map((show) => (
+                <div key={show.id} className="p-4 bg-black/40 border border-white/5 rounded-xl">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-bold text-white">{show.nameLocal}</span>
+                    <span className="text-xs font-mono text-[#f5a623]">{show.schedule.startUTC}–{show.schedule.endUTC} UTC</span>
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-[11px] font-medium truncate" style={{ color: "var(--ag-text)" }}>{p.name}</div>
-                    <div className="text-[9px]" style={{ color: "var(--ag-muted)" }}>{p.followers}</div>
-                  </div>
+                  <div className="text-xs text-[#00d4aa] mb-2">{show.format.toUpperCase()} · {show.schedule.days.join(", ")}</div>
+                  <p className="text-xs text-slate-300 leading-relaxed">{show.description}</p>
                 </div>
               ))}
             </div>
