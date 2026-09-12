@@ -21,6 +21,22 @@ export interface LanguageBroadcastProfile {
   headlines: string[];
 }
 
+export const BOSS_NUR_SPECIAL = {
+  id: "boss_nur",
+  name: "Boss Nur (The Boss)",
+  title: "Kanal İmparatorluğunun Sahibi, Kurucu Patriark & Süper Konuk",
+  avatar: "/images/characters/boss_nur.jpg",
+  watch: "Solid Gold Patek Philippe Grandmaster Chime",
+  traits: "1.63m Boy · Göbekli & Hedonist · Canlı Yayında Yemek Yer · Karısından Çok Korkar",
+  quotes: [
+    "Hahahahaha! Selamün aleyküm gençler! Bırakın şimdi o grafikleri, getirin hele şu fıstıklı baklavayı!",
+    "Oğlum siz ne anlatıyorsunuz öyle kuant muant, ben anlamam öyle şeylerden! Benim kafa başka yere gidiyor hahahaha!",
+    "Bütün bu ekranları, uyduları benim parayla kurdunuz ama vallahi helal olsun, güzel olmuş hahahaha!",
+    "Aman durun sessiz olun! Hanım arıyor! Çabuk yayını kesin hemen kapatmam lazım hahahaha!",
+  ],
+  fullScript: `Hahahahaha! Selamün aleyküm canlı yayın stüdyosu! Elena kızım, Marcus oğlum, Umay Nur evladım nasılsınız? Bırakın şimdi o faizleri, kuantları, enflasyonları... Bana oradan taze fıstıklı baklavayla demli bir çay getirin hele! Ben öyle karmaşık şeylerden çok anlamam, benim kafa başka yere gidiyor hahahaha! Bütün kanalı benim parayla kurdunuz ama vallahi helal olsun çok güzel olmuş! ... Aman durun durun sessiz olun, hanım arıyor! Çabuk yayını kesin yoksa beni mahveder hahahaha!`,
+};
+
 export const BROADCAST_LANGUAGES: LanguageBroadcastProfile[] = [
   {
     id: "tr",

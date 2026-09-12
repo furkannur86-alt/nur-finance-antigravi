@@ -5,6 +5,7 @@ import EagleCrest from "@/components/ui/EagleCrest";
 import NurEarth3DGlobe from "@/components/geopolitics/NurEarth3DGlobe";
 import {
   BROADCAST_LANGUAGES,
+  BOSS_NUR_SPECIAL,
   LanguageBroadcastProfile,
   hdVoiceEngine,
 } from "@/lib/broadcast/multilingual-broadcast";
@@ -39,6 +40,8 @@ export default function LiveBroadcast() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [headlineIdx, setHeadlineIdx] = useState(0);
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking">("opening");
+  const [isBossNurActive, setIsBossNurActive] = useState(false);
+  const [bossNurFood, setBossNurFood] = useState("Fıstıklı Baklava & Demli Çay");
 
   // Draggable HUD Card State
   const [hudPos, setHudPos] = useState({ x: 24, y: 120 });
@@ -142,6 +145,28 @@ export default function LiveBroadcast() {
     }, 1200);
   };
 
+  const handleBossNurCrash = () => {
+    cyberSound.playQuantumUnlock();
+    setIsBossNurActive(true);
+    addNotification({
+      title: "👑 BOSS NUR YAYINA GİRDİ!",
+      message: "Kanal imparatorluğunun kurucusu ve asıl sahibi canlı stüdyoya çat kapı giriş yaptı!",
+      severity: "SUCCESS",
+      category: "MEDIA",
+    });
+
+    hdVoiceEngine.stop();
+    setIsSpeaking(true);
+    hdVoiceEngine.speak(
+      BOSS_NUR_SPECIAL.fullScript,
+      "tr-TR",
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false),
+      () => setIsSpeaking(false),
+      { isMale: true, anchorName: "Boss Nur", rate: "+18%" }
+    );
+  };
+
   const handleSpeak = () => {
     const speechText = selectedLang.scripts[activeSegment];
     hdVoiceEngine.speak(
@@ -169,6 +194,104 @@ export default function LiveBroadcast() {
       onMouseUp={handleMouseUp}
       className="relative w-full h-full bg-slate-950 overflow-hidden select-none font-sans text-white flex flex-col justify-between"
     >
+      {/* ── BOSS NUR GUEST CRASH OVERLAY ─────────────────────────────────── */}
+      {isBossNurActive && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-2xl bg-gradient-to-r from-amber-950/95 via-black/95 to-amber-950/95 border-2 border-[#f5a623] rounded-2xl p-4 shadow-[0_0_50px_rgba(245,166,35,0.4)] backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-300">
+          <div className="flex items-start justify-between border-b border-[#f5a623]/30 pb-3 mb-3">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl animate-bounce">👑</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold bg-[#f5a623] text-black px-2 py-0.5 rounded">
+                    PATRİYARK BASKINI
+                  </span>
+                  <span className="text-xs font-serif font-bold text-[#ffd54f]">
+                    BOSS NUR CANLI YAYINDA
+                  </span>
+                </div>
+                <div className="text-[11px] text-amber-200/80 font-mono mt-0.5">
+                  1.63m Boy · Göbekli · Altın Patek Philippe · İkram: {bossNurFood}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                cyberSound.playClick();
+                setIsBossNurActive(false);
+                hdVoiceEngine.stop();
+                setIsSpeaking(false);
+              }}
+              className="px-2.5 py-1 rounded-lg bg-red-600/30 text-red-300 hover:bg-red-600 text-xs font-mono font-bold"
+            >
+              ✕ KAPAT
+            </button>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="relative w-24 h-28 rounded-xl overflow-hidden border-2 border-[#f5a623] shrink-0 shadow-xl bg-black">
+              <img
+                src="/images/characters/boss_nur.jpg"
+                alt="Boss Nur"
+                className="w-full h-full object-cover object-top"
+              />
+              <div className="absolute bottom-0 inset-x-0 bg-amber-500 text-black text-[9px] font-extrabold text-center py-0.5">
+                KAHKAHA & NEŞE
+              </div>
+            </div>
+
+            <div className="flex-1 space-y-2">
+              <div className="p-2.5 bg-black/60 rounded-xl border border-amber-500/20 text-xs text-amber-100 italic leading-relaxed font-sans">
+                &ldquo;{BOSS_NUR_SPECIAL.fullScript}&rdquo;
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400 font-mono">İkram Getir:</span>
+                  {[
+                    "Fıstıklı Baklava",
+                    "Çıtır Lahmacun",
+                    "Demli Çay & Simit",
+                  ].map((food) => (
+                    <button
+                      key={food}
+                      onClick={() => {
+                        cyberSound.playClick();
+                        setBossNurFood(food);
+                      }}
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
+                        bossNurFood === food
+                          ? "bg-[#f5a623] text-black"
+                          : "bg-white/10 text-slate-300 hover:bg-white/20"
+                      }`}
+                    >
+                      {food}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    cyberSound.playQuantumUnlock();
+                    addNotification({
+                      title: "📞 HANİM ARIYOR!",
+                      message: "Boss Nur telaşla telefonu kapattı ve stüdyodan kaçtı!",
+                      severity: "WARNING",
+                      category: "MEDIA",
+                    });
+                    setIsBossNurActive(false);
+                    hdVoiceEngine.stop();
+                    setIsSpeaking(false);
+                  }}
+                  className="px-2.5 py-1 rounded bg-red-600/80 hover:bg-red-600 text-white text-[10px] font-mono font-bold animate-pulse"
+                >
+                  📞 HANIM ARADI (KAÇ!)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── BACKGROUND STUDIO VIDEO WALL ──────────────────────────────────── */}
       <div className="absolute inset-0 z-0 bg-slate-950 overflow-hidden">
         {backdropMode === "NUR_STUDIO_2126" ? (
@@ -275,6 +398,15 @@ export default function LiveBroadcast() {
               </button>
             ))}
           </div>
+
+          {/* Boss Nur Live Crasher Button */}
+          <button
+            onClick={handleBossNurCrash}
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600/30 via-amber-500/40 to-amber-600/30 hover:from-amber-600/50 hover:to-amber-600/50 text-[#ffd54f] border border-amber-400/60 text-xs font-mono font-extrabold transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,166,35,0.3)] animate-pulse"
+            title="Kanal Sahibi Boss Nur'u Canlı Yayına Çağır (Baskın)"
+          >
+            <span>👑 BOSS NUR (BASKIN)</span>
+          </button>
 
           {/* Snapshot & Video Generator Tools */}
           <button

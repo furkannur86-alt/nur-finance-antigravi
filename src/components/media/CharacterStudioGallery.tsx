@@ -28,6 +28,25 @@ interface CharacterProfile {
 
 const CHARACTERS: CharacterProfile[] = [
   {
+    id: "boss_nur",
+    name: "Boss Nur (The Boss)",
+    role: "Kanal İmparatorluğu Sahibi & Kurucu Patriark",
+    location: "Global / Bütün Stüdyolar",
+    age: 61,
+    heightCm: 163,
+    bustSize: "Oldukça Göbekli · Tonton Hedonist",
+    eyeColor: "Işıltılı Zümrüt Yeşili",
+    eyeHex: "#00C853",
+    physique: "1.63 m · Sevimli tonton göbek, babacan tavırlar, güler yüz, gür kahkaha",
+    wardrobe: "Lüks İtalyan kaşmir hırka, yakası açık beyaz ipek gömlek veya kadife ceket",
+    decolletePolicy: "Patriark Rahatlığı (Kravatsız & Açık Yaka)",
+    watchModel: "Ağır Som Sarı Altın Patek Philippe Grandmaster Chime",
+    voiceName: "Microsoft AhmetNeural (Babacan & Neşeli)",
+    voiceSample: "Hahahahaha! Oğlum siz ne anlatıyorsunuz öyle kuant muant, ben anlamam o işlerden! Benim kafam başka yere gidiyor! Şu fıstıklı baklavadan getirin hele!",
+    imagePath: "/images/characters/boss_nur.jpg",
+    bio: "Kanal imparatorluğunun asıl sahibi. Sermayeyi o sağlamış, oğulları kurmuştur. Yayına çat kapı girip yemek yer, kahkahalar atar. Herkes ona sınırsız saygı gösterir. En büyük zayıflığı: Adı gizli olan karısından inanılmaz korkmasıdır!"
+  },
+  {
     id: "elena_vance",
     name: "Elena Vance",
     role: "Senior Global Macro & Sovereign Wealth Strategist",
