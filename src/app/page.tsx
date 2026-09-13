@@ -58,6 +58,11 @@ import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 import CockpitFrame from "@/components/cockpit/CockpitFrame";
 import FloatingWindowManager from "@/components/layout/FloatingWindowManager";
+import GalacticFleetPanel from "@/components/orbital/GalacticFleetPanel";
+import OrbitalCommandPanel from "@/components/orbital/OrbitalCommandPanel";
+import CivilizationTerminalPanel from "@/components/orbital/CivilizationTerminalPanel";
+import CivilizationArbitrageEngine from "@/components/trading/CivilizationArbitrageEngine";
+import MasterFleetMiningAdminPanel from "@/components/orbital/MasterFleetMiningAdminPanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -76,6 +81,11 @@ const FULLSCREEN_VIEWS = [
   "resource-intelligence",
   "institutional-suite",
   "orbital-telemetry",
+  "galactic-fleet",
+  "orbital-command",
+  "civilization-terminals",
+  "civilization-arbitrage",
+  "master-fleet-mining",
   "professional-ai",
   "professional-social",
   "user-profile",
@@ -168,6 +178,16 @@ export default function Home() {
         return <InstitutionalSuitePanel />;
       case "orbital-telemetry":
         return <OrbitalTelemetryPanel />;
+      case "galactic-fleet":
+        return <GalacticFleetPanel />;
+      case "orbital-command":
+        return <OrbitalCommandPanel />;
+      case "civilization-terminals":
+        return <CivilizationTerminalPanel onClose={() => setActiveView("dashboard")} />;
+      case "civilization-arbitrage":
+        return <CivilizationArbitrageEngine onClose={() => setActiveView("dashboard")} />;
+      case "master-fleet-mining":
+        return <MasterFleetMiningAdminPanel />;
       case "professional-ai":
         return <ProfessionalAIHubPanel />;
       case "professional-social":

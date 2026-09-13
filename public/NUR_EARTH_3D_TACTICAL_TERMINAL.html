@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUR EARTH 3D — 20 GALAKTİK AMİRAL GEMİSİ & TAKTİK C4ISR KÜRESİ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <!-- Three.js + OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg: #01040a;
+      --panel-bg: rgba(6, 12, 24, 0.94);
+      --border: rgba(46, 139, 87, 0.35);
+      --turk-green: #2E8B57;
+      --turk-green-glow: 0 0 16px rgba(46, 139, 87, 0.7);
+      --turk-gold: #eab308;
+      --accent-cyan: #06b6d4;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-ui: 'Outfit', sans-serif;
+      --font-serif: 'Cinzel', serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* TOP HEADER */
+    header {
+      background: rgba(2, 6, 18, 0.96);
+      border-bottom: 1px solid var(--border);
+      height: 52px;
+      padding: 0 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-beacon {
+      width: 10px;
+      height: 10px;
+      background: var(--accent-red);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent-red);
+      animation: pulseRed 1.4s infinite;
+    }
+
+    @keyframes pulseRed {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title span {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      background: rgba(46, 139, 87, 0.2);
+      border: 1px solid var(--turk-green);
+      color: #86efac;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .header-layers {
+      display: flex;
+      gap: 8px;
+    }
+
+    .layer-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .layer-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .layer-btn.active {
+      background: rgba(46, 139, 87, 0.3);
+      border-color: var(--turk-green);
+      color: #86efac;
+      box-shadow: 0 0 10px rgba(46, 139, 87, 0.4);
+    }
+
+    /* MAIN APP WORKSPACE */
+    .globe-workspace {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #tacticalCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* HUD PANELS */
+    .hud-left {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 320px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.8);
+      font-family: var(--font-mono);
+    }
+
+    .hud-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--turk-gold);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .hud-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      padding: 4px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .hud-item span:first-child { color: var(--text-muted); }
+    .hud-item span:last-child { color: #fff; font-weight: 700; }
+
+    /* SHIP INSPECTOR MODAL */
+    .ship-dock-card {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 340px;
+      background: rgba(3, 8, 20, 0.96);
+      border: 2px solid var(--turk-green);
+      border-radius: 12px;
+      padding: 16px;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9), 0 0 25px rgba(46,139,87,0.35);
+      display: none;
+    }
+    .ship-dock-card.active { display: block; }
+
+    .ship-dock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 6px;
+    }
+
+    .ship-dock-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .btn-dock-close {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--accent-red);
+      color: #fca5a5;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-dock-close:hover {
+      background: var(--accent-red);
+      color: #fff;
+    }
+
+    .dock-action-btn {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(46, 139, 87, 0.8), rgba(6, 182, 212, 0.8));
+      border: 1px solid #86efac;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      margin-top: 12px;
+    }
+    .dock-action-btn:hover { filter: brightness(1.2); }
+    .dock-action-btn:hover { filter: brightness(1.2); }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-group">
+      <div class="live-beacon"></div>
+      <div class="brand-title">
+        NUR EARTH 3D
+        <span>20 GALAKTİK AMİRAL GEMİSİ & C4ISR</span>
+      </div>
+    </div>
+
+    <!-- LAYER SELECTORS -->
+    <div class="header-layers">
+      <button class="layer-btn active" onclick="toggleTacticalLayer('SHIPS', this)">🚀 20 GALAKTİK GEMİ</button>
+      <button class="layer-btn" onclick="toggleTacticalLayer('FLIR', this)">🌡️ FLIR TERMAL</button>
+      <button class="layer-btn" onclick="toggleTacticalLayer('NUCLEAR', this)">⚛️ IAEA NÜKLEER</button>
+      <button class="layer-btn" onclick="toggleTacticalLayer('MINERALS', this)">⛏️ MİNERALLER</button>
+      <button class="layer-btn" onclick="toggleTacticalLayer('MAGMA', this)">🌋 DERİN MAGMA</button>
+    </div>
+
+    <div>
+      <a href="NUR_STARSHIP_BRIDGE_MASTER_TERMINAL.html" style="background: rgba(46,139,87,0.3); border: 1px solid var(--turk-green); color: #86efac; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; padding: 6px 12px; border-radius: 6px; text-decoration: none;">
+        ⤺ KOKPİT KÖŞKÜNE DÖN
+      </a>
+    </div>
+  </header>
+
+  <!-- GLOBE VIEWPORT -->
+  <div class="globe-workspace">
+    <canvas id="tacticalCanvas"></canvas>
+
+    <!-- LEFT HUD -->
+    <div class="hud-left" id="hudLeftTactical">
+      <div class="hud-title">
+        <span onclick="toggleMinimizeTacticalHud()" style="cursor: pointer;">◈ C4ISR SİSTEM DURUMU</span>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <button style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; cursor: pointer;" onclick="toggleMinimizeTacticalHud()" title="Küçült/Büyüt">—</button>
+          <button style="background: rgba(239,68,68,0.2); border: 1px solid var(--accent-red); color: #fca5a5; font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; cursor: pointer;" onclick="closeTacticalHud()" title="Kapat">✕</button>
+        </div>
+      </div>
+      <div id="hudTacticalBody">
+        <div class="hud-item"><span>AKTİF FİLO</span><span>10 EGEMEN + 10 LİBERAL</span></div>
+        <div class="hud-item"><span>OTONOM YÖRÜNGE</span><span style="color: #67e8f9;">AKTİF (LEO & HEO)</span></div>
+        <div class="hud-item"><span>GÜNEŞ RÜZGARI (Kp)</span><span>442.8 km/s (Kp 3.5)</span></div>
+        <div class="hud-item"><span>APOPHIS (99942)</span><span style="color: #fca5a5;">31,600 km (2029)</span></div>
+        <div class="hud-item"><span>RESONANS SEED</span><span style="color: #fde047;">#54751113</span></div>
+        <div class="hud-item" style="border: none; margin-top: 6px;">
+          <span style="color: #94a3b8; font-size: 0.65rem;">* Gemilere tıklayarak yakınlaşın (H: HUD Gizle/Aç)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOATING HUD TOGGLE BUTTON -->
+    <button style="position: absolute; bottom: 20px; left: 20px; z-index: 60; background: rgba(3,8,20,0.9); border: 1px solid var(--turk-green); color: #86efac; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 800; padding: 6px 14px; border-radius: 30px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.8);" onclick="toggleAllTacticalHud()">
+      <span>◈</span> HUD [H]
+    </button>
+
+    <!-- RIGHT SHIP CARD -->
+    <div class="ship-dock-card" id="shipDockCard">
+      <div class="ship-dock-header">
+        <div class="ship-dock-title" id="dockShipTitle">GEMİ DETAYI</div>
+        <button class="btn-dock-close" onclick="document.getElementById('shipDockCard').classList.remove('active')">✕ KAPAT (ESC)</button>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #86efac; margin-bottom: 8px;" id="dockShipType">EGEMEN AMİRAL GEMİSİ</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+        <div>Kültürel Mimari: <strong style="color: #fff;" id="dockShipArch">-</strong></div>
+        <div>Spiker / Ekip: <strong style="color: #fff;" id="dockShipAnchor">-</strong></div>
+        <div>Mevcut Görev: <strong style="color: #fde047;" id="dockShipTask">-</strong></div>
+      </div>
+      <a class="dock-action-btn" id="dockActionBtn" href="#" target="_blank">
+        <span>🛰️ CANLI MEDYA TERMİNALİNE GEÇ</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let scene, camera, renderer, globe, clouds, controls, raycaster, mouse;
+    let starships = [];
+    let layerThermal, layerNuclear, layerMinerals, layerMagma;
+    let earthTextures = {};
+
+    const FLEET = [
+      // 10 SOVEREIGN ARCHITECTURAL TITANS (STATE DOCTRINE & SACRED ARCHIVES)
+      {
+        id: "TR_SOV",
+        name: "NUR-08 // BOZKURT TİTANI",
+        type: "SOVEREIGN",
+        civ: "TURKISH CENTRAL MASTER",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // TR DOĞU KANADI KOMUTANLIĞI",
+        arch: "Selçuklu Kartal, Bozkurt Pruva, Samsun Kırmızı-Beyaz-Siyah Zırh",
+        anchor: "Kaan Selçuk Demir & Elif Nur Erdem",
+        theme: "🏛️ Kadim Devlet Aklı, Göktürk & 19 Mayıs Milli Ruhu",
+        terminal: "NUR_FINANS_CAPTAIN_TERMINAL.html",
+        color: 0xdc2626, accentColor: 0x0a0a0f, engineColor: 0x2E8B57,
+        lat: 39.9, lon: 32.8, alt: 9.8, speed: 0.00012, scale: 1.3
+      },
+      {
+        id: "GB_SOV",
+        name: "TUDOR-02 // MAJESTIC",
+        type: "SOVEREIGN",
+        civ: "ANGLO SOVEREIGN",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // SACLANT KRALİYET FİLOSU",
+        arch: "Westminster Gotik & Radcliffe Kubbeli Kraliyet Zırhı",
+        anchor: "Marcus Sterling & Elena Vance",
+        theme: "🏛️ City of London & Kraliyet Finans Doktrini",
+        terminal: "TUDOR_FINANCE_ENGLISH_TERMINAL.html",
+        color: 0x1e3a8a, accentColor: 0xf59e0b, engineColor: 0x38bdf8,
+        lat: 51.5, lon: -0.12, alt: 10.1, speed: 0.00011, scale: 1.25
+      },
+      {
+        id: "CN_SOV",
+        name: "TANG-03 // CELESTIAL DRAGON",
+        type: "SOVEREIGN",
+        civ: "CHINESE SOVEREIGN",
+        alliance: "SCO_BRICS",
+        allianceName: "🔴 ŞANGHAY İŞBİRLİĞİ (SCO) & BRICS+ AVRASYA ORBİTAL CEPHESİ",
+        arch: "Yasak Şehir Kademeli Pagoda & Dunhuang Solar Kanat",
+        anchor: "Chen Weilin & Lin Xiaoyu",
+        theme: "🏛️ İmparatorluk ve Parti Devlet Aklı",
+        terminal: "TANG_CAPITAL_CHINESE_TERMINAL.html",
+        color: 0xb91c1c, accentColor: 0xeab308, engineColor: 0x10b981,
+        lat: 39.9, lon: 116.4, alt: 10.3, speed: 0.00010, scale: 1.3
+      },
+      {
+        id: "JP_SOV",
+        name: "TOKUGAWA-04 // KURO SHOGUN",
+        type: "SOVEREIGN",
+        civ: "JAPANESE SOVEREIGN",
+        alliance: "QUAD_PACIFIC",
+        allianceName: "🟠 PASİFİK GÜVENLİK PAKTI (QUAD / US-JP KUANTUM VE UYDU KALKANI)",
+        arch: "Himeji Beyaz Balıkçıl Köşkü & Shinto Torii İticileri",
+        anchor: "Kenjiro Takahashi & Aoi Morimoto",
+        theme: "🏛️ Şinto Disiplini & Kabutocho Finans Aklı",
+        terminal: "TOKUGAWA_MARKETS_JAPANESE_TERMINAL.html",
+        color: 0x0f172a, accentColor: 0xf97316, engineColor: 0xfacc15,
+        lat: 35.6, lon: 139.7, alt: 9.9, speed: 0.00013, scale: 1.2
+      },
+      {
+        id: "FR_SOV",
+        name: "BOURBON-05 // FLEUR-DE-LIS",
+        type: "SOVEREIGN",
+        civ: "FRENCH/EU SOVEREIGN",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // STRATEJİK OTONOMİ BİRLİĞİ",
+        arch: "Versailles Sarayı Titanyum Zırhı & Kraliyet Laciverti",
+        anchor: "Antoine de Saint-Germain & Camille Laurent",
+        theme: "🏛️ Kıta Avrupası Stratejik Otonomi Doktrini",
+        terminal: "BOURBON_ANALYTICS_FRENCH_TERMINAL.html",
+        color: 0x172554, accentColor: 0xf59e0b, engineColor: 0x60a5fa,
+        lat: 48.8, lon: 2.35, alt: 10.0, speed: 0.00011, scale: 1.25
+      },
+      {
+        id: "AR_SOV",
+        name: "ABBASID-06 // HOUSE OF WISDOM",
+        type: "SOVEREIGN",
+        civ: "ARABIC SOVEREIGN",
+        alliance: "GCC_ARAB",
+        allianceName: "🟢 KÖRFEZ İŞBİRLİĞİ KONSEYİ (GCC) & ARAP SAVUNMA LİGİ",
+        arch: "Samarra Sarmal Minare Yerçekimi & Elhamra Mukarnas",
+        anchor: "Tariq Al-Mansoor & Noor Al-Hassan",
+        theme: "🏛️ Beytü'l-Hikme Kadim Astronomi & Körfez Doktrini",
+        terminal: "ABBASID_FINANCIAL_ARABIC_TERMINAL.html",
+        color: 0x064e3b, accentColor: 0xf59e0b, engineColor: 0x34d399,
+        lat: 24.7, lon: 46.7, alt: 9.9, speed: 0.00012, scale: 1.25
+      },
+      {
+        id: "IN_SOV",
+        name: "MAURYA-07 // ASHOKA VIMANA",
+        type: "SOVEREIGN",
+        civ: "INDIAN SOVEREIGN",
+        alliance: "SCO_BRICS",
+        allianceName: "🔴 BRICS+ & HİNT OKYANUSU İTTİFAKI (IORA ORBİTAL SAVUNMA)",
+        arch: "Brihadisvara Kuleleri & Konark Güneş Jiroskopu",
+        anchor: "Aarav Sharma & Priya Iyer",
+        theme: "🏛️ Vedik Devlet Aklı & Hint Okyanusu Savunması",
+        terminal: "MAURYA_INTELLIGENCE_HINDI_TERMINAL.html",
+        color: 0x78350f, accentColor: 0xf59e0b, engineColor: 0x818cf8,
+        lat: 28.6, lon: 77.2, alt: 10.2, speed: 0.00011, scale: 1.3
+      },
+      {
+        id: "RU_SOV",
+        name: "RURIK-08 // SLAVIC CITADEL",
+        type: "SOVEREIGN",
+        civ: "RUSSIAN SOVEREIGN",
+        alliance: "SCO_BRICS",
+        allianceName: "🔴 ŞANGHAY İŞBİRLİĞİ (SCO) & KUTUP İPEK YOLU SAVUNMA CEPHESİ",
+        arch: "Aziz Vasil Kubbe Reaktörleri & Kremlin Titanyum Suru",
+        anchor: "Viktor Morozov & Daria Volkova",
+        theme: "🏛️ Ortodoks Manastır Arşivleri & Kremlin Doktrini",
+        terminal: "RURIK_CAPITAL_RUSSIAN_TERMINAL.html",
+        color: 0x881337, accentColor: 0xf8fafc, engineColor: 0x06b6d4,
+        lat: 55.7, lon: 37.6, alt: 10.4, speed: 0.00010, scale: 1.3
+      },
+      {
+        id: "ES_SOV",
+        name: "HABSBURGO-09 // SAGRADA GALLEON",
+        type: "SOVEREIGN",
+        civ: "HISPANIC SOVEREIGN",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // GÜNEY AKDENİZ VE ATLANTİK KOMUTANLIĞI",
+        arch: "Sagrada Família Biyomimetik Kuleleri & Ağır Kalyon",
+        anchor: "Santiago De La Vega & Valentina Morales",
+        theme: "🏛️ Kastilya & Toledo Kadim Çelik Doktrini",
+        terminal: "HABSBURGO_CAPITAL_SPANISH_TERMINAL.html",
+        color: 0x991b1b, accentColor: 0xd97706, engineColor: 0xfbbf24,
+        lat: 40.4, lon: -3.7, alt: 9.9, speed: 0.00012, scale: 1.25
+      },
+      {
+        id: "AF_SOV",
+        name: "KILWA-10 // ZIMBABWE TITAN",
+        type: "SOVEREIGN",
+        civ: "PAN-AFRICAN SOVEREIGN",
+        alliance: "AU_AFRICA",
+        allianceName: "🟡 AFRİKA BİRLİĞİ (AU) & AFCFTA PAN-AFRİKAN EGEMEN SAVUNMA",
+        arch: "Lalibela Yekpare Kaya Zırhı & Timbuktu Kulesi",
+        anchor: "Kwame Osei & Zuri Mwangi",
+        theme: "🏛️ Kadim Timbuktu Arşivleri & Afrika Egemenliği",
+        terminal: "KILWA_MARKETS_AFRICAN_TERMINAL.html",
+        color: 0x713f12, accentColor: 0xeab308, engineColor: 0xf97316,
+        lat: -1.29, lon: 36.8, alt: 9.7, speed: 0.00013, scale: 1.25
+      },
+
+      // 10 LIBERAL PARTY SHIPS (HIGH-ENERGY ENTERTAINMENT & NIGHTLIFE)
+      {
+        id: "TR_LIB",
+        name: "LİBERAL VİZYON // TULIP LOUNGE",
+        type: "LIBERAL",
+        civ: "TURKISH LIBERAL PAX",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // LİBERAL KÜLTÜR & MEDYA KANADI",
+        arch: "İstanbul Lale Kulesi Hatları & Boğaz Cam Asma",
+        anchor: "Cem Demirkan & Melis Karahan",
+        theme: "🍸 Boğaz Günbatımı Rakı-Balık & Bebek Çatı Partisi",
+        terminal: "LIBERAL_VIZYON_TURKISH_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0xec4899, engineColor: 0x06b6d4,
+        lat: 41.0, lon: 28.9, alt: 10.9, speed: 0.00015, scale: 1.2
+      },
+      {
+        id: "US_LIB",
+        name: "PAX HORIZON // MIAMI SKY YACHT",
+        type: "LIBERAL",
+        civ: "ANGLO LIBERAL PAX",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // ATLANTİK DEMOKRASİ & MEDYA YAT KANADI",
+        arch: "Calatrava Akışkan Kanat & Cam Penthouse",
+        anchor: "Julian Vance & Chloe Montgomery",
+        theme: "🍾 Miami & Ibiza Köpük Partisi & VIP Şampanya",
+        terminal: "PAX_HORIZON_LIBERAL_ENGLISH_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0x38bdf8, engineColor: 0xf472b6,
+        lat: 25.7, lon: -80.2, alt: 11.3, speed: 0.00016, scale: 1.2
+      },
+      {
+        id: "CN_LIB",
+        name: "HARMONY // SHANGHAI CYBER RAVE",
+        type: "LIBERAL",
+        civ: "CHINESE LIBERAL PAX",
+        alliance: "SCO_BRICS",
+        allianceName: "🔴 BRICS+ & ŞANGHAY SERBEST TİCARET & SİBER MEDYA KANADI",
+        arch: "Şanghay Kule Eğrileri & Foton Güneş Yelkeni",
+        anchor: "Li Zihan & Meiling Zhao",
+        theme: "🪩 Şanghay Gece Kulübü & Yeşim Lazer Dansı",
+        terminal: "HARMONY_GLOBAL_CHINESE_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0x34d399, engineColor: 0x10b981,
+        lat: 31.2, lon: 121.5, alt: 11.1, speed: 0.00014, scale: 1.2
+      },
+      {
+        id: "JP_LIB",
+        name: "ZENITH // SHIBUYA RAVE GLIDER",
+        type: "LIBERAL",
+        civ: "JAPANESE LIBERAL PAX",
+        alliance: "QUAD_PACIFIC",
+        allianceName: "🟠 PASİFİK KUAD SERBEST İNOVASYON & SHIBUYA MEDYA KANADI",
+        arch: "Şinkansen Ultra-Pruva & Minimalist Kristal Spire",
+        anchor: "Daiki Sato & Yumi Tanaka",
+        theme: "🎤 Shibuya Karaoke Lounge & J-Pop Dans Partisi",
+        terminal: "ZENITH_PACIFIST_JAPANESE_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0xf472b6, engineColor: 0xa855f7,
+        lat: 35.6, lon: 139.7, alt: 10.8, speed: 0.00016, scale: 1.2
+      },
+      {
+        id: "FR_LIB",
+        name: "L'AURORE // CANNES RIVIERA YACHT",
+        type: "LIBERAL",
+        civ: "FRENCH/EU LIBERAL PAX",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // CANNES KOZMOPOLİT MEDYA KANADI",
+        arch: "Louvre Cam Piramidi & Akışkan Titanyum Kanat",
+        anchor: "Gaston Mercier & Élodie Fontenoy",
+        theme: "🥂 Cannes Kırmızı Halı Galası & Şampanya Kabaresi",
+        terminal: "L_AURORE_MONDE_FRENCH_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0x60a5fa, engineColor: 0xfde047,
+        lat: 43.5, lon: 7.01, alt: 11.1, speed: 0.00013, scale: 1.2
+      },
+      {
+        id: "AR_LIB",
+        name: "AL-AMAL // DUBAI PALM LOUNGE",
+        type: "LIBERAL",
+        civ: "ARABIC LIBERAL PAX",
+        alliance: "GCC_ARAB",
+        allianceName: "🟢 KÖRFEZ KÜRESEL VİZYON 2030 & DUBAİ MEDYA KANADI",
+        arch: "Gelecek Müzesi Torus Halkası & Kuantum Lazer Yelkeni",
+        anchor: "Zaid Al-Hashimi & Layla Al-Sabah",
+        theme: "✨ Dubai Marina Lüks Yat Partisi & Çatı Nargile",
+        terminal: "AL_AMAL_PEACE_ARABIC_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0x22d3ee, engineColor: 0x34d399,
+        lat: 25.1, lon: 55.1, alt: 10.9, speed: 0.00015, scale: 1.2
+      },
+      {
+        id: "IN_LIB",
+        name: "SHANTI // BOLLYWOOD COSMIC DANCE",
+        type: "LIBERAL",
+        civ: "INDIAN LIBERAL PAX",
+        alliance: "SCO_BRICS",
+        allianceName: "🔴 BRICS+ KÜLTÜREL DİYALOG & BOLLYWOOD MEDYA KANADI",
+        arch: "Lotus Tapınağı Taç Yaprakları & Fotonik Halesi",
+        anchor: "Rohan Kapoor & Ananya Sen",
+        theme: "💃 Yüksek Enerjili Bollywood Dansı & Holi Festivali",
+        terminal: "SHANTI_VISION_HINDI_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0xfacc15, engineColor: 0xa855f7,
+        lat: 19.0, lon: 72.8, alt: 11.4, speed: 0.00014, scale: 1.2
+      },
+      {
+        id: "RU_LIB",
+        name: "MIR ECHO // SOCHI CASINO SKYLINER",
+        type: "LIBERAL",
+        civ: "RUSSIAN LIBERAL PAX",
+        alliance: "SCO_BRICS",
+        allianceName: "🔴 AVRASYA BEYAZ GECELER SERBEST SANAT & CASINO KANADI",
+        arch: "Neo-Konstrüktivist Cam Yay & Aurora Halkası",
+        anchor: "Alexei Voronov & Ksenia Petrova",
+        theme: "🎉 Beyaz Geceler Çatı Kutlaması & Soçi Casino",
+        terminal: "MIR_ORBITAL_ECHO_RUSSIAN_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0x34d399, engineColor: 0x818cf8,
+        lat: 43.6, lon: 39.7, alt: 11.5, speed: 0.00012, scale: 1.2
+      },
+      {
+        id: "ES_LIB",
+        name: "PAZ DEL SOL // IBIZA SUNSET FIESTA",
+        type: "LIBERAL",
+        civ: "HISPANIC LIBERAL PAX",
+        alliance: "NATO",
+        allianceName: "🔵 NATO KUZEY ATLANTİK İTTİFAKI // İBİZA & AKDENİZ MEDYA KANADI",
+        arch: "Valencia Biyo-İskelet Beyaz Kemerleri",
+        anchor: "Mateo Gomez & Sofia Benitez",
+        theme: "🍹 Ibiza Günbatımı Plaj Partisi & Sangria Lounge",
+        terminal: "PAZ_DEL_SOL_SPANISH_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0xf59e0b, engineColor: 0x38bdf8,
+        lat: 38.9, lon: 1.43, alt: 11.0, speed: 0.00015, scale: 1.2
+      },
+      {
+        id: "AF_LIB",
+        name: "UBUNTU // LAGOS AFROBEATS CLUB",
+        type: "LIBERAL",
+        civ: "PAN-AFRICAN LIBERAL PAX",
+        alliance: "AU_AFRICA",
+        allianceName: "🟡 AFROFÜTÜRİZM & AFRİKA BİRLİĞİ GENÇLİK-MEDYA KANADI",
+        arch: "Afrofütüristik Akışkan Gövde & Biyo-Kubbeler",
+        anchor: "Tendai Moyo & Nia Adebayo",
+        theme: "🎵 Lagos Afrobeats Dans Kulübü & Cape Town Vibe",
+        terminal: "UBUNTU_HARMONY_AFRICAN_TERMINAL.html",
+        color: 0xf8fafc, accentColor: 0xc084fc, engineColor: 0xfb923c,
+        lat: 6.5, lon: 3.37, alt: 11.2, speed: 0.00015, scale: 1.2
+      }
+    ];
+
+    function createUltraHighResTacticalTexture() {
+      const c = document.createElement("canvas");
+      c.width = 4096; c.height = 2048;
+      const ctx = c.getContext("2d");
+
+      // Bathymetric Ocean Base
+      const oceanGrad = ctx.createLinearGradient(0, 0, 0, c.height);
+      oceanGrad.addColorStop(0.00, "#010d22");
+      oceanGrad.addColorStop(0.50, "#002852");
+      oceanGrad.addColorStop(1.00, "#010d22");
+      ctx.fillStyle = oceanGrad;
+      ctx.fillRect(0, 0, c.width, c.height);
+
+      // Continents & Topography
+      const drawLand = (points, baseColor, reliefPoints = [], reliefColor = "#6b5438") => {
+        ctx.fillStyle = baseColor;
+        ctx.beginPath();
+        points.forEach(([x, y], idx) => {
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fill();
+
+        if (reliefPoints.length > 0) {
+          ctx.fillStyle = reliefColor;
+          ctx.beginPath();
+          reliefPoints.forEach(([rx, ry], idx) => {
+            if (idx === 0) ctx.moveTo(rx, ry);
+            else ctx.lineTo(rx, ry);
+          });
+          ctx.closePath();
+          ctx.fill();
+        }
+      };
+
+      // Eurasia
+      drawLand([[1750, 480], [2100, 360], [2800, 360], [3300, 460], [3250, 780], [2950, 850], [2750, 820], [2600, 760], [2300, 680], [1850, 560]], "#1e3a24", [[2200, 520], [2600, 480], [2800, 560], [2500, 620]], "#3f301d");
+      // Europe
+      drawLand([[1820, 560], [1980, 420], [2100, 440], [2150, 580], [2050, 740], [1880, 760], [1780, 660]], "#284a22", [[1940, 680], [2020, 660], [2060, 690]], "#655337");
+      // Anatolia / Turkey
+      drawLand([[2080, 750], [2220, 740], [2280, 780], [2240, 840], [2140, 830], [2070, 780]], "#3f5e1b", [[2100, 760], [2200, 760], [2240, 790]], "#854d0e");
+      // East Asia / China
+      drawLand([[2500, 720], [2850, 740], [3050, 920], [2800, 1100], [2550, 960], [2450, 840]], "#1e4d2b", [[2600, 800], [2780, 820], [2850, 890]], "#59422a");
+      // India & Himalayas
+      drawLand([[2350, 840], [2650, 820], [2620, 1080], [2480, 1200], [2360, 1020]], "#2d5a27", [[2400, 850], [2620, 850], [2580, 890]], "#a16207");
+      // Arabia
+      drawLand([[2130, 840], [2280, 820], [2380, 960], [2280, 1060], [2160, 1000]], "#926115", [[2200, 880], [2320, 940]], "#b45309");
+      // Africa
+      drawLand([[1820, 820], [2160, 800], [2350, 980], [2280, 1420], [2050, 1550], [1880, 1250], [1760, 960]], "#1c4522", [[1860, 860], [2180, 860], [2240, 960]], "#854d0e");
+      // Americas
+      drawLand([[600, 380], [1150, 360], [1280, 620], [1050, 950], [860, 960], [680, 780], [520, 520]], "#234e2c", [[680, 480], [820, 680], [880, 860]], "#5a4128");
+      drawLand([[1020, 1020], [1280, 1060], [1420, 1260], [1260, 1680], [1080, 1780], [980, 1320]], "#064e3b", [[1000, 1040], [1060, 1350], [1110, 1650]], "#78350f");
+      // Australia
+      drawLand([[3180, 1360], [3520, 1380], [3580, 1620], [3280, 1650], [3120, 1480]], "#9a3412", [[3300, 1420], [3450, 1450]], "#7c2d12");
+
+      // Major Inland Lakes
+      ctx.fillStyle = "#001b3a";
+      ctx.beginPath(); ctx.ellipse(2155, 740, 46, 24, 0.08, 0, Math.PI * 2); ctx.fill(); // Black Sea
+      ctx.beginPath(); ctx.ellipse(2245, 745, 36, 85, 0.06, 0, Math.PI * 2); ctx.fill(); // Caspian Sea
+      ctx.beginPath(); ctx.ellipse(1990, 788, 175, 44, -0.04, 0, Math.PI * 2); ctx.fill(); // Med
+      ctx.beginPath(); ctx.ellipse(1040, 660, 28, 16, -0.2, 0, Math.PI * 2); ctx.fill(); // Great Lakes
+      ctx.beginPath(); ctx.ellipse(2780, 560, 12, 60, 0.55, 0, Math.PI * 2); ctx.fill(); // Baikal
+      ctx.beginPath(); ctx.ellipse(2225, 1250, 34, 34, 0, 0, Math.PI * 2); ctx.fill(); // Victoria
+
+      // Night City Lights
+      ctx.fillStyle = "rgba(255, 230, 150, 0.95)";
+      const cityLights = [[2050, 680, 80], [1020, 720, 95], [2720, 880, 110], [3120, 820, 70], [2480, 960, 85], [2130, 770, 45], [2240, 900, 50]];
+      cityLights.forEach(([cx, cy, count]) => {
+        for(let i=0; i<count; i++) {
+          const x = cx + (Math.random() - 0.5) * 160;
+          const y = cy + (Math.random() - 0.5) * 110;
+          ctx.fillRect(x, y, 2.2, 2.2);
+        }
+      });
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      return tex;
+    }
+
+    function initTactical() {
+      const container = document.querySelector(".globe-workspace");
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 3000);
+      camera.position.set(0, 8, 28);
+
+      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("tacticalCanvas"), antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
+      const ambient = new THREE.AmbientLight(0xffffff, 0.95);
+      scene.add(ambient);
+      const sun = new THREE.DirectionalLight(0xfff8e7, 2.0);
+      sun.position.set(50, 25, 35);
+      scene.add(sun);
+
+      // Earth Globe with Ultra High Res Physical Map
+      const globeGeo = new THREE.SphereGeometry(8, 96, 96);
+      const globeMat = new THREE.MeshStandardMaterial({
+        map: createUltraHighResTacticalTexture(),
+        roughness: 0.6,
+        metalness: 0.15
+      });
+      globe = new THREE.Mesh(globeGeo, globeMat);
+      globe.rotation.z = (23.44 * Math.PI) / 180;
+      scene.add(globe);
+
+      // Build 20 City-Scale Dreadnoughts with 3D NATO & Alliance Emblems
+      FLEET.forEach(d => {
+        const group = new THREE.Group();
+        group.userData = d;
+
+        const isSov = d.type === "SOVEREIGN";
+        const primaryMat = new THREE.MeshStandardMaterial({ color: d.color, metalness: isSov ? 0.9 : 0.95, roughness: 0.2 });
+        const accentMat = new THREE.MeshStandardMaterial({ color: d.accentColor || 0xf59e0b, metalness: 0.9, emissive: d.accentColor || 0xf59e0b, emissiveIntensity: 0.4 });
+        
+        // City arcology deck
+        const cityDeck = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 1.4), new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 }));
+        group.add(cityDeck);
+
+        const hull = new THREE.Mesh(new THREE.ConeGeometry(0.4, 1.8, 8), primaryMat);
+        hull.rotation.x = Math.PI / 2;
+        group.add(hull);
+
+        const wings = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 0.6), accentMat);
+        wings.position.set(0, 0, -0.3);
+        group.add(wings);
+
+        // 3D Alliance Emblem (NATO 4-pointed Star or Regional Seal)
+        let allianceColor = 0x60a5fa;
+        if (d.alliance === "SCO_BRICS") allianceColor = 0xf87171;
+        else if (d.alliance === "QUAD_PACIFIC") allianceColor = 0xfb923c;
+        else if (d.alliance === "GCC_ARAB") allianceColor = 0x34d399;
+        else if (d.alliance === "AU_AFRICA") allianceColor = 0xfacc15;
+
+        if (d.alliance === "NATO") {
+          const star1 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.35), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+          star1.position.set(0, 0.22, 0);
+          group.add(star1);
+          const star2 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.04, 0.06), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+          star2.position.set(0, 0.22, 0);
+          group.add(star2);
+          const natoRing = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.02, 8, 24), new THREE.MeshBasicMaterial({ color: 0x1d4ed8 }));
+          natoRing.position.set(0, 0.22, 0);
+          natoRing.rotation.x = Math.PI / 2;
+          group.add(natoRing);
+        } else {
+          const seal = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 8, 24), new THREE.MeshBasicMaterial({ color: allianceColor }));
+          seal.position.set(0, 0.22, 0);
+          seal.rotation.x = Math.PI / 2;
+          group.add(seal);
+        }
+
+        // IFF Strobe Nav Beacon
+        const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshBasicMaterial({ color: allianceColor }));
+        beacon.position.set(0, 0.4, 0);
+        group.add(beacon);
+
+        const s = d.scale || 1.2;
+        group.scale.set(s, s, s);
+
+        const pos = latLonToVector3(d.lat, d.lon, d.alt);
+        group.position.copy(pos);
+
+        scene.add(group);
+        starships.push(group);
+      });
+
+      window.addEventListener("resize", () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      window.addEventListener("pointerdown", onPointer);
+    }
+
+    function latLonToVector3(lat, lon, radius) {
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+      return new THREE.Vector3(
+        -(radius * Math.sin(phi) * Math.cos(theta)),
+        radius * Math.cos(phi),
+        radius * Math.sin(phi) * Math.sin(theta)
+      );
+    }
+
+    function onPointer(e) {
+      const c = document.querySelector(".globe-workspace");
+      mouse.x = (e.clientX / c.clientWidth) * 2 - 1;
+      mouse.y = -(e.clientY / c.clientHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(starships, true);
+      if(hits.length > 0) {
+        let g = hits[0].object;
+        while(g.parent && !g.userData.id) g = g.parent;
+        if(g && g.userData.id) {
+          const d = g.userData;
+          document.getElementById("dockShipTitle").textContent = d.name;
+          document.getElementById("dockShipType").textContent = `${d.type === "SOVEREIGN" ? "EGEMEN TİTAN" : "LİBERAL KRUVAZÖR"} // ${d.allianceName || 'SAVUNMA PAKTI'}`;
+          document.getElementById("dockShipArch").textContent = d.arch;
+          document.getElementById("dockShipAnchor").textContent = d.anchor;
+          document.getElementById("dockShipTask").textContent = `Devriye & Canlı Medya Yayını`;
+          document.getElementById("dockActionBtn").href = d.terminal;
+          document.getElementById("shipDockCard").classList.add("active");
+
+          controls.target.copy(g.position);
+        }
+      }
+    }
+
+    function toggleTacticalLayer(layer, btn) {
+      document.querySelectorAll(".layer-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    let frame = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      frame++;
+      
+      // Realistic Planetary Slow Motion
+      if(globe) globe.rotation.y += 0.00008;
+
+      // Realistic Forward Orbital Drift
+      starships.forEach((s, i) => {
+        const d = s.userData;
+        d.lon += d.speed * 6;
+        if(d.lon > 180) d.lon -= 360;
+
+        const currentLat = d.lat + Math.sin((d.lon * Math.PI)/180) * 2.0;
+        const p = latLonToVector3(currentLat, d.lon, d.alt + Math.sin(frame*0.005 + i)*0.08);
+        const nextP = latLonToVector3(currentLat, d.lon + 0.5, d.alt);
+
+        s.position.copy(p);
+        s.lookAt(nextP);
+      });
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    let isTacticalHudHidden = false;
+    function toggleMinimizeTacticalHud() {
+      const body = document.getElementById("hudTacticalBody");
+      if(body) {
+        body.style.display = body.style.display === "none" ? "block" : "none";
+      }
+    }
+
+    function closeTacticalHud() {
+      const hud = document.getElementById("hudLeftTactical");
+      if(hud) hud.style.display = "none";
+    }
+
+    function toggleAllTacticalHud() {
+      isTacticalHudHidden = !isTacticalHudHidden;
+      const hud = document.getElementById("hudLeftTactical");
+      const dock = document.getElementById("shipDockCard");
+      if(isTacticalHudHidden) {
+        if(hud) hud.style.display = "none";
+        if(dock) dock.classList.remove("active");
+      } else {
+        if(hud) {
+          hud.style.display = "block";
+          const body = document.getElementById("hudTacticalBody");
+          if(body) body.style.display = "block";
+        }
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initTactical();
+      animate();
+      window.addEventListener("keydown", (e) => {
+        if(e.key === "Escape") {
+          document.getElementById("shipDockCard").classList.remove("active");
+        } else if(e.key === "h" || e.key === "H") {
+          toggleAllTacticalHud();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

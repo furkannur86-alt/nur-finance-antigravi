@@ -67,13 +67,20 @@ const MODULES: Module[] = [
   { id: "nur-kids",          label: "Nur Kids",         icon: "👨‍👩‍👧", desc: "Family finance platform",   color: "#34d399", group: "SOCIAL" },
   { id: "compute-access",    label: "Free Access",      icon: "⛏️", desc: "Compute-for-access mining",  color: "#34d399", group: "SOCIAL" },
 
+  // GALACTIC
+  { id: "galactic-fleet",    label: "Galactic Fleet",   icon: "🚀", desc: "3D C4ISR Globe & 36 Ships",  color: "#2E8B57", group: "GALACTIC" },
+  { id: "orbital-command",   label: "Orbital Command",  icon: "🛸", desc: "Starship Cockpit & Bridge",   color: "#eab308", group: "GALACTIC" },
+  { id: "civilization-terminals", label: "Medeniyet Panelleri", icon: "🏛️", desc: "18 Medeniyet & Warp Kokpiti", color: "#00f0ff", group: "GALACTIC" },
+  { id: "civilization-arbitrage", label: "Filo Arbitraj & OMS", icon: "⚡", desc: "Çapraz Kur & Yüksek Frekans", color: "#10b981", group: "GALACTIC" },
+  { id: "master-fleet-mining",    label: "Master Filo Mining",   icon: "⛏️", desc: "36 Gemi Kripto & Hazine Havuzu", color: "#f59e0b", group: "GALACTIC" },
+
   // SOVEREIGN (admin only)
   { id: "umay-boss",         label: "Umay Gül Nur",     icon: "👑", desc: "Sovereign boss terminal",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "holding-ecosystem", label: "7 Büyüme Kolu",    icon: "🏛️", desc: "Holding ecosystem panel",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "tatar-finans",      label: "Tatar Finans",     icon: "🛡️", desc: "Tatar financial network",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
 ];
 
-const GROUP_ORDER = ["CORE", "MARKETS", "TRADING", "ANALYSIS", "MEDIA", "SOCIAL", "SOVEREIGN"];
+const GROUP_ORDER = ["GALACTIC", "CORE", "MARKETS", "TRADING", "ANALYSIS", "MEDIA", "SOCIAL", "SOVEREIGN"];
 
 interface Props {
   open: boolean;

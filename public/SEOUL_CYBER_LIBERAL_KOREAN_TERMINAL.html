@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEOUL CYBER K-POP CITADEL // SOVEREIGN TERMINAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@500;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06080e;
+      --panel-bg: rgba(10, 14, 26, 0.94);
+      --border: #f43f5e55;
+      --primary: #f43f5e;
+      --accent: #06b6d4;
+      --emerald: #10b981;
+      --gold: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-ui: 'Outfit', sans-serif;
+      --font-serif: 'Cinzel', serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000;
+      color: var(--text);
+      font-family: var(--font-ui);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* 🌌 SPACE ENTRY OVERLAY */
+    #spaceIntro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: radial-gradient(circle at center, #881337 0%, #1f040d 80%, #000 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #starCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .intro-card {
+      position: relative;
+      z-index: 10;
+      background: rgba(10, 14, 26, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 48px;
+      text-align: center;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 0 50px #f43f5e33;
+      max-width: 650px;
+    }
+    .intro-title { font-size: 1.85rem; font-weight: 900; color: #fff; margin-bottom: 8px; letter-spacing: 0.05em; font-family: var(--font-serif); }
+    .intro-subtitle { font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 24px; }
+    .btn-enter-cockpit {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 900;
+      padding: 14px 36px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 25px #f43f5e66;
+      transition: all 0.3s;
+      letter-spacing: 0.1em;
+    }
+    .btn-enter-cockpit:hover { transform: scale(1.05); box-shadow: 0 0 40px #f43f5eaa; }
+
+    /* 🛸 MASTER HEADER */
+    header {
+      height: 52px;
+      background: rgba(6, 10, 20, 0.98);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 900; color: #fff; }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #f43f5e22;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-hud {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text);
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-hud:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+
+    /* 🖥️ COCKPIT GRID */
+    .cockpit-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr 360px;
+      gap: 12px;
+      padding: 12px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 100%, #f43f5e11, transparent 70%), #03050a;
+    }
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    .panel-header {
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .panel-body { padding: 12px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .stat-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); font-family: var(--font-mono); font-size: 0.75rem; }
+    .stat-val { color: var(--gold); font-weight: 700; }
+
+    /* ⛏️ MINING CARD */
+    .mining-card {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+    }
+    .mining-val { color: var(--emerald); font-weight: bold; font-size: 0.85rem; }
+
+    .canvas-container { position: relative; flex: 1; width: 100%; height: 100%; background: #010204; overflow: hidden; border-radius: 6px; }
+    #bridgeCanvas { width: 100%; height: 100%; display: block; }
+    .bridge-hud-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10,14,26,0.85);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #fff;
+    }
+
+    .footer-bar {
+      height: 28px;
+      background: #04060a;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🌌 FULLSCREEN SPACE INTRO -->
+  <div id="spaceIntro">
+    <canvas id="starCanvas"></canvas>
+    <div class="intro-card">
+      <div style="font-size: 2.5rem; margin-bottom: 8px;">🎤</div>
+      <h1 class="intro-title">SEOUL CYBER K-POP CITADEL</h1>
+      <p class="intro-subtitle">강남 홀로그램 아레나 // K-POP, WEB3 엔터테인먼트 & K-FINTECH</p>
+      <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+        <span class="badge">🟠 QUAD PACIFIC // K-CULTURE</span>
+        <span class="badge">GANGNAM SEOUL // LAT 37.5°N | LON 127.0°E</span>
+        <span class="badge" style="border-color: #10b981; color: #6ee7b7;">⛏️ WASM MINING ACTIVE</span>
+      </div>
+      <button class="btn-enter-cockpit" onclick="enterCockpit()">
+        🚀 ENTER COCKPIT (WARP DIVE)
+      </button>
+      <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-top: 14px;">
+        Zero authentication required &bull; Auto-Sweep to Master Vault #54751113 Active
+      </div>
+    </div>
+  </div>
+
+  <!-- 🛸 TOP MASTER HEADER -->
+  <header>
+    <div class="brand">
+      <span>🎤 SEOUL CYBER K-POP CITADEL</span>
+      <span class="badge">KR_LIB</span>
+      <span class="badge">🟠 QUAD PACIFIC // K-CULTURE</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-hud" onclick="toggleMiningThrottle()">⚡ MINING: <span id="throttleLabel">100%</span></button>
+      <button class="btn-hud" onclick="warpJump()">🌌 WARP JUMP</button>
+      <button class="btn-hud" onclick="toggleHUD()">— HIDE (H)</button>
+      <button class="btn-hud" onclick="window.close()">✕ EXIT</button>
+    </div>
+  </header>
+
+  <div class="cockpit-grid" id="hudContainer">
+    <!-- LEFT PANEL: MARKET & MINING STATION -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>MARKET TELEMETRY</span>
+        <span>KOSDAQ // LIVE</span>
+      </div>
+      <div class="panel-body">
+        <div class="stat-row"><span>INDEX</span><span class="stat-val">890.50 (+2.65%)</span></div>
+        <div class="stat-row"><span>PRIMARY ASSET</span><span class="stat-val">352820.KQ (HYBE) ₩210,000</span></div>
+        <div class="stat-row"><span>MASTER TREASURY</span><span class="stat-val">$840.40B #54751113</span></div>
+        <div class="stat-row"><span>HFT ARBITRAGE</span><span class="stat-val">0.08ms QUANTUM FEED</span></div>
+
+        <!-- ⛏️ WASM Mining Bot Dashboard -->
+        <div class="mining-card">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--emerald); font-weight: bold;">⛏️ WASM HASH ENGINE</span>
+            <span style="color: #6ee7b7;">🟢 RUNNING</span>
+          </div>
+          <div class="stat-row"><span>Hashrate:</span><span class="mining-val" id="hashrateVal">5840 MH/s</span></div>
+          <div class="stat-row"><span>Validated Shares:</span><span class="mining-val" id="sharesVal">1,240 Shares</span></div>
+          <div class="stat-row"><span>Mined Tokens:</span><span class="mining-val" id="minedVal">12,400.0 NUR</span></div>
+          <div class="stat-row"><span>Master Sweep:</span><span style="color: var(--primary); font-weight: bold;">95% ➔ Umay Gül Nur</span></div>
+          <div style="margin-top: 6px; font-size: 0.65rem; color: var(--text-muted); word-break: break-all;">
+            Wallet: <span style="color: #fff;">NUR-KR-LIB-54751113-SEOUL</span>
+          </div>
+        </div>
+
+        <div style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 4px;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--primary); font-weight: bold; margin-bottom: 4px;">SOVEREIGN TELEMETRY & STRATEGY</div>
+          <p style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">Autonomous multi-threaded compute node with direct sovereign quantum cascade.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER PANEL: 3D BRIDGE COCKPIT -->
+    <div class="panel" style="padding: 6px;">
+      <div class="canvas-container">
+        <canvas id="bridgeCanvas"></canvas>
+        <div class="bridge-hud-overlay">
+          <div>ORBIT: GANGNAM SEOUL // LAT 37.5°N | LON 127.0°E</div>
+          <div>ALTITUDE: 424.0 KM | SPEED: 0.0042 c (WARP 9.5)</div>
+          <div>FACTION: 🍸 서울 사이버 요새</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: BROADCAST & HEGELIAN STUDIO -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>강남 홀로그램 스튜디오</span>
+        <span>BROADCAST STREAM</span>
+      </div>
+      <div class="panel-body">
+        <div style="display: flex; gap: 10px; align-items: center; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 6px;">
+          <div style="font-size: 1.8rem;">🎤</div>
+          <div>
+            <div style="font-weight: bold; font-size: 0.85rem; color: var(--primary);">Tae-hyun Jung & Soo-jin Lee</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">Chief Strategists & Anchors</div>
+          </div>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--gold); margin-top: 4px;">HEGELIAN DIALECTIC UPDATE:</div>
+        <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; border-left: 3px solid var(--primary);">
+          "정립: 철저한 기술 훈련. 반정립: 폭발적인 K-Culture 에너지. 종합: 글로벌 Web3 K-Wave 패권."
+        </div>
+
+        <button class="btn-hud" style="width: 100%; margin-top: 8px; padding: 8px; background: #f43f5e22; border-color: var(--primary); color: #fff;" onclick="playTTS()">
+          🎙️ PLAY NEURAL BROADCAST (KO)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span>SYSTEM: STANAG-4586 QUANTUM CIPHER</span>
+    <span>VAULT ID: #54751113 ($840.40B INVARIANT: 42 · 13 · 35 · 55)</span>
+    <span>STATUS: 🟢 MASTER TREASURY CASCADE ACTIVE</span>
+  </div>
+
+  <script>
+    // 🌌 Starfield Intro Animation
+    const starCanvas = document.getElementById('starCanvas');
+    const sCtx = starCanvas.getContext('2d');
+    let sW, sH;
+    function resizeStars() {
+      sW = starCanvas.width = window.innerWidth;
+      sH = starCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeStars);
+    resizeStars();
+
+    const stars = Array.from({ length: 300 }, () => ({
+      x: (Math.random() - 0.5) * sW,
+      y: (Math.random() - 0.5) * sH,
+      z: Math.random() * sW
+    }));
+
+    let warpSpeed = 4;
+    function animateStars() {
+      sCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      sCtx.fillRect(0, 0, sW, sH);
+
+      const cx = sW / 2;
+      const cy = sH / 2;
+
+      stars.forEach(s => {
+        s.z -= warpSpeed;
+        if (s.z <= 0) s.z = sW;
+
+        const k = 250 / s.z;
+        const px = s.x * k + cx;
+        const py = s.y * k + cy;
+
+        if (px >= 0 && px < sW && py >= 0 && py < sH) {
+          const size = (1 - s.z / sW) * 3;
+          sCtx.fillStyle = '#f43f5e';
+          sCtx.beginPath();
+          sCtx.arc(px, py, size, 0, Math.PI * 2);
+          sCtx.fill();
+        }
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    function enterCockpit() {
+      warpSpeed = 35;
+      setTimeout(() => {
+        const intro = document.getElementById('spaceIntro');
+        intro.style.opacity = '0';
+        intro.style.pointerEvents = 'none';
+        setTimeout(() => { intro.style.display = 'none'; }, 800);
+      }, 500);
+    }
+
+    // 🛸 Bridge Radar Canvas
+    const bCanvas = document.getElementById('bridgeCanvas');
+    const bCtx = bCanvas.getContext('2d');
+    let bW, bH;
+    function resizeBridge() {
+      bW = bCanvas.width = bCanvas.parentElement.clientWidth;
+      bH = bCanvas.height = bCanvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeBridge);
+    resizeBridge();
+
+    let angle = 0;
+    function drawBridgeRadar() {
+      bCtx.fillStyle = 'rgba(2, 4, 10, 0.2)';
+      bCtx.fillRect(0, 0, bW, bH);
+
+      const cx = bW / 2;
+      const cy = bH / 2;
+
+      for (let i = 0; i < 8; i++) {
+        const rad = angle + (i * Math.PI / 4);
+        bCtx.strokeStyle = i % 2 === 0 ? '#f43f5e' : '#06b6d4';
+        bCtx.lineWidth = 2;
+        bCtx.beginPath();
+        bCtx.arc(cx + Math.cos(rad) * 45, cy + Math.sin(rad) * 45, 55 + Math.sin(angle * 2) * 15, 0, Math.PI * 2);
+        bCtx.stroke();
+      }
+
+      angle += 0.015;
+      requestAnimationFrame(drawBridgeRadar);
+    }
+    drawBridgeRadar();
+
+    // ⛏️ Mining Simulation & Auto-Heartbeat
+    let hashrate = 5840;
+    let mined = 12400.0;
+    let shares = 1240;
+    setInterval(() => {
+      hashrate = 5840 + Math.floor(Math.random() * 120);
+      mined += (hashrate / 10000);
+      shares += (Math.random() > 0.4 ? 1 : 0);
+
+      document.getElementById('hashrateVal').innerText = hashrate + ' MH/s';
+      document.getElementById('minedVal').innerText = mined.toFixed(1) + ' NUR';
+      document.getElementById('sharesVal').innerText = shares + ' Shares';
+
+      fetch('http://localhost:3000/api/fleet/mining', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shipId: 'KR_LIB',
+          civilizationKey: 'kr',
+          faction: 'liberal',
+          workerId: 'WORKER-KR_LIB-01',
+          hashrateMhs: hashrate,
+          blocksMined: 1,
+          unclaimedTokens: 0.5,
+          walletAddress: 'NUR-KR-LIB-54751113-SEOUL'
+        })
+      }).catch(() => {});
+    }, 3000);
+
+    function toggleMiningThrottle() {
+      const el = document.getElementById('throttleLabel');
+      if (el.innerText === '100%') el.innerText = '50% (Eco)';
+      else if (el.innerText === '50% (Eco)') el.innerText = '150% (OC)';
+      else el.innerText = '100%';
+    }
+
+    function warpJump() {
+      alert('⚡ INITIATING RELATIVISTIC WARP JUMP // SEOUL CYBER K-POP CITADEL (WARP 9.5)');
+    }
+
+    function toggleHUD() {
+      const el = document.getElementById('hudContainer');
+      el.style.display = el.style.display === 'none' ? 'grid' : 'none';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') toggleHUD();
+    });
+
+    function playTTS() {
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance("서울 사이버 케이팝 요새에 오신 것을 환영합니다. 강남 홀로그램과 웹3 엔터테인먼트 유동성이 활성화되었습니다.");
+        u.lang = 'ko-KR';
+        window.speechSynthesis.speak(u);
+      }
+    }
+  </script>
+</body>
+</html>

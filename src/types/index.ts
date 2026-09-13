@@ -114,7 +114,12 @@ export type PanelView =
   | "professional-social"
   | "user-profile"
   | "profession-hub"
-  | "wish-framework";
+  | "wish-framework"
+  | "galactic-fleet"
+  | "orbital-command"
+  | "civilization-terminals"
+  | "civilization-arbitrage"
+  | "master-fleet-mining";
 
 export interface FloatingWindowConfig {
   id: string;

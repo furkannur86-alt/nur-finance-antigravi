@@ -51,6 +51,11 @@ const PortfolioManager = dynamic(() => import("@/components/portfolio/PortfolioM
 const BacktestPanel = dynamic(() => import("@/components/backtest/BacktestPanel"), { ssr: false });
 const OptionsPanel = dynamic(() => import("@/components/derivatives/OptionsPanel"), { ssr: false });
 const AIToolsPanel = dynamic(() => import("@/components/ai/AIToolsPanel"), { ssr: false });
+const GalacticFleetPanel = dynamic(() => import("@/components/orbital/GalacticFleetPanel"), { ssr: false });
+const OrbitalCommandPanel = dynamic(() => import("@/components/orbital/OrbitalCommandPanel"), { ssr: false });
+const CivilizationTerminalPanel = dynamic(() => import("@/components/orbital/CivilizationTerminalPanel"), { ssr: false });
+const CivilizationArbitrageEngine = dynamic(() => import("@/components/trading/CivilizationArbitrageEngine"), { ssr: false });
+const MasterFleetMiningAdminPanel = dynamic(() => import("@/components/orbital/MasterFleetMiningAdminPanel"), { ssr: false });
 
 export default function FloatingWindowManager() {
   const { floatingWindows, closeFloatingWindow, focusFloatingWindow } = useIDEStore();
@@ -79,6 +84,16 @@ export default function FloatingWindowManager() {
         return <ProfessionHubPanel />;
       case "wish-framework":
         return <WISHFrameworkPanel />;
+      case "galactic-fleet":
+        return <GalacticFleetPanel />;
+      case "orbital-command":
+        return <OrbitalCommandPanel />;
+      case "civilization-terminals":
+        return <CivilizationTerminalPanel />;
+      case "civilization-arbitrage":
+        return <CivilizationArbitrageEngine />;
+      case "master-fleet-mining":
+        return <MasterFleetMiningAdminPanel />;
       case "broadcast-studio":
         return <BroadcastStudioPanel />;
       case "umay-boss":

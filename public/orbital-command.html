@@ -1,0 +1,2646 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUR STARSHIP BRIDGE // PLANETARY ORBITAL COMMAND & 20 MEGA-CITY DREADNOUGHTS v19.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@400;600;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <!-- Three.js + OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg: #000206;
+      --cockpit-hull: #080f1e;
+      --cockpit-strut: #111e33;
+      --border: rgba(46, 139, 87, 0.4);
+      --turk-green: #2E8B57;
+      --turk-green-glow: 0 0 16px rgba(46, 139, 87, 0.75);
+      --turk-gold: #eab308;
+      --turk-gold-glow: 0 0 16px rgba(234, 179, 8, 0.65);
+      --cyan-holo: #06b6d4;
+      --cyan-glow: 0 0 16px rgba(6, 182, 212, 0.7);
+      --alert-red: #ef4444;
+      --party-pink: #ec4899;
+      --party-pink-glow: 0 0 20px rgba(236, 72, 153, 0.7);
+      --thermal-orange: #f97316;
+      --un-blue: #3b82f6;
+      --purple-quantum: #a855f7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* 3D CANVAS & BACKGROUND STARFIELD */
+    #cockpitContainer {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    canvas#threeCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* PHYSICAL COCKPIT CANOPY OVERLAYS */
+    .cockpit-frame-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95), inset 0 0 70px rgba(6, 182, 212, 0.15);
+      transition: opacity 0.3s ease;
+    }
+    .cockpit-frame-overlay.hidden-hud {
+      opacity: 0;
+      pointer-events: none !important;
+    }
+
+    /* Top Canopy Strut */
+    .cockpit-canopy-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 54px;
+      background: linear-gradient(180deg, #040814 0%, rgba(4, 8, 20, 0.94) 75%, transparent 100%);
+      border-bottom: 2px solid rgba(46, 139, 87, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      pointer-events: auto;
+      backdrop-filter: blur(14px);
+    }
+
+    /* Corner Reinforced Pillars */
+    .cockpit-pillar-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 52px;
+      height: 100%;
+      background: linear-gradient(90deg, #02040a 0%, rgba(2, 4, 10, 0.85) 60%, transparent 100%);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cockpit-pillar-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 52px;
+      height: 100%;
+      background: linear-gradient(270deg, #02040a 0%, rgba(2, 4, 10, 0.85) 60%, transparent 100%);
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cockpit-strut-diagonal-left {
+      position: absolute;
+      top: 0;
+      left: 18%;
+      width: 14px;
+      height: 100%;
+      background: linear-gradient(135deg, #0c1626 0%, rgba(12, 22, 38, 0.25) 100%);
+      border-left: 1px solid rgba(46, 139, 87, 0.3);
+      border-right: 1px solid rgba(6, 182, 212, 0.2);
+      transform: skewX(-14deg);
+      pointer-events: none;
+    }
+
+    .cockpit-strut-diagonal-right {
+      position: absolute;
+      top: 0;
+      right: 18%;
+      width: 14px;
+      height: 100%;
+      background: linear-gradient(225deg, #0c1626 0%, rgba(12, 22, 38, 0.25) 100%);
+      border-right: 1px solid rgba(46, 139, 87, 0.3);
+      border-left: 1px solid rgba(6, 182, 212, 0.2);
+      transform: skewX(14deg);
+      pointer-events: none;
+    }
+
+    .cockpit-glass-glare {
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 120%;
+      height: 45%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 40%, transparent 60%);
+      transform: rotate(-12deg);
+      pointer-events: none;
+    }
+
+    /* Center Targeting Crosshair */
+    .cockpit-crosshair-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 130px;
+      height: 130px;
+      border: 1px dashed rgba(6, 182, 212, 0.35);
+      border-radius: 50%;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cockpit-crosshair-center::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--cyan-holo);
+      border-radius: 50%;
+      box-shadow: var(--cyan-glow);
+    }
+    .cockpit-crosshair-ticks {
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border: 1px solid rgba(46, 139, 87, 0.25);
+      border-radius: 50%;
+      animation: spinReticle 60s linear infinite;
+    }
+    @keyframes spinReticle { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .cockpit-scanlines {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      opacity: 0.65;
+    }
+
+    /* NUMBER STREAM - 42 13 35 55 54751113 */
+    #numberStreamCanvas {
+      position: absolute;
+      top: 60px;
+      right: 64px;
+      width: 90px;
+      height: calc(100vh - 120px);
+      pointer-events: none;
+      z-index: 12;
+      opacity: 0.75;
+    }
+
+    /* TOP TITLE BRAND */
+    .top-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+    .top-brand span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: rgba(46, 139, 87, 0.2);
+      border: 1px solid var(--turk-green);
+      color: #86efac;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* TOP SENSOR & MAP PILLS */
+    .cockpit-mode-pills {
+      display: flex;
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .mode-pill {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mode-pill:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .mode-pill.active {
+      background: rgba(46, 139, 87, 0.35);
+      border-color: var(--turk-green);
+      color: #86efac;
+      box-shadow: 0 0 12px rgba(46, 139, 87, 0.4);
+    }
+    .mode-pill.un.active {
+      background: rgba(59, 130, 246, 0.35);
+      border-color: var(--un-blue);
+      color: #93c5fd;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* CAMERA PERSPECTIVE BUTTONS */
+    .cam-pills {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .cam-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .cam-btn.active {
+      background: rgba(6, 182, 212, 0.3);
+      color: #67e8f9;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MINIMIZABLE & CLOSABLE LEFT HUD PANEL
+    ═══════════════════════════════════════════════════════════════ */
+    .hud-panel-left {
+      position: absolute;
+      top: 68px;
+      left: 64px;
+      width: 320px;
+      background: rgba(4, 8, 18, 0.94);
+      border: 1px solid rgba(46, 139, 87, 0.4);
+      border-radius: 10px;
+      padding: 14px;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
+      pointer-events: auto;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hud-panel-left.minimized {
+      width: auto;
+      padding: 6px 14px;
+      cursor: pointer;
+      background: rgba(4, 8, 18, 0.85);
+      border-color: var(--turk-green);
+    }
+    .hud-panel-left.minimized .hud-content-body {
+      display: none;
+    }
+    .hud-panel-left.closed {
+      display: none !important;
+    }
+
+    .hud-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #86efac;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .hud-panel-left.minimized .hud-header-bar {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    .hud-ctrl-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hud-ctrl-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      line-height: 1;
+      transition: all 0.15s;
+    }
+    .hud-ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+    .hud-ctrl-btn.close:hover {
+      background: var(--alert-red);
+      border-color: var(--alert-red);
+      color: #fff;
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 3px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+    }
+    .hud-label { color: var(--text-muted); }
+    .hud-value { color: #f8fafc; font-weight: 700; }
+    .hud-value.green { color: #86efac; text-shadow: 0 0 8px rgba(46,139,87,0.8); }
+    .hud-value.gold { color: #fde047; text-shadow: 0 0 8px rgba(234,179,8,0.8); }
+    .hud-value.cyan { color: #67e8f9; text-shadow: 0 0 8px rgba(6,182,212,0.8); }
+    .hud-value.pink { color: #f472b6; text-shadow: 0 0 8px rgba(244,114,182,0.8); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INTERACTIVE COCKPIT LOGIN & AUTHENTICATION HUD CARD
+    ═══════════════════════════════════════════════════════════════ */
+    .cockpit-auth-card {
+      position: absolute;
+      top: 68px;
+      right: 64px;
+      width: 360px;
+      background: rgba(4, 10, 24, 0.94);
+      border: 2px solid var(--turk-gold);
+      border-radius: 12px;
+      padding: 16px;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 25px rgba(234, 179, 8, 0.35);
+      pointer-events: auto;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cockpit-auth-card.minimized {
+      width: auto;
+      padding: 8px 16px;
+      background: rgba(4, 10, 24, 0.85);
+    }
+    .cockpit-auth-card.minimized .auth-content-body {
+      display: none;
+    }
+    .cockpit-auth-card.closed {
+      display: none !important;
+    }
+
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(234, 179, 8, 0.3);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .auth-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .auth-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .auth-field-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+    }
+    .auth-input {
+      background: rgba(2, 6, 16, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .auth-input:focus {
+      border-color: var(--turk-gold);
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+      background: rgba(4, 12, 28, 0.95);
+    }
+    .auth-select {
+      background: rgba(2, 6, 16, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #86efac;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 8px;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-enter-terminal {
+      background: linear-gradient(135deg, #166534 0%, #2E8B57 50%, #06b6d4 100%);
+      border: 1px solid #86efac;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(46, 139, 87, 0.5);
+      transition: all 0.25s;
+      margin-top: 4px;
+    }
+    .btn-enter-terminal:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.7);
+      filter: brightness(1.15);
+    }
+
+    .btn-free-orbit-view {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .btn-free-orbit-view:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* SHIP INSPECTOR OVERLAY WITH PROMINENT CLOSE / UNLOCK BUTTON */
+    .ship-inspector-card {
+      position: absolute;
+      top: 68px;
+      right: 440px;
+      width: 370px;
+      background: rgba(3, 8, 20, 0.96);
+      border: 2px solid var(--turk-gold);
+      border-radius: 12px;
+      padding: 16px;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(234, 179, 8, 0.4);
+      display: none;
+      pointer-events: auto;
+      animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .ship-inspector-card.active { display: block; }
+    .ship-inspector-card.liberal {
+      border-color: var(--party-pink);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.9), var(--party-pink-glow);
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ship-insp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .ship-insp-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .btn-close-card {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--alert-red);
+      color: #fca5a5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-close-card:hover {
+      background: var(--alert-red);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .ship-insp-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      margin-bottom: 14px;
+    }
+    .ship-insp-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+    .ship-insp-row strong { color: #fff; text-align: right; max-width: 65%; }
+
+    .ship-insp-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ship-insp-action-btn {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(46, 139, 87, 0.85), rgba(6, 182, 212, 0.85));
+      border: 1px solid #86efac;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .ship-insp-action-btn:hover {
+      filter: brightness(1.2);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+      transform: translateY(-2px);
+    }
+    .ship-insp-action-btn.liberal {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.85), rgba(168, 85, 247, 0.85));
+      border-color: #f472b6;
+    }
+
+    .btn-reset-cam {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reset-cam:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MINIMIZABLE & CLOSABLE BOTTOM STARSHIP FLIGHT CONSOLE
+    ═══════════════════════════════════════════════════════════════ */
+    .flight-console-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(0deg, #01030a 0%, rgba(2, 6, 16, 0.96) 80%, transparent 100%);
+      border-top: 2px solid rgba(46, 139, 87, 0.45);
+      z-index: 25;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 20px 12px 20px;
+      pointer-events: auto;
+      backdrop-filter: blur(14px);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flight-console-bottom.minimized {
+      padding: 4px 20px;
+      background: rgba(2, 6, 16, 0.9);
+    }
+    .flight-console-bottom.minimized .gateway-buttons,
+    .flight-console-bottom.minimized .hitchhiker-ticker {
+      display: none;
+    }
+    .flight-console-bottom.closed {
+      display: none !important;
+    }
+
+    .console-top-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1250px;
+      margin-bottom: 6px;
+    }
+    .flight-console-bottom.minimized .console-top-strip {
+      margin-bottom: 0;
+    }
+
+    .hitchhiker-ticker {
+      display: flex;
+      gap: 12px;
+    }
+    .hitchhiker-chip {
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .hitchhiker-chip strong { color: var(--turk-gold); font-size: 0.72rem; }
+    .hitchhiker-chip span { color: var(--text-muted); font-size: 0.58rem; }
+
+    .gateway-buttons {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 1250px;
+      justify-content: center;
+    }
+
+    .gw-btn {
+      flex: 1;
+      max-width: 230px;
+      background: rgba(6, 15, 30, 0.85);
+      border: 1px solid rgba(46, 139, 87, 0.4);
+      color: #fff;
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+    }
+    .gw-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(46, 139, 87, 0.25);
+      border-color: var(--turk-green);
+      box-shadow: 0 6px 20px rgba(46, 139, 87, 0.4);
+    }
+    .gw-btn.media { border-color: rgba(234, 179, 8, 0.4); }
+    .gw-btn.media:hover { background: rgba(234, 179, 8, 0.2); border-color: var(--turk-gold); box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4); }
+    .gw-btn.tactical { border-color: rgba(6, 182, 212, 0.4); }
+    .gw-btn.tactical:hover { background: rgba(6, 182, 212, 0.2); border-color: var(--cyan-holo); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4); }
+    .gw-btn.geophysics { border-color: rgba(249, 115, 22, 0.4); }
+    .gw-btn.geophysics:hover { background: rgba(249, 115, 22, 0.2); border-color: var(--thermal-orange); box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4); }
+
+    .gw-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .gw-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FLOATING MASTER HUD TOGGLE BUTTON (CLEAN 3D VIEW)
+    ═══════════════════════════════════════════════════════════════ */
+    .master-hud-toggle-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 60;
+      background: rgba(3, 8, 20, 0.9);
+      border: 1px solid var(--turk-green);
+      color: #86efac;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 15px rgba(46, 139, 87, 0.4);
+      transition: all 0.2s;
+    }
+    .master-hud-toggle-btn:hover {
+      background: var(--turk-green);
+      color: #000;
+      transform: scale(1.05);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       HYPERDRIVE WARP TRANSITION OVERLAY
+    ═══════════════════════════════════════════════════════════════ */
+    #warpCanvasOverlay {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 150;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LOCAL 3000 (UMAY_GUL_NUR) STARSHIP INTERIOR FINANCIAL COMMAND DECK
+    ═══════════════════════════════════════════════════════════════ */
+    #starshipInteriorDeck {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 200;
+      background: radial-gradient(circle at 50% 20%, #061124 0%, #02050e 60%, #000206 100%);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadeInDeck 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #starshipInteriorDeck.active {
+      display: flex;
+    }
+    @keyframes fadeInDeck {
+      from { opacity: 0; transform: scale(1.04); filter: blur(10px); }
+      to { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+
+    .interior-deck-topbar {
+      height: 56px;
+      background: linear-gradient(90deg, #030814 0%, #0a1b33 50%, #030814 100%);
+      border-bottom: 2px solid var(--turk-green);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
+      z-index: 10;
+    }
+    .deck-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+    }
+    .deck-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: rgba(46, 139, 87, 0.25);
+      border: 1px solid var(--turk-green);
+      color: #86efac;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-return-cockpit {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.9), rgba(59, 130, 246, 0.9));
+      border: 1px solid #67e8f9;
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 900;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+      transition: all 0.2s;
+    }
+    .btn-return-cockpit:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.8);
+      background: #67e8f9;
+    }
+
+    /* INTERIOR TABS */
+    .deck-tabs-nav {
+      display: flex;
+      gap: 6px;
+      background: rgba(2, 6, 16, 0.95);
+      padding: 6px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .deck-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .deck-tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .deck-tab-btn.active {
+      background: rgba(46, 139, 87, 0.25);
+      border-color: var(--turk-green);
+      color: #86efac;
+      box-shadow: 0 0 15px rgba(46, 139, 87, 0.3);
+    }
+
+    .deck-content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .deck-section {
+      display: none;
+      animation: fadeInTab 0.2s ease;
+    }
+    .deck-section.active {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    @keyframes fadeInTab { from { opacity: 0; } to { opacity: 1; } }
+
+    /* FINANCIAL WORKSTATION GRID */
+    .finance-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    .station-panel {
+      background: rgba(4, 10, 24, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(14px);
+    }
+    .station-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+    .station-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticker-cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .ticker-card {
+      background: rgba(2, 6, 14, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ticker-symbol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .ticker-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .ticker-change {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+    .ticker-change.up { color: #86efac; }
+    .ticker-change.down { color: #f87171; }
+
+    /* GEOPHYSICS CANVAS FROM LOCAL 3000 */
+    #subsurfaceCanvas {
+      width: 100%;
+      height: 240px;
+      border-radius: 8px;
+      background: #020914;
+      border: 1px solid rgba(0, 229, 255, 0.2);
+    }
+
+    /* FLEET SELECTOR MODAL */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(1, 4, 10, 0.88);
+      backdrop-filter: blur(18px);
+      z-index: 250;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      width: 100%;
+      max-width: 1200px;
+      max-height: 88vh;
+      background: rgba(4, 10, 24, 0.96);
+      border: 2px solid var(--turk-gold);
+      border-radius: 14px;
+      box-shadow: 0 16px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(234, 179, 8, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: rgba(2, 6, 16, 0.98);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .modal-close-btn {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--alert-red);
+      color: #fca5a5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: var(--alert-red);
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .channel-card {
+      background: rgba(2, 6, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      color: inherit;
+    }
+    .channel-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--turk-green);
+      background: rgba(46, 139, 87, 0.15);
+      box-shadow: 0 6px 20px rgba(46, 139, 87, 0.3);
+    }
+    .channel-card.liberal:hover {
+      border-color: var(--party-pink);
+      background: rgba(236, 72, 153, 0.15);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-sigil {
+      font-size: 1.3rem;
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .card-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(46, 139, 87, 0.2);
+      color: #86efac;
+      border: 1px solid var(--turk-green);
+    }
+    .card-badge.liberal {
+      background: rgba(236, 72, 153, 0.2);
+      color: #fbcfe8;
+      border-color: var(--party-pink);
+    }
+
+    .card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .card-anchor {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .card-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: #fde047;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D COCKPIT VIEWPORT -->
+  <div id="cockpitContainer">
+    <canvas id="threeCanvas"></canvas>
+  </div>
+
+  <!-- HYPERDRIVE WARP TRANSITION CANVAS -->
+  <canvas id="warpCanvasOverlay"></canvas>
+
+  <!-- PHYSICAL COCKPIT CANOPY OVERLAYS -->
+  <div class="cockpit-frame-overlay" id="cockpitFrameOverlay">
+    <!-- Top Canopy Strut -->
+    <div class="cockpit-canopy-top">
+      <div class="top-brand">
+        <span style="border-color: var(--turk-gold); color: #fef08a;">NUR-08 // BOZKURT TİTANI</span>
+        NUR PLANETARY ORBITAL COMMAND
+        <span>v19.0 // 20 MEGA-CITY DREADNOUGHTS</span>
+      </div>
+
+      <!-- SENSOR & HIGH-RES MAP MODE PILLS -->
+      <div class="cockpit-mode-pills">
+        <button class="mode-pill active" onclick="setSensorMode('PHYSICAL_GEO', this)">🌍 FİZİKİ TOPOGRAFİ</button>
+        <button class="mode-pill un" onclick="setSensorMode('UN_BORDERS', this)">🇺🇳 BM & ÜLKE SINIRLARI</button>
+        <button class="mode-pill" onclick="setSensorMode('FLIR_THERMAL', this)">🌡️ FLIR TERMAL</button>
+        <button class="mode-pill" onclick="setSensorMode('GEOPHYSICS', this)">🌋 YERKÜRE & MAGMA</button>
+        <button class="mode-pill" onclick="setSensorMode('SPACE_WX', this)">⚡ UZAY HAVASI (Kp)</button>
+        <button class="mode-pill" onclick="setSensorMode('IAEA_NUC', this)">⚛️ IAEA NÜKLEER</button>
+        <button class="mode-pill" onclick="setSensorMode('MINERALS', this)">⛏️ MİNERALLER</button>
+      </div>
+
+      <!-- PERSPECTIVE VIEW CONTROLLER -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="cam-pills">
+          <button class="cam-btn active" id="btnCamCockpit" onclick="setCameraPerspective('COCKPIT')">🛸 KOKPİT</button>
+          <button class="cam-btn" id="btnCamSatellite" onclick="setCameraPerspective('SATELLITE')">🛰️ UYDU NADİR</button>
+          <button class="cam-btn" id="btnCamFree" onclick="setCameraPerspective('FREE')">🌐 SERBEST</button>
+        </div>
+        <button style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #86efac; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; cursor: pointer;" onclick="playBeep(880, 0.1)">🔊 SONAR</button>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #86efac; font-weight: 700;">
+          UTC: <span id="clockUTC">--:--:--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Struts & Pillars -->
+    <div class="cockpit-pillar-left"></div>
+    <div class="cockpit-pillar-right"></div>
+    <div class="cockpit-strut-diagonal-left"></div>
+    <div class="cockpit-strut-diagonal-right"></div>
+    <div class="cockpit-glass-glare"></div>
+
+    <!-- Center Reticle -->
+    <div class="cockpit-crosshair-center">
+      <div class="cockpit-crosshair-ticks"></div>
+    </div>
+
+    <!-- Scanlines -->
+    <div class="cockpit-scanlines"></div>
+
+    <!-- Number Stream Canvas -->
+    <canvas id="numberStreamCanvas"></canvas>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MINIMIZABLE & CLOSABLE LEFT HUD: TELEMETRY & PLANETARY DYNAMICS
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="hud-panel-left" id="hudPanelLeft">
+      <div class="hud-header-bar">
+        <span onclick="toggleMinimizePanel('hudPanelLeft')" style="cursor: pointer;">◈ YÖRÜNGE TELEMETRİSİ</span>
+        <div class="hud-ctrl-btns">
+          <button class="hud-ctrl-btn" onclick="toggleMinimizePanel('hudPanelLeft')" title="Küçült / Genişlet">—</button>
+          <button class="hud-ctrl-btn close" onclick="closePanel('hudPanelLeft')" title="Kapat">✕</button>
+        </div>
+      </div>
+      <div class="hud-content-body">
+        <div class="hud-row">
+          <span class="hud-label">DÜNYA EKSEN EĞİKLİĞİ</span>
+          <span class="hud-value green">23.44° (RADIAL TILT)</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">GERÇEKÇİ DÖNÜŞ HIZI</span>
+          <span class="hud-value cyan">1,670 km/h (Ekvator)</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">FİLO ÖLÇEĞİ</span>
+          <span class="hud-value gold">ŞEHİR BÜYÜKLÜĞÜNDE DREADNOUGHT</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">HARİTA KATMANI</span>
+          <span class="hud-value gold" id="hudMapModeName">FİZİKİ & TOPOGRAFİK (Google Earth)</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">YÖRÜNGE İRTİFASI</span>
+          <span class="hud-value cyan" id="hudAltitude">418.55 km (LEO)</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">GÖZLEM PERSPEKTİFİ</span>
+          <span class="hud-value" id="hudViewName">KAPTAN KÖŞKÜ KANOPİ</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">KİLİTLİ HEDEF</span>
+          <span class="hud-value pink" id="hudLockedTarget">SERBEST GÖZLEM (TIKLA)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         INTERACTIVE COCKPIT LOGIN & AUTHENTICATION HUD CARD
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="cockpit-auth-card" id="cockpitAuthCard">
+      <div class="auth-header">
+        <div class="auth-title" onclick="toggleMinimizePanel('cockpitAuthCard')" style="cursor: pointer;">
+          <span>🛸</span> KAPTAN KİMLİK DOĞRULAMA
+        </div>
+        <div class="hud-ctrl-btns">
+          <button class="hud-ctrl-btn" onclick="toggleMinimizePanel('cockpitAuthCard')" title="Küçült / Genişlet">—</button>
+          <button class="hud-ctrl-btn close" onclick="closePanel('cockpitAuthCard')" title="Kapat">✕</button>
+        </div>
+      </div>
+      <div class="auth-content-body">
+        <div class="auth-form">
+          <div class="auth-field-group">
+            <div class="auth-field-label">
+              <span>KAPTAN ÇAĞRI KODU / E-POSTA</span>
+              <span style="color: var(--turk-gold);">STANAG-4586</span>
+            </div>
+            <input type="text" class="auth-input" id="authCaptainName" value="captain@nur.financial" placeholder="captain@nur.financial">
+          </div>
+
+          <div class="auth-field-group">
+            <div class="auth-field-label">
+              <span>BİYOMETRİK KUANTUM ANAHTAR</span>
+              <span style="color: var(--cyan-holo);">#54751113</span>
+            </div>
+            <input type="password" class="auth-input" id="authQuantumKey" value="54751113" placeholder="42 · 13 · 35 · 55">
+          </div>
+
+          <div class="auth-field-group">
+            <div class="auth-field-label">
+              <span>KOMUTA İSTASYONU & AMİRAL GEMİSİ</span>
+            </div>
+            <select class="auth-select" id="authShipSelect">
+              <option value="NUR_TR">🇹🇷 NUR-08 BOZKURT (Merkez Türk Amiral Gemisi - NATO)</option>
+              <option value="TUDOR_UK">🇬🇧 TUDOR VANGUARD (Kraliyet Gotik Zırhı - NATO)</option>
+              <option value="PAX_LIB">🍾 PAX HORIZON (Miami/Ibiza Liberal Sky Yacht - NATO)</option>
+              <option value="TANG_CN">🇨🇳 TANG CELESTIAL DRAGON (SCO / BRICS+)</option>
+              <option value="TOKUGAWA_JP">🇯🇵 TOKUGAWA SHOGUN (Quad Pasifik)</option>
+              <option value="BOURBON_FR">🇫🇷 BOURBON FLEUR-DE-LIS (NATO / AB)</option>
+            </select>
+          </div>
+
+          <button class="btn-enter-terminal" onclick="triggerHyperdriveEnterDeck()">
+            <span>🚀 NUR FİNANSAL KOMUTA GÜVERTESİNE GİRİŞ YAP</span>
+          </button>
+
+          <button class="btn-free-orbit-view" onclick="enterFreeObservationMode()">
+            <span>👁️ SERBEST KOKPİT GÖZLEMİ (HUD'LARI GİZLE)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHIP INSPECTOR OVERLAY WITH PROMINENT CLOSE / UNLOCK BUTTON -->
+    <div class="ship-inspector-card" id="shipInspectorCard">
+      <div class="ship-insp-header">
+        <div class="ship-insp-title" id="inspShipName">GEMİ SEÇİLMEDİ</div>
+        <button class="btn-close-card" onclick="closeShipInspector()" title="Ekranı Kapat / Kilidi Aç (ESC)">
+          ✕ KAPAT (ESC)
+        </button>
+      </div>
+      <div class="ship-insp-details">
+        <div class="ship-insp-row"><span>Gemi Sınıfı:</span> <strong>Şehir Büyüklüğünde Mega Dreadnought (12.5 km)</strong></div>
+        <div class="ship-insp-row"><span>Savunma & İttifak Paktı:</span> <strong id="inspAlliance" style="color: #60a5fa;">🔵 NATO KUZEY ATLANTİK İTTİFAKI</strong></div>
+        <div class="ship-insp-row"><span>Kültürel Mimari & Stil:</span> <strong id="inspArch">Selçuklu Çift Başlı Kartal</strong></div>
+        <div class="ship-insp-row"><span>Spiker & Konsept:</span> <strong id="inspAnchor">Kaan Selçuk & Elif Nur</strong></div>
+        <div class="ship-insp-row"><span>Yayın & Eğlence Teması:</span> <strong id="inspTheme" style="color: #f472b6;">Resmi Devlet Aklı</strong></div>
+        <div class="ship-insp-row"><span>Gezegensel Devriye:</span> <strong id="inspTask" style="color: #fde047;">Başkent & Kriz Alanı</strong></div>
+        <div class="ship-insp-row"><span>İtiş & Rezonans:</span> <strong id="inspDrive" style="color: #67e8f9;">Kuantum Warp-35</strong></div>
+      </div>
+      <div class="ship-insp-actions">
+        <a class="ship-insp-action-btn" id="inspActionBtn" href="#" target="_blank">
+          <span>🚀 CANLI YAYINA BAĞLAN</span>
+        </a>
+        <button class="btn-reset-cam" onclick="resetCameraView()" title="Geniş Açıya Dön">
+          ⤢ SIFIRLA
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MINIMIZABLE & CLOSABLE BOTTOM STARSHIP FLIGHT CONSOLE
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="flight-console-bottom" id="flightConsoleBottom">
+      <div class="console-top-strip">
+        <div class="hitchhiker-ticker">
+          <div class="hitchhiker-chip"><span>HİTCHHİKER:</span> <strong>42</strong> <span>THE ANSWER</span></div>
+          <div class="hitchhiker-chip"><span>ASAL MOD:</span> <strong>13</strong> <span>SOVEREIGN PRIME</span></div>
+          <div class="hitchhiker-chip"><span>WARP:</span> <strong>35</strong> <span>WARP FACTOR</span></div>
+          <div class="hitchhiker-chip"><span>MAX HIZ:</span> <strong>55</strong> <span>HYPER-DRIVE</span></div>
+          <div class="hitchhiker-chip"><span>REZERV ÇEKİRDEK:</span> <strong>#54751113</strong> <span>QUANTUM VAULT</span></div>
+        </div>
+        <div class="hud-ctrl-btns">
+          <button class="hud-ctrl-btn" onclick="toggleMinimizePanel('flightConsoleBottom')" title="Konsolu Küçült / Büyüt">—</button>
+          <button class="hud-ctrl-btn close" onclick="closePanel('flightConsoleBottom')" title="Konsolu Kapat">✕</button>
+        </div>
+      </div>
+
+      <div class="gateway-buttons">
+        <button class="gw-btn media" onclick="openModal('mediaModal')">
+          <div class="gw-title">🛰️ 20 MEDYA KANALI SEÇİCİ</div>
+          <div class="gw-sub">10 Egemen Titan + 10 Liberal Parti Gemisi</div>
+        </button>
+
+        <a class="gw-btn tactical" href="NUR_EARTH_3D_TACTICAL_TERMINAL.html" target="_blank">
+          <div class="gw-title">🌍 3D C4ISR KÜRESİ</div>
+          <div class="gw-sub">Tam Ekran Google Earth & BM Haritası</div>
+        </a>
+
+        <button class="gw-btn geophysics" onclick="setSensorMode('GEOPHYSICS');">
+          <div class="gw-title">🌋 DERİN YERKÜRE & MAGMA</div>
+          <div class="gw-sub">Manto Konveksiyonu & Sismik Dalgalar</div>
+        </button>
+
+        <button class="gw-btn" style="border-color: rgba(239, 68, 68, 0.4);" onclick="setSensorMode('IAEA_NUC');">
+          <div class="gw-title">⚛️ NÜKLEER RİSK & MİNERAL</div>
+          <div class="gw-sub">IAEA Reaktörleri & Lityum/Kobalt</div>
+        </button>
+
+        <button class="gw-btn" style="border-color: var(--purple-quantum);" onclick="triggerHyperdriveEnterDeck()">
+          <div class="gw-title">👑 İÇ KARARGAH (WARP)</div>
+          <div class="gw-sub">Local 3000 Finans & Manto Masası</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING MASTER HUD TOGGLE BUTTON (CLEAN 3D ORBIT VIEW) -->
+  <button class="master-hud-toggle-btn" id="btnMasterHudToggle" onclick="toggleAllHUD()" title="Tüm HUD Panellerini Gizle/Göster (Klavye Kısayolu: H)">
+    <span style="color: var(--turk-gold);">◈</span> HUD GÖSTER / GİZLE [H]
+  </button>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LOCAL 3000 (UMAY_GUL_NUR) STARSHIP INTERIOR FINANCIAL COMMAND DECK
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="starshipInteriorDeck">
+    <!-- Top Bar -->
+    <div class="interior-deck-topbar">
+      <div class="deck-brand">
+        <span style="color: var(--turk-gold);">🐺 NUR FİNANS // BOZKURT AMİRAL GEMİSİ</span>
+        <span>İÇ KOMUTA GÜVERTESİ & FİNANSAL STRATEJİ KARARGAHI</span>
+        <span class="deck-badge">STANAG-4586 NATO LINK</span>
+        <span class="deck-badge" style="border-color: var(--turk-gold); color: #fde047;">KASA #54751113</span>
+      </div>
+
+      <button class="btn-return-cockpit" onclick="returnToCockpitObservation()">
+        <span>🔭 KOKPİT GÖZLEMİNE DÖN (3D ORBIT VIEW)</span>
+      </button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="deck-tabs-nav">
+      <button class="deck-tab-btn active" onclick="switchDeckTab('tabMarkets', this)">
+        <span>📊 BİST 100 & KÜRESEL PİYASALAR</span>
+      </button>
+      <button class="deck-tab-btn" onclick="switchDeckTab('tabGeophysics', this)">
+        <span>🌋 DERİN JEOFİZİK & MANTO MOTORU</span>
+      </button>
+      <button class="deck-tab-btn" onclick="switchDeckTab('tabVault', this)">
+        <span>🔐 KUANTUM KASA & REZERVLER (#54751113)</span>
+      </button>
+      <button class="deck-tab-btn" onclick="switchDeckTab('tabFleetFeeds', this)">
+        <span>🛰️ 20 DREADNOUGHT GEMİ CANLI İZLENCESİ</span>
+      </button>
+      <button class="deck-tab-btn" onclick="switchDeckTab('tabAIStrategy', this)">
+        <span>🤖 AI DİYALEKTİK DANIŞMAN (Marcus vs Elena)</span>
+      </button>
+    </div>
+
+    <!-- Workstations Content Area -->
+    <div class="deck-content-area">
+
+      <!-- TAB 1: MARKETS & BIST -->
+      <div class="deck-section active" id="tabMarkets">
+        <div class="ticker-cards-row">
+          <div class="ticker-card">
+            <span class="ticker-symbol">BİST 100</span>
+            <span class="ticker-val" id="valBist">9,842.50</span>
+            <span class="ticker-change up">+1.42% ▲</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">ASELS</span>
+            <span class="ticker-val">64.20 ₺</span>
+            <span class="ticker-change up">+3.10% ▲</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">THYAO</span>
+            <span class="ticker-val">312.00 ₺</span>
+            <span class="ticker-change up">+2.45% ▲</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">TUPRS</span>
+            <span class="ticker-val">184.50 ₺</span>
+            <span class="ticker-change up">+0.80% ▲</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">ALTIN ONS (XAU)</span>
+            <span class="ticker-val">$2,514.80</span>
+            <span class="ticker-change up">+0.95% ▲</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">BRENT PETROL</span>
+            <span class="ticker-val">$74.15</span>
+            <span class="ticker-change down">-1.10% ▼</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">BITCOIN (BTC)</span>
+            <span class="ticker-val">$61,850</span>
+            <span class="ticker-change up">+2.80% ▲</span>
+          </div>
+          <div class="ticker-card">
+            <span class="ticker-symbol">USD / TRY</span>
+            <span class="ticker-val">34.14 ₺</span>
+            <span class="ticker-change up">+0.08% ▲</span>
+          </div>
+        </div>
+
+        <div class="finance-grid">
+          <div class="station-panel">
+            <div class="station-header">
+              <div class="station-title">📈 BİST 100 & STRATEJİK HİSSELER // CANLI DERİNLİK & KUANTUM SİNYALİ</div>
+              <span class="deck-badge" style="color: #67e8f9; border-color: var(--cyan-holo);">SOVEREIGN QUANTUM ALGO</span>
+            </div>
+            <!-- Candlestick / Chart Simulation -->
+            <svg viewBox="0 0 800 240" style="width: 100%; height: 240px; background: rgba(2,6,16,0.9); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+              <!-- Grid lines -->
+              <line x1="0" y1="60" x2="800" y2="60" stroke="rgba(255,255,255,0.05)" />
+              <line x1="0" y1="120" x2="800" y2="120" stroke="rgba(255,255,255,0.05)" />
+              <line x1="0" y1="180" x2="800" y2="180" stroke="rgba(255,255,255,0.05)" />
+              <!-- Trend Area -->
+              <path d="M 0 200 Q 150 160 300 170 T 550 90 T 800 50 L 800 240 L 0 240 Z" fill="url(#chartGrad)" opacity="0.35" />
+              <path d="M 0 200 Q 150 160 300 170 T 550 90 T 800 50" fill="none" stroke="#2E8B57" stroke-width="3" />
+              <!-- Candlesticks -->
+              <g stroke="#86efac" stroke-width="1.5">
+                <line x1="100" y1="170" x2="100" y2="210" /><rect x="94" y="178" width="12" height="24" fill="#2E8B57" />
+                <line x1="220" y1="140" x2="220" y2="190" /><rect x="214" y="150" width="12" height="30" fill="#2E8B57" />
+                <line x1="340" y1="130" x2="340" y2="175" /><rect x="334" y="140" width="12" height="25" fill="#2E8B57" />
+                <line x1="460" y1="80" x2="460" y2="140" /><rect x="454" y="90" width="12" height="40" fill="#2E8B57" />
+                <line x1="580" y1="60" x2="580" y2="110" /><rect x="574" y="68" width="12" height="32" fill="#2E8B57" />
+                <line x1="700" y1="30" x2="700" y2="80" /><rect x="694" y="38" width="12" height="30" fill="#2E8B57" />
+              </g>
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2E8B57" stop-opacity="0.8"/>
+                  <stop offset="100%" stop-color="#020610" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #94a3b8;">
+              <span>EMA(20): <strong style="color:#86efac;">9,780.12</strong></span>
+              <span>RSI(14): <strong style="color:#fde047;">64.8 (Bullish Momentum)</strong></span>
+              <span>MACD: <strong style="color:#67e8f9;">+14.22 AL</strong></span>
+              <span>NATO DİJİTAL GÜVENLİK: <strong style="color:#60a5fa;">STANAG-4586 AKTİF</strong></span>
+            </div>
+          </div>
+
+          <div class="station-panel">
+            <div class="station-header">
+              <div class="station-title">📊 EMİR DEFTERİ DERİNLİĞİ</div>
+              <span class="deck-badge">L2 REAL-TIME</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;">
+              <div style="display: flex; justify-content: space-between; color: #f87171; background: rgba(239,68,68,0.1); padding: 4px 8px; border-radius: 4px;">
+                <span>9,848.00</span><span>14,500 LOT</span><span>SATIŞ</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #f87171; background: rgba(239,68,68,0.06); padding: 4px 8px; border-radius: 4px;">
+                <span>9,845.50</span><span>28,200 LOT</span><span>SATIŞ</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #fde047; font-weight: 800; padding: 4px 8px; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <span>9,842.50</span><span>MARKET SPREAD: 0.50</span><span>SON İŞLEM</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #86efac; background: rgba(46,139,87,0.06); padding: 4px 8px; border-radius: 4px;">
+                <span>9,840.00</span><span>36,800 LOT</span><span>ALIŞ</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #86efac; background: rgba(46,139,87,0.1); padding: 4px 8px; border-radius: 4px;">
+                <span>9,838.00</span><span>52,100 LOT</span><span>ALIŞ</span>
+              </div>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #94a3b8;">
+              🐺 <strong>Kaan Selçuk & Elif Nur Notu:</strong> "Stratejik savunma sanayii ve teknoloji hisselerinde kurumsal akış pozitif. Bozkurt Amiral Gemisi kuantum rezervleri kalkan seviyesini %100 koruyor."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: GEOPHYSICS (LOCAL 3000 UMAY_GUL_NUR ENGINE) -->
+      <div class="deck-section" id="tabGeophysics">
+        <div class="station-panel">
+          <div class="station-header">
+            <div class="station-title">🌋 DERİN YERKÜRE, MANTO KATMANLARI & SİSMİK REZONANS MOTORU</div>
+            <span class="deck-badge" style="border-color: var(--thermal-orange); color: #fb923c;">UMAY_GUL_NUR DEEP EARTH ENGINE</span>
+          </div>
+          <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5;">
+            Local 3000 çekirdeğinden bağlanan jeofizik arama sistemi: 6 katmanlı manto tabakalanması, litosfer gerilimi, magmatik konveksiyon ve kritik stratejik mineraller (Bor, Beylikova REE, Lityum, Kobalt) canlı sismogramı.
+          </p>
+          <!-- Subsurface Seismic Canvas -->
+          <canvas id="subsurfaceCanvas"></canvas>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+            <div style="background: rgba(2,6,14,0.9); border: 1px solid rgba(249,115,22,0.3); border-radius: 8px; padding: 12px;">
+              <div style="color: #fb923c; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800;">🇹🇷 BOR REZERVLERİ (KIRKA & BİGADİÇ)</div>
+              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">Dünya Rezerv Payı: <strong>%73.4</strong> | Saflık: <strong>%99.2</strong></div>
+              <div style="font-size: 0.68rem; color: #86efac; margin-top: 2px;">● Stratejik Lityum Karbonat Üretimi Devam Ediyor</div>
+            </div>
+            <div style="background: rgba(2,6,14,0.9); border: 1px solid rgba(6,182,212,0.3); border-radius: 8px; padding: 12px;">
+              <div style="color: #67e8f9; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800;">🌍 BEYLİKOVA NADİR TOPRAK ELEMENTLERİ (REE)</div>
+              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">694 Milyon Ton Rezerv (Dünyanın En Büyük 2.)</div>
+              <div style="font-size: 0.68rem; color: #86efac; margin-top: 2px;">● Lantan, Seryum, Neodimyum, Praseodim</div>
+            </div>
+            <div style="background: rgba(2,6,14,0.9); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 12px;">
+              <div style="color: #fde047; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800;">⚡ MANTO TERMAL GRADYANI & FAY GERİLİMİ</div>
+              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">KAFZ & DAFZ Sismik Rezonans: <strong>Normal (Kp=2.4)</strong></div>
+              <div style="font-size: 0.68rem; color: #60a5fa; margin-top: 2px;">● Kuantum Manyetometre Taraması Aktif</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: QUANTUM VAULT & SOVEREIGN RESERVES (#54751113) -->
+      <div class="deck-section" id="tabVault">
+        <div class="station-panel">
+          <div class="station-header">
+            <div class="station-title">🔐 KUANTUM KASA & SOVEREIGN FON REZERVLERİ (#54751113)</div>
+            <span class="deck-badge" style="border-color: var(--turk-gold); color: #fde047;">TOPLAM REZERV: $840,420,000,000</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+              <div style="background: rgba(2,6,16,0.9); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="color: var(--text-muted);">HİTCHHİKER STRATEJİK ASAL FORMÜLÜ</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #86efac; margin-top: 4px;">42 · 13 · 35 · 55 · #54751113</div>
+              </div>
+              <div style="background: rgba(2,6,16,0.9); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="color: var(--text-muted);">ALTIN BULLION & MERKEZ BANKASI REZERVİ</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #fde047; margin-top: 4px;">782.4 TON ($63.2 MİLYAR)</div>
+              </div>
+              <div style="background: rgba(2,6,16,0.9); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="color: var(--text-muted);">NATO DİJİTAL SAVAŞ VE ŞİFRELEME KORUMASI</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: #60a5fa; margin-top: 4px;">STANAG-4586 KUANTUM ANAHTAR DAĞITIMI (QKD)</div>
+              </div>
+            </div>
+
+            <div style="background: rgba(2,6,16,0.9); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; justify-content: center;">
+              <div style="font-family: 'Cinzel', serif; font-weight: 900; color: #fff; margin-bottom: 8px;">👑 TÜRK EGEMENLİK VE FİNANSAL GÜVENLİK DOKTRİNİ</div>
+              <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.6; font-family: 'Outfit', sans-serif;">
+                Bozkurt Amiral Gemisi Kuantum Kasası, tüm küresel finansal dalgalanmalara karşı bağımsız Türk egemenliğini korumak üzere dizayn edilmiştir. Selçuklu çift başlı kartal sembolizmi ve Samsunspor'un siyah-kırmızı-beyaz renk disiplini ile donatılmış, NATO Doğu Kanadı stratejik veri hatlarıyla mühürlenmiştir.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: 20 DREADNOUGHT FEEDS & MEDIA CHANNELS -->
+      <div class="deck-section" id="tabFleetFeeds">
+        <div class="station-panel">
+          <div class="station-header">
+            <div class="station-title">🛰️ 20 DREADNOUGHT AMİRAL GEMİSİ & MEDYA KANALLARI (10 EGEMEN + 10 LİBERAL)</div>
+            <button class="btn-close-card" style="background: rgba(6,182,212,0.2); border-color: var(--cyan-holo); color: #67e8f9;" onclick="openModal('mediaModal')">
+              🛰️ TAM LİSTEYİ AÇ
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+            <a class="channel-card" href="NUR_FINANS_CAPTAIN_TERMINAL.html" target="_blank">
+              <div class="card-top"><div class="card-sigil">🐺</div><div class="card-badge">EGEMEN TR // MERKEZ</div></div>
+              <div class="card-name">NUR FİNANS // BOZKURT TİTANI <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO]</span></div>
+              <div class="card-anchor">Kaan Selçuk & Elif Nur</div>
+              <div class="card-status">● Selçuklu Kartal, Samsun Kırmızı-Beyaz-Siyah</div>
+            </a>
+            <a class="channel-card" href="TUDOR_FINANCE_ENGLISH_TERMINAL.html" target="_blank">
+              <div class="card-top"><div class="card-sigil">🦁</div><div class="card-badge">EGEMEN UK/US</div></div>
+              <div class="card-name">TUDOR FINANCE (MAJESTIC) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO]</span></div>
+              <div class="card-anchor">Marcus Sterling & Elena Vance</div>
+              <div class="card-status">● Westminster Gotik Zırh & Kraliyet Laciverti</div>
+            </a>
+            <a class="channel-card liberal" href="LIBERAL_VIZYON_TURKISH_TERMINAL.html" target="_blank">
+              <div class="card-top"><div class="card-sigil">🍸</div><div class="card-badge liberal">LİBERAL TR // RAKI-LOUNGE</div></div>
+              <div class="card-name">LİBERAL VİZYON (TULIP LOUNGE) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO]</span></div>
+              <div class="card-anchor">Cem Demirkan & Melis Karahan</div>
+              <div class="card-status">● Boğaz Günbatımı Rakı-Balık & Çatı Partisi</div>
+            </a>
+            <a class="channel-card liberal" href="PAX_HORIZON_LIBERAL_ENGLISH_TERMINAL.html" target="_blank">
+              <div class="card-top"><div class="card-sigil">🍾</div><div class="card-badge liberal">LİBERAL US/GB // SKY YACHT</div></div>
+              <div class="card-name">PAX HORIZON (MIAMI SKY YACHT) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO]</span></div>
+              <div class="card-anchor">Julian Vance & Chloe Montgomery</div>
+              <div class="card-status">● Miami VIP Şampanya & Yüksek Enerjili Eğlence</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: AI HEGELIAN STRATEGY COUNSEL -->
+      <div class="deck-section" id="tabAIStrategy">
+        <div class="station-panel">
+          <div class="station-header">
+            <div class="station-title">🤖 AI HEGELİAN DİYALEKTİK STRATEJİ & SPİKER DİYALOĞU</div>
+            <span class="deck-badge" style="border-color: var(--purple-quantum); color: #d8b4fe;">THESIS vs ANTITHESIS vs SYNTHESIS</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; font-family: 'Outfit', sans-serif; font-size: 0.85rem;">
+            <div style="background: rgba(30, 58, 138, 0.2); border-left: 4px solid #3b82f6; padding: 12px; border-radius: 0 8px 8px 0;">
+              <strong style="color: #93c5fd;">MARCUS STERLING (THESIS - KÜRESEL SERMAYE VE RİSK DOKTRİNİ):</strong>
+              <p style="color: #e2e8f0; margin-top: 4px;">"Kuzey Atlantik ve Londra merkezli faiz kararları sonrasında likidite sıkılaşması belirginleşti. Gelişmekte olan piyasalara karşı sermaye çıkış riski sürerken, savunma ve teknoloji koridorları tek güvenli liman."</p>
+            </div>
+            <div style="background: rgba(190, 24, 93, 0.2); border-left: 4px solid #ec4899; padding: 12px; border-radius: 0 8px 8px 0;">
+              <strong style="color: #fbcfe8;">ELENA VANCE (ANTITHESIS - YÜKSEK VERİM VE AGRESİF BÜYÜME):</strong>
+              <p style="color: #e2e8f0; margin-top: 4px;">"Geleneksel temkinlilik fırsat maliyeti yaratıyor! Pax Horizon ve Liberal vizyonun işaret ettiği gibi; lüks tüketim, turizm, fintech ve yapay zeka altyapılarında muazzam bir likidite sıçraması var. Risk primini fırsata çevirmeliyiz."</p>
+            </div>
+            <div style="background: rgba(46, 139, 87, 0.25); border-left: 4px solid #2E8B57; padding: 12px; border-radius: 0 8px 8px 0;">
+              <strong style="color: #86efac;">ELİF NUR & KAAN SELÇUK (SYNTHESIS - TÜRK EGEMEN STRATEJİ KARARI):</strong>
+              <p style="color: #fff; margin-top: 4px;">"Her iki perspektif de entegre edildi. #54751113 Kuantum Kasamızın %60'ı altın ve stratejik savunma hisselerinde güvene alınırken, %40'ı kritik madenler (Bor, REE) ve yüksek teknolojili ihracat projelerine tahsis edildi. Risk minimize, egemen getiri maksimize."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: 20 MEDIA CHANNELS SELECTOR -->
+  <div class="modal-overlay" id="mediaModal" onclick="if(event.target === this) closeModal('mediaModal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>🛰️ NUR GALAKTİK FİLO // 20 MEDYA KANALI & AMİRAL GEMİLERİ</h2>
+        <button class="modal-close-btn" onclick="closeModal('mediaModal')">✕ KAPAT (ESC)</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 10 SOVEREIGN FLAGSHIPS (STATE DOCTRINE & SACRED ARCHITECTURE) -->
+        <a class="channel-card" href="NUR_FINANS_CAPTAIN_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🐺</div><div class="card-badge">EGEMEN TR // MERKEZ</div></div>
+          <div class="card-name">NUR FİNANS // BOZKURT TİTANI <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO DOĞU KANADI]</span></div>
+          <div class="card-anchor">Kaan Selçuk Demir & Elif Nur Erdem</div>
+          <div class="card-status">● Selçuklu Kartal, Bozkurt Pruva, Samsun Kırmızı-Beyaz-Siyah</div>
+        </a>
+
+        <a class="channel-card" href="TUDOR_FINANCE_ENGLISH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🦁</div><div class="card-badge">EGEMEN UK/US</div></div>
+          <div class="card-name">TUDOR FINANCE (MAJESTIC) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO SACLANT]</span></div>
+          <div class="card-anchor">Marcus Sterling & Elena Vance</div>
+          <div class="card-status">● Westminster Gotik Kuleleri & Radcliffe Kubbesi Kraliyet Zırhı</div>
+        </a>
+
+        <a class="channel-card" href="TANG_CAPITAL_CHINESE_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🐉</div><div class="card-badge">EGEMEN CN</div></div>
+          <div class="card-name">TANG CAPITAL (CELESTIAL DRAGON) <span style="font-size:0.65rem; color:#f87171;">[🔴 SCO / BRICS+]</span></div>
+          <div class="card-anchor">Chen Weilin & Lin Xiaoyu</div>
+          <div class="card-status">● Yasak Şehir Kademeli Pagoda & Dunhuang Solar Kanat</div>
+        </a>
+
+        <a class="channel-card" href="TOKUGAWA_MARKETS_JAPANESE_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">⛩️</div><div class="card-badge">EGEMEN JP</div></div>
+          <div class="card-name">TOKUGAWA (KURO SHOGUN) <span style="font-size:0.65rem; color:#fb923c;">[🟠 QUAD PASİFİK]</span></div>
+          <div class="card-anchor">Kenjiro Takahashi & Aoi Morimoto</div>
+          <div class="card-status">● Himeji Beyaz Balıkçıl Köşkü & Shinto Torii İticileri</div>
+        </a>
+
+        <a class="channel-card" href="BOURBON_ANALYTICS_FRENCH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">⚜️</div><div class="card-badge">EGEMEN FR/EU</div></div>
+          <div class="card-name">BOURBON (FLEUR-DE-LIS) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO / AB SAVUNMA]</span></div>
+          <div class="card-anchor">Antoine de Saint-Germain & Camille Laurent</div>
+          <div class="card-status">● Versailles Sarayı Titanyum Zırhı & Kraliyet Laciverti</div>
+        </a>
+
+        <a class="channel-card" href="ABBASID_FINANCIAL_ARABIC_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🌙</div><div class="card-badge">EGEMEN AR</div></div>
+          <div class="card-name">ABBASID (HOUSE OF WISDOM) <span style="font-size:0.65rem; color:#34d399;">[🟢 GCC KÖRFEZ LİGİ]</span></div>
+          <div class="card-anchor">Tariq Al-Mansoor & Noor Al-Hassan</div>
+          <div class="card-status">● Samarra Sarmal Minare Yerçekimi & Elhamra Mukarnas Kalkanı</div>
+        </a>
+
+        <a class="channel-card" href="MAURYA_INTELLIGENCE_HINDI_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🦚</div><div class="card-badge">EGEMEN IN</div></div>
+          <div class="card-name">MAURYA (ASHOKA VIMANA) <span style="font-size:0.65rem; color:#f87171;">[🔴 BRICS+ / IORA]</span></div>
+          <div class="card-anchor">Aarav Sharma & Priya Iyer</div>
+          <div class="card-status">● Brihadisvara Kuleleri & Konark Güneş Jiroskopu</div>
+        </a>
+
+        <a class="channel-card" href="RURIK_CAPITAL_RUSSIAN_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🐻</div><div class="card-badge">EGEMEN RU</div></div>
+          <div class="card-name">RURIK (SLAVIC CITADEL) <span style="font-size:0.65rem; color:#f87171;">[🔴 SCO / BRICS+]</span></div>
+          <div class="card-anchor">Viktor Morozov & Daria Volkova</div>
+          <div class="card-status">● Aziz Vasil Kubbe Reaktörleri & Kremlin Titanyum Suru</div>
+        </a>
+
+        <a class="channel-card" href="HABSBURGO_CAPITAL_SPANISH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🏰</div><div class="card-badge">EGEMEN ES/LATAM</div></div>
+          <div class="card-name">HABSBURGO (SAGRADA GALLEON) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO GÜNEY KANADI]</span></div>
+          <div class="card-anchor">Santiago De La Vega & Valentina Morales</div>
+          <div class="card-status">● Sagrada Família Biyomimetik Kuleleri & Ağır Kalyon</div>
+        </a>
+
+        <a class="channel-card" href="KILWA_MARKETS_AFRICAN_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🐘</div><div class="card-badge">EGEMEN PAN-AFRICA</div></div>
+          <div class="card-name">KILWA (GREAT ZIMBABWE TITAN) <span style="font-size:0.65rem; color:#facc15;">[🟡 AFRİKA BİRLİĞİ (AU)]</span></div>
+          <div class="card-anchor">Kwame Osei & Zuri Mwangi</div>
+          <div class="card-status">● Lalibela Yekpare Kaya & Timbuktu Kütüphane Kulesi</div>
+        </a>
+
+        <!-- 10 LIBERAL PARTY SHIPS (HIGH-ENERGY ENTERTAINMENT & NIGHTLIFE) -->
+        <a class="channel-card liberal" href="LIBERAL_VIZYON_TURKISH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🍸</div><div class="card-badge liberal">LİBERAL TR // RAKI-LOUNGE</div></div>
+          <div class="card-name">LİBERAL VİZYON (TULIP LOUNGE) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO MÜTTEFİKİ]</span></div>
+          <div class="card-anchor">Cem Demirkan & Melis Karahan</div>
+          <div class="card-status">● Boğaz Günbatımı Rakı-Balık & Bebek Çatı Partisi</div>
+        </a>
+
+        <a class="channel-card liberal" href="PAX_HORIZON_LIBERAL_ENGLISH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🍾</div><div class="card-badge liberal">LİBERAL US/GB // SKY YACHT</div></div>
+          <div class="card-name">PAX HORIZON (MIAMI SKY YACHT) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO MÜTTEFİKİ]</span></div>
+          <div class="card-anchor">Julian Vance & Chloe Montgomery</div>
+          <div class="card-status">● Miami & Ibiza Köpük Partisi & VIP Şampanya Lounge</div>
+        </a>
+
+        <a class="channel-card liberal" href="HARMONY_GLOBAL_CHINESE_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🪩</div><div class="card-badge liberal">LİBERAL CN // NEON CYBER</div></div>
+          <div class="card-name">HARMONY (SHANGHAI NEON) <span style="font-size:0.65rem; color:#f87171;">[🔴 SCO / BRICS+]</span></div>
+          <div class="card-anchor">Leo Zhang & Vivian Wu</div>
+          <div class="card-status">● The Bund Çatı Kulübü & Cyberpunk Neon Gece Hayatı</div>
+        </a>
+
+        <a class="channel-card liberal" href="NEO_TOKYO_LIBERAL_JAPANESE_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🌸</div><div class="card-badge liberal">LİBERAL JP // ROOPPONGI</div></div>
+          <div class="card-name">NEO TOKYO (SHIBUYA PULSE) <span style="font-size:0.65rem; color:#fb923c;">[🟠 QUAD PASİFİK]</span></div>
+          <div class="card-anchor">Ren Kurogane & Sayaka Hoshino</div>
+          <div class="card-status">● Roppongi Lüks Lounge & Fütüristik J-Pop Partisi</div>
+        </a>
+
+        <a class="channel-card liberal" href="LUMIERE_LIBERAL_FRENCH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🍷</div><div class="card-badge liberal">LİBERAL FR // CANNES YACHT</div></div>
+          <div class="card-name">LUMIÈRE (FRENCH RIVIERA) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO / AB]</span></div>
+          <div class="card-anchor">Julien Moreau & Léa Seydoux</div>
+          <div class="card-status">● Saint-Tropez Kırmızı Halı & Şarap-Kokteyl Kulübü</div>
+        </a>
+
+        <a class="channel-card liberal" href="DUBAI_SKYLINE_LIBERAL_ARABIC_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🛥️</div><div class="card-badge liberal">LİBERAL AR // DUBAI MARINA</div></div>
+          <div class="card-name">DUBAI SKYLINE (GOLD LOUNGE) <span style="font-size:0.65rem; color:#34d399;">[🟢 GCC KÖRFEZ LİGİ]</span></div>
+          <div class="card-anchor">Zayd Al-Maktoum & Layla Mansur</div>
+          <div class="card-status">● Palm Jumeirah Mega Yacht & Çöl Vaha Partisi</div>
+        </a>
+
+        <a class="channel-card liberal" href="BOLLYWOOD_PULSE_LIBERAL_HINDI_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">✨</div><div class="card-badge liberal">LİBERAL IN // GOA BEACH</div></div>
+          <div class="card-name">BOLLYWOOD PULSE (GOA DREAMS) <span style="font-size:0.65rem; color:#f87171;">[🔴 BRICS+]</span></div>
+          <div class="card-anchor">Kabir Kapoor & Ananya Sen</div>
+          <div class="card-status">● Mumbai Çatı Dans Festivali & Goa Plaj Eğlencesi</div>
+        </a>
+
+        <a class="channel-card liberal" href="NEVA_NIGHTS_LIBERAL_RUSSIAN_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🍸</div><div class="card-badge liberal">LİBERAL RU // WHITE NIGHTS</div></div>
+          <div class="card-name">NEVA NIGHTS (SOCHI RIVIERA) <span style="font-size:0.65rem; color:#f87171;">[🔴 SCO / BRICS+]</span></div>
+          <div class="card-anchor">Nikolai Romanov & Polina Petrova</div>
+          <div class="card-status">● St. Petersburg Beyaz Geceler & Lüks Kokteyl Kulübü</div>
+        </a>
+
+        <a class="channel-card liberal" href="IBIZA_FIESTA_LIBERAL_SPANISH_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">💃</div><div class="card-badge liberal">LİBERAL ES // IBIZA YACHT</div></div>
+          <div class="card-name">IBIZA FIESTA (BALEARIC BEAT) <span style="font-size:0.65rem; color:#60a5fa;">[🔵 NATO MÜTTEFİKİ]</span></div>
+          <div class="card-anchor">Carlos Mendoza & Isabella Gomez</div>
+          <div class="card-status">● Balearik Adaları Mega Dans Güvertesi & Gece Kulübü</div>
+        </a>
+
+        <a class="channel-card liberal" href="AFRO_BEATS_LIBERAL_AFRICAN_TERMINAL.html" target="_blank">
+          <div class="card-top"><div class="card-sigil">🥁</div><div class="card-badge liberal">LİBERAL PAN-AFRICA // LAGOS</div></div>
+          <div class="card-name">AFRO BEATS (LAGOS SUNSET) <span style="font-size:0.65rem; color:#facc15;">[🟡 AFRİKA BİRLİĞİ (AU)]</span></div>
+          <div class="card-anchor">Femi Adeleke & Nandi Zulu</div>
+          <div class="card-status">● Victoria Island VIP Kulübü & Afro-Fütürist Festival</div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════════
+       GLOBAL STATE & 3D INITIALIZATION
+    ═══════════════════════════════════════════════════════════════ */
+    let scene, camera, renderer, controls;
+    let globe, clouds, magmaMesh, spaceWeatherMesh;
+    let starshipFleet = [];
+    let focusedShip = null;
+    let activeSensorMode = "PHYSICAL_GEO";
+    let isAllHudHidden = false;
+
+    // Realistic Planetary Rotation & Orbital Physics
+    const EARTH_RADIUS = 10;
+    let timeWarpMultiplier = 1.0;
+
+    /* ═══════════════════════════════════════════════════════════════
+       20 MEGA-CITY DREADNOUGHTS REGISTRY (10 SOVEREIGN + 10 LIBERAL)
+       NATO link for TR, GB, US, FR, ES hulls; SCO for CN/RU; QUAD for JP; GCC for AR; AU for Africa
+    ═══════════════════════════════════════════════════════════════ */
+    const DREADNOUGHT_DATA = [
+      // 10 SOVEREIGN DREADNOUGHTS
+      { id: "TR_SOV", name: "NUR-08 BOZKURT TİTANI", type: "SOVEREIGN", alliance: "NATO", allianceName: "🔵 NATO DOĞU KANADI & TÜRK EGEMENLİK DOKTRİNİ", arch: "Selçuklu Çift Başlı Kartal & Bozkurt Pruva", anchor: "Kaan Selçuk Demir & Elif Nur Erdem", theme: "Resmi Devlet Aklı & Osmanlı/Selçuklu Mirası", color: 0xdc2626, hullColor: 0x0a0a0f, trimColor: 0xeab308, lat: 39.9, lon: 32.8, alt: 14.2, speed: 0.0038, targetCity: "Ankara / Doğu Akdeniz", task: "Türk Dünyası & Doğu Kanadı Devriyesi", terminal: "NUR_FINANS_CAPTAIN_TERMINAL.html" },
+      { id: "UK_SOV", name: "TUDOR VANGUARD (MAJESTIC)", type: "SOVEREIGN", alliance: "NATO", allianceName: "🔵 NATO SACLANT KUZEY ATLANTİK", arch: "Westminster Gotik & Radcliffe Kubbesi", anchor: "Marcus Sterling & Elena Vance", theme: "Kraliyet Titanyum Zırhı & Klasik Finans", color: 0x1e3a8a, hullColor: 0x0f172a, trimColor: 0xd4af37, lat: 51.5, lon: -0.1, alt: 14.8, speed: 0.0035, targetCity: "Londra / Kuzey Atlantik", task: "Kraliyet Filo Savunması", terminal: "TUDOR_FINANCE_ENGLISH_TERMINAL.html" },
+      { id: "CN_SOV", name: "TANG CELESTIAL DRAGON", type: "SOVEREIGN", alliance: "SCO_BRICS", allianceName: "🔴 SCO / BRICS+ AVRASYA BLOKU", arch: "Yasak Şehir Pagoda & Dunhuang Solar", anchor: "Chen Weilin & Lin Xiaoyu", theme: "Han Hanedanı Devlet Doktrini", color: 0xb91c1c, hullColor: 0x1c1917, trimColor: 0xf59e0b, lat: 39.9, lon: 116.4, alt: 14.5, speed: 0.0036, targetCity: "Pekin / İpek Yolu", task: "Avrasya Ticaret Koridoru", terminal: "TANG_CAPITAL_CHINESE_TERMINAL.html" },
+      { id: "JP_SOV", name: "TOKUGAWA KURO SHOGUN", type: "SOVEREIGN", alliance: "QUAD_PACIFIC", allianceName: "🟠 QUAD PASİFİK GÜVENLİK DİYALOĞU", arch: "Himeji Beyaz Balıkçıl & Shinto Torii", anchor: "Kenjiro Takahashi & Aoi Morimoto", theme: "Samuray Disiplini & İmparatorluk", color: 0x18181b, hullColor: 0x09090b, trimColor: 0xd97706, lat: 35.6, lon: 139.6, alt: 15.0, speed: 0.0037, targetCity: "Tokyo / Pasifik", task: "Pasifik Kalkanı", terminal: "TOKUGAWA_MARKETS_JAPANESE_TERMINAL.html" },
+      { id: "FR_SOV", name: "BOURBON FLEUR-DE-LIS", type: "SOVEREIGN", alliance: "NATO", allianceName: "🔵 NATO / AB STRATEJİK OTONOMİ", arch: "Versailles Titanyum & Kraliyet Mavisi", anchor: "Antoine de Saint-Germain & Camille Laurent", theme: "Aydınlanma & Fransız Devlet Geleneği", color: 0x1d4ed8, hullColor: 0x030712, trimColor: 0xfbbf24, lat: 48.8, lon: 2.3, alt: 14.4, speed: 0.0034, targetCity: "Paris / Batı Avrupa", task: "Avrupa Stratejik Savunması", terminal: "BOURBON_ANALYTICS_FRENCH_TERMINAL.html" },
+      { id: "AR_SOV", name: "ABBASID HOUSE OF WISDOM", type: "SOVEREIGN", alliance: "GCC_ARAB", allianceName: "🟢 GCC KÖRFEZ İŞBİRLİĞİ KONSEYİ", arch: "Samarra Sarmal Minare & Elhamra Mukarnas", anchor: "Tariq Al-Mansoor & Noor Al-Hassan", theme: "Beytü'l-Hikme Bilgeliği & Hilafet Mirası", color: 0x047857, hullColor: 0x064e3b, trimColor: 0xfacc15, lat: 24.7, lon: 46.6, alt: 14.1, speed: 0.0039, targetCity: "Riyad / Basra Körfezi", task: "Körfez Enerji Koridoru", terminal: "ABBASID_FINANCIAL_ARABIC_TERMINAL.html" },
+      { id: "IN_SOV", name: "MAURYA ASHOKA VIMANA", type: "SOVEREIGN", alliance: "SCO_BRICS", allianceName: "🔴 BRICS+ / HİNT OKYANUSU İTTİFAKI", arch: "Brihadisvara & Konark Güneş Jiroskopu", anchor: "Aarav Sharma & Priya Iyer", theme: "Dharma Çarkı & Kadim Hint Doktrini", color: 0xc2410c, hullColor: 0x431407, trimColor: 0xfde047, lat: 28.6, lon: 77.2, alt: 14.6, speed: 0.0035, targetCity: "Yeni Delhi / Hint Okyanusu", task: "Güneş Çarkı Savunması", terminal: "MAURYA_INTELLIGENCE_HINDI_TERMINAL.html" },
+      { id: "RU_SOV", name: "RURIK SLAVIC CITADEL", type: "SOVEREIGN", alliance: "SCO_BRICS", allianceName: "🔴 SCO / BRICS+ KUZEY KORİDORU", arch: "Aziz Vasil Kubbe Reaktörü & Kremlin Suru", anchor: "Viktor Morozov & Daria Volkova", theme: "Üçüncü Roma & Slav Jeopolitik Aklı", color: 0x991b1b, hullColor: 0x18181b, trimColor: 0xf59e0b, lat: 55.7, lon: 37.6, alt: 14.7, speed: 0.0033, targetCity: "Moskova / Arktik", task: "Kuzey Deniz Rotası", terminal: "RURIK_CAPITAL_RUSSIAN_TERMINAL.html" },
+      { id: "ES_SOV", name: "HABSBURGO SAGRADA GALLEON", type: "SOVEREIGN", alliance: "NATO", allianceName: "🔵 NATO GÜNEY KANADI & İBERYA", arch: "Sagrada Família Kuleleri & Ağır Kalyon", anchor: "Santiago De La Vega & Valentina Morales", theme: "İspanyol İmparatorluğu & Barok Zırh", color: 0x854d0e, hullColor: 0x1c1917, trimColor: 0xfde047, lat: 40.4, lon: -3.7, alt: 14.3, speed: 0.0036, targetCity: "Madrid / Cebelitarık", task: "İberya & Atlantik Geçidi", terminal: "HABSBURGO_CAPITAL_SPANISH_TERMINAL.html" },
+      { id: "AF_SOV", name: "KILWA GREAT ZIMBABWE", type: "SOVEREIGN", alliance: "AU_AFRICA", allianceName: "🟡 AFRİKA BİRLİĞİ (AU) BARIŞ GÜCÜ", arch: "Lalibela Kaya Monoliti & Timbuktu", anchor: "Kwame Osei & Zuri Mwangi", theme: "Pan-Afrika Birliği & Kadim Krallıklar", color: 0xa16207, hullColor: 0x292524, trimColor: 0x22c55e, lat: -1.2, lon: 36.8, alt: 14.9, speed: 0.0037, targetCity: "Addis Ababa / Rift Vadisi", task: "Afrika Kaynak Güvenliği", terminal: "KILWA_MARKETS_AFRICAN_TERMINAL.html" },
+
+      // 10 LIBERAL DREADNOUGHTS (HIGH ENERGY, NIGHTLIFE, SKY YACHTS)
+      { id: "TR_LIB", name: "LİBERAL VİZYON (TULIP LOUNGE)", type: "LIBERAL", alliance: "NATO", allianceName: "🔵 NATO MÜTTEFİKİ // LİBERAL TR", arch: "Boğaz Cam Köşkü & Rakı-Lounge Terası", anchor: "Cem Demirkan & Melis Karahan", theme: "Boğaz Rakı-Balık & Çatı Partisi", color: 0xec4899, hullColor: 0x1e1b4b, trimColor: 0x38bdf8, lat: 41.0, lon: 29.0, alt: 15.6, speed: 0.0042, targetCity: "İstanbul Boğazı / Bebek", task: "Sınırsız Eğlence & Finansal Akış", terminal: "LIBERAL_VIZYON_TURKISH_TERMINAL.html" },
+      { id: "UK_LIB", name: "PAX HORIZON (MIAMI SKY YACHT)", type: "LIBERAL", alliance: "NATO", allianceName: "🔵 NATO MÜTTEFİKİ // LİBERAL US/UK", arch: "Ultra Lüks Cam Katamaran & Şampanya Bar", anchor: "Julian Vance & Chloe Montgomery", theme: "Miami & Ibiza Köpük Partisi & VIP Lounge", color: 0xf43f5e, hullColor: 0x0f172a, trimColor: 0xfacc15, lat: 25.7, lon: -80.2, alt: 15.8, speed: 0.0044, targetCity: "Miami / Biscayne Bay", task: "VIP Jet-Set & Global Capital", terminal: "PAX_HORIZON_LIBERAL_ENGLISH_TERMINAL.html" },
+      { id: "CN_LIB", name: "HARMONY SHANGHAI NEON", type: "LIBERAL", alliance: "SCO_BRICS", allianceName: "🔴 SCO / BRICS+ LİBERAL KANAT", arch: "Cyberpunk Cam Pagoda & Lazer Terası", anchor: "Leo Zhang & Vivian Wu", theme: "The Bund Çatı Kulübü & Gece Hayatı", color: 0xa855f7, hullColor: 0x18181b, trimColor: 0x22d3ee, lat: 31.2, lon: 121.4, alt: 15.5, speed: 0.0043, targetCity: "Şanghay / Pudong", task: "Mega Şehir Partisi", terminal: "HARMONY_GLOBAL_CHINESE_TERMINAL.html" },
+      { id: "JP_LIB", name: "NEO TOKYO SHIBUYA PULSE", type: "LIBERAL", alliance: "QUAD_PACIFIC", allianceName: "🟠 QUAD PASİFİK LİBERAL KANAT", arch: "Holografik Neon Cam & J-Pop Sahnesi", anchor: "Ren Kurogane & Sayaka Hoshino", theme: "Roppongi Lüks Lounge & Elektronik Dans", color: 0x06b6d4, hullColor: 0x09090b, trimColor: 0xf43f5e, lat: 35.6, lon: 139.7, alt: 15.9, speed: 0.0045, targetCity: "Tokyo / Shibuya", task: "24 Saat Kesintisiz Müzik", terminal: "NEO_TOKYO_LIBERAL_JAPANESE_TERMINAL.html" },
+      { id: "FR_LIB", name: "LUMIÈRE FRENCH RIVIERA", type: "LIBERAL", alliance: "NATO", allianceName: "🔵 NATO / AB LİBERAL KANAT", arch: "Cannes Mega Yat & Şampanya Havuzu", anchor: "Julien Moreau & Léa Seydoux", theme: "Saint-Tropez Kırmızı Halı & Şarap Kulübü", color: 0x8b5cf6, hullColor: 0x030712, trimColor: 0xf472b6, lat: 43.5, lon: 7.0, alt: 15.7, speed: 0.0041, targetCity: "Cannes / Monaco", task: "Riviera Festivali", terminal: "LUMIERE_LIBERAL_FRENCH_TERMINAL.html" },
+      { id: "AR_LIB", name: "DUBAI SKYLINE GOLD LOUNGE", type: "LIBERAL", alliance: "GCC_ARAB", allianceName: "🟢 GCC LİBERAL KÖRFEZ KANADI", arch: "Cam Burj & Helikopter Pisti", anchor: "Zayd Al-Maktoum & Layla Mansur", theme: "Palm Jumeirah Mega Yacht & Vaha Partisi", color: 0x10b981, hullColor: 0x022c22, trimColor: 0xfacc15, lat: 25.2, lon: 55.2, alt: 15.4, speed: 0.0046, targetCity: "Dubai / Marina", task: "Ultra Zengin Finans Partisi", terminal: "DUBAI_SKYLINE_LIBERAL_ARABIC_TERMINAL.html" },
+      { id: "IN_LIB", name: "BOLLYWOOD PULSE GOA", type: "LIBERAL", alliance: "SCO_BRICS", allianceName: "🔴 BRICS+ LİBERAL KANAT", arch: "Neon Lotus & Plaj Dans Güvertesi", anchor: "Kabir Kapoor & Ananya Sen", theme: "Mumbai Çatı Kulübü & Goa Plajı", color: 0xf59e0b, hullColor: 0x451a03, trimColor: 0xec4899, lat: 15.4, lon: 73.8, alt: 15.6, speed: 0.0043, targetCity: "Goa / Mumbai", task: "Festival & Sinema Akışı", terminal: "BOLLYWOOD_PULSE_LIBERAL_HINDI_TERMINAL.html" },
+      { id: "RU_LIB", name: "NEVA NIGHTS SOCHI RIVIERA", type: "LIBERAL", alliance: "SCO_BRICS", allianceName: "🔴 BRICS+ LİBERAL KANAT", arch: "Karadeniz Kristal Yat & Votka Lounge", anchor: "Nikolai Romanov & Polina Petrova", theme: "St. Petersburg Beyaz Geceler Partisi", color: 0x38bdf8, hullColor: 0x0f172a, trimColor: 0xf472b6, lat: 43.6, lon: 39.7, alt: 15.5, speed: 0.0042, targetCity: "Soçi / Yalta", task: "Yaz Kulübü Yayını", terminal: "NEVA_NIGHTS_LIBERAL_RUSSIAN_TERMINAL.html" },
+      { id: "ES_LIB", name: "IBIZA FIESTA BALEARIC", type: "LIBERAL", alliance: "NATO", allianceName: "🔵 NATO MÜTTEFİKİ // LİBERAL İSPANYA", arch: "Açık Hava Dans Pisti & Lazer Fıskiyesi", anchor: "Carlos Mendoza & Isabella Gomez", theme: "Balearik Adaları Mega Dans Kulübü", color: 0xf43f5e, hullColor: 0x18181b, trimColor: 0x06b6d4, lat: 38.9, lon: 1.4, alt: 15.8, speed: 0.0047, targetCity: "Ibiza / Formentera", task: "Elektronik Müzik Devriyesi", terminal: "IBIZA_FIESTA_LIBERAL_SPANISH_TERMINAL.html" },
+      { id: "AF_LIB", name: "AFRO BEATS LAGOS SUNSET", type: "LIBERAL", alliance: "AU_AFRICA", allianceName: "🟡 AFRİKA BİRLİĞİ LİBERAL KANAT", arch: "Fütürist Bambu & Altın Teras", anchor: "Femi Adeleke & Nandi Zulu", theme: "Victoria Island VIP Kulübü & Afro-Dans", color: 0xeab308, hullColor: 0x1c1917, trimColor: 0x10b981, lat: 6.5, lon: 3.3, alt: 15.7, speed: 0.0044, targetCity: "Lagos / Cape Town", task: "Afro-Fütürist Festival", terminal: "AFRO_BEATS_LIBERAL_AFRICAN_TERMINAL.html" }
+    ];
+
+    /* ═══════════════════════════════════════════════════════════════
+       HIGH-RES GOOGLE EARTH PHYSICAL TOPOGRAPHY & UN BORDERS CANVAS
+    ═══════════════════════════════════════════════════════════════ */
+    function createHighResEarthCanvas(mode = "PHYSICAL_GEO") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 4096;
+      canvas.height = 2048;
+      const ctx = canvas.getContext("2d");
+
+      // Deep ocean base gradient
+      const oceanGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      oceanGrad.addColorStop(0, "#010a18");
+      oceanGrad.addColorStop(0.35, "#031b38");
+      oceanGrad.addColorStop(0.5, "#04284d");
+      oceanGrad.addColorStop(0.65, "#031b38");
+      oceanGrad.addColorStop(1, "#010a18");
+      ctx.fillStyle = oceanGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // High-Res Continents polygon coordinates
+      const CONTINENTS = [
+        // Eurasia & Africa
+        { name: "EURASIA_AFRICA", poly: [[-10, 36], [0, 42], [5, 48], [10, 54], [25, 60], [30, 70], [60, 75], [100, 78], [140, 72], [170, 66], [160, 50], [130, 40], [120, 30], [105, 20], [100, 5], [80, 10], [70, 25], [55, 25], [45, 12], [50, 0], [40, -10], [35, -25], [20, -34], [15, -25], [10, -5], [5, 5], [0, 5], [-15, 12], [-18, 20], [-10, 30], [-6, 36], [15, 38], [28, 41], [35, 36], [36, 42], [42, 42], [40, 37], [30, 31], [25, 32], [-5, 36]], fill: "#243c24", relief: "#4a5d32" },
+        // Anatolia & Middle East detail
+        { name: "ANATOLIA", poly: [[26, 36], [32, 36], [36, 36], [44, 37], [44, 41], [38, 42], [30, 42], [26, 41], [26, 36]], fill: "#4a5d32", relief: "#736340" },
+        // North America
+        { name: "NORTH_AMERICA", poly: [[-168, 65], [-150, 70], [-120, 75], [-90, 72], [-60, 50], [-70, 42], [-80, 25], [-82, 30], [-90, 30], [-97, 26], [-105, 20], [-90, 15], [-80, 8], [-77, 8], [-85, 16], [-105, 23], [-118, 33], [-125, 48], [-140, 60], [-168, 65]], fill: "#2b4028", relief: "#54633e" },
+        // South America
+        { name: "SOUTH_AMERICA", poly: [[-77, 8], [-60, 10], [-50, 0], [-35, -5], [-38, -15], [-45, -23], [-55, -35], [-65, -55], [-75, -50], [-72, -40], [-70, -20], [-80, -5], [-77, 8]], fill: "#1e3a1e", relief: "#384a28" },
+        // Australia
+        { name: "AUSTRALIA", poly: [[114, -22], [125, -15], [135, -12], [145, -15], [152, -25], [150, -38], [138, -36], [130, -32], [115, -35], [114, -22]], fill: "#5a4525", relief: "#7a5c32" }
+      ];
+
+      function toCanvasX(lon) { return ((lon + 180) / 360) * canvas.width; }
+      function toCanvasY(lat) { return ((90 - lat) / 180) * canvas.height; }
+
+      // Draw Continents & Relief
+      CONTINENTS.forEach(c => {
+        ctx.beginPath();
+        c.poly.forEach((pt, idx) => {
+          const x = toCanvasX(pt[0]);
+          const y = toCanvasY(pt[1]);
+          if(idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = c.fill;
+        ctx.fill();
+
+        // Mountain Topographic Relief
+        ctx.strokeStyle = c.relief;
+        ctx.lineWidth = 14;
+        ctx.stroke();
+      });
+
+      // Lakes and Inland Seas (Caspian, Great Lakes, Baikal, Black Sea, Van)
+      const LAKES = [
+        { name: "CASPIAN", poly: [[47, 47], [53, 47], [54, 40], [50, 37], [48, 42], [47, 47]] },
+        { name: "BLACK_SEA", poly: [[28, 42], [41, 42], [41, 46], [32, 46], [28, 42]] },
+        { name: "GREAT_LAKES", poly: [[-92, 48], [-84, 46], [-80, 44], [-84, 42], [-88, 44], [-92, 48]] },
+        { name: "BAIKAL", poly: [[104, 52], [108, 55], [109, 56], [105, 53], [104, 52]] },
+        { name: "LAKE_VAN", poly: [[42.5, 38.5], [43.8, 38.8], [43.6, 38.3], [42.5, 38.5]] }
+      ];
+      ctx.fillStyle = "#021c38";
+      LAKES.forEach(lake => {
+        ctx.beginPath();
+        lake.poly.forEach((pt, idx) => {
+          const x = toCanvasX(pt[0]);
+          const y = toCanvasY(pt[1]);
+          if(idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      // UN Borders Mode (Dashed blue/gold boundary outlines)
+      if (mode === "UN_BORDERS") {
+        ctx.strokeStyle = "rgba(59, 130, 246, 0.75)";
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([8, 6]);
+
+        // Latitude & Longitude Geodetic Grid
+        for(let lon = -180; lon <= 180; lon += 30) {
+          ctx.beginPath();
+          ctx.moveTo(toCanvasX(lon), 0);
+          ctx.lineTo(toCanvasX(lon), canvas.height);
+          ctx.stroke();
+        }
+        for(let lat = -90; lat <= 90; lat += 30) {
+          ctx.beginPath();
+          ctx.moveTo(0, toCanvasY(lat));
+          ctx.lineTo(canvas.width, toCanvasY(lat));
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+      }
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       BUILD REALISTIC 3D STARSHIP DREADNOUGHT WITH NATO EMBLEMS
+    ═══════════════════════════════════════════════════════════════ */
+    function createMegaCityDreadnought(data) {
+      const shipGroup = new THREE.Group();
+      shipGroup.userData = data;
+
+      const isLiberal = data.type === "LIBERAL";
+
+      // 1. MEGA-HULL (City-Scale 12.5km equivalent)
+      const hullGeo = isLiberal 
+        ? new THREE.ConeGeometry(0.75, 2.4, 8) 
+        : new THREE.BoxGeometry(1.2, 0.45, 2.6);
+      const hullMat = new THREE.MeshStandardMaterial({
+        color: data.hullColor,
+        metalness: 0.85,
+        roughness: 0.25,
+        wireframe: false
+      });
+      const hullMesh = new THREE.Mesh(hullGeo, hullMat);
+      if(isLiberal) hullMesh.rotation.x = Math.PI / 2;
+      shipGroup.add(hullMesh);
+
+      // 2. SACRED OR LIBERAL ARCHITECTURAL SUPERSTRUCTURE
+      const superGeo = isLiberal
+        ? new THREE.CylinderGeometry(0.35, 0.6, 0.8, 12)
+        : new THREE.BoxGeometry(0.7, 0.5, 1.2);
+      const superMat = new THREE.MeshStandardMaterial({
+        color: data.color,
+        emissive: data.color,
+        emissiveIntensity: 0.45,
+        metalness: 0.7,
+        roughness: 0.3
+      });
+      const superMesh = new THREE.Mesh(superGeo, superMat);
+      superMesh.position.y = 0.35;
+      shipGroup.add(superMesh);
+
+      // 3. NATO 4-POINT COMPASS STAR & ALLIANCE HULL INSIGNIA
+      if (data.alliance === "NATO") {
+        const natoGroup = new THREE.Group();
+        // 4-point compass cross
+        const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.4, 0.02), new THREE.MeshBasicMaterial({ color: 0x60a5fa }));
+        const hBar = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.06, 0.02), new THREE.MeshBasicMaterial({ color: 0x60a5fa }));
+        const circle = new THREE.Mesh(new THREE.RingGeometry(0.12, 0.16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+        natoGroup.add(vBar, hBar, circle);
+        natoGroup.position.set(0, 0.62, 0.2);
+        natoGroup.rotation.x = -Math.PI / 2;
+        shipGroup.add(natoGroup);
+      } else {
+        // Gold/Red Sovereign Crest Ring
+        const crest = new THREE.Mesh(
+          new THREE.RingGeometry(0.12, 0.18, 16),
+          new THREE.MeshBasicMaterial({ color: data.trimColor, side: THREE.DoubleSide })
+        );
+        crest.position.set(0, 0.62, 0.2);
+        crest.rotation.x = -Math.PI / 2;
+        shipGroup.add(crest);
+      }
+
+      // 4. PHOTON WARP DRIVE & ION THRUST GLOW
+      const thrusterGeo = new THREE.CylinderGeometry(0.12, 0.24, 0.3, 8);
+      const thrusterMat = new THREE.MeshBasicMaterial({
+        color: isLiberal ? 0xec4899 : 0x06b6d4
+      });
+      const leftThruster = new THREE.Mesh(thrusterGeo, thrusterMat);
+      leftThruster.position.set(-0.35, 0, -1.35);
+      leftThruster.rotation.x = Math.PI / 2;
+
+      const rightThruster = new THREE.Mesh(thrusterGeo, thrusterMat);
+      rightThruster.position.set(0.35, 0, -1.35);
+      rightThruster.rotation.x = Math.PI / 2;
+      shipGroup.add(leftThruster, rightThruster);
+
+      // 5. STROBE NAVIGATIONAL BEACON
+      const beaconMat = new THREE.MeshBasicMaterial({ color: isLiberal ? 0xf472b6 : 0x86efac });
+      const beaconMesh = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), beaconMat);
+      beaconMesh.position.set(0, 0.75, 0);
+      shipGroup.add(beaconMesh);
+      shipGroup.userData.navLight = beaconMesh;
+
+      return shipGroup;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THREE.JS INITIALIZATION
+    ═══════════════════════════════════════════════════════════════ */
+    function initThree() {
+      const container = document.getElementById("cockpitContainer");
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x000206, 0.0035);
+
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, 4.5, 24);
+
+      renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById("threeCanvas"),
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 12;
+      controls.maxDistance = 60;
+      controls.target.set(0, 0, 0);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+      scene.add(ambientLight);
+
+      const sunLight = new THREE.DirectionalLight(0xffffff, 1.6);
+      sunLight.position.set(40, 20, 30);
+      scene.add(sunLight);
+
+      const cyanRim = new THREE.DirectionalLight(0x06b6d4, 0.7);
+      cyanRim.position.set(-30, -10, -20);
+      scene.add(cyanRim);
+
+      // Background Deep Galaxy Stars
+      const starGeo = new THREE.BufferGeometry();
+      const starCount = 3500;
+      const starPos = new Float32Array(starCount * 3);
+      for(let i=0; i<starCount*3; i+=3) {
+        starPos[i] = (Math.random() - 0.5) * 350;
+        starPos[i+1] = (Math.random() - 0.5) * 350;
+        starPos[i+2] = (Math.random() - 0.5) * 350;
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7, transparent: true, opacity: 0.85 });
+      const starField = new THREE.Points(starGeo, starMat);
+      scene.add(starField);
+
+      // 3D EARTH GLOBE with 23.44° Axial Tilt
+      const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+      const earthMat = new THREE.MeshStandardMaterial({
+        map: createHighResEarthCanvas("PHYSICAL_GEO"),
+        roughness: 0.65,
+        metalness: 0.15
+      });
+      globe = new THREE.Mesh(earthGeo, earthMat);
+      globe.rotation.z = (23.44 * Math.PI) / 180; // Realistic Earth Axial Tilt
+      scene.add(globe);
+
+      // Clouds Atmosphere Layer
+      const cloudGeo = new THREE.SphereGeometry(EARTH_RADIUS + 0.12, 48, 48);
+      const cloudMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.28,
+        blending: THREE.AdditiveBlending
+      });
+      clouds = new THREE.Mesh(cloudGeo, cloudMat);
+      globe.add(clouds);
+
+      // Atmosphere Glow Ring
+      const atmoGeo = new THREE.SphereGeometry(EARTH_RADIUS + 0.45, 48, 48);
+      const atmoMat = new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending
+      });
+      const atmoGlow = new THREE.Mesh(atmoGeo, atmoMat);
+      scene.add(atmoGlow);
+
+      // SPAWN 20 MEGA-CITY DREADNOUGHTS ALONG REALISTIC ORBITS
+      DREADNOUGHT_DATA.forEach((data) => {
+        const ship = createMegaCityDreadnought(data);
+        const pos = latLonToVector3(data.lat, data.lon, data.alt);
+        ship.position.copy(pos);
+        scene.add(ship);
+        starshipFleet.push(ship);
+      });
+
+      // RAYCASTER FOR INTERACTION & SELECTION
+      window.addEventListener("click", onDocumentClick, false);
+      window.addEventListener("resize", onWindowResize, false);
+      window.addEventListener("keydown", handleGlobalKeydown, false);
+    }
+
+    function latLonToVector3(lat, lon, alt) {
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+      const x = -(alt * Math.sin(phi) * Math.cos(theta));
+      const z = alt * Math.sin(phi) * Math.sin(theta);
+      const y = alt * Math.cos(phi);
+      return new THREE.Vector3(x, y, z);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INTERACTION & HUD TOGGLE / MINIMIZE SYSTEM
+    ═══════════════════════════════════════════════════════════════ */
+    function toggleMinimizePanel(panelId) {
+      const panel = document.getElementById(panelId);
+      if(!panel) return;
+      panel.classList.toggle("minimized");
+      playBeep(640, 0.08);
+    }
+
+    function closePanel(panelId) {
+      const panel = document.getElementById(panelId);
+      if(!panel) return;
+      panel.classList.add("closed");
+      playBeep(420, 0.08);
+    }
+
+    function toggleAllHUD() {
+      isAllHudHidden = !isAllHudHidden;
+      const canopy = document.getElementById("cockpitFrameOverlay");
+      const leftHud = document.getElementById("hudPanelLeft");
+      const authCard = document.getElementById("cockpitAuthCard");
+      const consoleBottom = document.getElementById("flightConsoleBottom");
+      const inspector = document.getElementById("shipInspectorCard");
+
+      if (isAllHudHidden) {
+        if(canopy) canopy.classList.add("hidden-hud");
+        if(leftHud) leftHud.classList.add("closed");
+        if(authCard) authCard.classList.add("closed");
+        if(consoleBottom) consoleBottom.classList.add("closed");
+        if(inspector) inspector.classList.remove("active");
+        document.getElementById("btnMasterHudToggle").innerHTML = '<span style="color: #86efac;">◈</span> HUD GÖSTER [H]';
+      } else {
+        if(canopy) canopy.classList.remove("hidden-hud");
+        if(leftHud) leftHud.classList.remove("closed", "minimized");
+        if(authCard) authCard.classList.remove("closed", "minimized");
+        if(consoleBottom) consoleBottom.classList.remove("closed", "minimized");
+        document.getElementById("btnMasterHudToggle").innerHTML = '<span style="color: var(--turk-gold);">◈</span> HUD GİZLE [H]';
+      }
+      playBeep(isAllHudHidden ? 380 : 720, 0.1);
+    }
+
+    function enterFreeObservationMode() {
+      toggleMinimizePanel('cockpitAuthCard');
+      toggleMinimizePanel('hudPanelLeft');
+      playBeep(880, 0.12);
+    }
+
+    function handleGlobalKeydown(e) {
+      if(e.key === "h" || e.key === "H") {
+        // Prevent trigger if typing inside input
+        if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+        toggleAllHUD();
+      } else if(e.key === "Escape") {
+        closeShipInspector();
+        closeModal('mediaModal');
+      }
+    }
+
+    function onDocumentClick(event) {
+      // Ignore clicks on HUD overlays
+      if (event.target.closest('.cockpit-canopy-top') || 
+          event.target.closest('.hud-panel-left') || 
+          event.target.closest('.cockpit-auth-card') || 
+          event.target.closest('.ship-inspector-card') || 
+          event.target.closest('.flight-console-bottom') ||
+          event.target.closest('.modal-overlay') ||
+          event.target.closest('#starshipInteriorDeck') ||
+          event.target.closest('.master-hud-toggle-btn')) {
+        return;
+      }
+
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(starshipFleet, true);
+
+      if (intersects.length > 0) {
+        let hitGroup = intersects[0].object;
+        while(hitGroup.parent && !hitGroup.userData.id) {
+          hitGroup = hitGroup.parent;
+        }
+        if (hitGroup && hitGroup.userData.id) {
+          inspectShip(hitGroup.userData, hitGroup);
+        }
+      }
+    }
+
+    function inspectShip(data, shipObj) {
+      focusedShip = shipObj;
+      playBeep(1040, 0.15);
+
+      const card = document.getElementById("shipInspectorCard");
+      const isLiberal = data.type === "LIBERAL";
+
+      document.getElementById("inspShipName").textContent = data.name;
+      const allianceEl = document.getElementById("inspAlliance");
+      allianceEl.textContent = data.allianceName || "KÜRESEL SAVUNMA PAKTI";
+      if (data.alliance === "NATO") allianceEl.style.color = "#60a5fa";
+      else if (data.alliance === "SCO_BRICS") allianceEl.style.color = "#f87171";
+      else if (data.alliance === "QUAD_PACIFIC") allianceEl.style.color = "#fb923c";
+      else if (data.alliance === "GCC_ARAB") allianceEl.style.color = "#34d399";
+      else if (data.alliance === "AU_AFRICA") allianceEl.style.color = "#facc15";
+
+      document.getElementById("inspArch").textContent = data.arch;
+      document.getElementById("inspAnchor").textContent = data.anchor;
+      document.getElementById("inspTheme").textContent = data.theme;
+      document.getElementById("inspTask").textContent = `${data.targetCity} // ${data.task}`;
+      document.getElementById("inspDrive").textContent = isLiberal ? "Foton Güneş Yelkeni & Warp-55" : "Kuantum Warp-35 Hyperdrive";
+
+      const actionBtn = document.getElementById("inspActionBtn");
+      actionBtn.href = data.terminal;
+      actionBtn.className = isLiberal ? "ship-insp-action-btn liberal" : "ship-insp-action-btn";
+
+      if(isLiberal) card.classList.add("liberal");
+      else card.classList.remove("liberal");
+
+      document.getElementById("hudLockedTarget").textContent = data.name;
+      card.classList.add("active");
+
+      // Smooth camera interpolation towards ship
+      const targetPos = shipObj.position.clone().multiplyScalar(1.35);
+      camera.position.lerp(targetPos, 0.6);
+      controls.target.copy(shipObj.position);
+    }
+
+    function closeShipInspector() {
+      const card = document.getElementById("shipInspectorCard");
+      card.classList.remove("active");
+      focusedShip = null;
+      document.getElementById("hudLockedTarget").textContent = "SERBEST GÖZLEM (TIKLA)";
+      playBeep(420, 0.1);
+    }
+
+    function resetCameraView() {
+      camera.position.set(0, 4.5, 24);
+      controls.target.set(0, 0, 0);
+      closeShipInspector();
+      playBeep(520, 0.12);
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById("cockpitContainer");
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       HYPERDRIVE WARP TRANSITION TO INTERIOR DECK
+    ═══════════════════════════════════════════════════════════════ */
+    function triggerHyperdriveEnterDeck() {
+      playWarpSound();
+      const warpCanvas = document.getElementById("warpCanvasOverlay");
+      warpCanvas.style.display = "block";
+      warpCanvas.width = window.innerWidth;
+      warpCanvas.height = window.innerHeight;
+      const ctx = warpCanvas.getContext("2d");
+
+      // Warp speed lines animation
+      let duration = 0;
+      const stars = [];
+      for(let i=0; i<300; i++) {
+        stars.push({
+          x: (Math.random() - 0.5) * warpCanvas.width,
+          y: (Math.random() - 0.5) * warpCanvas.height,
+          z: Math.random() * 1000,
+          len: Math.random() * 20 + 10
+        });
+      }
+
+      function renderWarp() {
+        ctx.fillStyle = "rgba(0, 2, 6, 0.35)";
+        ctx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
+
+        const cx = warpCanvas.width / 2;
+        const cy = warpCanvas.height / 2;
+
+        ctx.strokeStyle = "#06b6d4";
+        ctx.lineWidth = 2.5;
+
+        stars.forEach(s => {
+          s.z -= 35;
+          if (s.z <= 0) s.z = 1000;
+          const k = 400 / s.z;
+          const px = s.x * k + cx;
+          const py = s.y * k + cy;
+
+          const kPrev = 400 / (s.z + s.len * 2);
+          const pxPrev = s.x * kPrev + cx;
+          const pyPrev = s.y * kPrev + cy;
+
+          ctx.beginPath();
+          ctx.moveTo(pxPrev, pyPrev);
+          ctx.lineTo(px, py);
+          ctx.stroke();
+        });
+
+        duration++;
+        if (duration < 35) {
+          requestAnimationFrame(renderWarp);
+        } else {
+          warpCanvas.style.display = "none";
+          document.getElementById("starshipInteriorDeck").classList.add("active");
+          initSubsurfaceCanvas();
+        }
+      }
+      renderWarp();
+    }
+
+    function returnToCockpitObservation() {
+      document.getElementById("starshipInteriorDeck").classList.remove("active");
+      playBeep(520, 0.15);
+    }
+
+    function switchDeckTab(tabId, btn) {
+      document.querySelectorAll('.deck-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.deck-tab-btn').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if(target) target.classList.add('active');
+      if(btn) btn.classList.add('active');
+      playBeep(640, 0.08);
+
+      if(tabId === 'tabGeophysics') {
+        setTimeout(initSubsurfaceCanvas, 50);
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LOCAL 3000 UMAY_GUL_NUR SUBSURFACE STRATIGRAPHY & SEISMIC CANVAS
+    ═══════════════════════════════════════════════════════════════ */
+    let subsurfaceAnimId;
+    function initSubsurfaceCanvas() {
+      const canvas = document.getElementById("subsurfaceCanvas");
+      if(!canvas) return;
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.offsetWidth || 800;
+      canvas.height = 240;
+
+      let t = 0;
+      function drawSubsurface() {
+        const W = canvas.width;
+        const H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        // Deep earth stratigraphy gradient
+        const bg = ctx.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, "#020914");
+        bg.addColorStop(0.3, "#041525");
+        bg.addColorStop(0.7, "#0c1b24");
+        bg.addColorStop(1, "#180e04");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Stratigraphic horizon layers
+        const layers = 6;
+        for (let i = 1; i <= layers; i++) {
+          const y = (H / (layers + 1)) * i;
+          ctx.strokeStyle = "rgba(0, 229, 255, 0.25)";
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([6, 6]);
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          for (let x = 0; x <= W; x += 20) {
+            const dip = Math.sin(x * 0.015 + i + t) * 6 + Math.cos(x * 0.008 + t) * 4;
+            ctx.lineTo(x, y + dip);
+          }
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Magmatic thermal plume
+        const plumeX = W * 0.65;
+        const plumeGrad = ctx.createRadialGradient(plumeX, H, 10, plumeX, H * 0.3, 160);
+        plumeGrad.addColorStop(0, "rgba(249, 115, 22, 0.6)");
+        plumeGrad.addColorStop(0.5, "rgba(234, 179, 8, 0.25)");
+        plumeGrad.addColorStop(1, "rgba(234, 179, 8, 0)");
+        ctx.fillStyle = plumeGrad;
+        ctx.beginPath();
+        ctx.arc(plumeX, H, 160, Math.PI, 0);
+        ctx.fill();
+
+        // Active Seismic Waveform
+        ctx.strokeStyle = "#86efac";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for(let x=0; x<=W; x+=10) {
+          const wave = Math.sin(x * 0.04 + t * 3) * 12 * Math.exp(-Math.abs(x - W/2)/200);
+          const y = H * 0.25 + wave;
+          if(x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        t += 0.02;
+        subsurfaceAnimId = requestAnimationFrame(drawSubsurface);
+      }
+      if(subsurfaceAnimId) cancelAnimationFrame(subsurfaceAnimId);
+      drawSubsurface();
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       AUTONOMOUS REALISTIC PLANETARY & KEPLERIAN ORBITAL DYNAMICS
+    ═══════════════════════════════════════════════════════════════ */
+    let frameCount = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      frameCount++;
+
+      // 1. REALISTIC PLANETARY ROTATION (Slow, serene & majestic)
+      if (globe) globe.rotation.y += 0.00008 * timeWarpMultiplier;
+      if (clouds) clouds.rotation.y += 0.00012 * timeWarpMultiplier;
+
+      // 2. REALISTIC ORBITAL INERTIA & FORWARD VELOCITY ORIENTATION
+      starshipFleet.forEach((ship, idx) => {
+        const d = ship.userData;
+        
+        // Advance longitude along orbital track
+        const deltaLon = (d.speed * 6) * timeWarpMultiplier;
+        d.lon += deltaLon;
+        if(d.lon > 180) d.lon -= 360;
+
+        // Orbital inclination variation
+        const orbitPhase = (d.lon * Math.PI) / 180;
+        const currentLat = d.lat + Math.sin(orbitPhase) * 2.5;
+
+        // Altitude orbital harmonic wobble
+        const altWobble = Math.sin(frameCount * 0.005 + idx) * 0.08;
+        const currentAlt = d.alt + altWobble;
+
+        const currentPos = latLonToVector3(currentLat, d.lon, currentAlt);
+        const nextPos = latLonToVector3(currentLat, d.lon + 0.5, currentAlt);
+
+        ship.position.copy(currentPos);
+        ship.lookAt(nextPos);
+
+        // Blinker nav light strobe
+        if (ship.userData.navLight) {
+          ship.userData.navLight.visible = (frameCount % 60) > 30;
+        }
+      });
+
+      if (focusedShip) {
+        controls.target.lerp(focusedShip.position, 0.08);
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function setSensorMode(mode, btn) {
+      activeSensorMode = mode;
+      document.querySelectorAll('.mode-pill').forEach(el => el.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+
+      if (globe) {
+        globe.material.map = createHighResEarthCanvas(mode);
+        globe.material.needsUpdate = true;
+      }
+      document.getElementById("hudMapModeName").textContent = mode;
+      playBeep(740, 0.1);
+    }
+
+    function setCameraPerspective(type) {
+      document.querySelectorAll('.cam-btn').forEach(el => el.classList.remove('active'));
+      if(type === 'COCKPIT') {
+        document.getElementById('btnCamCockpit').classList.add('active');
+        camera.position.set(0, 4.5, 24);
+        controls.target.set(0, 0, 0);
+        document.getElementById("hudViewName").textContent = "KAPTAN KÖŞKÜ KANOPİ";
+      } else if(type === 'SATELLITE') {
+        document.getElementById('btnCamSatellite').classList.add('active');
+        camera.position.set(0, 26, 0);
+        controls.target.set(0, 0, 0);
+        document.getElementById("hudViewName").textContent = "UYDU NADİR (90° KUTUP)";
+      } else if(type === 'FREE') {
+        document.getElementById('btnCamFree').classList.add('active');
+        document.getElementById("hudViewName").textContent = "SERBEST YÖRÜNGE KAMERASI";
+      }
+      playBeep(880, 0.1);
+    }
+
+    function initNumberStream() {
+      const canvas = document.getElementById("numberStreamCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 90;
+      canvas.height = window.innerHeight - 120;
+
+      const POOL = [42, 13, 35, 55, 54751113, 42, 13, 35, 55];
+      let y = 0;
+
+      function renderStream() {
+        ctx.fillStyle = "rgba(1, 4, 10, 0.25)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = "bold 11px 'JetBrains Mono', monospace";
+        ctx.fillStyle = "rgba(6, 182, 212, 0.85)";
+        ctx.shadowColor = "#06b6d4";
+        ctx.shadowBlur = 6;
+
+        for(let i=0; i<POOL.length; i++) {
+          const rowY = (y + i * 28) % canvas.height;
+          ctx.fillText(POOL[i].toLocaleString(), 10, rowY);
+        }
+        y += 1.2;
+        requestAnimationFrame(renderStream);
+      }
+      renderStream();
+    }
+
+    let audioCtx;
+    function playBeep(freq = 880, duration = 0.1) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function playWarpSound() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 1.2);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.3);
+      } catch(e) {}
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("active");
+      playBeep(520, 0.15);
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+      playBeep(380, 0.1);
+    }
+
+    function startClock() {
+      setInterval(() => {
+        const d = new Date();
+        document.getElementById("clockUTC").textContent = d.toISOString().substr(11, 8);
+        const alt = (418.55 + (Math.random() - 0.5) * 0.15).toFixed(2);
+        document.getElementById("hudAltitude").textContent = `${alt} km (LEO)`;
+      }, 1000);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initThree();
+      animate();
+      initNumberStream();
+      startClock();
+    });
+  </script>
+</body>
+</html>

@@ -18,16 +18,32 @@ export interface VoiceProfile {
 }
 
 const NEURAL_VOICE_MAP: Record<string, VoiceProfile> = {
-  tr: { voice: "tr-TR-EmelNeural", name: "Umay Nur (TR Studio Female)", defaultRate: "+22%", gender: "female" },
-  tr_male: { voice: "tr-TR-AhmetNeural", name: "Umay Gün / Demir (TR Studio Male)", defaultRate: "+20%", gender: "male" },
+  tr: { voice: "tr-TR-EmelNeural", name: "Elif Nur Erdem (TR Studio Female)", defaultRate: "+22%", gender: "female" },
+  tr_male: { voice: "tr-TR-AhmetNeural", name: "Kaan Selçuk Demir (TR Sovereign Male)", defaultRate: "+20%", gender: "male" },
   en: { voice: "en-US-AriaNeural", name: "Elena Vance (US Broadcast Female)", defaultRate: "+20%", gender: "female" },
-  en_male: { voice: "en-US-ChristopherNeural", name: "Marcus Sterling (US Anchor Male)", defaultRate: "+18%", gender: "male" },
-  "en-gb": { voice: "en-GB-SoniaNeural", name: "Victoria Ashworth (London Female)", defaultRate: "+18%", gender: "female" },
-  de: { voice: "de-DE-KatjaNeural", name: "Katharina Vogt (Frankfurt Female)", defaultRate: "+18%", gender: "female" },
-  fr: { voice: "fr-FR-DeniseNeural", name: "Camille Dubois (Paris Female)", defaultRate: "+18%", gender: "female" },
-  ru: { voice: "ru-RU-SvetlanaNeural", name: "Viktoria Smirnova (Moscow Female)", defaultRate: "+18%", gender: "female" },
-  ar: { voice: "ar-SA-ZariyahNeural", name: "Fatima Al-Qahtani (Dubai Female)", defaultRate: "+15%", gender: "female" },
-  ar_male: { voice: "ar-AE-HamdanNeural", name: "Zaid Al-Mansoor (Dubai Male)", defaultRate: "+15%", gender: "male" },
+  en_male: { voice: "en-US-ChristopherNeural", name: "Marcus Sterling (UK Anchor Male)", defaultRate: "+18%", gender: "male" },
+  "en-gb": { voice: "en-GB-SoniaNeural", name: "Victoria Ashworth (London Royal)", defaultRate: "+18%", gender: "female" },
+  de: { voice: "de-DE-KatjaNeural", name: "Greta Lindemann (Frankfurt Female)", defaultRate: "+18%", gender: "female" },
+  de_male: { voice: "de-DE-ConradNeural", name: "Heinrich von Berg (Prussian Male)", defaultRate: "+18%", gender: "male" },
+  zh: { voice: "zh-CN-XiaoxiaoNeural", name: "Lin Xiaoyu (Beijing Female)", defaultRate: "+20%", gender: "female" },
+  zh_male: { voice: "zh-CN-YunxiNeural", name: "Chen Weilin (Shanghai Male)", defaultRate: "+20%", gender: "male" },
+  ja: { voice: "ja-JP-NanamiNeural", name: "Aoi Morimoto (Tokyo Female)", defaultRate: "+20%", gender: "female" },
+  ja_male: { voice: "ja-JP-KeitaNeural", name: "Kenjiro Takahashi (Shinto Male)", defaultRate: "+20%", gender: "male" },
+  fr: { voice: "fr-FR-DeniseNeural", name: "Camille Laurent (Paris Female)", defaultRate: "+18%", gender: "female" },
+  fr_male: { voice: "fr-FR-HenriNeural", name: "Antoine de Saint-Germain (Versailles Male)", defaultRate: "+18%", gender: "male" },
+  ru: { voice: "ru-RU-SvetlanaNeural", name: "Daria Volkova (Moscow Female)", defaultRate: "+18%", gender: "female" },
+  ru_male: { voice: "ru-RU-DmitryNeural", name: "Viktor Morozov (Slavic Citadel Male)", defaultRate: "+18%", gender: "male" },
+  ar: { voice: "ar-SA-ZariyahNeural", name: "Noor Al-Hassan (Riyadh Female)", defaultRate: "+15%", gender: "female" },
+  ar_male: { voice: "ar-SA-HamedNeural", name: "Tariq Al-Mansoor (Abbasid Wisdom Male)", defaultRate: "+15%", gender: "male" },
+  fa_male: { voice: "fa-IR-FaridNeural", name: "Kourosh Rostami (Persepolis Male)", defaultRate: "+18%", gender: "male" },
+  hi: { voice: "hi-IN-SwaraNeural", name: "Priya Iyer (Vedic Female)", defaultRate: "+18%", gender: "female" },
+  hi_male: { voice: "hi-IN-MadhurNeural", name: "Aarav Sharma (Maurya Vimana Male)", defaultRate: "+18%", gender: "male" },
+  es: { voice: "es-ES-ElviraNeural", name: "Valentina Morales (Madrid Female)", defaultRate: "+18%", gender: "female" },
+  es_male: { voice: "es-ES-AlvaroNeural", name: "Santiago De La Vega (Habsburgo Galleon Male)", defaultRate: "+18%", gender: "male" },
+  it: { voice: "it-IT-ElsaNeural", name: "Giulia Bellini (Rome Female)", defaultRate: "+18%", gender: "female" },
+  it_male: { voice: "it-IT-DiegoNeural", name: "Marco Aurelio Conti (Nova Roma Male)", defaultRate: "+18%", gender: "male" },
+  ko: { voice: "ko-KR-SunHiNeural", name: "Ji-won Kim (Seoul Female)", defaultRate: "+20%", gender: "female" },
+  ko_male: { voice: "ko-KR-InJoonNeural", name: "Min-jun Park (Goryeo Sovereign Male)", defaultRate: "+20%", gender: "male" },
 };
 
 /**
@@ -100,10 +116,17 @@ function resolveVoiceKey(langCode: string, isMale = false): string {
   if (lc.startsWith("tr")) return isMale ? "tr_male" : "tr";
   if (lc === "en-gb" || lc.startsWith("en-gb")) return "en-gb";
   if (lc.startsWith("en")) return isMale ? "en_male" : "en";
-  if (lc.startsWith("de")) return "de";
-  if (lc.startsWith("fr")) return "fr";
-  if (lc.startsWith("ru")) return "ru";
+  if (lc.startsWith("de")) return isMale ? "de_male" : "de";
+  if (lc.startsWith("zh")) return isMale ? "zh_male" : "zh";
+  if (lc.startsWith("ja")) return isMale ? "ja_male" : "ja";
+  if (lc.startsWith("fr")) return isMale ? "fr_male" : "fr";
+  if (lc.startsWith("ru")) return isMale ? "ru_male" : "ru";
   if (lc.startsWith("ar")) return isMale ? "ar_male" : "ar";
+  if (lc.startsWith("fa")) return "fa_male";
+  if (lc.startsWith("hi")) return isMale ? "hi_male" : "hi";
+  if (lc.startsWith("es")) return isMale ? "es_male" : "es";
+  if (lc.startsWith("it")) return isMale ? "it_male" : "it";
+  if (lc.startsWith("ko")) return isMale ? "ko_male" : "ko";
   return "tr";
 }
 

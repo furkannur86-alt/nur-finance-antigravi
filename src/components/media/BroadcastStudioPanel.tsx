@@ -14,6 +14,7 @@ import {
 import { cyberSound } from "@/lib/audio/sound-synth";
 
 export type StudioStageType =
+  | "hegelian-debate"
   | "3d-globe"
   | "orbital-radar"
   | "financial-bourses"
@@ -22,6 +23,7 @@ export type StudioStageType =
   | "executive-office";
 
 const STUDIO_STAGES: { id: StudioStageType; name: string; path?: string }[] = [
+  { id: "hegelian-debate", name: "⚖️ Studio C — Hegelian Debate Arena (Marcus vs Elena → Elif Nur)" },
   { id: "anchor-female", name: "Studio A — NUR TV 2126 4K Main Stage", path: "/images/studio/broadcast_studio.jpg" },
   { id: "executive-office", name: "Studio B — Sovereign Executive Suite", path: "/images/studio/executive-office.jpg" },
   { id: "financial-bourses", name: "📊 Global Financial Bourses Matrix" },
@@ -34,6 +36,7 @@ export default function BroadcastStudioPanel() {
 
   const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
   const [selectedStudio, setSelectedStudio] = useState(STUDIO_STAGES[0]);
+  const [activeDebater, setActiveDebater] = useState<"marcus" | "elena" | "elif_nur">("elif_nur");
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");
   const [teleprompterSpeed, setTeleprompterSpeed] = useState(2);
   const [isPrompting, setIsPrompting] = useState(true);
@@ -258,7 +261,87 @@ export default function BroadcastStudioPanel() {
         <div className="flex-1 flex flex-col min-w-0 border-r" style={{ borderColor: "var(--ag-border)" }}>
           {/* Video Preview Box */}
           <div className="relative aspect-video w-full max-h-[50%] bg-black overflow-hidden border-b shrink-0 flex items-center justify-center" style={{ borderColor: "var(--ag-border)" }}>
-            {selectedStudio.id === "3d-globe" ? (
+            {selectedStudio.id === "hegelian-debate" ? (
+              <div className="w-full h-full grid grid-cols-3 gap-2 p-3 bg-slate-950/95 relative z-0">
+                {/* Speaker 1: Marcus Sterling (Thesis) */}
+                <div
+                  onClick={() => {
+                    cyberSound.playClick();
+                    setActiveDebater("marcus");
+                  }}
+                  className={`relative rounded-xl overflow-hidden border cursor-pointer transition-all flex flex-col justify-end p-2.5 ${
+                    activeDebater === "marcus"
+                      ? "border-amber-400 ring-2 ring-amber-400/40 shadow-lg shadow-amber-500/20"
+                      : "border-white/10 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src="/images/characters/marcus_sterling.jpg"
+                    alt="Marcus Sterling"
+                    fill
+                    className="object-cover -z-10"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent -z-10" />
+                  <div className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/30 text-amber-300 w-fit mb-1 border border-amber-400/40">
+                    THESIS &bull; SOVEREIGN CAPITAL
+                  </div>
+                  <div className="text-xs font-bold text-white font-serif">Marcus Sterling</div>
+                  <p className="text-[9px] text-slate-300 line-clamp-2">"Physical gold, sovereign energy & defense state order."</p>
+                </div>
+
+                {/* Speaker 2: Elif Nur Erdem (Synthesis) */}
+                <div
+                  onClick={() => {
+                    cyberSound.playClick();
+                    setActiveDebater("elif_nur");
+                  }}
+                  className={`relative rounded-xl overflow-hidden border cursor-pointer transition-all flex flex-col justify-end p-2.5 ${
+                    activeDebater === "elif_nur"
+                      ? "border-cyan-400 ring-2 ring-cyan-400/50 shadow-xl shadow-cyan-500/30"
+                      : "border-white/10 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src="/images/characters/elif_nur.jpg"
+                    alt="Elif Nur Erdem"
+                    fill
+                    className="object-cover -z-10"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent -z-10" />
+                  <div className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/30 text-cyan-300 w-fit mb-1 border border-cyan-400/40">
+                    👑 SYNTHESIS &bull; NUR DIALECTIC
+                  </div>
+                  <div className="text-xs font-bold text-cyan-200 font-serif">Elif Nur Erdem</div>
+                  <p className="text-[9px] text-slate-200 line-clamp-2">"Relativistic synthesis: Sovereign vault anchors borderless global yield."</p>
+                </div>
+
+                {/* Speaker 3: Elena Vance (Antithesis) */}
+                <div
+                  onClick={() => {
+                    cyberSound.playClick();
+                    setActiveDebater("elena");
+                  }}
+                  className={`relative rounded-xl overflow-hidden border cursor-pointer transition-all flex flex-col justify-end p-2.5 ${
+                    activeDebater === "elena"
+                      ? "border-pink-400 ring-2 ring-pink-400/40 shadow-lg shadow-pink-500/20"
+                      : "border-white/10 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src="/images/characters/elena_vance.jpg"
+                    alt="Elena Vance"
+                    fill
+                    className="object-cover -z-10"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent -z-10" />
+                  <div className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-pink-500/30 text-pink-300 w-fit mb-1 border border-pink-400/40">
+                    ANTITHESIS &bull; SKY YACHT YIELD
+                  </div>
+                  <div className="text-xs font-bold text-pink-200 font-serif">Elena Vance</div>
+                  <p className="text-[9px] text-slate-300 line-clamp-2">"Frictionless 24/7 liquidity, Web3 speed & unbounded markets."</p>
+                </div>
+              </div>
+            ) : selectedStudio.id === "3d-globe" ? (
               <div className="w-full h-full relative">
                 <NurEarth3DGlobe />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 pointer-events-none" />
