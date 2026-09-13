@@ -64,6 +64,7 @@ import CivilizationTerminalPanel from "@/components/orbital/CivilizationTerminal
 import CivilizationArbitrageEngine from "@/components/trading/CivilizationArbitrageEngine";
 import MasterFleetMiningAdminPanel from "@/components/orbital/MasterFleetMiningAdminPanel";
 import UmayMasterTerminalPanel from "@/components/umay/UmayMasterTerminalPanel";
+import FleetMinerPanel from "@/components/mining/FleetMinerPanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -72,6 +73,7 @@ const MAX_CONSOLE_HEIGHT = 500;
 const DEFAULT_CONSOLE_HEIGHT = 200;
 
 const FULLSCREEN_VIEWS = [
+  "fleet-miner",
   "umay-master",
   "umay-boss",
   "holding-ecosystem",
@@ -160,6 +162,8 @@ export default function Home() {
 
   const renderMainContent = () => {
     switch (activeView) {
+      case "fleet-miner":
+        return <FleetMinerPanel />;
       case "umay-master":
         return <UmayMasterTerminalPanel />;
       case "umay-boss":

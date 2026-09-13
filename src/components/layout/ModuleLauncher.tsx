@@ -73,6 +73,7 @@ const MODULES: Module[] = [
   { id: "civilization-terminals", label: "Medeniyet Panelleri", icon: "🏛️", desc: "18 Medeniyet & Warp Kokpiti", color: "#00f0ff", group: "GALACTIC" },
   { id: "civilization-arbitrage", label: "Filo Arbitraj & OMS", icon: "⚡", desc: "Çapraz Kur & Yüksek Frekans", color: "#10b981", group: "GALACTIC" },
   { id: "master-fleet-mining",    label: "Master Filo Mining",   icon: "⛏️", desc: "36 Gemi Kripto & Hazine Havuzu", color: "#f59e0b", group: "GALACTIC" },
+  { id: "fleet-miner",            label: "Fleet Miner Node",     icon: "⛏️", desc: "WASM & Python Madencilik İstemcisi", color: "#10b981", group: "GALACTIC" },
 
   // SOVEREIGN (admin only)
   { id: "umay-master",       label: "Umay Master Terminal", icon: "👑", desc: "Root sovereign fleet bridge (Invariant 42·13·35·55)", color: "#ffd700", group: "SOVEREIGN", adminOnly: true },

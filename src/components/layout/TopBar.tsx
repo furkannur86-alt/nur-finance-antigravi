@@ -55,6 +55,7 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }
   "nur-education":    { label: "Education",         icon: "🎓", color: "#34d399" },
   "nur-kids":         { label: "Nur Kids",          icon: "👨‍👩‍👧", color: "#34d399" },
   "master-fleet-mining": { label: "Filo Mining Admin",  icon: "⛏️", color: "#f59e0b" },
+  "fleet-miner":      { label: "Fleet Miner",       icon: "⛏️", color: "#10b981" },
   "umay-master":      { label: "Umay Master Terminal", icon: "👑", color: "#ffd700" },
   "umay-boss":        { label: "Umay Gül Nur",      icon: "👑", color: "#fbbf24" },
   "holding-ecosystem":{ label: "7 Büyüme Kolu",    icon: "🏛️", color: "#fbbf24" },
