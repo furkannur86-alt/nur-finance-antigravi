@@ -64,6 +64,7 @@ import CivilizationTerminalPanel from "@/components/orbital/CivilizationTerminal
 import CivilizationArbitrageEngine from "@/components/trading/CivilizationArbitrageEngine";
 import MasterFleetMiningAdminPanel from "@/components/orbital/MasterFleetMiningAdminPanel";
 import UmayMasterTerminalPanel from "@/components/umay/UmayMasterTerminalPanel";
+import FleetMinerPanel from "@/components/mining/FleetMinerPanel";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -88,6 +89,7 @@ const FULLSCREEN_VIEWS = [
   "civilization-terminals",
   "civilization-arbitrage",
   "master-fleet-mining",
+  "fleet-miner",
   "professional-ai",
   "professional-social",
   "user-profile",
@@ -192,6 +194,8 @@ export default function Home() {
         return <CivilizationArbitrageEngine onClose={() => setActiveView("dashboard")} />;
       case "master-fleet-mining":
         return <MasterFleetMiningAdminPanel />;
+      case "fleet-miner":
+        return <FleetMinerPanel />;
       case "professional-ai":
         return <ProfessionalAIHubPanel />;
       case "professional-social":
