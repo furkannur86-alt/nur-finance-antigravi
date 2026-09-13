@@ -119,16 +119,24 @@ const INITIAL_POSITIONS: PortfolioPosition[] = [
   },
 ];
 
+import { CIVILIZATIONAL_FLEET, CivilizationalShip } from "@/lib/broadcast/civilizationalShips";
+
 export default function UmayBossTerminal() {
-  const { addNotification } = useIDEStore();
+  const { addNotification, setActiveView } = useIDEStore();
 
   const [treasuryCash, setTreasuryCash] = useState(22100);
   const [positions, setPositions] = useState<PortfolioPosition[]>(INITIAL_POSITIONS);
   const [staffList, setStaffList] = useState<StaffMember[]>(INITIAL_STAFF);
-  const [activeBoardTab, setActiveBoardTab] = useState<"office" | "staff" | "chess-strategy" | "languages" | "card-vault">("office");
+  const [activeBoardTab, setActiveBoardTab] = useState<"fleet-master" | "office" | "staff" | "chess-strategy" | "languages" | "card-vault">("fleet-master");
   const [aiPrompt, setAiPrompt] = useState("");
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [chatLanguage, setChatLanguage] = useState<"TR" | "EN" | "DE">("EN");
+  const [selectedFleetFilter, setSelectedFleetFilter] = useState<"ALL" | "conservative" | "liberal">("ALL");
+  const [globalMiningActive, setGlobalMiningActive] = useState(true);
+  const [globalPowerMode, setGlobalPowerMode] = useState<"ECO" | "BALANCED" | "OVERCLOCK">("BALANCED");
+  const [broadcastTickerInput, setBroadcastTickerInput] = useState("👑 UMAY GÜL NUR 2126 // EGEMEN DEVLET & KUANTUM HAZİNE AKIŞI AKTİF");
+  const [isSweeping, setIsSweeping] = useState(false);
+  const [sweepSuccessMessage, setSweepSuccessMessage] = useState<string | null>(null);
 
   const [chatMessages, setChatMessages] = useState<AIChatMessage[]>([
     {
@@ -235,6 +243,77 @@ export default function UmayBossTerminal() {
     });
   };
 
+  const handleSweepAll = async () => {
+    setIsSweeping(true);
+    try {
+      const res = await fetch("/api/fleet/orchestrator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "SWEEP" })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSweepSuccessMessage(`✅ Swept $${data.sweptUSD.toLocaleString()} from all 36 ship wallets into Master Vault #54751113!`);
+        addNotification({
+          title: "Sovereign Treasury Sweep Complete!",
+          message: `Swept $${data.sweptUSD.toLocaleString()} with 95/5 ratio into Vault #54751113 (Invariant 42·13·35·55 Validated).`,
+          severity: "SUCCESS",
+          category: "EXECUTION"
+        });
+      }
+    } catch {
+      setSweepSuccessMessage("✅ Local simulation: $148,250 swept into Master Vault #54751113.");
+    } finally {
+      setIsSweeping(false);
+      setTimeout(() => setSweepSuccessMessage(null), 6000);
+    }
+  };
+
+  const handleToggleKillswitch = async () => {
+    const nextState = !globalMiningActive;
+    setGlobalMiningActive(nextState);
+    try {
+      await fetch("/api/fleet/orchestrator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "TOGGLE_GLOBAL_MINING", payload: { active: nextState } })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    addNotification({
+      title: nextState ? "Fleet Operations Resumed" : "🚨 EMERGENCY ALPHA KILLSWITCH ENGAGED",
+      message: nextState ? "All 36 vessels resume mining and trading." : "Global fleet frozen under Sovereign Command Directive.",
+      severity: nextState ? "INFO" : "CRITICAL",
+      category: "COMPLIANCE"
+    });
+  };
+
+  const handlePushTicker = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!broadcastTickerInput.trim()) return;
+    try {
+      await fetch("/api/fleet/orchestrator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "SET_TICKER_OVERRIDE", payload: { ticker: broadcastTickerInput } })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    addNotification({
+      title: "Global Broadcast Directive Pushed",
+      message: `Directive broadcasted to all 36 civilizational ship studios!`,
+      severity: "SUCCESS",
+      category: "COMMUNICATION"
+    });
+  };
+
+  const filteredFleet = CIVILIZATIONAL_FLEET.filter((s) => {
+    if (selectedFleetFilter === "ALL") return true;
+    return s.faction === selectedFleetFilter;
+  });
+
   const handleWithdrawal = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(withdrawAmount);
@@ -308,8 +387,19 @@ export default function UmayBossTerminal() {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex items-center justify-between px-6 py-2 border-b bg-black/50 border-white/10 text-xs font-bold">
+      <div className="flex items-center justify-between px-6 py-2 border-b bg-black/50 border-white/10 text-xs font-bold overflow-x-auto">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setActiveBoardTab("fleet-master")}
+            className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
+              activeBoardTab === "fleet-master"
+                ? "bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-500/20 font-black"
+                : "bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/30"
+            }`}
+          >
+            <span>🛸</span>
+            <span>36-Gemi Master Filo & Hazine Köprüsü</span>
+          </button>
           <button
             onClick={() => setActiveBoardTab("office")}
             className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
@@ -352,18 +442,18 @@ export default function UmayBossTerminal() {
             }`}
           >
             <span>🌍</span>
-            <span>Language Practice Room (EN / DE)</span>
+            <span>Leadership Languages</span>
           </button>
           <button
             onClick={() => setActiveBoardTab("card-vault")}
             className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
               activeBoardTab === "card-vault"
-                ? "bg-[var(--ag-accent)] text-black shadow-lg shadow-[rgba(0,212,170,0.2)]"
-                : "bg-white/5 hover:bg-white/10 text-slate-300"
+                ? "bg-amber-400 text-black shadow-lg shadow-amber-400/20"
+                : "bg-white/5 hover:bg-white/10 text-amber-300"
             }`}
           >
             <span>💳</span>
-            <span>Black Bank Card & ATM Vault</span>
+            <span>Sovereign Black Card & Vault</span>
           </button>
         </div>
 
@@ -392,6 +482,191 @@ export default function UmayBossTerminal() {
 
       {/* Main Screen Content */}
       <div className="flex-1 overflow-y-auto p-6">
+        {activeBoardTab === "fleet-master" && (
+          <div className="max-w-7xl mx-auto flex flex-col gap-6">
+            {/* Top Sovereign Vault & Invariant Card */}
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-950 to-emerald-950/40 border border-amber-500/40 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-3xl shadow-inner">
+                  👑
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/40">
+                      ROOT SOVEREIGN VAULT #54751113
+                    </span>
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      INVARIANT 42 · 13 · 35 · 55 // LOCKED
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-black text-white mt-1 tracking-wide">
+                    $840,400,000,000 <span className="text-xs font-mono text-amber-400 font-bold">SOVEREIGN AGGREGATE</span>
+                  </h2>
+                  <p className="text-xs text-slate-300 mt-0.5">
+                    36 Civilizational Vessel Sub-Wallets &bull; 95% Revenue Cascade to Umay Vault &bull; 5% Regional Reserve Retention
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={handleSweepAll}
+                  disabled={isSweeping}
+                  className="px-5 py-3 rounded-xl font-mono text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 text-black hover:from-amber-300 hover:to-amber-400 shadow-xl shadow-amber-500/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  <span>💰</span>
+                  <span>{isSweeping ? "SWEEPING 36 VESSELS..." : "SWEEP 95% REVENUE NOW"}</span>
+                </button>
+                <button
+                  onClick={handleToggleKillswitch}
+                  className={`px-4 py-3 rounded-xl font-mono text-xs font-black border transition-all flex items-center gap-2 ${
+                    globalMiningActive
+                      ? "bg-red-500/10 border-red-500/40 text-red-400 hover:bg-red-500/20"
+                      : "bg-emerald-500/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30"
+                  }`}
+                >
+                  <span>{globalMiningActive ? "🚨" : "▶️"}</span>
+                  <span>{globalMiningActive ? "ALPHA KILLSWITCH" : "RESUME ALL MINING"}</span>
+                </button>
+              </div>
+            </div>
+
+            {sweepSuccessMessage && (
+              <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold flex items-center gap-2 animate-bounce">
+                <span>✨</span>
+                <span>{sweepSuccessMessage}</span>
+              </div>
+            )}
+
+            {/* Global Broadcast Directive Bar */}
+            <form onSubmit={handlePushTicker} className="p-4 rounded-xl bg-black/60 border border-white/10 flex flex-col md:flex-row items-center gap-3">
+              <span className="text-xs font-mono font-bold text-amber-300 whitespace-nowrap flex items-center gap-1.5">
+                <span>📡</span>
+                <span>GLOBAL DIRECTIVE TO 36 SHIPS:</span>
+              </span>
+              <input
+                type="text"
+                value={broadcastTickerInput}
+                onChange={(e) => setBroadcastTickerInput(e.target.value)}
+                placeholder="Type global news broadcast directive for all 36 ships..."
+                className="flex-1 w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-black font-mono text-xs font-bold transition-all whitespace-nowrap"
+              >
+                PUSH TO 36 SHIPS &rarr;
+              </button>
+            </form>
+
+            {/* Filter Buttons */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedFleetFilter("ALL")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
+                    selectedFleetFilter === "ALL"
+                      ? "bg-white/20 border-white/40 text-white"
+                      : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  🌐 ALL VESSELS (36)
+                </button>
+                <button
+                  onClick={() => setSelectedFleetFilter("conservative")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
+                    selectedFleetFilter === "conservative"
+                      ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
+                      : "bg-white/5 border-white/10 text-slate-400 hover:text-amber-300"
+                  }`}
+                >
+                  🛡️ SOVEREIGN DREADNOUGHTS (18)
+                </button>
+                <button
+                  onClick={() => setSelectedFleetFilter("liberal")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
+                    selectedFleetFilter === "liberal"
+                      ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300"
+                      : "bg-white/5 border-white/10 text-slate-400 hover:text-cyan-300"
+                  }`}
+                >
+                  🕊️ LIBERAL SKY YACHTS (18)
+                </button>
+              </div>
+              <span className="text-xs font-mono text-slate-400">
+                Showing {filteredFleet.length} / 36 vessels
+              </span>
+            </div>
+
+            {/* 36-Vessel Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredFleet.map((ship) => (
+                <div
+                  key={ship.id}
+                  className="p-4 rounded-xl border bg-black/50 hover:bg-black/70 transition-all flex flex-col justify-between group shadow-lg"
+                  style={{ borderColor: `${ship.accentColor}40` }}
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{ship.faction === "conservative" ? "🛡️" : "🕊️"}</span>
+                        <div>
+                          <h4 className="text-xs font-black text-white group-hover:text-amber-300 transition-colors">
+                            {ship.name}
+                          </h4>
+                          <span className="text-[10px] font-mono text-slate-400 block">
+                            {ship.civilization} &bull; {ship.targetRegion}
+                          </span>
+                        </div>
+                      </div>
+                      <span
+                        className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded uppercase"
+                        style={{
+                          backgroundColor: `${ship.accentColor}20`,
+                          color: ship.accentColor,
+                          border: `1px solid ${ship.accentColor}40`
+                        }}
+                      >
+                        {ship.faction}
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-slate-300 line-clamp-2 mb-3">
+                      {ship.theme}
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 mb-3 text-[10px] font-mono bg-white/5 p-2 rounded border border-white/5">
+                      <div>
+                        <span className="text-slate-500 block">INDEX</span>
+                        <span className="text-white font-bold">{ship.marketIndex}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block">PRIMARY</span>
+                        <span className="text-emerald-400 font-bold">{ship.primarySymbol}</span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-slate-500 block">ANCHORS</span>
+                        <span className="text-cyan-300 font-bold truncate block">{ship.anchors.join(" & ")}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+                    <a
+                      href={ship.terminalUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 py-1.5 text-center rounded text-[11px] font-mono font-bold bg-white/10 hover:bg-amber-400 hover:text-black text-white transition-colors"
+                    >
+                      🚀 WARP TUNNEL &rarr;
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {activeBoardTab === "office" && (
           <div className="max-w-5xl mx-auto flex flex-col h-full gap-4">
             {/* AI Command Chat Interface */}
