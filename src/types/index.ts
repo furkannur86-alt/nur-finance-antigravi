@@ -119,7 +119,8 @@ export type PanelView =
   | "orbital-command"
   | "civilization-terminals"
   | "civilization-arbitrage"
-  | "master-fleet-mining";
+  | "master-fleet-mining"
+  | "umay-master";
 
 export interface FloatingWindowConfig {
   id: string;

@@ -75,6 +75,7 @@ const MODULES: Module[] = [
   { id: "master-fleet-mining",    label: "Master Filo Mining",   icon: "⛏️", desc: "36 Gemi Kripto & Hazine Havuzu", color: "#f59e0b", group: "GALACTIC" },
 
   // SOVEREIGN (admin only)
+  { id: "umay-master",       label: "Umay Master Terminal", icon: "👑", desc: "Root sovereign fleet bridge (Invariant 42·13·35·55)", color: "#ffd700", group: "SOVEREIGN", adminOnly: true },
   { id: "umay-boss",         label: "Umay Gül Nur",     icon: "👑", desc: "Sovereign boss terminal",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "holding-ecosystem", label: "7 Büyüme Kolu",    icon: "🏛️", desc: "Holding ecosystem panel",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
   { id: "tatar-finans",      label: "Tatar Finans",     icon: "🛡️", desc: "Tatar financial network",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },

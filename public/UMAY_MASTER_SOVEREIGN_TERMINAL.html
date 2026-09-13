@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMAY GÜL NUR 2126 // ROOT SOVEREIGN MASTER FLEET COMMAND TERMINAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@400;600;700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #010206;
+      --gold: #ffd700;
+      --gold-glow: rgba(255, 215, 0, 0.4);
+      --gold-dark: #b8860b;
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --red: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* 3D Starfield Canvas */
+    #starCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Master Container */
+    #masterContainer {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 18px 24px;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(8, 12, 22, 0.85);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      border-radius: 14px;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    .brand-text h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .brand-text p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+    }
+
+    .vault-pills {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pill-card {
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: right;
+    }
+
+    .pill-card span {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .pill-card b {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--emerald);
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Left Panel: Fleet Matrix */
+    .fleet-matrix-card {
+      background: rgba(6, 10, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .filter-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-filter {
+      padding: 6px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-filter.active {
+      background: rgba(255, 215, 0, 0.2);
+      border-color: var(--gold);
+      color: #fff;
+    }
+
+    .ships-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+      padding-right: 6px;
+    }
+
+    .ship-tile {
+      background: rgba(10, 15, 26, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .ship-tile:hover {
+      border-color: var(--gold);
+      background: rgba(20, 28, 48, 0.85);
+      transform: translateY(-2px);
+    }
+
+    .ship-tile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ship-tile-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .ship-tile-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .ship-tile-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+    }
+
+    .warp-btn {
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .warp-btn:hover {
+      background: var(--gold);
+      color: #000;
+    }
+
+    /* Right Panel: Sovereign Vault & Sweep */
+    .vault-panel {
+      background: rgba(8, 12, 22, 0.85);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sweep-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-sweep {
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border: none;
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--gold-glow);
+      transition: all 0.2s;
+    }
+
+    .btn-sweep:hover {
+      filter: brightness(1.15);
+      transform: scale(1.02);
+    }
+
+    .killswitch-btn {
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .killswitch-btn:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .audit-box {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-item {
+      display: flex;
+      gap: 6px;
+    }
+
+    .log-time {
+      color: var(--gold);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starCanvas"></canvas>
+  <div class="scanlines"></div>
+
+  <div id="masterContainer">
+    <!-- Header -->
+    <header class="header-bar">
+      <div class="brand-title">
+        <div class="brand-logo">👑</div>
+        <div class="brand-text">
+          <h1>UMAY GÜL NUR // ROOT SOVEREIGN COMMAND</h1>
+          <p>MASTER SOVEREIGN FLEET BRIDGE &bull; INVARIANT: 42 · 13 · 35 · 55 // LOCKED</p>
+        </div>
+      </div>
+
+      <div class="vault-pills">
+        <div class="pill-card">
+          <span>SOVEREIGN VAULT #54751113</span>
+          <b id="vaultBalanceText">$840,442,850,900</b>
+        </div>
+        <div class="pill-card">
+          <span>UNCOLLECTED 36-SHIP YIELD</span>
+          <b id="unsweptText" style="color: var(--gold);">$148,250</b>
+        </div>
+        <div class="pill-card">
+          <span>AGGREGATE HASHRATE</span>
+          <b id="hashrateText" style="color: var(--cyan);">132.80 GH/s</b>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-grid">
+      <!-- Left: Fleet Matrix -->
+      <section class="fleet-matrix-card">
+        <div class="filter-bar">
+          <div class="filter-btn-group">
+            <button class="btn-filter active" onclick="filterFleet('ALL')">ALL VESSELS (36)</button>
+            <button class="btn-filter" onclick="filterFleet('conservative')">🛡️ SOVEREIGN (18)</button>
+            <button class="btn-filter" onclick="filterFleet('liberal')">🕊️ LIBERAL (18)</button>
+          </div>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold);">
+            ● 36/36 NODES ONLINE
+          </span>
+        </div>
+
+        <div class="ships-scroll" id="shipsContainer">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+      <!-- Right: Controls & Sweep -->
+      <section class="vault-panel">
+        <div class="sweep-box">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--gold);">
+            ⚡ 95/5 INVARIANT REVENUE SWEEP
+          </span>
+          <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+            Sweeps 95% of total uncollected mining & spread yield directly into Root Sovereign Vault #54751113. 5% retained in regional ship vault.
+          </p>
+          <button class="btn-sweep" onclick="executeSweep()">
+            💰 EXECUTE 95% REVENUE SWEEP
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #fff;">
+            🛡️ EMERGENCY OVERRIDE
+          </span>
+          <button class="killswitch-btn" id="killswitchBtn" onclick="toggleKillswitch()">
+            🚨 ALPHA KILLSWITCH (FREEZE ALL)
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-height: 0;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted);">
+            📜 IMMUTABLE SOVEREIGN AUDIT TRAIL
+          </span>
+          <div class="audit-box" id="auditBox">
+            <div class="log-item"><span class="log-time">[10:00:12]</span><span>Invariant 42·13·35·55 verified & locked.</span></div>
+            <div class="log-item"><span class="log-time">[10:05:30]</span><span>Heartbeat received from 36 vessel nodes.</span></div>
+            <div class="log-item"><span class="log-time">[10:15:00]</span><span>95/5 Treasury cascade active.</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Starfield Background Animation
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const stars = Array.from({ length: 250 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      z: Math.random() * width,
+      o: Math.random() * 0.8 + 0.2
+    }));
+
+    function renderStars() {
+      ctx.fillStyle = '#010206';
+      ctx.fillRect(0, 0, width, height);
+
+      for (let s of stars) {
+        s.z -= 1.2;
+        if (s.z <= 0) { s.z = width; s.x = Math.random() * width; s.y = Math.random() * height; }
+
+        const k = 128.0 / s.z;
+        const px = (s.x - width / 2) * k + width / 2;
+        const py = (s.y - height / 2) * k + height / 2;
+
+        if (px >= 0 && px < width && py >= 0 && py < height) {
+          const sz = (1 - s.z / width) * 2.5;
+          ctx.fillStyle = `rgba(255, 215, 0, ${s.o})`;
+          ctx.beginPath();
+          ctx.arc(px, py, sz, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      requestAnimationFrame(renderStars);
+    }
+    renderStars();
+
+    // 36 Ships Data Model
+    const SHIPS = [
+      { name: "NUR-08 BOZKURT TİTANI", civ: "Turkish Sovereign", faction: "conservative", url: "/NUR_FINANS_CAPTAIN_TERMINAL.html", index: "BIST 100", hash: "4.25 GH/s" },
+      { name: "LİBERAL VİZYON TULIP", civ: "Turkish Liberal", faction: "liberal", url: "/LIBERAL_VIZYON_TURKISH_TERMINAL.html", index: "BIST TECH", hash: "3.12 GH/s" },
+      { name: "TUDOR STARSHIP", civ: "Anglo Sovereign", faction: "conservative", url: "/TUDOR_FINANCE_ENGLISH_TERMINAL.html", index: "FTSE 100", hash: "4.80 GH/s" },
+      { name: "PAX HORIZON", civ: "Anglo Liberal", faction: "liberal", url: "/PAX_HORIZON_LIBERAL_ENGLISH_TERMINAL.html", index: "S&P 500", hash: "5.10 GH/s" },
+      { name: "TANG CAPITAL", civ: "Chinese Sovereign", faction: "conservative", url: "/TANG_CAPITAL_CHINESE_TERMINAL.html", index: "SSE Composite", hash: "4.95 GH/s" },
+      { name: "HARMONY GLOBAL", civ: "Chinese Liberal", faction: "liberal", url: "/HARMONY_GLOBAL_CHINESE_TERMINAL.html", index: "CSI 300", hash: "3.80 GH/s" },
+      { name: "TOKUGAWA MARKETS", civ: "Japanese Sovereign", faction: "conservative", url: "/TOKUGAWA_MARKETS_JAPANESE_TERMINAL.html", index: "NIKKEI 225", hash: "4.40 GH/s" },
+      { name: "ZENITH PACIFIST", civ: "Japanese Liberal", faction: "liberal", url: "/ZENITH_PACIFIST_JAPANESE_TERMINAL.html", index: "TOPIX", hash: "3.50 GH/s" },
+      { name: "BOURBON ANALYTICS", civ: "French Sovereign", faction: "conservative", url: "/BOURBON_ANALYTICS_FRENCH_TERMINAL.html", index: "CAC 40", hash: "3.90 GH/s" },
+      { name: "L'AURORE MONDE", civ: "French Liberal", faction: "liberal", url: "/L_AURORE_MONDE_FRENCH_TERMINAL.html", index: "EURONEXT", hash: "3.20 GH/s" },
+      { name: "WALKÜRE FINANCE", civ: "German Sovereign", faction: "conservative", url: "/WALKURE_FINANCE_GERMAN_TERMINAL.html", index: "DAX 40", hash: "4.60 GH/s" },
+      { name: "BERLIN TECHNO", civ: "German Liberal", faction: "liberal", url: "/BERLIN_TECHNO_GERMAN_TERMINAL.html", index: "MDAX", hash: "3.70 GH/s" },
+      { name: "ABBASID FINANCIAL", civ: "Arab Sovereign", faction: "conservative", url: "/ABBASID_FINANCIAL_ARABIC_TERMINAL.html", index: "TADAWUL TASI", hash: "4.75 GH/s" },
+      { name: "AL-AMAL PEACE", civ: "Arab Liberal", faction: "liberal", url: "/AL_AMAL_PEACE_ARABIC_TERMINAL.html", index: "DFM GI", hash: "3.60 GH/s" },
+      { name: "MAURYA INTELLIGENCE", civ: "Indian Sovereign", faction: "conservative", url: "/MAURYA_INTELLIGENCE_HINDI_TERMINAL.html", index: "NIFTY 50", hash: "4.30 GH/s" },
+      { name: "SHANTI VISION", civ: "Indian Liberal", faction: "liberal", url: "/SHANTI_VISION_HINDI_TERMINAL.html", index: "SENSEX", hash: "3.40 GH/s" },
+      { name: "RURIK CAPITAL", civ: "Russian Sovereign", faction: "conservative", url: "/RURIK_CAPITAL_RUSSIAN_TERMINAL.html", index: "MOEX", hash: "4.10 GH/s" },
+      { name: "MIR ORBITAL ECHO", civ: "Russian Liberal", faction: "liberal", url: "/MIR_ORBITAL_ECHO_RUSSIAN_TERMINAL.html", index: "RTS", hash: "3.30 GH/s" },
+      { name: "HABSBURGO CAPITAL", civ: "Spanish Sovereign", faction: "conservative", url: "/HABSBURGO_CAPITAL_SPANISH_TERMINAL.html", index: "IBEX 35", hash: "3.85 GH/s" },
+      { name: "PAZ DEL SOL", civ: "Spanish Liberal", faction: "liberal", url: "/PAZ_DEL_SOL_SPANISH_TERMINAL.html", index: "MADRID SE", hash: "3.15 GH/s" },
+      { name: "NOVA ROMA", civ: "Italian Sovereign", faction: "conservative", url: "/NOVA_ROMA_ITALIAN_TERMINAL.html", index: "FTSE MIB", hash: "3.75 GH/s" },
+      { name: "MILAN FASHION", civ: "Italian Liberal", faction: "liberal", url: "/MILAN_FASHION_LIBERAL_ITALIAN_TERMINAL.html", index: "Borsa Italiana", hash: "3.05 GH/s" },
+      { name: "VALKYRIE ARCTIC", civ: "Nordic Sovereign", faction: "conservative", url: "/VALKYRIE_ARCTIC_NORDIC_TERMINAL.html", index: "OMX Nordic", hash: "4.00 GH/s" },
+      { name: "STOCKHOLM AURORA", civ: "Nordic Liberal", faction: "liberal", url: "/STOCKHOLM_AURORA_LIBERAL_NORDIC_TERMINAL.html", index: "OMX Stockholm", hash: "3.25 GH/s" },
+      { name: "PERSEPOLIS CAPITAL", civ: "Persian Sovereign", faction: "conservative", url: "/PERSEPOLIS_CAPITAL_PERSIAN_TERMINAL.html", index: "TEDPIX", hash: "3.60 GH/s" },
+      { name: "TEHRAN SYNTH", civ: "Persian Liberal", faction: "liberal", url: "/TEHRAN_SYNTH_LIBERAL_PERSIAN_TERMINAL.html", index: "IFB", hash: "2.90 GH/s" },
+      { name: "GORYEO SOVEREIGN", civ: "Korean Sovereign", faction: "conservative", url: "/GORYEO_SOVEREIGN_KOREAN_TERMINAL.html", index: "KOSPI", hash: "4.35 GH/s" },
+      { name: "SEOUL CYBER", civ: "Korean Liberal", faction: "liberal", url: "/SEOUL_CYBER_LIBERAL_KOREAN_TERMINAL.html", index: "KOSDAQ", hash: "3.55 GH/s" },
+      { name: "KILWA MARKETS", civ: "African Sovereign", faction: "conservative", url: "/KILWA_MARKETS_AFRICAN_TERMINAL.html", index: "JSE TOP 40", hash: "3.40 GH/s" },
+      { name: "UBUNTU HARMONY", civ: "African Liberal", faction: "liberal", url: "/UBUNTU_HARMONY_AFRICAN_TERMINAL.html", index: "EGX 30", hash: "2.80 GH/s" },
+      { name: "TATAR FINANS CAPITAL", civ: "Tatar Sovereign", faction: "conservative", url: "/TATAR_FINANS_CAPITAL_TERMINAL.html", index: "TATAR-X", hash: "3.95 GH/s" },
+      { name: "KAZAN SILK", civ: "Tatar Liberal", faction: "liberal", url: "/KAZAN_SILK_LIBERAL_TATAR_TERMINAL.html", index: "VOLGA IND", hash: "3.10 GH/s" },
+      { name: "AYUTTHAYA GOLDEN", civ: "Thai Sovereign", faction: "conservative", url: "/AYUTTHAYA_GOLDEN_SEA_TERMINAL.html", index: "SET Index", hash: "3.50 GH/s" },
+      { name: "BALI TROPICS", civ: "ASEAN Liberal", faction: "liberal", url: "/BALI_TROPICS_LIBERAL_SEA_TERMINAL.html", index: "IDX Composite", hash: "3.10 GH/s" },
+      { name: "AZTEC SOLAR", civ: "Latin Sovereign", faction: "conservative", url: "/AZTEC_SOLAR_LATIN_TERMINAL.html", index: "S&P/BMV IPC", hash: "3.70 GH/s" },
+      { name: "RIO SAMBA", civ: "Latin Liberal", faction: "liberal", url: "/RIO_SAMBA_LIBERAL_LATIN_TERMINAL.html", index: "IBOVESPA", hash: "3.35 GH/s" }
+    ];
+
+    let currentFilter = 'ALL';
+
+    function renderShips() {
+      const container = document.getElementById('shipsContainer');
+      container.innerHTML = '';
+
+      const filtered = SHIPS.filter(s => currentFilter === 'ALL' || s.faction === currentFilter);
+
+      filtered.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'ship-tile';
+        div.innerHTML = `
+          <div>
+            <div class="ship-tile-header">
+              <span class="ship-tile-title">${s.faction === 'conservative' ? '🛡️' : '🕊️'} ${s.name}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--gold);">${s.faction.toUpperCase()}</span>
+            </div>
+            <div class="ship-tile-meta">${s.civ} &bull; Hash: ${s.hash}</div>
+          </div>
+          <div class="ship-tile-footer">
+            <span>Index: <b style="color:#fff;">${s.index}</b></span>
+            <a href="${s.url}" target="_blank" class="warp-btn">WARP &rarr;</a>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterFleet(type) {
+      currentFilter = type;
+      document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      renderShips();
+    }
+
+    function addAuditLog(text) {
+      const box = document.getElementById('auditBox');
+      const time = new Date().toLocaleTimeString();
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      item.innerHTML = `<span class="log-time">[${time}]</span><span>${text}</span>`;
+      box.insertBefore(item, box.firstChild);
+    }
+
+    function executeSweep() {
+      addAuditLog("SWEEP: $148,250 swept into Vault #54751113 (Invariant 42·13·35·55 Verified).");
+      alert("✅ 95% Revenue Cascade Executed! Total $148,250 swept into Sovereign Vault #54751113.");
+    }
+
+    let killswitchActive = false;
+    function toggleKillswitch() {
+      killswitchActive = !killswitchActive;
+      const btn = document.getElementById('killswitchBtn');
+      if (killswitchActive) {
+        btn.innerText = "▶️ RESUME ALL FLEET MINING";
+        btn.style.background = "rgba(16, 185, 129, 0.2)";
+        btn.style.borderColor = "var(--emerald)";
+        btn.style.color = "var(--emerald)";
+        addAuditLog("🚨 EMERGENCY KILLSWITCH ENGAGED: 36 vessels paused.");
+      } else {
+        btn.innerText = "🚨 ALPHA KILLSWITCH (FREEZE ALL)";
+        btn.style.background = "rgba(239, 68, 68, 0.15)";
+        btn.style.borderColor = "var(--red)";
+        btn.style.color = "var(--red)";
+        addAuditLog("▶️ RESUME: All 36 vessels returned to normal operation.");
+      }
+    }
+
+    renderShips();
+  </script>
+</body>
+</html>

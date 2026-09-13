@@ -56,6 +56,7 @@ const OrbitalCommandPanel = dynamic(() => import("@/components/orbital/OrbitalCo
 const CivilizationTerminalPanel = dynamic(() => import("@/components/orbital/CivilizationTerminalPanel"), { ssr: false });
 const CivilizationArbitrageEngine = dynamic(() => import("@/components/trading/CivilizationArbitrageEngine"), { ssr: false });
 const MasterFleetMiningAdminPanel = dynamic(() => import("@/components/orbital/MasterFleetMiningAdminPanel"), { ssr: false });
+const UmayMasterTerminalPanel = dynamic(() => import("@/components/umay/UmayMasterTerminalPanel"), { ssr: false });
 
 export default function FloatingWindowManager() {
   const { floatingWindows, closeFloatingWindow, focusFloatingWindow } = useIDEStore();
@@ -94,6 +95,8 @@ export default function FloatingWindowManager() {
         return <CivilizationArbitrageEngine />;
       case "master-fleet-mining":
         return <MasterFleetMiningAdminPanel />;
+      case "umay-master":
+        return <UmayMasterTerminalPanel />;
       case "broadcast-studio":
         return <BroadcastStudioPanel />;
       case "umay-boss":
