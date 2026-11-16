@@ -36,11 +36,11 @@ export default function StatusBar() {
   const activeTab = tabs.find((t) => t.id === activeTabId);
 
   const [clock, setClock] = useState(() =>
-    new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+    new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "UTC" })
   );
   useEffect(() => {
     const t = setInterval(() =>
-      setClock(new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })),
+      setClock(new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "UTC" })),
     1000);
     return () => clearInterval(t);
   }, []);
