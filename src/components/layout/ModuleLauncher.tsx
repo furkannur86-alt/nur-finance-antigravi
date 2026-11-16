@@ -48,6 +48,12 @@ const MODULES: Module[] = [
   { id: "wish-framework",    label: "W.I.S.H. Engine",  icon: "🎯", desc: "Worldview, Indicators, Setup, Discipline", color: "#10b981", group: "ANALYSIS" },
   { id: "data-ingest",       label: "Data Ingest",      icon: "📥", desc: "Pipeline & data ingestion",  color: "#f59e0b", group: "ANALYSIS" },
   { id: "encyclopedia",      label: "Wiki",             icon: "📚", desc: "Financial encyclopedia",     color: "#f59e0b", group: "ANALYSIS" },
+  { id: "dark-pool-flow",    label: "Dark Pool Flow",   icon: "🌊", desc: "FINRA ATS dark pool volume & unusual signals", color: "#00c8ff", group: "ANALYSIS" },
+  { id: "financial-health",  label: "Financial Health", icon: "💊", desc: "Piotroski · Altman Z · Beneish M-Score", color: "#10b981", group: "ANALYSIS" },
+  { id: "options-flow",      label: "Options Flow",     icon: "📊", desc: "Unusual options activity & put/call ratio", color: "#a855f7", group: "ANALYSIS" },
+  { id: "watchlist-manager", label: "Watchlists",       icon: "📌", desc: "Multi-list watchlist with CSV export",     color: "#38bdf8", group: "ANALYSIS" },
+  { id: "risk-dashboard",    label: "Risk Dashboard",   icon: "🛡", desc: "VaR · CVaR · Monte Carlo · Stress Tests",   color: "#ef4444", group: "ANALYSIS" },
+  { id: "scatter-screener",  label: "Scatter Screener", icon: "🔭", desc: "Bubble scatter: valuation vs. quality",    color: "#f59e0b", group: "ANALYSIS" },
 
   // MEDIA & NFS
   { id: "live-tv",           label: "NUR TV",           icon: "📺", desc: "24/7 broadcast channel",     color: "#e879f9", group: "MEDIA" },

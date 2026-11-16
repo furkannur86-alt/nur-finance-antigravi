@@ -57,6 +57,12 @@ const CivilizationTerminalPanel = dynamic(() => import("@/components/orbital/Civ
 const CivilizationArbitrageEngine = dynamic(() => import("@/components/trading/CivilizationArbitrageEngine"), { ssr: false });
 const MasterFleetMiningAdminPanel = dynamic(() => import("@/components/orbital/MasterFleetMiningAdminPanel"), { ssr: false });
 const UmayMasterTerminalPanel = dynamic(() => import("@/components/umay/UmayMasterTerminalPanel"), { ssr: false });
+const DarkPoolFlowPanel = dynamic(() => import("@/components/analysis/DarkPoolFlowPanel"), { ssr: false });
+const FinancialHealthPanel = dynamic(() => import("@/components/analysis/FinancialHealthPanel"), { ssr: false });
+const OptionsFlowPanel = dynamic(() => import("@/components/analysis/OptionsFlowPanel"), { ssr: false });
+const WatchlistManagerPanel = dynamic(() => import("@/components/analysis/WatchlistManagerPanel"), { ssr: false });
+const RiskDashboardPanel = dynamic(() => import("@/components/analysis/RiskDashboardPanel"), { ssr: false });
+const ScatterScreenerPanel = dynamic(() => import("@/components/analysis/ScatterScreenerPanel"), { ssr: false });
 
 export default function FloatingWindowManager() {
   const { floatingWindows, closeFloatingWindow, focusFloatingWindow } = useIDEStore();
@@ -159,6 +165,18 @@ export default function FloatingWindowManager() {
         return <OptionsPanel />;
       case "ai-tools":
         return <AIToolsPanel />;
+      case "dark-pool-flow":
+        return <DarkPoolFlowPanel />;
+      case "financial-health":
+        return <FinancialHealthPanel />;
+      case "options-flow":
+        return <OptionsFlowPanel />;
+      case "watchlist-manager":
+        return <WatchlistManagerPanel />;
+      case "risk-dashboard":
+        return <RiskDashboardPanel />;
+      case "scatter-screener":
+        return <ScatterScreenerPanel />;
       case "dashboard":
       default:
         return <DashboardPanel />;

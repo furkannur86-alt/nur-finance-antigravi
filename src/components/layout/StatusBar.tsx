@@ -19,6 +19,9 @@ const viewLabels: Record<string, string> = {
   "umay-boss": "UMAY GÜL NUR", "holding-ecosystem": "7 GROWTH ARMS",
   "tatar-finans": "TATAR FINANS", "nur-kids": "NUR KIDS",
   "nur-education": "NUR EDUCATION", "compute-access": "COMPUTE ACCESS",
+  "dark-pool-flow": "DARK POOL FLOW", "financial-health": "FINANCIAL HEALTH",
+  "options-flow": "OPTIONS FLOW", "watchlist-manager": "WATCHLISTS",
+  "risk-dashboard": "RISK DASHBOARD", "scatter-screener": "SCATTER SCREENER",
 };
 
 const legalLinks = [
