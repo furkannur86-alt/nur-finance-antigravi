@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import DemoBadge from "../ui/DemoBadge";
 
 interface DarkPoolEntry {
   ticker: string;
@@ -71,7 +72,8 @@ export default function DarkPoolFlowPanel() {
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#12151c]">
         <div className="flex items-center gap-3">
           <span className="text-[#00c8ff] font-bold text-sm">DARK POOL FLOW</span>
-          <span className="text-[10px] text-slate-500">FINRA ATS · 12-WEEK TREND</span>
+          <DemoBadge />
+          <span className="text-[10px] text-slate-500">12-WEEK TREND</span>
         </div>
         <div className="flex items-center gap-4 text-[10px]">
           <span className="text-slate-400">AVG DARK%: <span className="text-[#f59e0b] font-bold">{avgDarkPct}%</span></span>
@@ -174,7 +176,7 @@ export default function DarkPoolFlowPanel() {
 
       {/* Footer */}
       <div className="px-4 py-2 border-t border-white/10 text-[9px] text-slate-600 flex justify-between">
-        <span>SOURCE: FINRA ATS TRANSPARENCY DATA · MOCK MODE</span>
+        <span>DEMO DATA · MOCK MODE</span>
         <span>UNUSUAL = &gt;2σ DEVIATION FROM 12-WEEK MEAN</span>
       </div>
     </div>

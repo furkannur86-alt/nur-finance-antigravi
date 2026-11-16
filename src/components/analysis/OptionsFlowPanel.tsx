@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import DemoBadge from "../ui/DemoBadge";
 
 interface OptionsFlowEntry {
   id: string;
@@ -85,8 +86,11 @@ export default function OptionsFlowPanel() {
   return (
     <div className="h-full flex flex-col bg-[#0a0c10] text-white font-mono text-xs overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#12151c]">
-        <span className="text-[#00c8ff] font-bold text-sm">OPTIONS FLOW</span>
-        <span className="text-[10px] text-slate-500">UNUSUAL ACTIVITY · REAL-TIME SCAN</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[#00c8ff] font-bold text-sm">OPTIONS FLOW</span>
+          <DemoBadge />
+        </div>
+        <span className="text-[10px] text-slate-500">UNUSUAL ACTIVITY</span>
       </div>
 
       {/* Stats */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DemoBadge from "../ui/DemoBadge";
 
 interface HealthMetrics {
   ticker: string;
@@ -97,7 +98,10 @@ export default function FinancialHealthPanel() {
     <div className="h-full flex flex-col bg-[#0a0c10] text-white font-mono text-xs overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#12151c]">
-        <span className="text-[#00c8ff] font-bold text-sm">FINANCIAL HEALTH SCORES</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[#00c8ff] font-bold text-sm">FINANCIAL HEALTH SCORES</span>
+          <DemoBadge />
+        </div>
         <span className="text-[10px] text-slate-500">Piotroski · Altman · Beneish</span>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import DemoBadge from "../ui/DemoBadge";
 
 interface WatchlistItem {
   ticker: string;
@@ -157,7 +158,10 @@ export default function WatchlistManagerPanel() {
   return (
     <div className="h-full flex flex-col bg-[#0a0c10] text-white font-mono text-xs overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#12151c]">
-        <span className="text-[#00c8ff] font-bold text-sm">WATCHLIST MANAGER</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[#00c8ff] font-bold text-sm">WATCHLIST MANAGER</span>
+          <DemoBadge />
+        </div>
         <div className="flex gap-2">
           <button onClick={exportCSV} className="text-[10px] px-2 py-1 rounded border border-white/20 text-slate-400 hover:text-white hover:border-white/40 transition-colors">↓ CSV</button>
         </div>
