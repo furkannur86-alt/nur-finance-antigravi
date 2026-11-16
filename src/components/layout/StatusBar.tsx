@@ -3,26 +3,7 @@
 import Link from "next/link";
 import { useIDEStore } from "@/stores/useIDEStore";
 import { useEffect, useState } from "react";
-
-const viewLabels: Record<string, string> = {
-  editor: "EDITOR", dashboard: "DASHBOARD", portfolio: "PORTFOLIO",
-  charts: "CHARTS", backtest: "BACKTEST", terminal: "NFS TERMINAL",
-  news: "NFS BRIEFS", alerts: "NFS ALERTS", research: "NFS RESEARCH",
-  "global-markets": "GLOBAL MARKETS", "economic-data": "ECONOMIC DATA",
-  "data-ingest": "DATA INGEST", geopolitics: "GEO INTEL", fundamentals: "FUNDAMENTALS",
-  screener: "SCREENER", "news-feed": "LIVE NEWS", encyclopedia: "ENCYCLOPEDIA",
-  pricing: "PLANS", media: "NFS MEDIA", "live-tv": "NUR TV LIVE",
-  options: "OPTIONS", "ai-tools": "QUANT MODELS", "macro-risk": "MACRO RISK",
-  "oms-ems": "OMS / EMS", "quant-copilot": "QUANT STRATEGIST",
-  "broadcast-studio": "BROADCAST STUDIO", "verification-portal": "VERIFICATION",
-  "wallet-gateway": "WALLET GATEWAY", "nur-coin": "NUR COIN",
-  "umay-boss": "UMAY GÜL NUR", "holding-ecosystem": "7 GROWTH ARMS",
-  "tatar-finans": "TATAR FINANS", "nur-kids": "NUR KIDS",
-  "nur-education": "NUR EDUCATION", "compute-access": "COMPUTE ACCESS",
-  "dark-pool-flow": "DARK POOL FLOW", "financial-health": "FINANCIAL HEALTH",
-  "options-flow": "OPTIONS FLOW", "watchlist-manager": "WATCHLISTS",
-  "risk-dashboard": "RISK DASHBOARD", "scatter-screener": "SCATTER SCREENER",
-};
+import { getStatusLabel, type PanelView } from "@/panels/registry";
 
 const legalLinks = [
   { href: "/impressum", label: "Impressum" },
@@ -45,7 +26,7 @@ export default function StatusBar() {
     return () => clearInterval(t);
   }, []);
 
-  const viewLabel = viewLabels[activeView] || activeView.toUpperCase();
+  const viewLabel = getStatusLabel(activeView as PanelView);
   const statusColor = isRunning ? "#f59e0b" : "#22c55e";
 
   return (

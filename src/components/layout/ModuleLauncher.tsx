@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useIDEStore } from "@/stores/useIDEStore";
-import { PanelView } from "@/types";
+import { PANELS, GROUP_ORDER, type PanelView, type PanelEntry } from "@/panels/registry";
 import { cyberSound } from "@/lib/audio/sound-synth";
 
 interface Module {
@@ -15,80 +15,9 @@ interface Module {
   adminOnly?: boolean;
 }
 
-const MODULES: Module[] = [
-  // CORE
-  { id: "dashboard",         label: "Dashboard",        icon: "📊", desc: "Live markets overview",       color: "#00d4aa", group: "CORE" },
-  { id: "portfolio",         label: "Portfolio",         icon: "💼", desc: "Positions & P&L tracker",     color: "#00d4aa", group: "CORE" },
-  { id: "charts",            label: "Charts",            icon: "📈", desc: "Interactive price charts",    color: "#00d4aa", group: "CORE" },
-  { id: "backtest",          label: "Backtest",          icon: "⏪", desc: "Strategy backtesting engine", color: "#00d4aa", group: "CORE" },
-
-  // MARKETS
-  { id: "global-markets",    label: "Global Markets",   icon: "🌍", desc: "World indices & FX",          color: "#38bdf8", group: "MARKETS" },
-  { id: "economic-data",     label: "Macro",            icon: "🏦", desc: "FRED macroeconomic data",     color: "#38bdf8", group: "MARKETS" },
-  { id: "fundamentals",      label: "Fundamentals",     icon: "📋", desc: "Company financials",          color: "#38bdf8", group: "MARKETS" },
-  { id: "screener",          label: "Screener",         icon: "🔍", desc: "Stock & ETF screening",       color: "#38bdf8", group: "MARKETS" },
-  { id: "news-feed",         label: "Live News",        icon: "📡", desc: "Real-time news stream",       color: "#38bdf8", group: "MARKETS" },
-  { id: "options",           label: "Options",          icon: "⚙️", desc: "Options chain & Greeks",      color: "#38bdf8", group: "MARKETS" },
-
-  // TRADING
-  { id: "oms-ems",           label: "OMS / EMS",        icon: "⚡", desc: "Order management system",    color: "#a78bfa", group: "TRADING" },
-  { id: "nur-coin",          label: "$NUR Coin",        icon: "🪙", desc: "Sovereign blockchain token",  color: "#a78bfa", group: "TRADING" },
-  { id: "wallet-gateway",    label: "Web3 Wallet",      icon: "🔐", desc: "Multi-chain wallet gateway",  color: "#a78bfa", group: "TRADING" },
-
-  // ANALYSIS
-  { id: "quant-copilot",     label: "Quant Strategist", icon: "🤖", desc: "AI-powered quant signals",   color: "#f59e0b", group: "ANALYSIS" },
-  { id: "macro-risk",        label: "Macro Risk",       icon: "⚠️", desc: "Systemic risk dashboard",    color: "#f59e0b", group: "ANALYSIS" },
-  { id: "ai-tools",          label: "Quant Models",     icon: "🧮", desc: "ML & quantitative models",   color: "#f59e0b", group: "ANALYSIS" },
-  { id: "geopolitics",       label: "NUR Earth 3D",     icon: "🌐", desc: "Geopolitical risk globe",    color: "#f59e0b", group: "ANALYSIS" },
-  { id: "geophysics-resources", label: "Geophysics & Mining", icon: "⛏️", desc: "3D Geophysics natural resources map", color: "#f59e0b", group: "ANALYSIS" },
-  { id: "resource-intelligence", label: "Resource Engine",   icon: "💎", desc: "€27K/mo Institutional Resource Intelligence", color: "#f59e0b", group: "ANALYSIS" },
-  { id: "institutional-suite", label: "Institutional ($8.5K)", icon: "🏛️", desc: "7-Pillar Sovereign Intelligence Matrix", color: "#06b6d4", group: "ANALYSIS" },
-  { id: "orbital-telemetry", label: "Orbital Telemetry", icon: "🛰️", desc: "Downlink & RF Spectrum Telemetry (13·35·42·55·54751113)", color: "#00f0ff", group: "ANALYSIS" },
-  { id: "professional-ai",   label: "Professional AI",  icon: "🩺", desc: "Medical, engineering, legal & education AI", color: "#10b981", group: "ANALYSIS" },
-  { id: "wish-framework",    label: "W.I.S.H. Engine",  icon: "🎯", desc: "Worldview, Indicators, Setup, Discipline", color: "#10b981", group: "ANALYSIS" },
-  { id: "data-ingest",       label: "Data Ingest",      icon: "📥", desc: "Pipeline & data ingestion",  color: "#f59e0b", group: "ANALYSIS" },
-  { id: "encyclopedia",      label: "Wiki",             icon: "📚", desc: "Financial encyclopedia",     color: "#f59e0b", group: "ANALYSIS" },
-  { id: "dark-pool-flow",    label: "Dark Pool Flow",   icon: "🌊", desc: "FINRA ATS dark pool volume & unusual signals", color: "#00c8ff", group: "ANALYSIS" },
-  { id: "financial-health",  label: "Financial Health", icon: "💊", desc: "Piotroski · Altman Z · Beneish M-Score", color: "#10b981", group: "ANALYSIS" },
-  { id: "options-flow",      label: "Options Flow",     icon: "📊", desc: "Unusual options activity & put/call ratio", color: "#a855f7", group: "ANALYSIS" },
-  { id: "watchlist-manager", label: "Watchlists",       icon: "📌", desc: "Multi-list watchlist with CSV export",     color: "#38bdf8", group: "ANALYSIS" },
-  { id: "risk-dashboard",    label: "Risk Dashboard",   icon: "🛡", desc: "VaR · CVaR · Monte Carlo · Stress Tests",   color: "#ef4444", group: "ANALYSIS" },
-  { id: "scatter-screener",  label: "Scatter Screener", icon: "🔭", desc: "Bubble scatter: valuation vs. quality",    color: "#f59e0b", group: "ANALYSIS" },
-
-  // MEDIA & NFS
-  { id: "live-tv",           label: "NUR TV",           icon: "📺", desc: "24/7 broadcast channel",     color: "#e879f9", group: "MEDIA" },
-  { id: "broadcast-studio",  label: "Studio",           icon: "🎬", desc: "AI video production studio", color: "#e879f9", group: "MEDIA" },
-  { id: "terminal",          label: "NUR Terminal",     icon: "💻", desc: "Sovereign CLI terminal",     color: "#e879f9", group: "MEDIA" },
-  { id: "news",              label: "Briefs",           icon: "📰", desc: "Market intelligence briefs", color: "#e879f9", group: "MEDIA" },
-  { id: "alerts",            label: "Alerts",           icon: "🔔", desc: "HUD risk alert system",      color: "#e879f9", group: "MEDIA" },
-  { id: "research",          label: "Research",         icon: "🔬", desc: "Deep-dive research reports", color: "#e879f9", group: "MEDIA" },
-  { id: "pricing",           label: "Plans",            icon: "💎", desc: "Subscription tiers",         color: "#e879f9", group: "MEDIA" },
-  { id: "verification-portal", label: "VIP Verify",    icon: "✅", desc: "On-chain payment verify",    color: "#e879f9", group: "MEDIA" },
-
-  // SOCIAL / EDUCATION
-  { id: "professional-social", label: "Sovereign Social", icon: "👥", desc: "Closed-loop professional financial network", color: "#a855f7", group: "SOCIAL" },
-  { id: "user-profile",      label: "User Profile",     icon: "👤", desc: "Sovereign identity & credentials", color: "#a855f7", group: "SOCIAL" },
-  { id: "profession-hub",    label: "Profession Hub",   icon: "🌐", desc: "Cross-disciplinary verification hub", color: "#a855f7", group: "SOCIAL" },
-  { id: "nur-education",     label: "Education",        icon: "🎓", desc: "Financial education hub",    color: "#34d399", group: "SOCIAL" },
-  { id: "nur-kids",          label: "Nur Kids",         icon: "👨‍👩‍👧", desc: "Family finance platform",   color: "#34d399", group: "SOCIAL" },
-  { id: "compute-access",    label: "Free Access",      icon: "⛏️", desc: "Compute-for-access mining",  color: "#34d399", group: "SOCIAL" },
-
-  // GALACTIC
-  { id: "galactic-fleet",    label: "Galactic Fleet",   icon: "🚀", desc: "3D C4ISR Globe & 36 Ships",  color: "#2E8B57", group: "GALACTIC" },
-  { id: "orbital-command",   label: "Orbital Command",  icon: "🛸", desc: "Starship Cockpit & Bridge",   color: "#eab308", group: "GALACTIC" },
-  { id: "civilization-terminals", label: "Medeniyet Panelleri", icon: "🏛️", desc: "18 Medeniyet & Warp Kokpiti", color: "#00f0ff", group: "GALACTIC" },
-  { id: "civilization-arbitrage", label: "Filo Arbitraj & OMS", icon: "⚡", desc: "Çapraz Kur & Yüksek Frekans", color: "#10b981", group: "GALACTIC" },
-  { id: "master-fleet-mining",    label: "Master Filo Mining",   icon: "⛏️", desc: "36 Gemi Kripto & Hazine Havuzu", color: "#f59e0b", group: "GALACTIC" },
-  { id: "fleet-miner",            label: "Fleet Miner",           icon: "⛏",  desc: "Tarayıcı & Python mining botu — PoW · telemetri · indir", color: "#00e5ff", group: "GALACTIC" },
-
-  // SOVEREIGN (admin only)
-  { id: "umay-master",       label: "Umay Master Terminal", icon: "👑", desc: "Root sovereign fleet bridge (Invariant 42·13·35·55)", color: "#ffd700", group: "SOVEREIGN", adminOnly: true },
-  { id: "umay-boss",         label: "Umay Gül Nur",     icon: "👑", desc: "Sovereign boss terminal",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
-  { id: "holding-ecosystem", label: "7 Büyüme Kolu",    icon: "🏛️", desc: "Holding ecosystem panel",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
-  { id: "tatar-finans",      label: "Tatar Finans",     icon: "🛡️", desc: "Tatar financial network",    color: "#fbbf24", group: "SOVEREIGN", adminOnly: true },
-];
-
-const GROUP_ORDER = ["GALACTIC", "CORE", "MARKETS", "TRADING", "ANALYSIS", "MEDIA", "SOCIAL", "SOVEREIGN"];
+const MODULES: Module[] = (Object.entries(PANELS) as [PanelView, PanelEntry][]).map(
+  ([id, p]) => ({ id, label: p.label, icon: p.icon, desc: p.desc, color: p.color, group: p.group, adminOnly: p.adminOnly })
+);
 
 interface Props {
   open: boolean;
@@ -167,19 +96,19 @@ export default function ModuleLauncher({ open, onClose }: Props) {
             ref={inputRef}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Modül ara…  (Esc ile kapat)"
+            placeholder="Modul ara...  (Esc ile kapat)"
             className="flex-1 bg-transparent outline-none text-sm"
             style={{ color: "rgba(255,255,255,0.9)", caretColor: "#00d4aa" }}
           />
           <span className="text-[10px] px-2 py-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.35)" }}>
-            {filtered.length} modül
+            {filtered.length} modul
           </span>
           <button
             onClick={onClose}
             className="w-6 h-6 rounded flex items-center justify-center text-xs hover:bg-white/10 transition-colors"
             style={{ color: "rgba(255,255,255,0.4)" }}
           >
-            ✕
+            X
           </button>
         </div>
 
@@ -259,7 +188,7 @@ export default function ModuleLauncher({ open, onClose }: Props) {
                           className="px-1 py-0.2 rounded bg-cyan-500/20 hover:bg-cyan-500/50 text-cyan-300 text-[8px] font-mono border border-cyan-500/30"
                           title="Open as Floating Window"
                         >
-                          ⤢ FLOATING
+                          FLOATING
                         </button>
                       </div>
                     </div>
@@ -278,14 +207,13 @@ export default function ModuleLauncher({ open, onClose }: Props) {
           style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.3)" }}
         >
           <div className="flex items-center gap-3 text-[9px]" style={{ color: "rgba(255,255,255,0.4)" }}>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↑↓</kbd> Navigate</span>
-            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>↵</kbd> Open Full View</span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Navigate</kbd></span>
+            <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Enter</kbd> Open</span>
             <span><kbd className="px-1 py-0.5 rounded text-[8px]" style={{ border: "1px solid rgba(255,255,255,0.15)" }}>Esc</kbd> Close</span>
           </div>
           <div className="flex items-center gap-1.5">
-
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4aa" }} />
-            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Modül Aktif</span>
+            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Modul Aktif</span>
           </div>
         </div>
       </div>
