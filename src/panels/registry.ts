@@ -440,6 +440,43 @@ export const PANELS = {
     load: () => import("@/components/analysis/MunicipalBondPanel"),
   },
 
+  "ai-trading-agent": {
+    label: "AI Trading Agent", statusLabel: "AI TRADING", group: "ANALYSIS",
+    icon: "🤖", color: "#00e5a0", desc: "Vibe-Trading style multi-agent AI trading system",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/AITradingAgentPanel"),
+  },
+  "data-platform": {
+    label: "Data Platform", statusLabel: "DATA PLATFORM", group: "ANALYSIS",
+    icon: "🔌", color: "#38bdf8", desc: "OpenBB-style data provider hub & pipeline manager",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/DataPlatformPanel"),
+  },
+  "quant-lab": {
+    label: "Quant Lab", statusLabel: "QUANT LAB", group: "ANALYSIS",
+    icon: "🧪", color: "#a855f7", desc: "QuantLib-style derivatives pricer, yield curves & risk models",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/QuantLabPanel"),
+  },
+  "ai-news-terminal": {
+    label: "AI News", statusLabel: "AI NEWS", group: "ANALYSIS",
+    icon: "📡", color: "#fbbf24", desc: "ASKB-style AI-curated news, research briefs & smart alerts",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/AINewsTerminalPanel"),
+  },
+  "portfolio-intelligence": {
+    label: "Portfolio Intel", statusLabel: "PORT INTEL", group: "ANALYSIS",
+    icon: "🧠", color: "#06b6d4", desc: "AI portfolio insights, scenario analysis & optimization",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/PortfolioIntelligencePanel"),
+  },
+  "market-regime": {
+    label: "Market Regime", statusLabel: "MARKET REGIME", group: "ANALYSIS",
+    icon: "🔄", color: "#22c55e", desc: "Regime detection, signal history & strategy playbook",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/MarketRegimePanel"),
+  },
+
   // ── MEDIA & NFS ───────────────────────────────────────────────
   "live-tv": {
     label: "NUR TV", statusLabel: "NUR TV LIVE", group: "MEDIA",
