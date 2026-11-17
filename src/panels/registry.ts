@@ -318,12 +318,6 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/PortfolioAttributionPanel"),
   },
-  "volatility-surface": {
-    label: "Vol Surface", statusLabel: "VOL SURFACE", group: "ANALYSIS",
-    icon: "🌊", color: "#a855f7", desc: "Options IV surface, skew analysis & greeks heatmap",
-    minPlan: "quant", dataMode: "demo",
-    load: () => import("@/components/analysis/VolatilitySurfacePanel"),
-  },
   "market-microstructure": {
     label: "Microstructure", statusLabel: "MICROSTRUCTURE", group: "ANALYSIS",
     icon: "🔬", color: "#38bdf8", desc: "Order book depth, LOB analytics & market maker signals",
@@ -383,6 +377,67 @@ export const PANELS = {
     icon: "🪙", color: "#e879f9", desc: "DeFi protocols, TVL, yield farming & on-chain analytics",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/CryptoDeFiPanel"),
+  },
+
+  "earnings-analysis": {
+    label: "Earnings", statusLabel: "EARNINGS", group: "ANALYSIS",
+    icon: "📊", color: "#22c55e", desc: "EPS estimates, revisions, calendar & history",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/EarningsAnalysisPanel"),
+  },
+  "insider-trading": {
+    label: "Insider Trading", statusLabel: "INSIDER TRADING", group: "ANALYSIS",
+    icon: "🕵️", color: "#ef4444", desc: "SEC Form 4 filings, cluster detection & sector stats",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/InsiderTradingPanel"),
+  },
+  "supply-chain": {
+    label: "Supply Chain", statusLabel: "SUPPLY CHAIN", group: "ANALYSIS",
+    icon: "🔗", color: "#06b6d4", desc: "SPLC-style supply chain intelligence & disruptions",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/SupplyChainPanel"),
+  },
+  "alternative-data": {
+    label: "Alt Data", statusLabel: "ALT DATA", group: "ANALYSIS",
+    icon: "🛰️", color: "#a855f7", desc: "Satellite, web traffic, app, social & credit card signals",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/AlternativeDataPanel"),
+  },
+  "index-builder": {
+    label: "Index Builder", statusLabel: "INDEX BUILDER", group: "ANALYSIS",
+    icon: "🏗️", color: "#fbbf24", desc: "Custom index construction, backtesting & MEMB analytics",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/IndexBuilderPanel"),
+  },
+  "asset-allocation": {
+    label: "Asset Allocation", statusLabel: "ASSET ALLOC", group: "ANALYSIS",
+    icon: "🎯", color: "#06b6d4", desc: "PORT-style multi-asset allocation & optimizer",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/AssetAllocationPanel"),
+  },
+  "trade-ideas": {
+    label: "Trade Ideas", statusLabel: "TRADE IDEAS", group: "ANALYSIS",
+    icon: "💡", color: "#fbbf24", desc: "IDEA-style systematic trade idea generator",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/TradeIdeaPanel"),
+  },
+  "private-credit": {
+    label: "Private Credit", statusLabel: "PRIVATE CREDIT", group: "ANALYSIS",
+    icon: "🏦", color: "#a855f7", desc: "Direct lending pipeline, portfolio & market analytics",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/PrivateCreditPanel"),
+  },
+  "convertible-bonds": {
+    label: "Convertibles", statusLabel: "CONVERTIBLES", group: "ANALYSIS",
+    icon: "🔀", color: "#06b6d4", desc: "CNVT-style convertible bond analytics & greeks",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/ConvertibleBondPanel"),
+  },
+  "municipal-bonds": {
+    label: "Muni Bonds", statusLabel: "MUNI BONDS", group: "ANALYSIS",
+    icon: "🏛️", color: "#22c55e", desc: "Municipal bond market, tax-equivalent yields & curves",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/MunicipalBondPanel"),
   },
 
   // ── MEDIA & NFS ───────────────────────────────────────────────
