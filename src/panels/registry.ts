@@ -560,6 +560,24 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/AgriculturePanel"),
   },
+  "distressed-debt": {
+    label: "Distressed Debt", statusLabel: "DISTRESSED DEBT", group: "ANALYSIS",
+    icon: "💀", color: "#ef4444", desc: "Bond watchlist, bankruptcies, recovery rates & CDS spreads",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/DistressedDebtPanel"),
+  },
+  "wealth-management": {
+    label: "Wealth Management", statusLabel: "WEALTH MGMT", group: "ANALYSIS",
+    icon: "💎", color: "#fbbf24", desc: "Client portfolios, model allocation, tax-loss harvesting & estate planning",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/WealthManagementPanel"),
+  },
+  "infrastructure": {
+    label: "Infrastructure", statusLabel: "INFRASTRUCTURE", group: "ANALYSIS",
+    icon: "🏗️", color: "#38bdf8", desc: "Infra funds, mega-projects, PPP deals & energy transition",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/InfrastructurePanel"),
+  },
 
   // ── MEDIA & NFS ───────────────────────────────────────────────
   "live-tv": {
