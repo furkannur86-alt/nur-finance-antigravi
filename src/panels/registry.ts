@@ -524,6 +524,42 @@ export const PANELS = {
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/MarketRegimePanel"),
   },
+  "shipping-freight": {
+    label: "Shipping & Freight", statusLabel: "SHIPPING/FREIGHT", group: "ANALYSIS",
+    icon: "🚢", color: "#06b6d4", desc: "Baltic indices, tanker/container rates, trade routes & port congestion",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/ShippingFreightPanel"),
+  },
+  "volatility-lab": {
+    label: "Volatility Lab", statusLabel: "VOL LAB", group: "ANALYSIS",
+    icon: "📈", color: "#ef4444", desc: "VIX term structure, vol surface, skew analytics & variance risk premium",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/VolatilitySurfacePanel"),
+  },
+  "trade-finance": {
+    label: "Trade Finance", statusLabel: "TRADE FINANCE", group: "ANALYSIS",
+    icon: "📦", color: "#10b981", desc: "L/C pricing, supply chain finance, factoring & trade corridors",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/TradeFinancePanel"),
+  },
+  "emerging-markets": {
+    label: "Emerging Markets", statusLabel: "EM MARKETS", group: "ANALYSIS",
+    icon: "🌏", color: "#a855f7", desc: "EM sovereign spreads, FX, capital flows & carry trade monitor",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/EmergingMarketsPanel"),
+  },
+  "carbon-emissions": {
+    label: "Carbon & Emissions", statusLabel: "CARBON/ETS", group: "ANALYSIS",
+    icon: "🌱", color: "#22c55e", desc: "EU ETS, voluntary carbon market, offsets & regulation tracker",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CarbonEmissionsPanel"),
+  },
+  "agriculture": {
+    label: "Agriculture", statusLabel: "AGRICULTURE", group: "ANALYSIS",
+    icon: "🌾", color: "#eab308", desc: "Crop prices, USDA WASDE, weather impact & global trade flows",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/AgriculturePanel"),
+  },
 
   // ── MEDIA & NFS ───────────────────────────────────────────────
   "live-tv": {
