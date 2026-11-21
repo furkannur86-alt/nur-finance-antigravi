@@ -578,6 +578,24 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/InfrastructurePanel"),
   },
+  "energy-trading": {
+    label: "Energy Trading", statusLabel: "ENERGY TRADING", group: "ANALYSIS",
+    icon: "⚡", color: "#f97316", desc: "Power markets, natural gas, LNG terminals & renewable certificates",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/EnergyTradingPanel"),
+  },
+  "central-bank": {
+    label: "Central Bank Watch", statusLabel: "CB WATCH", group: "ANALYSIS",
+    icon: "🏦", color: "#a855f7", desc: "Policy rates, meeting probabilities, balance sheets & forward guidance",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CentralBankPanel"),
+  },
+  "securitization": {
+    label: "Securitization", statusLabel: "SECURITIZATION", group: "ANALYSIS",
+    icon: "📦", color: "#38bdf8", desc: "CLO tranches, ABS sectors, agency MBS & new issuance pipeline",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/SecuritizationPanel"),
+  },
 
   // ── MEDIA & NFS ───────────────────────────────────────────────
   "live-tv": {
