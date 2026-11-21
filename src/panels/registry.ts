@@ -378,6 +378,36 @@ export const PANELS = {
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/CryptoDeFiPanel"),
   },
+  "commodities": {
+    label: "Commodities", statusLabel: "COMMODITIES", group: "ANALYSIS",
+    icon: "🛢️", color: "#f59e0b", desc: "Bloomberg CMDTY-style commodity prices, forward curves, spreads & seasonality",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CommoditiesPanel"),
+  },
+  "esg-analytics": {
+    label: "ESG Analytics", statusLabel: "ESG ANALYTICS", group: "ANALYSIS",
+    icon: "🌱", color: "#10b981", desc: "ESG scores, screening, carbon footprint & sustainability analysis",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/ESGPanel"),
+  },
+  "ipo-center": {
+    label: "IPO Center", statusLabel: "IPO CENTER", group: "ANALYSIS",
+    icon: "🔔", color: "#a855f7", desc: "Bloomberg ECM-style IPO tracker, pipeline, pricing & performance",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/IPOPanel"),
+  },
+  "fx-options": {
+    label: "FX Options", statusLabel: "FX OPTIONS", group: "ANALYSIS",
+    icon: "💱", color: "#06b6d4", desc: "Bloomberg OVML-style vol board, surface, pricer & option flows",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/FXOptionsPanel"),
+  },
+  "repo-money-market": {
+    label: "Repo & Money Mkt", statusLabel: "REPO/MONEY MKT", group: "ANALYSIS",
+    icon: "🏧", color: "#38bdf8", desc: "Bloomberg BTMM-style repo rates, T-bills, CP & Fed reserves",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/RepoMoneyMarketPanel"),
+  },
 
   "earnings-analysis": {
     label: "Earnings", statusLabel: "EARNINGS", group: "ANALYSIS",
