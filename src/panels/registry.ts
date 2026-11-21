@@ -408,6 +408,24 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/RepoMoneyMarketPanel"),
   },
+  "private-equity": {
+    label: "PE & M&A", statusLabel: "PE & M&A", group: "ANALYSIS",
+    icon: "🏦", color: "#a855f7", desc: "PE fund performance, M&A deals, fundraising & exit activity",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/PrivateEquityPanel"),
+  },
+  "geopolitical-risk": {
+    label: "Geopolitical Risk", statusLabel: "GEOPOLITICAL", group: "ANALYSIS",
+    icon: "🌍", color: "#ef4444", desc: "GPR index, sanctions, elections, tail risk scenario analysis",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/GeopoliticalRiskPanel"),
+  },
+  "insurance-ils": {
+    label: "ILS & Insurance", statusLabel: "ILS/INSURANCE", group: "ANALYSIS",
+    icon: "🛡️", color: "#f97316", desc: "Cat bonds, ILS market, reinsurance pricing & catastrophe losses",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/InsurancePanel"),
+  },
 
   "earnings-analysis": {
     label: "Earnings", statusLabel: "EARNINGS", group: "ANALYSIS",
