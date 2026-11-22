@@ -596,6 +596,42 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/SecuritizationPanel"),
   },
+  "precious-metals": {
+    label: "Precious Metals", statusLabel: "PRECIOUS METALS", group: "ANALYSIS",
+    icon: "🥇", color: "#eab308", desc: "Gold/silver/platinum spot & futures, physical premiums, miners & ETF flows",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/PreciousMetalsPanel"),
+  },
+  "municipal-bonds": {
+    label: "Municipal Bonds", statusLabel: "MUNI BONDS", group: "ANALYSIS",
+    icon: "🏛️", color: "#22c55e", desc: "AAA MMD curve, sector spreads, credit watch & new issue calendar",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/MunicipalBondsPanel"),
+  },
+  "macro-dashboard": {
+    label: "Macro Dashboard", statusLabel: "MACRO", group: "ANALYSIS",
+    icon: "🌍", color: "#a855f7", desc: "Global GDP forecasts, economic indicators, trade balances & labor market",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/MacroDashboardPanel"),
+  },
+  "hedge-fund-monitor": {
+    label: "Hedge Fund Monitor", statusLabel: "HEDGE FUNDS", group: "ANALYSIS",
+    icon: "🦈", color: "#a855f7", desc: "Top funds by AUM, strategy performance, 13F filings & HFRI indices",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/HedgeFundMonitorPanel"),
+  },
+  "derivatives-swaps": {
+    label: "Derivatives & Swaps", statusLabel: "DERIVATIVES", group: "ANALYSIS",
+    icon: "🔄", color: "#ef4444", desc: "IRS curves, CDS indices, swaption vol surface & structured products",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/DerivativesSwapsPanel"),
+  },
+  "cross-asset-correlation": {
+    label: "Cross-Asset Correlation", statusLabel: "CORRELATION", group: "ANALYSIS",
+    icon: "🔗", color: "#38bdf8", desc: "Correlation matrix, rolling windows, regime analysis & trading signals",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CrossAssetCorrelationPanel"),
+  },
 
   // ── MEDIA & NFS ───────────────────────────────────────────────
   "live-tv": {
