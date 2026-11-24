@@ -584,12 +584,6 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/EnergyTradingPanel"),
   },
-  "central-bank": {
-    label: "Central Bank Watch", statusLabel: "CB WATCH", group: "ANALYSIS",
-    icon: "🏦", color: "#a855f7", desc: "Policy rates, meeting probabilities, balance sheets & forward guidance",
-    minPlan: "quant", dataMode: "demo",
-    load: () => import("@/components/analysis/CentralBankPanel"),
-  },
   "securitization": {
     label: "Securitization", statusLabel: "SECURITIZATION", group: "ANALYSIS",
     icon: "📦", color: "#38bdf8", desc: "CLO tranches, ABS sectors, agency MBS & new issuance pipeline",
@@ -601,12 +595,6 @@ export const PANELS = {
     icon: "🥇", color: "#eab308", desc: "Gold/silver/platinum spot & futures, physical premiums, miners & ETF flows",
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/PreciousMetalsPanel"),
-  },
-  "municipal-bonds": {
-    label: "Municipal Bonds", statusLabel: "MUNI BONDS", group: "ANALYSIS",
-    icon: "🏛️", color: "#22c55e", desc: "AAA MMD curve, sector spreads, credit watch & new issue calendar",
-    minPlan: "quant", dataMode: "demo",
-    load: () => import("@/components/analysis/MunicipalBondsPanel"),
   },
   "macro-dashboard": {
     label: "Macro Dashboard", statusLabel: "MACRO", group: "ANALYSIS",
@@ -835,12 +823,6 @@ export const PANELS = {
   },
 
   // ── FIXED INCOME & RATES ────────────────────────────────────
-  "yield-curve": {
-    label: "Yield Curve", statusLabel: "YIELD CURVE", group: "ANALYSIS",
-    icon: "📐", color: "#00e5a0", desc: "Government bond yield curves, spreads & forwards",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/analysis/YieldCurvePanel"),
-  },
   "treasury-auctions": {
     label: "Treasury Auctions", statusLabel: "AUCTIONS", group: "ANALYSIS",
     icon: "🏛️", color: "#38bdf8", desc: "Government bond auction schedule, results & demand",
@@ -880,6 +862,54 @@ export const PANELS = {
     icon: "💱", color: "#00e5a0", desc: "FX carry trade opportunities, NDF pricing & risk",
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/FXCarryTradePanel"),
+  },
+  "clo-analytics": {
+    label: "CLO Analytics", statusLabel: "CLO ANALYTICS", group: "ANALYSIS",
+    icon: "📊", color: "#6366f1", desc: "Collateralized loan obligation tranches, waterfall & stress tests",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CLOAnalyticsPanel"),
+  },
+  "central-counterparty": {
+    label: "Central Counterparty", statusLabel: "CCP CLEARING", group: "TRADING",
+    icon: "🏛", color: "#8b5cf6", desc: "CCP margin, default fund & clearing member exposure",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CentralCounterpartyPanel"),
+  },
+  "commodity-options": {
+    label: "Commodity Options", statusLabel: "COMMODITY OPTIONS", group: "MARKETS",
+    icon: "🛢", color: "#f59e0b", desc: "Commodity option chains, vol surface & Greeks",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CommodityOptionsPanel"),
+  },
+  "ir-swap-curve": {
+    label: "IR Swap Curve", statusLabel: "IR SWAP CURVE", group: "ANALYSIS",
+    icon: "📈", color: "#14b8a6", desc: "Interest rate swap curves, basis spreads & forward rates",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/IRSwapCurvePanel"),
+  },
+  "sovereign-wealth-fund": {
+    label: "Sovereign Wealth Fund", statusLabel: "SOVEREIGN WEALTH", group: "SOVEREIGN",
+    icon: "🏦", color: "#eab308", desc: "Sovereign wealth fund holdings, allocations & mandate tracking",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/SovereignWealthFundPanel"),
+  },
+  "systematic-strategy": {
+    label: "Systematic Strategy", statusLabel: "SYSTEMATIC STRATEGY", group: "TRADING",
+    icon: "🤖", color: "#ec4899", desc: "Systematic & quantitative strategy backtesting framework",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/SystematicStrategyPanel"),
+  },
+  "tax-optimization": {
+    label: "Tax Optimization", statusLabel: "TAX OPTIMIZATION", group: "ANALYSIS",
+    icon: "📋", color: "#84cc16", desc: "Tax-loss harvesting, wash sale tracking & optimization",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/TaxOptimizationPanel"),
+  },
+  "venture-capital": {
+    label: "Venture Capital", statusLabel: "VENTURE CAPITAL", group: "ANALYSIS",
+    icon: "🚀", color: "#f97316", desc: "VC deal flow, portfolio company metrics & fund performance",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/VentureCapitalPanel"),
   },
 } as const satisfies Record<string, PanelEntry>;
 
