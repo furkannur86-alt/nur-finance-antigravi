@@ -633,6 +633,49 @@ export const PANELS = {
     load: () => import("@/components/analysis/CrossAssetCorrelationPanel"),
   },
 
+  "yield-curve": {
+    label: "Yield Curve", statusLabel: "YIELD CURVE", group: "ANALYSIS",
+    icon: "📐", color: "#38bdf8", desc: "Treasury yield curves, global spreads, history & implied forwards",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/YieldCurvePanel"),
+  },
+  "blockchain-analytics": {
+    label: "Blockchain Analytics", statusLabel: "BLOCKCHAIN", group: "ANALYSIS",
+    icon: "⛓️", color: "#38bdf8", desc: "On-chain metrics, DeFi TVL, whale alerts & NFT market",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/BlockchainAnalyticsPanel"),
+  },
+  "factor-investing": {
+    label: "Factor Investing", statusLabel: "FACTORS", group: "ANALYSIS",
+    icon: "🧮", color: "#38bdf8", desc: "MSCI Barra factor performance, exposure, backtest & signals",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/FactorInvestingPanel"),
+  },
+  "securities-lending": {
+    label: "Securities Lending", statusLabel: "SEC LENDING", group: "ANALYSIS",
+    icon: "🔄", color: "#38bdf8", desc: "Lendable inventory, borrow rates, short interest & recalls",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/SecuritiesLendingPanel"),
+  },
+  "weather-derivatives": {
+    label: "Weather Derivatives", statusLabel: "WEATHER", group: "ANALYSIS",
+    icon: "🌦️", color: "#38bdf8", desc: "HDD/CDD contracts, temperature forecasts & weather hedging",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/WeatherDerivativesPanel"),
+  },
+  "pension-fund": {
+    label: "Pension Fund Analytics", statusLabel: "PENSION", group: "ANALYSIS",
+    icon: "🏛️", color: "#38bdf8", desc: "Funded status, liability structure, allocation & stress tests",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/PensionFundPanel"),
+  },
+  "regulatory-compliance": {
+    label: "Regulatory Compliance", statusLabel: "COMPLIANCE", group: "ANALYSIS",
+    icon: "⚖️", color: "#38bdf8", desc: "MiFID II, Dodd-Frank, Basel III compliance dashboard & alerts",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/RegulatoryCompliancePanel"),
+  },
+
   // ── MEDIA & NFS ───────────────────────────────────────────────
   "live-tv": {
     label: "NUR TV", statusLabel: "NUR TV LIVE", group: "MEDIA",
@@ -789,6 +832,54 @@ export const PANELS = {
     icon: "🛡️", color: "#fbbf24", desc: "Tatar financial network",
     minPlan: "b", dataMode: "demo", adminOnly: true,
     load: () => import("@/components/tatar/TatarFinansPanel"),
+  },
+
+  // ── FIXED INCOME & RATES ────────────────────────────────────
+  "yield-curve": {
+    label: "Yield Curve", statusLabel: "YIELD CURVE", group: "ANALYSIS",
+    icon: "📐", color: "#00e5a0", desc: "Government bond yield curves, spreads & forwards",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/YieldCurvePanel"),
+  },
+  "treasury-auctions": {
+    label: "Treasury Auctions", statusLabel: "AUCTIONS", group: "ANALYSIS",
+    icon: "🏛️", color: "#38bdf8", desc: "Government bond auction schedule, results & demand",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/TreasuryAuctionPanel"),
+  },
+  "credit-default-swaps": {
+    label: "Credit Default Swaps", statusLabel: "CDS", group: "ANALYSIS",
+    icon: "🛡️", color: "#ef4444", desc: "CDS indices, single-name spreads & credit events",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CreditDefaultSwapPanel"),
+  },
+
+  // ── EQUITY & CORPORATE ──────────────────────────────────────
+  "merger-arbitrage": {
+    label: "Merger Arbitrage", statusLabel: "M&A ARB", group: "ANALYSIS",
+    icon: "🔀", color: "#a855f7", desc: "M&A deal spreads, timelines & break risk analysis",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/MergerArbitragePanel"),
+  },
+  "dividend-analysis": {
+    label: "Dividend Analysis", statusLabel: "DIVIDENDS", group: "ANALYSIS",
+    icon: "💰", color: "#22c55e", desc: "Dividend calendar, aristocrats, estimates & screens",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/DividendAnalysisPanel"),
+  },
+  "short-interest": {
+    label: "Short Interest", statusLabel: "SHORT INT", group: "ANALYSIS",
+    icon: "📉", color: "#ef4444", desc: "Short interest, squeeze signals & borrow rates",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/ShortInterestPanel"),
+  },
+
+  // ── FX ──────────────────────────────────────────────────────
+  "fx-carry-trade": {
+    label: "FX Carry Trade", statusLabel: "FX CARRY", group: "ANALYSIS",
+    icon: "💱", color: "#00e5a0", desc: "FX carry trade opportunities, NDF pricing & risk",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/FXCarryTradePanel"),
   },
 } as const satisfies Record<string, PanelEntry>;
 
