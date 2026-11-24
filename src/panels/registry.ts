@@ -923,6 +923,66 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/InsuranceLinkedPanel"),
   },
+  "mortgage-backed": {
+    label: "MBS Analytics", statusLabel: "MBS / RMBS / CMBS", group: "ANALYSIS",
+    icon: "🏠", color: "#6366f1", desc: "Agency MBS pools, prepayment models, non-agency RMBS/CMBS & TBA market",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/MortgageBackedPanel"),
+  },
+  "inflation-trading": {
+    label: "Inflation Trading", statusLabel: "INFLATION / TIPS", group: "TRADING",
+    icon: "📈", color: "#f97316", desc: "Breakeven rates, TIPS analytics, inflation swaps & global CPI dashboard",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/InflationTradingPanel"),
+  },
+  "leveraged-finance": {
+    label: "Leveraged Finance", statusLabel: "LEVERAGED FINANCE", group: "MARKETS",
+    icon: "🏗️", color: "#a855f7", desc: "Leveraged loans, high yield bonds, new issue pipeline & distressed debt",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/LeveragedFinancePanel"),
+  },
+  "country-risk": {
+    label: "Country Risk", statusLabel: "COUNTRY RISK", group: "SOVEREIGN",
+    icon: "🌍", color: "#ef4444", desc: "Sovereign credit, macro indicators, political risk & contagion analysis",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CountryRiskPanel"),
+  },
+  "crypto-derivatives": {
+    label: "Crypto Derivatives", statusLabel: "CRYPTO DERIVATIVES", group: "TRADING",
+    icon: "₿", color: "#f7931a", desc: "Crypto futures, options, perpetual swaps & on-chain analytics",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CryptoDerivativesPanel"),
+  },
+  "fx-volatility": {
+    label: "FX Volatility", statusLabel: "FX VOLATILITY", group: "TRADING",
+    icon: "💱", color: "#38bdf8", desc: "FX implied vol surface, risk reversals, options strategies & EM vol",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/FXVolatilityPanel"),
+  },
+  "asian-markets": {
+    label: "Asian Markets", statusLabel: "ASIAN MARKETS", group: "MARKETS",
+    icon: "🏯", color: "#ef4444", desc: "Asia-Pacific equities, bonds, FX rates & foreign fund flows",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/AsianMarketsPanel"),
+  },
+  "green-bond": {
+    label: "Green / ESG Bonds", statusLabel: "GREEN / ESG BONDS", group: "MARKETS",
+    icon: "🌿", color: "#22c55e", desc: "Green bond issuance, EU taxonomy, impact metrics & greenium analysis",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/GreenBondPanel"),
+  },
+  "latam-markets": {
+    label: "Latin America", statusLabel: "LATAM MARKETS", group: "MARKETS",
+    icon: "🌎", color: "#f97316", desc: "LatAm equities, rates, FX & commodity exposure",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/LatAmMarketsPanel"),
+  },
+  "quantitative-models": {
+    label: "Quantitative Models", statusLabel: "QUANT MODELS", group: "ANALYSIS",
+    icon: "🧮", color: "#6366f1", desc: "Option pricing models, risk decomposition, backtesting & live signals",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/QuantitativeModelsPanel"),
+  },
 } as const satisfies Record<string, PanelEntry>;
 
 export type PanelView = keyof typeof PANELS;
