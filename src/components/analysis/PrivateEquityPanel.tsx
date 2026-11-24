@@ -1,193 +1,153 @@
 "use client";
-
 import { useState } from "react";
-import DemoBadge from "@/components/ui/DemoBadge";
 
-const PE_FUNDS = [
-  { name: "Blackstone Capital Partners IX", firm: "Blackstone", vintage: 2024, size: "$30.4B", strategy: "Buyout", irr: 18.2, moic: 1.8, dpi: 0.4, status: "INVESTING" },
-  { name: "KKR Americas Fund XIII", firm: "KKR", vintage: 2023, size: "$18.5B", strategy: "Buyout", irr: 22.5, moic: 2.1, dpi: 0.6, status: "INVESTING" },
-  { name: "Apollo Investment Fund X", firm: "Apollo", vintage: 2024, size: "$24.8B", strategy: "Buyout", irr: 16.8, moic: 1.6, dpi: 0.3, status: "INVESTING" },
-  { name: "Warburg Pincus XIV", firm: "Warburg Pincus", vintage: 2023, size: "$16.2B", strategy: "Growth", irr: 24.2, moic: 2.4, dpi: 0.8, status: "HARVESTING" },
-  { name: "Silver Lake Partners VII", firm: "Silver Lake", vintage: 2024, size: "$20.5B", strategy: "Tech Buyout", irr: 28.4, moic: 2.8, dpi: 0.5, status: "INVESTING" },
-  { name: "Thoma Bravo Fund XVI", firm: "Thoma Bravo", vintage: 2023, size: "$14.8B", strategy: "Software", irr: 26.1, moic: 2.6, dpi: 0.7, status: "HARVESTING" },
+const TABS = ["Fund Overview", "Deal Pipeline", "Portfolio", "Performance"] as const;
+
+const FUNDS = [
+  { name: "NUR Growth Equity I", vintage: 2021, size: 850, invested: 72, irr: 28.4, tvpi: 1.82, dpi: 0.34, strategy: "Growth", sector: "Tech" },
+  { name: "NUR Buyout III", vintage: 2020, size: 2200, invested: 91, irr: 18.7, tvpi: 1.65, dpi: 0.72, strategy: "Buyout", sector: "Multi" },
+  { name: "NUR Infra Fund II", vintage: 2022, size: 1500, invested: 48, irr: 14.2, tvpi: 1.28, dpi: 0.12, strategy: "Infra", sector: "Energy" },
+  { name: "NUR Secondaries I", vintage: 2023, size: 600, invested: 25, irr: 22.1, tvpi: 1.15, dpi: 0.0, strategy: "Secondary", sector: "Multi" },
 ];
 
-const MA_DEALS = [
-  { target: "Figma", acquirer: "Adobe", value: "$20.0B", sector: "Software", status: "COMPLETED", premium: 42.5, date: "Nov 18" },
-  { target: "Hess Corp", acquirer: "Chevron", value: "$53.0B", sector: "Energy", status: "PENDING", premium: 28.8, date: "Nov 12" },
-  { target: "iRobot", acquirer: "Amazon", value: "$1.7B", sector: "Consumer Tech", status: "WITHDRAWN", premium: 22.0, date: "Nov 05" },
-  { target: "Juniper Networks", acquirer: "HPE", value: "$14.0B", sector: "Networking", status: "REGULATORY", premium: 32.4, date: "Oct 28" },
-  { target: "US Steel", acquirer: "Nippon Steel", value: "$14.9B", sector: "Materials", status: "REGULATORY", premium: 40.2, date: "Oct 22" },
-  { target: "Albertsons", acquirer: "Kroger", value: "$24.6B", sector: "Retail", status: "PENDING", premium: 32.8, date: "Oct 15" },
+const DEALS = [
+  { company: "QuantumAI Labs", stage: "Due Diligence", amount: 45, ev: 320, sector: "AI/ML", lead: "NUR Growth", status: "active" },
+  { company: "GreenHydro Corp", stage: "Term Sheet", amount: 80, ev: 540, sector: "CleanTech", lead: "NUR Infra", status: "active" },
+  { company: "FinSecure Inc", stage: "Closed", amount: 35, ev: 180, sector: "FinTech", lead: "NUR Growth", status: "closed" },
+  { company: "DataMesh Systems", stage: "Screening", amount: 25, ev: 150, sector: "Enterprise", lead: "NUR Buyout", status: "pipeline" },
+  { company: "BioSync Health", stage: "IC Review", amount: 60, ev: 400, sector: "HealthTech", lead: "NUR Growth", status: "active" },
+  { company: "LogiChain AI", stage: "Closed", amount: 40, ev: 220, sector: "Supply Chain", lead: "NUR Buyout", status: "closed" },
 ];
 
-type Tab = "funds" | "deals" | "fundraising" | "exits";
+const PORTFOLIO = [
+  { company: "Nebula Cloud", invested: 30, currentVal: 85, moic: 2.83, sector: "Cloud", year: 2021, status: "Growing" },
+  { company: "CyberVault", invested: 25, currentVal: 62, moic: 2.48, sector: "Security", year: 2022, status: "Growing" },
+  { company: "MedAI Diagnostics", invested: 40, currentVal: 44, moic: 1.10, sector: "HealthTech", year: 2023, status: "Flat" },
+  { company: "TerraScale Energy", invested: 55, currentVal: 120, moic: 2.18, sector: "Energy", year: 2020, status: "Exiting" },
+  { company: "PayFlow", invested: 20, currentVal: 8, moic: 0.40, sector: "Payments", year: 2022, status: "Write-down" },
+  { company: "RoboFarm", invested: 35, currentVal: 78, moic: 2.23, sector: "AgTech", year: 2021, status: "Growing" },
+];
+
+function Badge({ children, color }: { children: React.ReactNode; color: string }) {
+  return <span style={{ background: color + "22", color, padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 600 }}>{children}</span>;
+}
+
+function DemoBadge() {
+  return <span style={{ background: "#f59e0b22", color: "#f59e0b", padding: "2px 6px", borderRadius: 4, fontSize: 10, fontWeight: 700, position: "absolute", top: 8, right: 8 }}>DEMO</span>;
+}
 
 export default function PrivateEquityPanel() {
-  const [tab, setTab] = useState<Tab>("funds");
+  const [tab, setTab] = useState<(typeof TABS)[number]>("Fund Overview");
 
   return (
-    <div className="h-full flex flex-col text-[11px]" style={{ background: "#0a0e17", color: "#e2e8f0" }}>
-      <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: "rgba(0,229,160,0.15)" }}>
-        <div className="flex items-center gap-2">
-          <span className="text-sm">🏦</span>
-          <span className="font-bold text-xs" style={{ color: "#00e5a0" }}>PE & M&A</span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>Bloomberg PE</span>
-          <DemoBadge />
-        </div>
-        <div className="flex gap-1">
-          {(["funds", "deals", "fundraising", "exits"] as Tab[]).map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className="px-2 py-1 rounded text-[9px] font-bold uppercase"
-              style={{ background: tab === t ? "rgba(0,229,160,0.2)" : "transparent", color: tab === t ? "#00e5a0" : "#64748b" }}>
-              {t}
-            </button>
-          ))}
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "var(--ag-bg, #0a0e17)", color: "var(--ag-text, #e2e8f0)", fontFamily: "monospace", fontSize: 12, position: "relative", overflow: "hidden" }}>
+      <DemoBadge />
+      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #1e293b", padding: "0 8px" }}>
+        {TABS.map((t) => (
+          <button key={t} onClick={() => setTab(t)} style={{ background: tab === t ? "#1e293b" : "transparent", color: tab === t ? "#00e5a0" : "#64748b", border: "none", padding: "8px 14px", cursor: "pointer", fontSize: 11, fontWeight: 600, fontFamily: "monospace", borderBottom: tab === t ? "2px solid #00e5a0" : "2px solid transparent" }}>{t}</button>
+        ))}
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+          <Badge color="#a855f7">PRIVATE EQUITY</Badge>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto px-3 py-2">
-        {tab === "funds" && (
-          <div className="space-y-1.5">
-            <div className="text-[9px] font-bold mb-2" style={{ color: "#fbbf24" }}>PE FUND PERFORMANCE</div>
-            {PE_FUNDS.map((f, i) => (
-              <div key={i} className="p-2.5 rounded" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <div className="flex justify-between items-center mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold" style={{ color: "#00e5a0" }}>{f.name}</span>
-                    <span className="text-[8px] px-1 py-0.5 rounded" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>{f.strategy}</span>
+      <div style={{ flex: 1, overflow: "auto", padding: 12 }}>
+        {tab === "Fund Overview" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {FUNDS.map((f, i) => (
+              <div key={i} style={{ background: "#111827", borderRadius: 6, padding: 14 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 13 }}>{f.name}</div>
+                    <div style={{ color: "#64748b", fontSize: 10 }}>Vintage {f.vintage} | {f.strategy} | {f.sector}</div>
                   </div>
-                  <span className="px-1.5 py-0.5 rounded text-[8px] font-bold" style={{
-                    background: f.status === "INVESTING" ? "rgba(34,197,94,0.15)" : "rgba(251,191,36,0.15)",
-                    color: f.status === "INVESTING" ? "#22c55e" : "#fbbf24"
-                  }}>{f.status}</span>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ color: "#00e5a0", fontWeight: 700, fontSize: 16 }}>{f.irr.toFixed(1)}%</div>
+                    <div style={{ color: "#64748b", fontSize: 10 }}>Net IRR</div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-6 gap-2 text-[9px]">
-                  <div><span style={{ color: "#64748b" }}>Size:</span> <span className="font-mono font-bold" style={{ color: "#fbbf24" }}>{f.size}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Vintage:</span> <span className="font-mono">{f.vintage}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Net IRR:</span> <span className="font-mono font-bold" style={{ color: "#22c55e" }}>{f.irr}%</span></div>
-                  <div><span style={{ color: "#64748b" }}>MOIC:</span> <span className="font-mono" style={{ color: "#38bdf8" }}>{f.moic}x</span></div>
-                  <div><span style={{ color: "#64748b" }}>DPI:</span> <span className="font-mono">{f.dpi}x</span></div>
-                  <div><span style={{ color: "#64748b" }}>Firm:</span> <span>{f.firm}</span></div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                  <div><span style={{ color: "#64748b", fontSize: 10 }}>Size</span><br /><span style={{ fontWeight: 600 }}>${f.size}M</span></div>
+                  <div><span style={{ color: "#64748b", fontSize: 10 }}>Invested</span><br /><span style={{ fontWeight: 600 }}>{f.invested}%</span></div>
+                  <div><span style={{ color: "#64748b", fontSize: 10 }}>TVPI</span><br /><span style={{ fontWeight: 600, color: f.tvpi > 1.5 ? "#00e5a0" : "#f59e0b" }}>{f.tvpi.toFixed(2)}x</span></div>
+                  <div><span style={{ color: "#64748b", fontSize: 10 }}>DPI</span><br /><span style={{ fontWeight: 600 }}>{f.dpi.toFixed(2)}x</span></div>
+                </div>
+                <div style={{ marginTop: 8, height: 6, background: "#1e293b", borderRadius: 3 }}>
+                  <div style={{ height: "100%", width: `${f.invested}%`, background: "linear-gradient(90deg, #6366f1, #00e5a0)", borderRadius: 3 }} />
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {tab === "deals" && (
-          <div className="space-y-1.5">
-            <div className="text-[9px] font-bold mb-2" style={{ color: "#fbbf24" }}>NOTABLE M&A TRANSACTIONS</div>
-            {MA_DEALS.map((d, i) => (
-              <div key={i} className="p-2.5 rounded" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <div className="flex justify-between items-center mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold" style={{ color: "#00e5a0" }}>{d.target}</span>
-                    <span style={{ color: "#64748b" }}>←</span>
-                    <span style={{ color: "#38bdf8" }}>{d.acquirer}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[9px]" style={{ color: "#64748b" }}>{d.date}</span>
-                    <span className="px-1.5 py-0.5 rounded text-[8px] font-bold" style={{
-                      background: d.status === "COMPLETED" ? "rgba(34,197,94,0.15)" : d.status === "WITHDRAWN" ? "rgba(239,68,68,0.15)" : d.status === "REGULATORY" ? "rgba(251,191,36,0.15)" : "rgba(56,189,248,0.15)",
-                      color: d.status === "COMPLETED" ? "#22c55e" : d.status === "WITHDRAWN" ? "#ef4444" : d.status === "REGULATORY" ? "#fbbf24" : "#38bdf8"
-                    }}>{d.status}</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 gap-2 text-[9px]">
-                  <div><span style={{ color: "#64748b" }}>Value:</span> <span className="font-mono font-bold" style={{ color: "#fbbf24" }}>{d.value}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Sector:</span> <span>{d.sector}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Premium:</span> <span className="font-mono" style={{ color: "#22c55e" }}>+{d.premium}%</span></div>
-                  <div></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {tab === "fundraising" && (
-          <div className="space-y-3">
-            <div className="text-[9px] font-bold" style={{ color: "#fbbf24" }}>GLOBAL PE FUNDRAISING 2026</div>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: "Total Raised", value: "$685B", sub: "-8% YoY" },
-                { label: "Funds Closed", value: "842", sub: "-12% YoY" },
-                { label: "Avg Fund Size", value: "$814M", sub: "+5% YoY" },
-                { label: "Dry Powder", value: "$2.8T", sub: "All-time high" },
-                { label: "Buyout Share", value: "42%", sub: "of total" },
-                { label: "Time to Close", value: "18.5 mo", sub: "+2.4 mo YoY" },
-              ].map(s => (
-                <div key={s.label} className="p-2.5 rounded" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  <div className="text-[8px]" style={{ color: "#64748b" }}>{s.label}</div>
-                  <div className="font-mono font-bold text-sm mt-1" style={{ color: "#a855f7" }}>{s.value}</div>
-                  <div className="text-[8px] mt-0.5" style={{ color: "#94a3b8" }}>{s.sub}</div>
-                </div>
+        {tab === "Deal Pipeline" && (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #1e293b" }}>
+                {["Company", "Stage", "Amount", "EV", "Sector", "Lead", "Status"].map((h) => (
+                  <th key={h} style={{ padding: "6px 8px", textAlign: "left", color: "#64748b", fontSize: 10, fontWeight: 600 }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {DEALS.map((d, i) => (
+                <tr key={i} style={{ borderBottom: "1px solid #111827" }}>
+                  <td style={{ padding: "6px 8px", fontWeight: 600 }}>{d.company}</td>
+                  <td style={{ padding: "6px 8px" }}>{d.stage}</td>
+                  <td style={{ padding: "6px 8px" }}>${d.amount}M</td>
+                  <td style={{ padding: "6px 8px" }}>${d.ev}M</td>
+                  <td style={{ padding: "6px 8px" }}><Badge color="#38bdf8">{d.sector}</Badge></td>
+                  <td style={{ padding: "6px 8px", color: "#94a3b8" }}>{d.lead}</td>
+                  <td style={{ padding: "6px 8px" }}>
+                    <Badge color={d.status === "closed" ? "#00e5a0" : d.status === "active" ? "#f59e0b" : "#64748b"}>
+                      {d.status.toUpperCase()}
+                    </Badge>
+                  </td>
+                </tr>
               ))}
-            </div>
+            </tbody>
+          </table>
+        )}
 
-            <div className="text-[9px] font-bold mt-2" style={{ color: "#fbbf24" }}>BY STRATEGY</div>
-            {[
-              { strategy: "Buyout", raised: "$288B", funds: 185, color: "#a855f7" },
-              { strategy: "Growth Equity", raised: "$142B", funds: 220, color: "#22c55e" },
-              { strategy: "Venture Capital", raised: "$118B", funds: 285, color: "#38bdf8" },
-              { strategy: "Secondaries", raised: "$65B", funds: 48, color: "#f97316" },
-              { strategy: "Infra / Real Assets", raised: "$72B", funds: 104, color: "#fbbf24" },
-            ].map(s => (
-              <div key={s.strategy} className="flex items-center gap-2 p-2 rounded" style={{ background: "rgba(255,255,255,0.03)" }}>
-                <div className="w-2 h-2 rounded-full" style={{ background: s.color }} />
-                <span className="w-32">{s.strategy}</span>
-                <div className="flex-1 h-2.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <div className="h-full rounded-full" style={{ width: `${(parseInt(s.raised.replace(/[^0-9]/g, "")) / 288) * 100}%`, background: s.color, opacity: 0.6 }} />
+        {tab === "Portfolio" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {PORTFOLIO.map((p, i) => (
+              <div key={i} style={{ background: "#111827", borderRadius: 6, padding: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontWeight: 600 }}>{p.company} <span style={{ color: "#64748b", fontSize: 10 }}>({p.sector}, {p.year})</span></div>
+                  <div style={{ color: "#64748b", fontSize: 10, marginTop: 2 }}>Invested: ${p.invested}M → Current: ${p.currentVal}M</div>
                 </div>
-                <span className="font-mono w-16 text-right" style={{ color: s.color }}>{s.raised}</span>
-                <span className="font-mono text-[9px] w-14 text-right" style={{ color: "#64748b" }}>{s.funds} funds</span>
+                <div style={{ textAlign: "right", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div>
+                    <div style={{ color: p.moic >= 2 ? "#00e5a0" : p.moic >= 1 ? "#f59e0b" : "#ef4444", fontWeight: 700, fontSize: 16 }}>{p.moic.toFixed(2)}x</div>
+                    <div style={{ color: "#64748b", fontSize: 10 }}>MOIC</div>
+                  </div>
+                  <Badge color={p.status === "Growing" ? "#00e5a0" : p.status === "Exiting" ? "#6366f1" : p.status === "Write-down" ? "#ef4444" : "#64748b"}>
+                    {p.status}
+                  </Badge>
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        {tab === "exits" && (
-          <div className="space-y-3">
-            <div className="text-[9px] font-bold" style={{ color: "#fbbf24" }}>PE EXIT ACTIVITY</div>
-            {[
-              { company: "Medline Industries", sponsor: "Blackstone/Carlyle", entryYear: 2021, exitType: "Secondary", exitValue: "$34B", moic: 1.8, holdPeriod: "5 yr" },
-              { company: "Endeavor", sponsor: "Silver Lake", entryYear: 2019, exitType: "IPO", exitValue: "$18B", moic: 3.2, holdPeriod: "7 yr" },
-              { company: "Worldpay", sponsor: "GTCR/Apollo", entryYear: 2023, exitType: "Trade Sale", exitValue: "$22B", moic: 2.1, holdPeriod: "3 yr" },
-              { company: "Cloudera", sponsor: "CD&R/KKR", entryYear: 2021, exitType: "Trade Sale", exitValue: "$8.8B", moic: 1.6, holdPeriod: "5 yr" },
-              { company: "Citrix", sponsor: "Vista/Evergreen Coast", entryYear: 2022, exitType: "Secondary", exitValue: "$16.5B", moic: 1.4, holdPeriod: "4 yr" },
-            ].map((e, i) => (
-              <div key={i} className="p-2.5 rounded" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <div className="flex justify-between items-center mb-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold" style={{ color: "#00e5a0" }}>{e.company}</span>
-                    <span className="text-[8px] px-1 py-0.5 rounded" style={{ background: "rgba(56,189,248,0.15)", color: "#38bdf8" }}>{e.exitType}</span>
-                  </div>
-                  <span className="font-mono font-bold" style={{ color: "#fbbf24" }}>{e.exitValue}</span>
-                </div>
-                <div className="grid grid-cols-4 gap-2 text-[9px]">
-                  <div><span style={{ color: "#64748b" }}>Sponsor:</span> <span>{e.sponsor}</span></div>
-                  <div><span style={{ color: "#64748b" }}>MOIC:</span> <span className="font-mono" style={{ color: "#22c55e" }}>{e.moic}x</span></div>
-                  <div><span style={{ color: "#64748b" }}>Hold:</span> <span className="font-mono">{e.holdPeriod}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Entry:</span> <span className="font-mono">{e.entryYear}</span></div>
-                </div>
-              </div>
-            ))}
-
-            <div className="text-[9px] font-bold mt-2" style={{ color: "#fbbf24" }}>EXIT VOLUME BY TYPE (2026 YTD)</div>
-            <div className="p-3 rounded" style={{ background: "rgba(255,255,255,0.03)" }}>
-              {[
-                { type: "Trade Sale", pct: 42, value: "$285B" },
-                { type: "Secondary / GP-led", pct: 28, value: "$190B" },
-                { type: "IPO", pct: 18, value: "$122B" },
-                { type: "Recapitalization", pct: 12, value: "$82B" },
-              ].map(e => (
-                <div key={e.type} className="flex items-center gap-2 mb-2">
-                  <span className="w-36 text-[9px]">{e.type}</span>
-                  <div className="flex-1 h-3 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${e.pct}%`, background: "#a855f7", opacity: 0.6 }} />
-                  </div>
-                  <span className="font-mono w-14 text-right text-[9px]" style={{ color: "#a855f7" }}>{e.value}</span>
-                  <span className="font-mono w-10 text-right text-[9px]" style={{ color: "#64748b" }}>{e.pct}%</span>
+        {tab === "Performance" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ background: "#111827", borderRadius: 6, padding: 12 }}>
+              <div style={{ color: "#94a3b8", fontSize: 11, marginBottom: 8 }}>J-Curve (Net Cash Flow)</div>
+              <svg viewBox="0 0 400 180" style={{ width: "100%", height: 160 }}>
+                <line x1="40" y1="90" x2="380" y2="90" stroke="#1e293b" />
+                {[0, 1, 2, 3, 4, 5, 6, 7].map((y) => (<text key={y} x={40 + y * 48} y="175" fill="#64748b" fontSize="8" textAnchor="middle">Y{y}</text>))}
+                <polyline points="40,90 88,120 136,140 184,145 232,130 280,100 328,70 376,45" fill="none" stroke="#6366f1" strokeWidth="2" />
+                <text x="40" y="12" fill="#64748b" fontSize="9">+</text>
+                <text x="40" y="168" fill="#64748b" fontSize="9">-</text>
+              </svg>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+              {[{ label: "Pooled IRR", value: "21.3%", color: "#00e5a0" }, { label: "Avg TVPI", value: "1.48x", color: "#6366f1" }, { label: "Total Committed", value: "$5.15B", color: "#f59e0b" }].map((s) => (
+                <div key={s.label} style={{ background: "#111827", borderRadius: 6, padding: 12, textAlign: "center" }}>
+                  <div style={{ color: "#64748b", fontSize: 10 }}>{s.label}</div>
+                  <div style={{ color: s.color, fontSize: 20, fontWeight: 700, marginTop: 4 }}>{s.value}</div>
                 </div>
               ))}
             </div>

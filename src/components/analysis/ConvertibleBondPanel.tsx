@@ -1,163 +1,138 @@
 "use client";
-
 import { useState } from "react";
-import DemoBadge from "@/components/ui/DemoBadge";
 
-const CONVERTIBLES = [
-  { issuer: "Tesla Inc.", ticker: "TSLA", coupon: 2.0, maturity: "2028-05-15", convPrice: 310.00, stockPrice: 285.40, parity: 92.06, premium: 8.6, delta: 0.62, yield: 3.8, size: 1800, rating: "BBB-", bondPrice: 99.75 },
-  { issuer: "MicroStrategy", ticker: "MSTR", coupon: 0.0, maturity: "2029-06-15", convPrice: 480.00, stockPrice: 425.80, parity: 88.71, premium: 12.4, delta: 0.55, yield: 2.1, size: 2050, rating: "B", bondPrice: 99.60 },
-  { issuer: "Airbnb Inc.", ticker: "ABNB", coupon: 0.0, maturity: "2027-03-15", convPrice: 190.00, stockPrice: 158.20, parity: 83.26, premium: 20.1, delta: 0.42, yield: 4.2, size: 2000, rating: "NR", bondPrice: 100.10 },
-  { issuer: "Palo Alto Networks", ticker: "PANW", coupon: 0.375, maturity: "2028-06-01", convPrice: 420.00, stockPrice: 395.50, parity: 94.17, premium: 6.2, delta: 0.72, yield: 1.5, size: 1500, rating: "BBB+", bondPrice: 100.00 },
-  { issuer: "Shopify Inc.", ticker: "SHOP", coupon: 0.125, maturity: "2027-11-01", convPrice: 92.00, stockPrice: 108.40, parity: 117.83, premium: -15.1, delta: 0.95, yield: -1.8, size: 920, rating: "NR", bondPrice: 100.25 },
-  { issuer: "Snap Inc.", ticker: "SNAP", coupon: 0.75, maturity: "2028-08-01", convPrice: 22.00, stockPrice: 14.50, parity: 65.91, premium: 51.7, delta: 0.18, yield: 8.5, size: 1100, rating: "B-", bondPrice: 99.50 },
-  { issuer: "Unity Software", ticker: "U", coupon: 2.0, maturity: "2027-11-15", convPrice: 48.00, stockPrice: 32.80, parity: 68.33, premium: 46.3, delta: 0.22, yield: 7.2, size: 850, rating: "NR", bondPrice: 100.00 },
+const TABS = ["Overview", "Pricing", "Greeks", "Screening"] as const;
+
+const BONDS = [
+  { issuer: "Tesla Inc", coupon: 2.0, maturity: "2027-05-15", convPrice: 285.0, parity: 92.4, premium: 18.2, delta: 0.54, gamma: 0.012, yield: 3.1, rating: "BB+", outstanding: 1800 },
+  { issuer: "Airbnb Inc", coupon: 0.0, maturity: "2026-03-15", convPrice: 198.5, parity: 105.3, premium: 8.4, delta: 0.72, gamma: 0.008, yield: 1.2, rating: "BBB-", outstanding: 2000 },
+  { issuer: "Shopify Inc", coupon: 0.125, maturity: "2025-11-01", convPrice: 155.0, parity: 88.7, premium: 22.6, delta: 0.41, gamma: 0.015, yield: 4.5, rating: "BB", outstanding: 950 },
+  { issuer: "MicroStrategy", coupon: 0.75, maturity: "2028-12-15", convPrice: 630.0, parity: 72.1, premium: 38.9, delta: 0.28, gamma: 0.006, yield: 6.8, rating: "B+", outstanding: 3400 },
+  { issuer: "Palo Alto Networks", coupon: 0.375, maturity: "2025-06-01", convPrice: 345.0, parity: 97.8, premium: 12.1, delta: 0.65, gamma: 0.010, yield: 2.0, rating: "BBB", outstanding: 1500 },
+  { issuer: "Lam Research", coupon: 1.25, maturity: "2029-03-15", convPrice: 710.0, parity: 84.2, premium: 25.4, delta: 0.38, gamma: 0.009, yield: 3.9, rating: "A-", outstanding: 800 },
+  { issuer: "ON Semiconductor", coupon: 0.5, maturity: "2027-09-01", convPrice: 92.0, parity: 110.5, premium: 5.2, delta: 0.82, gamma: 0.005, yield: 0.8, rating: "BBB-", outstanding: 1200 },
+  { issuer: "Western Digital", coupon: 3.0, maturity: "2028-06-15", convPrice: 58.0, parity: 76.3, premium: 31.1, delta: 0.33, gamma: 0.014, yield: 5.6, rating: "B", outstanding: 1100 },
 ];
 
-type Tab = "overview" | "greeks" | "new";
+const MARKET_STATS = { totalOutstanding: "$298B", newIssuanceYTD: "$42.1B", avgPremium: "21.3%", avgDelta: "0.48" };
+
+function Badge({ children, color }: { children: React.ReactNode; color: string }) {
+  return <span style={{ background: color + "22", color, padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 600 }}>{children}</span>;
+}
+
+function DemoBadge() {
+  return <span style={{ background: "#f59e0b22", color: "#f59e0b", padding: "2px 6px", borderRadius: 4, fontSize: 10, fontWeight: 700, position: "absolute", top: 8, right: 8 }}>DEMO</span>;
+}
 
 export default function ConvertibleBondPanel() {
-  const [tab, setTab] = useState<Tab>("overview");
-  const [sortBy, setSortBy] = useState<"premium" | "delta" | "yield">("premium");
-
-  const sorted = [...CONVERTIBLES].sort((a, b) => {
-    if (sortBy === "premium") return a.premium - b.premium;
-    if (sortBy === "delta") return b.delta - a.delta;
-    return b.yield - a.yield;
-  });
-
-  const totalSize = CONVERTIBLES.reduce((s, c) => s + c.size, 0);
-  const avgPremium = CONVERTIBLES.reduce((s, c) => s + c.premium, 0) / CONVERTIBLES.length;
-  const itmCount = CONVERTIBLES.filter(c => c.stockPrice > c.convPrice).length;
+  const [tab, setTab] = useState<(typeof TABS)[number]>("Overview");
 
   return (
-    <div className="h-full flex flex-col text-[11px]" style={{ background: "#0a0e17", color: "#e2e8f0" }}>
-      <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: "rgba(0,229,160,0.15)" }}>
-        <div className="flex items-center gap-2">
-          <span className="text-sm">🔀</span>
-          <span className="font-bold text-xs" style={{ color: "#00e5a0" }}>CONVERTIBLE BONDS</span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>Bloomberg CNVT</span>
-          <DemoBadge />
-        </div>
-        <div className="flex gap-1">
-          {(["overview", "greeks", "new"] as Tab[]).map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className="px-2 py-1 rounded text-[9px] font-bold uppercase"
-              style={{ background: tab === t ? "rgba(0,229,160,0.2)" : "transparent", color: tab === t ? "#00e5a0" : "#64748b" }}>
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex gap-2 px-3 py-2 border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-        {[
-          { label: "TOTAL OUTSTANDING", value: `$${(totalSize / 1000).toFixed(1)}B`, color: "#38bdf8" },
-          { label: "AVG PREMIUM", value: `${avgPremium.toFixed(1)}%`, color: "#fbbf24" },
-          { label: "IN-THE-MONEY", value: `${itmCount}/${CONVERTIBLES.length}`, color: "#22c55e" },
-          { label: "AVG DELTA", value: (CONVERTIBLES.reduce((s, c) => s + c.delta, 0) / CONVERTIBLES.length).toFixed(2), color: "#a855f7" },
-        ].map(s => (
-          <div key={s.label} className="flex-1 p-2 rounded" style={{ background: "rgba(255,255,255,0.03)" }}>
-            <div className="text-[8px] font-bold tracking-wider" style={{ color: "#64748b" }}>{s.label}</div>
-            <div className="text-sm font-bold mt-0.5" style={{ color: s.color }}>{s.value}</div>
-          </div>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "var(--ag-bg, #0a0e17)", color: "var(--ag-text, #e2e8f0)", fontFamily: "monospace", fontSize: 12, position: "relative", overflow: "hidden" }}>
+      <DemoBadge />
+      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #1e293b", padding: "0 8px" }}>
+        {TABS.map((t) => (
+          <button key={t} onClick={() => setTab(t)} style={{ background: tab === t ? "#1e293b" : "transparent", color: tab === t ? "#00e5a0" : "#64748b", border: "none", padding: "8px 14px", cursor: "pointer", fontSize: 11, fontWeight: 600, fontFamily: "monospace", borderBottom: tab === t ? "2px solid #00e5a0" : "2px solid transparent" }}>{t}</button>
         ))}
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+          <Badge color="#6366f1">CONVERTIBLES</Badge>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-auto px-3 py-2">
-        {tab === "overview" && (
-          <>
-            <div className="flex gap-1 mb-2">
-              {(["premium", "delta", "yield"] as const).map(s => (
-                <button key={s} onClick={() => setSortBy(s)}
-                  className="px-2 py-0.5 rounded text-[9px] font-bold uppercase"
-                  style={{ background: sortBy === s ? "rgba(0,229,160,0.15)" : "rgba(255,255,255,0.03)", color: sortBy === s ? "#00e5a0" : "#64748b" }}>
-                  Sort: {s}
-                </button>
+      <div style={{ flex: 1, overflow: "auto", padding: 12 }}>
+        {tab === "Overview" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+              {Object.entries(MARKET_STATS).map(([k, v]) => (
+                <div key={k} style={{ background: "#111827", borderRadius: 6, padding: 12, textAlign: "center" }}>
+                  <div style={{ color: "#64748b", fontSize: 10, textTransform: "uppercase", marginBottom: 4 }}>{k.replace(/([A-Z])/g, " $1")}</div>
+                  <div style={{ color: "#00e5a0", fontSize: 18, fontWeight: 700 }}>{v}</div>
+                </div>
               ))}
             </div>
-            <div className="space-y-1.5">
-              {sorted.map(c => {
-                const itm = c.stockPrice > c.convPrice;
-                return (
-                  <div key={c.ticker} className="p-2.5 rounded" style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${itm ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.05)"}` }}>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold" style={{ color: "#00e5a0" }}>{c.ticker}</span>
-                        <span style={{ color: "#94a3b8" }}>{c.issuer}</span>
-                        <span className="font-mono text-[9px]" style={{ color: "#64748b" }}>{c.coupon}% {c.maturity.slice(0, 7)}</span>
-                      </div>
-                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold"
-                        style={{ background: itm ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: itm ? "#22c55e" : "#ef4444" }}>
-                        {itm ? "ITM" : "OTM"}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-6 gap-2 text-[9px]">
-                      <div><span style={{ color: "#64748b" }}>Stock:</span> <span className="font-mono" style={{ color: "#e2e8f0" }}>${c.stockPrice}</span></div>
-                      <div><span style={{ color: "#64748b" }}>Conv:</span> <span className="font-mono" style={{ color: "#38bdf8" }}>${c.convPrice}</span></div>
-                      <div><span style={{ color: "#64748b" }}>Parity:</span> <span className="font-mono" style={{ color: c.parity > 100 ? "#22c55e" : "#e2e8f0" }}>{c.parity.toFixed(1)}</span></div>
-                      <div><span style={{ color: "#64748b" }}>Prem:</span> <span className="font-mono" style={{ color: c.premium < 0 ? "#22c55e" : c.premium > 30 ? "#ef4444" : "#fbbf24" }}>{c.premium.toFixed(1)}%</span></div>
-                      <div><span style={{ color: "#64748b" }}>Delta:</span> <span className="font-mono" style={{ color: "#a855f7" }}>{c.delta.toFixed(2)}</span></div>
-                      <div><span style={{ color: "#64748b" }}>Yield:</span> <span className="font-mono" style={{ color: c.yield > 5 ? "#22c55e" : "#e2e8f0" }}>{c.yield.toFixed(1)}%</span></div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{ background: "#111827", borderRadius: 6, padding: 12 }}>
+              <div style={{ color: "#94a3b8", fontSize: 11, marginBottom: 8 }}>Premium vs Delta Scatter</div>
+              <svg viewBox="0 0 400 200" style={{ width: "100%", height: 180 }}>
+                <rect x="40" y="10" width="350" height="170" fill="#0a0e17" rx="4" />
+                {[0, 25, 50].map((v, i) => (<g key={i}><line x1="40" y1={180 - v * 3.4} x2="390" y2={180 - v * 3.4} stroke="#1e293b" /><text x="35" y={184 - v * 3.4} fill="#64748b" fontSize="9" textAnchor="end">{v}%</text></g>))}
+                {[0, 0.25, 0.5, 0.75, 1].map((v, i) => (<text key={i} x={40 + v * 350} y="196" fill="#64748b" fontSize="9" textAnchor="middle">{v.toFixed(2)}</text>))}
+                {BONDS.map((b, i) => (<circle key={i} cx={40 + b.delta * 350} cy={180 - b.premium * 3.4} r={Math.sqrt(b.outstanding / 100)} fill="#6366f1" fillOpacity="0.7"><title>{b.issuer}: Delta={b.delta}, Premium={b.premium}%</title></circle>))}
+                <text x="215" y="10" fill="#64748b" fontSize="9" textAnchor="middle">Delta</text>
+              </svg>
             </div>
-          </>
-        )}
-
-        {tab === "greeks" && (
-          <div className="space-y-2">
-            <div className="text-[9px] mb-2" style={{ color: "#64748b" }}>Convertible bond sensitivity analysis (Greeks)</div>
-            {CONVERTIBLES.map(c => (
-              <div key={c.ticker} className="p-3 rounded" style={{ background: "rgba(255,255,255,0.03)" }}>
-                <div className="flex justify-between mb-2">
-                  <span className="font-bold" style={{ color: "#00e5a0" }}>{c.ticker} {c.coupon}% {c.maturity.slice(0, 7)}</span>
-                  <span className="font-mono text-[9px]" style={{ color: "#64748b" }}>${c.size}M outstanding</span>
-                </div>
-                <div className="grid grid-cols-5 gap-2 text-center">
-                  {[
-                    { label: "Delta", value: c.delta.toFixed(2), color: "#a855f7" },
-                    { label: "Gamma", value: (c.delta * 0.08).toFixed(3), color: "#38bdf8" },
-                    { label: "Vega", value: (c.delta * 15).toFixed(1), color: "#22c55e" },
-                    { label: "Theta", value: (-0.02 * (1 - c.delta)).toFixed(3), color: "#ef4444" },
-                    { label: "Rho", value: (c.delta * -0.5).toFixed(2), color: "#fbbf24" },
-                  ].map(g => (
-                    <div key={g.label} className="p-1.5 rounded" style={{ background: "rgba(255,255,255,0.03)" }}>
-                      <div className="text-[8px]" style={{ color: "#64748b" }}>{g.label}</div>
-                      <div className="font-mono font-bold" style={{ color: g.color }}>{g.value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
         )}
 
-        {tab === "new" && (
-          <div className="space-y-2">
-            <div className="text-[9px] font-bold mb-1" style={{ color: "#fbbf24" }}>NEW ISSUANCE PIPELINE</div>
-            {[
-              { issuer: "Rivian Automotive", size: 1500, coupon: "0.25%", conv: "$18.50", pricing: "2026-11-20", status: "PRICING" },
-              { issuer: "Palantir Technologies", size: 2000, coupon: "0.00%", conv: "$35.00", pricing: "2026-11-22", status: "ROADSHOW" },
-              { issuer: "Block Inc.", size: 1200, coupon: "0.50%", conv: "$95.00", pricing: "2026-11-25", status: "FILED" },
-              { issuer: "Rocket Lab USA", size: 500, coupon: "1.50%", conv: "$28.00", pricing: "2026-12-01", status: "FILED" },
-            ].map((n, i) => (
-              <div key={i} className="p-3 rounded" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-bold" style={{ color: "#00e5a0" }}>{n.issuer}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[8px] font-bold"
-                    style={{ background: n.status === "PRICING" ? "rgba(34,197,94,0.15)" : n.status === "ROADSHOW" ? "rgba(56,189,248,0.15)" : "rgba(255,255,255,0.05)",
-                             color: n.status === "PRICING" ? "#22c55e" : n.status === "ROADSHOW" ? "#38bdf8" : "#94a3b8" }}>
-                    {n.status}
-                  </span>
+        {tab === "Pricing" && (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #1e293b" }}>
+                {["Issuer", "Coupon", "Maturity", "Conv Px", "Parity", "Premium", "Yield", "Rating"].map((h) => (
+                  <th key={h} style={{ padding: "6px 8px", textAlign: "left", color: "#64748b", fontSize: 10, fontWeight: 600 }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {BONDS.map((b, i) => (
+                <tr key={i} style={{ borderBottom: "1px solid #111827" }}>
+                  <td style={{ padding: "6px 8px", fontWeight: 600 }}>{b.issuer}</td>
+                  <td style={{ padding: "6px 8px" }}>{b.coupon.toFixed(3)}%</td>
+                  <td style={{ padding: "6px 8px", color: "#94a3b8" }}>{b.maturity}</td>
+                  <td style={{ padding: "6px 8px" }}>${b.convPrice.toFixed(2)}</td>
+                  <td style={{ padding: "6px 8px", color: b.parity >= 100 ? "#00e5a0" : "#f59e0b" }}>{b.parity.toFixed(1)}</td>
+                  <td style={{ padding: "6px 8px" }}>{b.premium.toFixed(1)}%</td>
+                  <td style={{ padding: "6px 8px", color: b.yield > 5 ? "#ef4444" : "#00e5a0" }}>{b.yield.toFixed(2)}%</td>
+                  <td style={{ padding: "6px 8px" }}><Badge color={b.rating.startsWith("A") ? "#00e5a0" : b.rating.startsWith("BB") ? "#f59e0b" : "#ef4444"}>{b.rating}</Badge></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {tab === "Greeks" && (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #1e293b" }}>
+                {["Issuer", "Delta", "Gamma", "Vega", "Theta", "Rho"].map((h) => (
+                  <th key={h} style={{ padding: "6px 8px", textAlign: "left", color: "#64748b", fontSize: 10, fontWeight: 600 }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {BONDS.map((b, i) => (
+                <tr key={i} style={{ borderBottom: "1px solid #111827" }}>
+                  <td style={{ padding: "6px 8px", fontWeight: 600 }}>{b.issuer}</td>
+                  <td style={{ padding: "6px 8px", color: b.delta > 0.6 ? "#00e5a0" : "#f59e0b" }}>{b.delta.toFixed(3)}</td>
+                  <td style={{ padding: "6px 8px" }}>{b.gamma.toFixed(4)}</td>
+                  <td style={{ padding: "6px 8px" }}>{(b.gamma * 1200 + 5).toFixed(1)}</td>
+                  <td style={{ padding: "6px 8px", color: "#ef4444" }}>-{(b.coupon * 0.8 + 0.02).toFixed(3)}</td>
+                  <td style={{ padding: "6px 8px" }}>{(b.delta * 0.15).toFixed(3)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {tab === "Screening" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ color: "#94a3b8", fontSize: 11 }}>Busted Converts (Parity &lt; 80%)</div>
+            {BONDS.filter((b) => b.parity < 80).map((b, i) => (
+              <div key={i} style={{ background: "#111827", borderRadius: 6, padding: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontWeight: 600 }}>{b.issuer}</div>
+                  <div style={{ color: "#64748b", fontSize: 10 }}>Parity: {b.parity.toFixed(1)} | Yield: {b.yield.toFixed(2)}% | Rating: {b.rating}</div>
                 </div>
-                <div className="grid grid-cols-4 gap-2 text-[9px]">
-                  <div><span style={{ color: "#64748b" }}>Size:</span> <span className="font-mono">${n.size}M</span></div>
-                  <div><span style={{ color: "#64748b" }}>Coupon:</span> <span className="font-mono">{n.coupon}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Conv Price:</span> <span className="font-mono">{n.conv}</span></div>
-                  <div><span style={{ color: "#64748b" }}>Pricing:</span> <span className="font-mono">{n.pricing}</span></div>
+                <Badge color="#ef4444">BUSTED</Badge>
+              </div>
+            ))}
+            <div style={{ color: "#94a3b8", fontSize: 11, marginTop: 8 }}>In-the-Money (Parity &gt; 100%)</div>
+            {BONDS.filter((b) => b.parity >= 100).map((b, i) => (
+              <div key={i} style={{ background: "#111827", borderRadius: 6, padding: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontWeight: 600 }}>{b.issuer}</div>
+                  <div style={{ color: "#64748b", fontSize: 10 }}>Parity: {b.parity.toFixed(1)} | Delta: {b.delta.toFixed(2)} | Premium: {b.premium.toFixed(1)}%</div>
                 </div>
+                <Badge color="#00e5a0">ITM</Badge>
               </div>
             ))}
           </div>

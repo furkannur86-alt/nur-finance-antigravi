@@ -911,6 +911,18 @@ export const PANELS = {
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/VentureCapitalPanel"),
   },
+  "carbon-credit": {
+    label: "Carbon Credits", statusLabel: "CARBON CREDITS", group: "MARKETS",
+    icon: "🌱", color: "#22c55e", desc: "EU ETS, voluntary carbon markets, compliance & project analytics",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CarbonCreditPanel"),
+  },
+  "insurance-linked": {
+    label: "Insurance-Linked Securities", statusLabel: "ILS / CAT BONDS", group: "ANALYSIS",
+    icon: "🌪", color: "#ef4444", desc: "Cat bonds, ILS market, peril analysis & reinsurance metrics",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/InsuranceLinkedPanel"),
+  },
 } as const satisfies Record<string, PanelEntry>;
 
 export type PanelView = keyof typeof PANELS;
