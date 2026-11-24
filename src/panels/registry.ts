@@ -1068,6 +1068,42 @@ export const PANELS = {
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/media/FinancialNewsWirePanel"),
   },
+  "social-sentiment": {
+    label: "Social Sentiment", statusLabel: "SOCIAL SENT", group: "SOCIAL",
+    icon: "💬", color: "#06b6d4", desc: "Social media sentiment analysis, trending tickers, Reddit/X mentions & viral alerts",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/social/SocialSentimentPanel"),
+  },
+  "institutional-ownership": {
+    label: "Institutional Ownership", statusLabel: "INST OWN", group: "MARKETS",
+    icon: "🏛️", color: "#8b5cf6", desc: "13F filings, institutional holders, activist positions & insider transactions",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/markets/InstitutionalOwnershipPanel"),
+  },
+  "forex-monitor": {
+    label: "FX Monitor", statusLabel: "FX MONITOR", group: "TRADING",
+    icon: "💱", color: "#22c55e", desc: "Major & EM currency pairs, cross rates, central bank watch & carry trade monitor",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/trading/ForexMonitorPanel"),
+  },
+  "earnings-calendar": {
+    label: "Earnings Calendar", statusLabel: "EARNINGS", group: "MARKETS",
+    icon: "📅", color: "#f97316", desc: "Upcoming earnings, estimates consensus, surprise history & guidance tracker",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/markets/EarningsCalendarPanel"),
+  },
+  "climate-risk": {
+    label: "Climate Risk", statusLabel: "CLIMATE", group: "SOVEREIGN",
+    icon: "🌡️", color: "#10b981", desc: "Climate risk scores, carbon exposure, transition risk & physical risk metrics",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/sovereign/ClimateRiskPanel"),
+  },
+  "podcast-research": {
+    label: "Podcast & Research", statusLabel: "PODCAST", group: "MEDIA",
+    icon: "🎙️", color: "#a855f7", desc: "Financial podcasts, research notes, analyst calls & transcript search",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/media/PodcastResearchPanel"),
+  },
 } as const satisfies Record<string, PanelEntry>;
 
 export type PanelView = keyof typeof PANELS;
