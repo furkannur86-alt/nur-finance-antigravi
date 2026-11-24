@@ -114,7 +114,7 @@ zamanlı bir editör ve ticari veri lisansını karşılar.
 ## 6. 90 Günlük Plan
 
 | Dönem | Ürün | Medya | İş / Hukuk |
-|-------|------|-------|-----------|
+|-------|------|-------|------------|
 | **Gün 1–14** | Parolaları kaldır; DEMO rozetleri; Auth; panel kayıt defteri; Vitest + CI | Karakter kartları (3 sunucu); video şablonu; editoryal politika sayfası | Tüzel kişi + Impressum; EODHD lisans sorusu; marka başvurusu |
 | **Gün 15–30** | 5 çekirdek panel gerçek veride; Stripe/Paddle; Free + Pro yayında | Sabah bülteni günlük (TR); günde 2 Short | AGB, Datenschutz, Widerruf gözden geçirme; KDV kaydı |
 | **Gün 31–60** | Uyarılar, kişisel brifing, temel analiz + skorlar gerçek veride; yetki tablosu + B/R testleri | + Terminal Dersi (haftalık), haftalık özet; e-posta bülteni | İlk 20 ücretli kullanıcıyla görüşme |

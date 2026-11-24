@@ -23,7 +23,7 @@ takvim + sessiz müzik, sunucusuz, açıkça "otomatik veri ekranı" etiketli.
 ## 2. Kanal Mimarisi
 
 | Aşama | Kanal | Gerekçe |
-|-------|-------|---------|
+|-------|-------|--------|
 | 0–6 ay | **Tek kanal, tek dil (Türkçe)** | Abone ve izlenme eşiğine en hızlı tek kanalda ulaşılır; çok dilli sesi YouTube'un çoklu ses parçası özelliğiyle ekleyin |
 | 6–12 ay | + Almanca kanal | DACH reklam geliri ve terminal alıcısı daha değerli |
 | 12 ay+ | + İngilizce kanal | Rekabet en yoğun; önce diğer ikisinde yöntem kanıtlansın |
