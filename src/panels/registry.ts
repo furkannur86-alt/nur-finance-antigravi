@@ -983,6 +983,54 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/QuantitativeModelsPanel"),
   },
+  "global-macro": {
+    label: "Global Macro Strategy", statusLabel: "GLOBAL MACRO", group: "ANALYSIS",
+    icon: "🌐", color: "#38bdf8", desc: "Macro scorecard, cross-asset performance, themes & trade ideas",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/GlobalMacroPanel"),
+  },
+  "portfolio-construction": {
+    label: "Portfolio Construction", statusLabel: "PORTFOLIO CONSTRUCTION", group: "ANALYSIS",
+    icon: "📊", color: "#6366f1", desc: "Asset allocation, mean-variance optimization, rebalancing & analytics",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/PortfolioConstructionPanel"),
+  },
+  "repo-markets": {
+    label: "Repo Markets", statusLabel: "REPO / SECURED FINANCE", group: "MARKETS",
+    icon: "🔄", color: "#a855f7", desc: "Repo rates, triparty collateral, securities lending & funding markets",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/RepoMarketsPanel"),
+  },
+  "algorithmic-trading": {
+    label: "Algorithmic Trading", statusLabel: "ALGO TRADING", group: "TRADING",
+    icon: "🤖", color: "#22c55e", desc: "Algo strategies, execution analytics, smart order routing & latency metrics",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/AlgorithmicTradingPanel"),
+  },
+  "central-clearing": {
+    label: "Central Clearing", statusLabel: "CCP / CLEARING", group: "TRADING",
+    icon: "🏛️", color: "#fbbf24", desc: "CCP margins, clearing volumes, default fund & counterparty risk",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CentralClearingPanel"),
+  },
+  "commodities-trading": {
+    label: "Commodities Trading", statusLabel: "COMMODITIES TRADING", group: "TRADING",
+    icon: "🛢️", color: "#f97316", desc: "Energy, metals, agriculture — futures curves, spreads & physical markets",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/CommoditiesTradingPanel"),
+  },
+  "sovereign-debt-auctions": {
+    label: "Sovereign Debt Auctions", statusLabel: "SOVEREIGN AUCTIONS", group: "SOVEREIGN",
+    icon: "🏦", color: "#38bdf8", desc: "Government bond auctions, bid-to-cover ratios, tail & issuance calendar",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/analysis/SovereignDebtAuctionsPanel"),
+  },
+  "credit-portfolio": {
+    label: "Credit Portfolio", statusLabel: "CREDIT PORTFOLIO", group: "ANALYSIS",
+    icon: "💳", color: "#ec4899", desc: "Credit portfolio analytics, migration matrices, default probabilities & recovery",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/analysis/CreditPortfolioPanel"),
+  },
 } as const satisfies Record<string, PanelEntry>;
 
 export type PanelView = keyof typeof PANELS;
