@@ -1031,6 +1031,43 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/CreditPortfolioPanel"),
   },
+  // ── NEW BATCH: MARKETS / TRADING / SOVEREIGN / MEDIA / SOCIAL ──
+  "municipal-bonds": {
+    label: "Municipal Bonds", statusLabel: "MUNI BONDS", group: "MARKETS",
+    icon: "🏙️", color: "#a78bfa", desc: "Muni bond market, yield curves, credit analysis & new issuance calendar",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/markets/MunicipalBondsPanel"),
+  },
+  "etf-flows": {
+    label: "ETF Flows & Analytics", statusLabel: "ETF FLOWS", group: "MARKETS",
+    icon: "📈", color: "#06b6d4", desc: "ETF fund flows, creation/redemption, premium/discount & sector rotation",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/markets/ETFFlowsPanel"),
+  },
+  "options-flow": {
+    label: "Options Flow", statusLabel: "OPTIONS FLOW", group: "TRADING",
+    icon: "🎯", color: "#f43f5e", desc: "Unusual options activity, flow analysis, gamma exposure & vol skew",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/trading/OptionsFlowPanel"),
+  },
+  "dark-pool": {
+    label: "Dark Pool Monitor", statusLabel: "DARK POOLS", group: "TRADING",
+    icon: "🌑", color: "#8b5cf6", desc: "Dark pool prints, block trades, ATS volume & short volume analysis",
+    minPlan: "quant", dataMode: "demo",
+    load: () => import("@/components/trading/DarkPoolPanel"),
+  },
+  "geopolitical-risk": {
+    label: "Geopolitical Risk", statusLabel: "GEO RISK", group: "SOVEREIGN",
+    icon: "🌍", color: "#ef4444", desc: "Geopolitical risk indices, conflict monitors, sanctions & trade policy tracker",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/sovereign/GeopoliticalRiskPanel"),
+  },
+  "financial-news-wire": {
+    label: "Financial News Wire", statusLabel: "NEWS WIRE", group: "MEDIA",
+    icon: "📰", color: "#f59e0b", desc: "Real-time financial news feed, breaking alerts, sector headlines & sentiment",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/media/FinancialNewsWirePanel"),
+  },
 } as const satisfies Record<string, PanelEntry>;
 
 export type PanelView = keyof typeof PANELS;
