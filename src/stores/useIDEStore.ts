@@ -142,6 +142,27 @@ const INITIAL_NOTIFICATIONS: HUDNotification[] = [
   },
 ];
 
+export interface SavedLayout {
+  id: string;
+  name: string;
+  createdAt: string;
+  activeView: PanelView;
+  floatingWindows: FloatingWindowConfig[];
+}
+
+function loadSavedLayouts(): SavedLayout[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("nur-layouts");
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function persistLayouts(layouts: SavedLayout[]) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem("nur-layouts", JSON.stringify(layouts)); } catch {}
+}
+
 interface IDEState {
   files: FileNode[];
   tabs: Tab[];
@@ -165,8 +186,13 @@ interface IDEState {
   focusedCoordinates: [number, number] | null;
   expandedPanel: string | null;
   demoPlan: PlanTier | null;
+  savedLayouts: SavedLayout[];
 
   // Actions
+  saveLayout: (name: string) => void;
+  loadLayout: (id: string) => void;
+  deleteLayout: (id: string) => void;
+  renameLayout: (id: string, name: string) => void;
   setExpandedPanel: (panel: string | null) => void;
   setDemoPlan: (plan: PlanTier | null) => void;
   setFocusedCoordinates: (coords: [number, number] | null) => void;
@@ -253,6 +279,51 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   },
   expandedPanel: null,
   demoPlan: null,
+  savedLayouts: loadSavedLayouts(),
+
+  saveLayout: (name: string) => {
+    const { activeView, floatingWindows } = get();
+    const layout: SavedLayout = {
+      id: `layout-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      name,
+      createdAt: new Date().toISOString(),
+      activeView,
+      floatingWindows: floatingWindows.map((w) => ({ ...w })),
+    };
+    set((s) => {
+      const updated = [layout, ...s.savedLayouts];
+      persistLayouts(updated);
+      return { savedLayouts: updated };
+    });
+  },
+
+  loadLayout: (id: string) => {
+    const layout = get().savedLayouts.find((l) => l.id === id);
+    if (!layout) return;
+    set({
+      activeView: layout.activeView,
+      floatingWindows: layout.floatingWindows.map((w) => ({
+        ...w,
+        id: `win-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      })),
+    });
+  },
+
+  deleteLayout: (id: string) => {
+    set((s) => {
+      const updated = s.savedLayouts.filter((l) => l.id !== id);
+      persistLayouts(updated);
+      return { savedLayouts: updated };
+    });
+  },
+
+  renameLayout: (id: string, name: string) => {
+    set((s) => {
+      const updated = s.savedLayouts.map((l) => (l.id === id ? { ...l, name } : l));
+      persistLayouts(updated);
+      return { savedLayouts: updated };
+    });
+  },
 
   setExpandedPanel: (expandedPanel) => set({ expandedPanel }),
   setDemoPlan: (demoPlan) => set({ demoPlan }),

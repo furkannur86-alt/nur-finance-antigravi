@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useIDEStore } from "@/stores/useIDEStore";
+import type { PanelView } from "@/types";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { cyberSound } from "@/lib/audio/sound-synth";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
@@ -80,6 +81,12 @@ export default function TopBar() {
     openFloatingWindow,
     popoutToNativeWindow,
     demoPlan,
+    savedLayouts,
+    saveLayout,
+    loadLayout,
+    deleteLayout,
+    renameLayout,
+    floatingWindows,
   } = useIDEStore();
 
 
@@ -88,6 +95,11 @@ export default function TopBar() {
   const { user } = useSupabaseAuth();
   const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [launcherOpen, setLauncherOpen] = useState(false);
+  const [layoutMenuOpen, setLayoutMenuOpen] = useState(false);
+  const [layoutName, setLayoutName] = useState("");
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const layoutMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -126,6 +138,55 @@ export default function TopBar() {
         crestClickCount.current = 0;
       }, 1200);
     }
+  };
+
+  useEffect(() => {
+    if (!layoutMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (layoutMenuRef.current && !layoutMenuRef.current.contains(e.target as Node)) {
+        setLayoutMenuOpen(false);
+        setRenamingId(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [layoutMenuOpen]);
+
+  const PRESET_LAYOUTS = [
+    { name: "Trading Desk", activeView: "oms-ems" as const, windows: ["portfolio", "charts", "options", "trade-blotter"] },
+    { name: "Research", activeView: "fundamentals" as const, windows: ["news-feed", "screener", "economic-data"] },
+    { name: "Risk Monitor", activeView: "risk-dashboard" as const, windows: ["macro-risk", "volatility-lab", "correlation-matrix"] },
+    { name: "Macro Overview", activeView: "global-markets" as const, windows: ["economic-data", "yield-curve", "central-bank"] },
+    { name: "Media Center", activeView: "live-tv" as const, windows: ["news-feed", "broadcast-studio", "media"] },
+  ];
+
+  const handleLoadPreset = (preset: typeof PRESET_LAYOUTS[number]) => {
+    const { setActiveView: sav } = useIDEStore.getState();
+    sav(preset.activeView);
+    const wins = preset.windows.map((view, i) => ({
+      id: `win-${Date.now()}-${i}`,
+      view: view as PanelView,
+      title: VIEW_LABELS[view]?.label ?? view,
+      x: 100 + i * 40,
+      y: 80 + i * 35,
+      width: 900,
+      height: 600,
+      isMaximized: false,
+      isMinimized: false,
+      zIndex: 100 + i,
+      opacity: 1.0,
+    }));
+    useIDEStore.setState({ activeView: preset.activeView, floatingWindows: wins });
+    setLayoutMenuOpen(false);
+    cyberSound.playClick();
+  };
+
+  const handleSave = () => {
+    const name = layoutName.trim();
+    if (!name) return;
+    saveLayout(name);
+    setLayoutName("");
+    cyberSound.playClick();
   };
 
   const unreadAlertsCount = notifications.filter((n) => !n.read).length;
@@ -199,6 +260,84 @@ export default function TopBar() {
             `
           </span>
         </button>
+
+        {/* Layout Save/Load */}
+        <div className="relative shrink-0" ref={layoutMenuRef}>
+          <button
+            onClick={() => { setLayoutMenuOpen((v) => !v); cyberSound.playClick(); }}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-[1.02] shrink-0"
+            style={{
+              background: "linear-gradient(135deg, rgba(168,139,250,0.12), rgba(168,139,250,0.06))",
+              border: "1px solid rgba(168,139,250,0.3)",
+              color: "#a78bfa",
+            }}
+            title="Save & Load Window Layouts"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="3" rx="1"/><rect x="9" y="6" width="6" height="9" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/></svg>
+            Layouts
+          </button>
+          {layoutMenuOpen && (
+            <div
+              className="absolute top-full left-0 mt-1 w-72 rounded-lg shadow-2xl z-[9999] overflow-hidden"
+              style={{ background: "#111827", border: "1px solid rgba(168,139,250,0.3)" }}
+            >
+              <div className="p-2 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                <div className="flex gap-1">
+                  <input
+                    value={layoutName}
+                    onChange={(e) => setLayoutName(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSave()}
+                    placeholder="Layout name..."
+                    className="flex-1 px-2 py-1 rounded text-xs font-mono bg-black/40 border border-white/10 text-white placeholder-slate-500 outline-none focus:border-purple-500/50"
+                  />
+                  <button
+                    onClick={handleSave}
+                    disabled={!layoutName.trim()}
+                    className="px-2 py-1 rounded text-[10px] font-bold bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 border border-purple-500/30 disabled:opacity-30 transition-all"
+                  >
+                    SAVE
+                  </button>
+                </div>
+              </div>
+              {savedLayouts.length > 0 && (
+                <div className="border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                  <div className="px-2 pt-1.5 pb-0.5 text-[9px] font-mono text-slate-500 tracking-wider">SAVED</div>
+                  {savedLayouts.map((l) => (
+                    <div key={l.id} className="flex items-center gap-1 px-2 py-1 hover:bg-white/5 group">
+                      {renamingId === l.id ? (
+                        <input
+                          value={renameValue}
+                          onChange={(e) => setRenameValue(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === "Enter") { renameLayout(l.id, renameValue); setRenamingId(null); } if (e.key === "Escape") setRenamingId(null); }}
+                          onBlur={() => { renameLayout(l.id, renameValue); setRenamingId(null); }}
+                          autoFocus
+                          className="flex-1 px-1 py-0.5 rounded text-[11px] font-mono bg-black/40 border border-purple-500/40 text-white outline-none"
+                        />
+                      ) : (
+                        <button onClick={() => { loadLayout(l.id); setLayoutMenuOpen(false); cyberSound.playClick(); }} className="flex-1 text-left text-[11px] text-slate-300 hover:text-white truncate">{l.name}</button>
+                      )}
+                      <button onClick={() => { setRenamingId(l.id); setRenameValue(l.name); }} className="text-[9px] text-slate-500 hover:text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity px-1">REN</button>
+                      <button onClick={() => { deleteLayout(l.id); cyberSound.playClick(); }} className="text-[9px] text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity px-1">DEL</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div>
+                <div className="px-2 pt-1.5 pb-0.5 text-[9px] font-mono text-slate-500 tracking-wider">PRESETS</div>
+                {PRESET_LAYOUTS.map((p) => (
+                  <button
+                    key={p.name}
+                    onClick={() => handleLoadPreset(p)}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 text-left transition-colors"
+                  >
+                    <span className="text-[11px] text-slate-300">{p.name}</span>
+                    <span className="text-[9px] text-slate-500 ml-auto">{p.windows.length + 1} panels</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Current Active View Breadcrumb with Detach & Popout Controls */}
         <div
