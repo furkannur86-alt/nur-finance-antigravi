@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 
 export type DataMode = "demo" | "delayed" | "live";
-export type PlanTier = "free" | "pro" | "quant" | "team" | "r" | "b";
+export type PlanTier = "free" | "pro" | "quant" | "team" | "professional" | "institutional";
 
 export interface PanelEntry {
   label: string;
@@ -100,18 +100,6 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/trading/OMSEMSPanel"),
   },
-  "nur-coin": {
-    label: "$NUR Coin", statusLabel: "NUR COIN", group: "TRADING",
-    icon: "🪙", color: "#a78bfa", desc: "Sovereign blockchain token",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/crypto/NurCoinEcosystemPanel"),
-  },
-  "wallet-gateway": {
-    label: "Web3 Wallet", statusLabel: "WALLET GATEWAY", group: "TRADING",
-    icon: "🔐", color: "#a78bfa", desc: "Multi-chain wallet gateway",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/trading/DigitalWalletGateway"),
-  },
 
   // ── ANALYSIS ──────────────────────────────────────────────────
   "quant-copilot": {
@@ -149,30 +137,6 @@ export const PANELS = {
     icon: "💎", color: "#f59e0b", desc: "Institutional Resource Intelligence",
     minPlan: "team", dataMode: "demo",
     load: () => import("@/components/resources/ResourceIntelligencePanel"),
-  },
-  "institutional-suite": {
-    label: "Institutional ($8.5K)", statusLabel: "INSTITUTIONAL", group: "ANALYSIS",
-    icon: "🏛️", color: "#06b6d4", desc: "7-Pillar Sovereign Intelligence Matrix",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/institutional/InstitutionalSuitePanel"),
-  },
-  "orbital-telemetry": {
-    label: "Orbital Telemetry", statusLabel: "ORBITAL TELEMETRY", group: "ANALYSIS",
-    icon: "🛰️", color: "#00f0ff", desc: "Downlink & RF Spectrum Telemetry",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/orbital/OrbitalTelemetryPanel"),
-  },
-  "professional-ai": {
-    label: "Professional AI", statusLabel: "PROFESSIONAL AI", group: "ANALYSIS",
-    icon: "🩺", color: "#10b981", desc: "Medical, engineering, legal & education AI",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/professional/ProfessionalAIHubPanel"),
-  },
-  "wish-framework": {
-    label: "W.I.S.H. Engine", statusLabel: "WISH ENGINE", group: "ANALYSIS",
-    icon: "🎯", color: "#10b981", desc: "Worldview, Indicators, Setup, Discipline",
-    minPlan: "quant", dataMode: "demo",
-    load: () => import("@/components/trading/WISHFrameworkPanel"),
   },
   "data-ingest": {
     label: "Data Ingest", statusLabel: "DATA INGEST", group: "ANALYSIS",
@@ -677,12 +641,6 @@ export const PANELS = {
     minPlan: "free", dataMode: "live",
     load: () => import("@/components/media/LiveBroadcast"),
   },
-  "broadcast-studio": {
-    label: "Studio", statusLabel: "BROADCAST STUDIO", group: "MEDIA",
-    icon: "🎬", color: "#e879f9", desc: "AI video production studio",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/media/BroadcastStudioPanel"),
-  },
   "terminal": {
     label: "NUR Terminal", statusLabel: "NFS TERMINAL", group: "MEDIA",
     icon: "💻", color: "#e879f9", desc: "Sovereign CLI terminal",
@@ -719,17 +677,11 @@ export const PANELS = {
     minPlan: "free", dataMode: "live",
     load: () => import("@/components/pricing/PricingPanel"),
   },
-  "verification-portal": {
-    label: "VIP Verify", statusLabel: "VERIFICATION", group: "MEDIA",
-    icon: "✅", color: "#e879f9", desc: "On-chain payment verify",
-    minPlan: "free", dataMode: "demo",
-    load: () => import("@/components/pricing/VerificationPanel"),
-  },
 
   // ── SOCIAL / EDUCATION ────────────────────────────────────────
   "professional-social": {
-    label: "Sovereign Social", statusLabel: "SOVEREIGN SOCIAL", group: "SOCIAL",
-    icon: "👥", color: "#a855f7", desc: "Closed-loop professional financial network",
+    label: "Professional Network", statusLabel: "PRO NETWORK", group: "SOCIAL",
+    icon: "👥", color: "#a855f7", desc: "Professional financial network",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/social/FinancialSocialPanel"),
   },
@@ -739,94 +691,13 @@ export const PANELS = {
     minPlan: "free", dataMode: "demo",
     load: () => import("@/components/social/UserProfilePanel"),
   },
-  "profession-hub": {
-    label: "Profession Hub", statusLabel: "PROFESSION HUB", group: "SOCIAL",
-    icon: "🌐", color: "#a855f7", desc: "Cross-disciplinary verification hub",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/social/ProfessionHubPanel"),
-  },
   "nur-education": {
     label: "Education", statusLabel: "NUR EDUCATION", group: "SOCIAL",
     icon: "🎓", color: "#34d399", desc: "Financial education hub",
     minPlan: "free", dataMode: "demo",
     load: () => import("@/components/education/NurEducationPanel"),
   },
-  "nur-kids": {
-    label: "Nur Kids", statusLabel: "NUR KIDS", group: "SOCIAL",
-    icon: "👨‍👩‍👧", color: "#34d399", desc: "Family finance platform",
-    minPlan: "free", dataMode: "demo",
-    load: () => import("@/components/kids/NurKidsPanel"),
-  },
-  "compute-access": {
-    label: "Free Access", statusLabel: "COMPUTE ACCESS", group: "SOCIAL",
-    icon: "⛏️", color: "#34d399", desc: "Compute-for-access mining",
-    minPlan: "free", dataMode: "demo",
-    load: () => import("@/components/compute/ComputeForAccessPanel"),
-  },
 
-  // ── GALACTIC ──────────────────────────────────────────────────
-  "galactic-fleet": {
-    label: "Galactic Fleet", statusLabel: "GALACTIC FLEET", group: "GALACTIC",
-    icon: "🚀", color: "#2E8B57", desc: "3D C4ISR Globe & 36 Ships",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/orbital/GalacticFleetPanel"),
-  },
-  "orbital-command": {
-    label: "Orbital Command", statusLabel: "ORBITAL COMMAND", group: "GALACTIC",
-    icon: "🛸", color: "#eab308", desc: "Starship Cockpit & Bridge",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/orbital/OrbitalCommandPanel"),
-  },
-  "civilization-terminals": {
-    label: "Civilization Terminals", statusLabel: "CIVILIZATION TERMINALS", group: "GALACTIC",
-    icon: "🏛️", color: "#00f0ff", desc: "18 Civilization panels & Warp Cockpit",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/orbital/CivilizationTerminalPanel"),
-  },
-  "civilization-arbitrage": {
-    label: "Fleet Arbitrage & OMS", statusLabel: "CIVILIZATION ARBITRAGE", group: "GALACTIC",
-    icon: "⚡", color: "#10b981", desc: "Cross-currency & high-frequency trading",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/trading/CivilizationArbitrageEngine"),
-  },
-  "master-fleet-mining": {
-    label: "Master Fleet Mining", statusLabel: "MASTER FLEET MINING", group: "GALACTIC",
-    icon: "⛏️", color: "#f59e0b", desc: "36-ship crypto mining & treasury pool",
-    minPlan: "team", dataMode: "demo",
-    load: () => import("@/components/orbital/MasterFleetMiningAdminPanel"),
-  },
-  "fleet-miner": {
-    label: "Fleet Miner", statusLabel: "FLEET MINER", group: "GALACTIC",
-    icon: "⛏", color: "#00e5ff", desc: "Browser & Python mining bot",
-    minPlan: "free", dataMode: "demo",
-    load: () => import("@/components/mining/FleetMinerPanel"),
-  },
-
-  // ── SOVEREIGN (admin only) ────────────────────────────────────
-  "umay-master": {
-    label: "Umay Master Terminal", statusLabel: "UMAY MASTER", group: "SOVEREIGN",
-    icon: "👑", color: "#ffd700", desc: "Root sovereign fleet bridge",
-    minPlan: "b", dataMode: "demo", adminOnly: true,
-    load: () => import("@/components/umay/UmayMasterTerminalPanel"),
-  },
-  "umay-boss": {
-    label: "Umay Gül Nur", statusLabel: "UMAY GÜL NUR", group: "SOVEREIGN",
-    icon: "👑", color: "#fbbf24", desc: "Sovereign boss terminal",
-    minPlan: "b", dataMode: "demo", adminOnly: true,
-    load: () => import("@/components/umay/UmayBossTerminal"),
-  },
-  "holding-ecosystem": {
-    label: "7 Growth Arms", statusLabel: "7 GROWTH ARMS", group: "SOVEREIGN",
-    icon: "🏛️", color: "#fbbf24", desc: "Holding ecosystem panel",
-    minPlan: "b", dataMode: "demo", adminOnly: true,
-    load: () => import("@/components/holding/HoldingEcosystemPanel"),
-  },
-  "tatar-finans": {
-    label: "Tatar Finance", statusLabel: "TATAR FINANCE", group: "SOVEREIGN",
-    icon: "🛡️", color: "#fbbf24", desc: "Tatar financial network",
-    minPlan: "b", dataMode: "demo", adminOnly: true,
-    load: () => import("@/components/tatar/TatarFinansPanel"),
-  },
 
   // ── FIXED INCOME & RATES ────────────────────────────────────
   "treasury-auctions": {
@@ -894,7 +765,7 @@ export const PANELS = {
     load: () => import("@/components/analysis/IRSwapCurvePanel"),
   },
   "sovereign-wealth-fund": {
-    label: "Sovereign Wealth Fund", statusLabel: "SOVEREIGN WEALTH", group: "SOVEREIGN",
+    label: "Sovereign Wealth Fund", statusLabel: "SOVEREIGN WEALTH", group: "ANALYSIS",
     icon: "🏦", color: "#eab308", desc: "Sovereign wealth fund holdings, allocations & mandate tracking",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/SovereignWealthFundPanel"),
@@ -1026,7 +897,7 @@ export const PANELS = {
     load: () => import("@/components/analysis/CommoditiesTradingPanel"),
   },
   "sovereign-debt-auctions": {
-    label: "Sovereign Debt Auctions", statusLabel: "SOVEREIGN AUCTIONS", group: "SOVEREIGN",
+    label: "Sovereign Debt Auctions", statusLabel: "SOVEREIGN AUCTIONS", group: "MARKETS",
     icon: "🏦", color: "#38bdf8", desc: "Government bond auctions, bid-to-cover ratios, tail & issuance calendar",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/SovereignDebtAuctionsPanel"),
@@ -1037,7 +908,7 @@ export const PANELS = {
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/CreditPortfolioPanel"),
   },
-  // ── NEW BATCH: MARKETS / TRADING / SOVEREIGN / MEDIA / SOCIAL ──
+  // ── ADDITIONAL PANELS ──
   "etf-flows": {
     label: "ETF Flows & Analytics", statusLabel: "ETF FLOWS", group: "MARKETS",
     icon: "📈", color: "#06b6d4", desc: "ETF fund flows, creation/redemption, premium/discount & sector rotation",
@@ -1092,18 +963,6 @@ export const PANELS = {
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/media/PodcastResearchPanel"),
   },
-  "space-weather": {
-    label: "Space Weather", statusLabel: "SPACE WX", group: "GALACTIC",
-    icon: "☀️", color: "#f59e0b", desc: "Solar flare alerts, geomagnetic storms, satellite risk & space debris tracking",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/orbital/SpaceWeatherPanel"),
-  },
-  "asteroid-mining": {
-    label: "Asteroid Mining", statusLabel: "ASTEROID", group: "GALACTIC",
-    icon: "☄️", color: "#8b5cf6", desc: "Near-earth object valuations, mining feasibility scores & resource extraction estimates",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/orbital/AsteroidMiningPanel"),
-  },
   "system-health": {
     label: "System Health", statusLabel: "SYS HEALTH", group: "CORE",
     icon: "🖥️", color: "#06b6d4", desc: "Platform uptime, API latency, data feed status & system diagnostics",
@@ -1153,12 +1012,6 @@ export const PANELS = {
     minPlan: "r", dataMode: "demo",
     load: () => import("@/components/risk/MilitaryRiskPanel"),
   },
-  "galactic-risk": {
-    label: "Galactic Risk", statusLabel: "GALACTIC RISK", group: "RISK",
-    icon: "☄️", color: "#ef4444", desc: "NASA NEO data, asteroid close approaches, solar storm impact & space debris threat levels",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/risk/GalacticRiskPanel"),
-  },
   "political-risk": {
     label: "Political Risk", statusLabel: "POLITICAL", group: "RISK",
     icon: "🏛️", color: "#ef4444", desc: "Election risk, regime stability, sanctions tracking, policy change impact & sovereign default probability",
@@ -1169,7 +1022,7 @@ export const PANELS = {
 
 export type PanelView = keyof typeof PANELS;
 
-export const GROUP_ORDER = ["CORE", "MARKETS", "TRADING", "ANALYSIS", "RISK", "MEDIA", "SOCIAL", "GALACTIC", "SOVEREIGN"] as const;
+export const GROUP_ORDER = ["CORE", "MARKETS", "TRADING", "ANALYSIS", "RISK", "MEDIA", "SOCIAL"] as const;
 
 export function getPanelsByGroup(filterAdmin: boolean = false) {
   const entries = Object.entries(PANELS) as [PanelView, PanelEntry][];

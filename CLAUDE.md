@@ -2,63 +2,93 @@
 
 # NUR Finance AntiGravi — Project Rules
 
-## CRITICAL BUSINESS RULES: NUR Finance B & NUR Finance R Access Control
+## Company Identity
 
-These rules are NON-NEGOTIABLE. They govern who can access NUR Finance B (Bloomberg-tier) and NUR Finance R (Reuters-tier) products. Every developer, agent, and system working on this project MUST enforce these rules. They apply to the website, terminal, APIs, onboarding flows, payment systems, and all related infrastructure.
+NUR Finance is a **financial data, analytics, and media company**. We sell financial information, real-time market data, trading tools, risk analytics, and financial media content. Every feature, panel, and product must serve this mission. Nothing else belongs in this platform.
 
-### Product Definitions
+## Terminal Tiers
 
-- **NUR Finance R** — Reuters-tier terminal (~€100K/year). Competes with and surpasses Reuters Eikon.
-- **NUR Finance B** — Bloomberg-tier terminal (~€100K/year). Competes with and surpasses Bloomberg Terminal.
+NUR Finance offers three terminal products:
 
-### Entry Requirements
+### Retail Terminal
+- **Target**: Individual traders, retail investors, finance students, independent analysts
+- **Pricing**: Free (limited) / €29–€49 per month (full)
+- **Features**: 15-min delayed or standard data feeds, up to 3 concurrent dock panels, watchlists, news feed, basic charts, portfolio tracker
+- **Prerequisites**: None. Instant signup with credit card or free account.
 
-#### NUR Finance R
-- **Prerequisite**: Applicant must have a MINIMUM of 1 year of active Reuters usage history.
-- **No invitation required**: Anyone meeting the Reuters history requirement can subscribe.
-- Without 1 year Reuters history → ACCESS DENIED. No exceptions.
+### Professional Terminal
+- **Target**: Professional traders, analysts, portfolio managers — including those already using Bloomberg or Reuters who want a complementary tool
+- **Pricing**: €199 per month
+- **Features**: Real-time Level 1 & Level 2 data, interactive 60 FPS charts, full options chain with Greeks, quick DMA execution ticket, macro risk & VaR modeling, unlimited custom layouts, all analysis panels
+- **Prerequisites**: None. Instant checkout.
 
-#### NUR Finance B
-- **Prerequisite 1 (Necessary)**: Applicant must have a MINIMUM of 1 year of active Bloomberg usage history.
-- **Prerequisite 2 (Necessary)**: Applicant must receive a confirmed invitation email from a person hand-selected by NUR Finance leadership. Bloomberg history alone is NOT sufficient.
-- **Security**: Email-based identity verification — the invitee must confirm "I am at this email" through a secure verification flow.
-- Without 1 year Bloomberg history → ACCESS DENIED. No exceptions.
-- Without invitation confirmation → ACCESS DENIED. No exceptions.
+### Institutional Terminal
+- **Target**: Banks, investment banks, hedge funds, asset managers, sovereign wealth funds, political parties, government agencies
+- **Pricing**: €999+ per month (bespoke enterprise pricing)
+- **Features**: Everything in Professional, plus multi-seat team administration, FIX Protocol DMA, compliance audit logs, dedicated war room view, custom REST/WebSocket API access, priority support
+- **Prerequisites**: None. Invoice or enterprise agreement.
 
-### Transition Rules
+### Pricing Principles
+- **No usage-history gatekeeping.** We do NOT require proof of Bloomberg, Reuters, or any other terminal usage.
+- **No invitation system.** Anyone can subscribe to any tier.
+- **Instant checkout.** Credit card, SEPA, wire transfer, invoice for enterprise.
+- **Free tier exists** to let users experience the platform before paying.
 
-| From | To | Rule |
-|------|----|------|
-| Bloomberg (external) | NUR Finance B | ALLOWED — if they have 1yr Bloomberg history + invitation confirmation |
-| Reuters (external) | NUR Finance R | ALLOWED — if they have 1yr Reuters history |
-| NUR Finance B | NUR Finance R | ALLOWED — can switch freely |
-| NUR Finance R | NUR Finance B | BLOCKED — see special process below |
+## Content Policy — STRICT
 
-#### Special Process: NUR Finance R → NUR Finance B
+### What BELONGS in this platform:
+- Financial data and market analytics
+- Trading tools and execution systems
+- Risk management and compliance
+- Economic data and indicators
+- Financial news and media
+- Geopolitical intelligence (as it affects markets)
+- Institutional research tools
 
-A NUR Finance R user who wants to switch to NUR Finance B must:
+### What does NOT belong — DO NOT BUILD:
+- Space, galactic, orbital, or sci-fi content of any kind
+- Fictional characters, personas, or vanity panels (no "Boss Nur", no "Umay", no character lore)
+- Cryptocurrency mining, DePIN compute-for-access, or client-side GPU mining
+- Custom blockchain tokens (no "NUR Coin", no sovereign ledger)
+- Civilizational ship fleets or faction systems
+- Starship cockpits, warp drives, or space bridges
+- Kids finance platforms or non-finance educational content
+- Video production studios (we deliver financial media, not production tools)
+- Any panel or feature that would make an institutional buyer question our credibility
 
-1. **Purchase a Bloomberg subscription** (keep NUR Finance R active)
-2. **Use Bloomberg for 1 full year** (while continuing to use NUR Finance R)
-3. **After 1 year of Bloomberg**: May close Bloomberg contract and switch to NUR Finance B (still requires invitation confirmation)
-4. **WARNING**: If the user closes BOTH Bloomberg AND NUR Finance R during this process, they permanently lose access to NUR Finance R as well. No reinstatement.
+### Panel Groups (GROUP_ORDER):
+`["CORE", "MARKETS", "TRADING", "ANALYSIS", "RISK", "MEDIA", "SOCIAL"]`
 
-#### Summary
+The following groups have been REMOVED and must not be recreated:
+- ~~GALACTIC~~ — All space/civilizational content eliminated
+- ~~SOVEREIGN~~ — All vanity/personal content eliminated
 
-- NUR Finance B → NUR Finance R: Free transition, anytime
-- NUR Finance R → NUR Finance B: Must first get 1yr Bloomberg, keep NUR R active, then switch
-- Closing both Bloomberg + NUR Finance R during transition = permanent ban from NUR Finance R
-- NUR Finance B always requires invitation from approved persons, regardless of path
+Legitimate panels that were in SOVEREIGN (like sovereign-wealth-fund, sovereign-debt-auctions) have been moved to ANALYSIS or MARKETS.
 
-### Implementation Notes
+## UX Principles
 
-- The onboarding/signup flow MUST verify Bloomberg/Reuters usage history (integration with their systems or document verification)
-- NUR Finance B requires an invitation system with email confirmation
-- The invitation list is maintained by NUR Finance leadership only
-- These rules must be prominently displayed in the Pricing/Plans page
-- Backend must enforce these rules — frontend display alone is insufficient
+- **Bloomberg-like but modern.** The terminal should feel professional and dense like Bloomberg, but with modern web UX — responsive, 60 FPS, clean typography.
+- **Categorized navigation.** The website and terminal toolbar should use clear, categorized dropdowns: Markets, Trading, Analysis, Risk, Media, Intelligence.
+- **Performance first.** No panel should freeze the browser. 3D visualizations (like the geopolitical globe) must use lightweight Canvas2D by default, with WebGL only on-demand in dedicated panels, with proper GPU cleanup on unmount (`renderer.dispose()`, texture/geometry cleanup).
+- **User-friendly.** Every feature should be discoverable through intuitive menus and toolbar buttons. Power users can use the command palette.
 
----
+## Broadcast & Media System
+
+The broadcast system delivers **institutional financial media**:
+- Market opening/closing briefings
+- Macro analysis segments
+- Sector and earnings coverage
+- FX and commodities updates
+- Central bank and policy coverage
+
+Anchor roles are **professional financial broadcast roles**:
+- Global Macro Anchor
+- Fixed Income & Rates Host
+- FX & Commodities Strategist
+- Chief Technical Analyst
+- Emerging Markets Correspondent
+
+No fictional characters. No personal vanity personas. No wardrobe rules or character lore.
 
 ## Project Structure
 
@@ -67,9 +97,13 @@ A NUR Finance R user who wants to switch to NUR Finance B must:
 - **Database**: Supabase PostgreSQL
 - **Market Data**: EODHD API
 - **Design System**: CSS custom properties (--ag-accent, --ag-bg, --ag-surface, etc.)
+- **Language**: ALL content must be in English. No Turkish text in any .ts/.tsx file.
 
 ## Security
 
 - API keys must NEVER be committed to the repository
 - Keys are configured as environment variables on hosting platforms only
 - .env* is in .gitignore
+- No client-side cryptomining or GPU compute harvesting — ever
+- No smart contracts or blockchain token deployments
+- Payment processing via standard institutional gateways (Stripe, SEPA, wire transfer)
