@@ -65,7 +65,7 @@ kullanıyor; giriş yapan kullanıcıda Supabase'e taşınmalı (cihazlar arası
 ## 3. Güvenlik
 
 | # | Bulgu | Öneri | Öncelik |
-|---|-------|-------|---------|
+|---|-------|-------|--------|
 | S1 | Yönetici parolaları belgede ve istemci kodunda | Supabase Auth + `role` alanı + RLS; yönetici rotaları sunucuda kontrol | Acil |
 | S2 | `/api/execute` kullanıcı kodu alıyor | Yalnızca simülasyon modunda kalsın; gerçek çalıştırma gerekiyorsa izole servis (Firecracker/gVisor) ve süre/bellek sınırı | Acil |
 | S3 | API rotalarında hız sınırı yok | IP + kullanıcı başına sınır (Upstash/Redis), pahalı rotalarda plan kotası | Yüksek |
