@@ -115,7 +115,7 @@ export const PANELS = {
     load: () => import("@/components/ai/AIQuantCopilot"),
   },
   "macro-risk": {
-    label: "Macro Risk", statusLabel: "MACRO RISK", group: "ANALYSIS",
+    label: "Macro Risk", statusLabel: "MACRO RISK", group: "RISK",
     icon: "⚠️", color: "#f59e0b", desc: "Systemic risk dashboard",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/macro/MacroRiskPanel"),
@@ -205,7 +205,7 @@ export const PANELS = {
     load: () => import("@/components/analysis/WatchlistManagerPanel"),
   },
   "risk-dashboard": {
-    label: "Risk Dashboard", statusLabel: "RISK DASHBOARD", group: "ANALYSIS",
+    label: "Risk Dashboard", statusLabel: "RISK DASHBOARD", group: "RISK",
     icon: "🛡", color: "#ef4444", desc: "VaR · CVaR · Monte Carlo · Stress Tests",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/RiskDashboardPanel"),
@@ -367,7 +367,7 @@ export const PANELS = {
     load: () => import("@/components/analysis/RealEstatePanel"),
   },
   "credit-risk": {
-    label: "Credit Risk", statusLabel: "CREDIT RISK", group: "ANALYSIS",
+    label: "Credit Risk", statusLabel: "CREDIT RISK", group: "RISK",
     icon: "⚠️", color: "#ef4444", desc: "CDS curves, default probability, recovery & transition matrices",
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/analysis/CreditRiskPanel"),
@@ -772,26 +772,26 @@ export const PANELS = {
     load: () => import("@/components/orbital/OrbitalCommandPanel"),
   },
   "civilization-terminals": {
-    label: "Medeniyet Panelleri", statusLabel: "CIVILIZATION TERMINALS", group: "GALACTIC",
-    icon: "🏛️", color: "#00f0ff", desc: "18 Medeniyet & Warp Kokpiti",
+    label: "Civilization Terminals", statusLabel: "CIVILIZATION TERMINALS", group: "GALACTIC",
+    icon: "🏛️", color: "#00f0ff", desc: "18 Civilization panels & Warp Cockpit",
     minPlan: "team", dataMode: "demo",
     load: () => import("@/components/orbital/CivilizationTerminalPanel"),
   },
   "civilization-arbitrage": {
-    label: "Filo Arbitraj & OMS", statusLabel: "CIVILIZATION ARBITRAGE", group: "GALACTIC",
-    icon: "⚡", color: "#10b981", desc: "Çapraz Kur & Yüksek Frekans",
+    label: "Fleet Arbitrage & OMS", statusLabel: "CIVILIZATION ARBITRAGE", group: "GALACTIC",
+    icon: "⚡", color: "#10b981", desc: "Cross-currency & high-frequency trading",
     minPlan: "team", dataMode: "demo",
     load: () => import("@/components/trading/CivilizationArbitrageEngine"),
   },
   "master-fleet-mining": {
-    label: "Master Filo Mining", statusLabel: "MASTER FLEET MINING", group: "GALACTIC",
-    icon: "⛏️", color: "#f59e0b", desc: "36 Gemi Kripto & Hazine Havuzu",
+    label: "Master Fleet Mining", statusLabel: "MASTER FLEET MINING", group: "GALACTIC",
+    icon: "⛏️", color: "#f59e0b", desc: "36-ship crypto mining & treasury pool",
     minPlan: "team", dataMode: "demo",
     load: () => import("@/components/orbital/MasterFleetMiningAdminPanel"),
   },
   "fleet-miner": {
     label: "Fleet Miner", statusLabel: "FLEET MINER", group: "GALACTIC",
-    icon: "⛏", color: "#00e5ff", desc: "Tarayıcı & Python mining botu",
+    icon: "⛏", color: "#00e5ff", desc: "Browser & Python mining bot",
     minPlan: "free", dataMode: "demo",
     load: () => import("@/components/mining/FleetMinerPanel"),
   },
@@ -942,7 +942,7 @@ export const PANELS = {
     load: () => import("@/components/analysis/LeveragedFinancePanel"),
   },
   "country-risk": {
-    label: "Country Risk", statusLabel: "COUNTRY RISK", group: "SOVEREIGN",
+    label: "Country Risk", statusLabel: "COUNTRY RISK", group: "RISK",
     icon: "🌍", color: "#ef4444", desc: "Sovereign credit, macro indicators, political risk & contagion analysis",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/CountryRiskPanel"),
@@ -1057,7 +1057,7 @@ export const PANELS = {
     load: () => import("@/components/trading/DarkPoolPanel"),
   },
   "geopolitical-risk": {
-    label: "Geopolitical Risk", statusLabel: "GEO RISK", group: "SOVEREIGN",
+    label: "Geopolitical Risk", statusLabel: "GEO RISK", group: "RISK",
     icon: "🌍", color: "#ef4444", desc: "Geopolitical risk indices, conflict monitors, sanctions & trade policy tracker",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/sovereign/GeopoliticalRiskPanel"),
@@ -1093,7 +1093,7 @@ export const PANELS = {
     load: () => import("@/components/markets/EarningsCalendarPanel"),
   },
   "climate-risk": {
-    label: "Climate Risk", statusLabel: "CLIMATE", group: "SOVEREIGN",
+    label: "Climate Risk", statusLabel: "CLIMATE", group: "RISK",
     icon: "🌡️", color: "#10b981", desc: "Climate risk scores, carbon exposure, transition risk & physical risk metrics",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/sovereign/ClimateRiskPanel"),
@@ -1144,7 +1144,7 @@ export const PANELS = {
 
 export type PanelView = keyof typeof PANELS;
 
-export const GROUP_ORDER = ["GALACTIC", "CORE", "MARKETS", "TRADING", "ANALYSIS", "MEDIA", "SOCIAL", "SOVEREIGN"] as const;
+export const GROUP_ORDER = ["CORE", "MARKETS", "TRADING", "ANALYSIS", "RISK", "MEDIA", "SOCIAL", "GALACTIC", "SOVEREIGN"] as const;
 
 export function getPanelsByGroup(filterAdmin: boolean = false) {
   const entries = Object.entries(PANELS) as [PanelView, PanelEntry][];

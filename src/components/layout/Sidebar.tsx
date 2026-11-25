@@ -5,24 +5,26 @@ import { useIDEStore } from "@/stores/useIDEStore";
 import { PANELS, GROUP_ORDER, type PanelView, type PanelEntry } from "@/panels/registry";
 
 const GROUP_COLORS: Record<string, string> = {
-  GALACTIC: "#00f0ff",
   CORE: "#00d4aa",
   MARKETS: "#38bdf8",
   TRADING: "#a78bfa",
   ANALYSIS: "#f59e0b",
+  RISK: "#ef4444",
   MEDIA: "#e879f9",
   SOCIAL: "#ec4899",
+  GALACTIC: "#00f0ff",
   SOVEREIGN: "#fbbf24",
 };
 
 const GROUP_ICONS: Record<string, string> = {
-  GALACTIC: "🚀",
   CORE: "⚙️",
   MARKETS: "📊",
   TRADING: "⚡",
   ANALYSIS: "🔬",
+  RISK: "⚠️",
   MEDIA: "📡",
   SOCIAL: "👥",
+  GALACTIC: "🚀",
   SOVEREIGN: "👑",
 };
 
