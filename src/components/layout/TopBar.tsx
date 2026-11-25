@@ -79,6 +79,7 @@ export default function TopBar() {
     updateVerification,
     openFloatingWindow,
     popoutToNativeWindow,
+    demoPlan,
   } = useIDEStore();
 
 
@@ -260,6 +261,27 @@ export default function TopBar() {
           <span className={user ? "text-emerald-400" : "text-slate-400"}>👤</span>
           <span className="font-bold">{user ? user.email?.split("@")[0] : "Sign In"}</span>
         </button>
+
+        {/* Plan Badge */}
+        {demoPlan && (demoPlan === "b" || demoPlan === "r") && (
+          <div
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md shrink-0"
+            style={{
+              background: demoPlan === "b"
+                ? "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))"
+                : "linear-gradient(135deg, rgba(0,240,255,0.15), rgba(0,240,255,0.05))",
+              border: `1px solid ${demoPlan === "b" ? "rgba(255,215,0,0.4)" : "rgba(0,240,255,0.4)"}`,
+            }}
+          >
+            <span className="text-[10px]">{demoPlan === "b" ? "👑" : "🛡️"}</span>
+            <span
+              className="text-[9px] font-mono font-black tracking-[0.15em]"
+              style={{ color: demoPlan === "b" ? "#ffd700" : "#00f0ff" }}
+            >
+              NUR FINANCE {demoPlan.toUpperCase()}
+            </span>
+          </div>
+        )}
 
         {/* Matrix */}
         <button

@@ -12,6 +12,7 @@ import {
   VIPVerificationStatus,
   FloatingWindowConfig,
 } from "@/types";
+import type { PlanTier } from "@/panels/registry";
 import { sampleFiles } from "@/lib/sample-files";
 
 
@@ -163,9 +164,11 @@ interface IDEState {
   soundMuted: boolean;
   focusedCoordinates: [number, number] | null;
   expandedPanel: string | null;
+  demoPlan: PlanTier | null;
 
   // Actions
   setExpandedPanel: (panel: string | null) => void;
+  setDemoPlan: (plan: PlanTier | null) => void;
   setFocusedCoordinates: (coords: [number, number] | null) => void;
   openFile: (node: FileNode) => void;
   closeTab: (id: string) => void;
@@ -249,8 +252,10 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     overallStatus: "NOT_STARTED",
   },
   expandedPanel: null,
+  demoPlan: null,
 
   setExpandedPanel: (expandedPanel) => set({ expandedPanel }),
+  setDemoPlan: (demoPlan) => set({ demoPlan }),
   setFocusedCoordinates: (focusedCoordinates) => set({ focusedCoordinates }),
   setSovereignAdmin: (isSovereignAdmin) => set({ isSovereignAdmin }),
   setSovereignAuthModalOpen: (sovereignAuthModalOpen) => set({ sovereignAuthModalOpen }),

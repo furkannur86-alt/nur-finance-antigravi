@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, type ComponentType } from "react";
 import dynamic from "next/dynamic";
 import { useIDEStore } from "@/stores/useIDEStore";
 import TopBar from "@/components/layout/TopBar";
@@ -58,6 +58,7 @@ import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 import CockpitFrame from "@/components/cockpit/CockpitFrame";
 import FloatingWindowManager from "@/components/layout/FloatingWindowManager";
+import { PANELS } from "@/panels/registry";
 import GalacticFleetPanel from "@/components/orbital/GalacticFleetPanel";
 import OrbitalCommandPanel from "@/components/orbital/OrbitalCommandPanel";
 import CivilizationTerminalPanel from "@/components/orbital/CivilizationTerminalPanel";
@@ -103,11 +104,12 @@ const FULLSCREEN_VIEWS = [
 ];
 
 export default function Home() {
-  const { activeView, setActiveView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity } = useIDEStore();
+  const { activeView, setActiveView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity, setDemoPlan } = useIDEStore();
   const didInit = useRef(false);
   const [consoleHeight, setConsoleHeight] = useState(DEFAULT_CONSOLE_HEIGHT);
   const [consoleCollapsed, setConsoleCollapsed] = useState(false);
   const [isPopoutMode, setIsPopoutMode] = useState(false);
+  const [DynamicPanel, setDynamicPanel] = useState<ComponentType | null>(null);
   const dragging = useRef(false);
   const startY = useRef(0);
   const startHeight = useRef(0);
@@ -120,9 +122,34 @@ export default function Home() {
         setActiveView(popout as any);
         setIsPopoutMode(true);
       }
+      const plan = urlParams.get("plan");
+      if (plan && ["free", "pro", "quant", "team", "r", "b"].includes(plan)) {
+        setDemoPlan(plan as any);
+      }
     }
-  }, [setActiveView]);
+  }, [setActiveView, setDemoPlan]);
 
+  useEffect(() => {
+    if (activeView === "editor") { setDynamicPanel(null); return; }
+    const entry = PANELS[activeView as keyof typeof PANELS];
+    if (!entry) { setDynamicPanel(null); return; }
+    const inSwitch = [
+      "umay-master","umay-boss","holding-ecosystem","tatar-finans","nur-kids","nur-education",
+      "compute-access","geophysics-resources","resource-intelligence","institutional-suite",
+      "orbital-telemetry","galactic-fleet","orbital-command","civilization-terminals",
+      "civilization-arbitrage","master-fleet-mining","fleet-miner","professional-ai",
+      "professional-social","user-profile","profession-hub","wish-framework",
+      "dashboard","portfolio","charts","backtest","oms-ems","quant-copilot",
+      "broadcast-studio","verification-portal","wallet-gateway","nur-coin",
+      "global-markets","economic-data","data-ingest","geopolitics","fundamentals",
+      "screener","news-feed","encyclopedia","pricing","media","live-tv","options",
+      "ai-tools","macro-risk","news","alerts","research","terminal"
+    ];
+    if (inSwitch.includes(activeView)) { setDynamicPanel(null); return; }
+    let cancelled = false;
+    entry.load().then((mod) => { if (!cancelled) setDynamicPanel(() => mod.default); });
+    return () => { cancelled = true; };
+  }, [activeView]);
 
   useEffect(() => {
     if (didInit.current) return;
@@ -267,7 +294,16 @@ export default function Home() {
       case "terminal":
         return <NURTerminalPanel />;
       case "editor":
+        return (
+          <div className="flex flex-col flex-1 min-h-0">
+            <EditorTabs />
+            <div className="flex-1 min-h-0">
+              <CodeEditor />
+            </div>
+          </div>
+        );
       default:
+        if (DynamicPanel) return <DynamicPanel />;
         return (
           <div className="flex flex-col flex-1 min-h-0">
             <EditorTabs />
