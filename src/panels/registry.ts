@@ -24,6 +24,12 @@ export const PANELS = {
     minPlan: "free", dataMode: "live", adminOnly: false,
     load: () => import("@/components/dashboard/DashboardPanel"),
   },
+  "ai-assistant": {
+    label: "AI Assistant", statusLabel: "NUR AI", group: "CORE",
+    icon: "🤖", color: "#00d4aa", desc: "AI-powered terminal guide and workflow assistant",
+    minPlan: "free", dataMode: "demo",
+    load: () => import("@/components/ai/NurAIAssistant"),
+  },
   "dashboard": {
     label: "Dashboard", statusLabel: "DASHBOARD", group: "CORE",
     icon: "📊", color: "#00d4aa", desc: "Live markets overview",
@@ -128,7 +134,7 @@ export const PANELS = {
   },
   "geopolitics": {
     label: "NUR Earth 3D", statusLabel: "GEO INTEL", group: "ANALYSIS",
-    icon: "🌐", color: "#f59e0b", desc: "Geopolitical risk globe",
+    icon: "🌐", color: "#f59e0b", desc: "3D financial intelligence globe",
     minPlan: "pro", dataMode: "live",
     load: () => import("@/components/geopolitics/NurEarth3DGlobe"),
   },
@@ -810,13 +816,13 @@ export const PANELS = {
     load: () => import("@/components/umay/UmayBossTerminal"),
   },
   "holding-ecosystem": {
-    label: "7 Büyüme Kolu", statusLabel: "7 GROWTH ARMS", group: "SOVEREIGN",
+    label: "7 Growth Arms", statusLabel: "7 GROWTH ARMS", group: "SOVEREIGN",
     icon: "🏛️", color: "#fbbf24", desc: "Holding ecosystem panel",
     minPlan: "b", dataMode: "demo", adminOnly: true,
     load: () => import("@/components/holding/HoldingEcosystemPanel"),
   },
   "tatar-finans": {
-    label: "Tatar Finans", statusLabel: "TATAR FINANS", group: "SOVEREIGN",
+    label: "Tatar Finance", statusLabel: "TATAR FINANCE", group: "SOVEREIGN",
     icon: "🛡️", color: "#fbbf24", desc: "Tatar financial network",
     minPlan: "b", dataMode: "demo", adminOnly: true,
     load: () => import("@/components/tatar/TatarFinansPanel"),
@@ -1032,35 +1038,17 @@ export const PANELS = {
     load: () => import("@/components/analysis/CreditPortfolioPanel"),
   },
   // ── NEW BATCH: MARKETS / TRADING / SOVEREIGN / MEDIA / SOCIAL ──
-  "municipal-bonds": {
-    label: "Municipal Bonds", statusLabel: "MUNI BONDS", group: "MARKETS",
-    icon: "🏙️", color: "#a78bfa", desc: "Muni bond market, yield curves, credit analysis & new issuance calendar",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/markets/MunicipalBondsPanel"),
-  },
   "etf-flows": {
     label: "ETF Flows & Analytics", statusLabel: "ETF FLOWS", group: "MARKETS",
     icon: "📈", color: "#06b6d4", desc: "ETF fund flows, creation/redemption, premium/discount & sector rotation",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/markets/ETFFlowsPanel"),
   },
-  "options-flow": {
-    label: "Options Flow", statusLabel: "OPTIONS FLOW", group: "TRADING",
-    icon: "🎯", color: "#f43f5e", desc: "Unusual options activity, flow analysis, gamma exposure & vol skew",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/trading/OptionsFlowPanel"),
-  },
   "dark-pool": {
     label: "Dark Pool Monitor", statusLabel: "DARK POOLS", group: "TRADING",
     icon: "🌑", color: "#8b5cf6", desc: "Dark pool prints, block trades, ATS volume & short volume analysis",
     minPlan: "quant", dataMode: "demo",
     load: () => import("@/components/trading/DarkPoolPanel"),
-  },
-  "geopolitical-risk": {
-    label: "Geopolitical Risk", statusLabel: "GEO RISK", group: "RISK",
-    icon: "🌍", color: "#ef4444", desc: "Geopolitical risk indices, conflict monitors, sanctions & trade policy tracker",
-    minPlan: "pro", dataMode: "demo",
-    load: () => import("@/components/sovereign/GeopoliticalRiskPanel"),
   },
   "financial-news-wire": {
     label: "Financial News Wire", statusLabel: "NEWS WIRE", group: "MEDIA",
@@ -1139,6 +1127,43 @@ export const PANELS = {
     icon: "🏦", color: "#0ea5e9", desc: "Margin balances, securities lending, locate availability & financing rates",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/trading/PrimeBrokeragePanel"),
+  },
+  // ── NEW RISK PANELS ──────────────────────────────────────────
+  "financial-risk": {
+    label: "Financial Risk", statusLabel: "FIN RISK", group: "RISK",
+    icon: "💰", color: "#ef4444", desc: "Systemic risk indicators, contagion maps, liquidity stress & financial stability metrics",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/risk/FinancialRiskPanel"),
+  },
+  "cyber-risk": {
+    label: "Cyber Risk", statusLabel: "CYBER", group: "RISK",
+    icon: "🔒", color: "#ef4444", desc: "Cyber threat intelligence, breach tracking, ransomware activity & infrastructure vulnerability",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/risk/CyberRiskPanel"),
+  },
+  "nuclear-risk": {
+    label: "Nuclear Risk", statusLabel: "NUCLEAR", group: "RISK",
+    icon: "☢️", color: "#ef4444", desc: "Nuclear threat levels, reactor incidents, proliferation tracking & fallout modeling",
+    minPlan: "r", dataMode: "demo",
+    load: () => import("@/components/risk/NuclearRiskPanel"),
+  },
+  "military-risk": {
+    label: "Military Risk", statusLabel: "MILITARY", group: "RISK",
+    icon: "🎖️", color: "#ef4444", desc: "Global conflict zones, troop movements, defense spending & arms trade flows",
+    minPlan: "r", dataMode: "demo",
+    load: () => import("@/components/risk/MilitaryRiskPanel"),
+  },
+  "galactic-risk": {
+    label: "Galactic Risk", statusLabel: "GALACTIC RISK", group: "RISK",
+    icon: "☄️", color: "#ef4444", desc: "NASA NEO data, asteroid close approaches, solar storm impact & space debris threat levels",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/risk/GalacticRiskPanel"),
+  },
+  "political-risk": {
+    label: "Political Risk", statusLabel: "POLITICAL", group: "RISK",
+    icon: "🏛️", color: "#ef4444", desc: "Election risk, regime stability, sanctions tracking, policy change impact & sovereign default probability",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/risk/PoliticalRiskPanel"),
   },
 } as const satisfies Record<string, PanelEntry>;
 

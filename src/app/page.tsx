@@ -66,6 +66,8 @@ import CivilizationArbitrageEngine from "@/components/trading/CivilizationArbitr
 import MasterFleetMiningAdminPanel from "@/components/orbital/MasterFleetMiningAdminPanel";
 import UmayMasterTerminalPanel from "@/components/umay/UmayMasterTerminalPanel";
 import FleetMinerPanel from "@/components/mining/FleetMinerPanel";
+import WindowFrame from "@/components/layout/WindowFrame";
+import NurAIAssistant from "@/components/ai/NurAIAssistant";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -100,7 +102,8 @@ const FULLSCREEN_VIEWS = [
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
   "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
-  "wallet-gateway", "nur-coin",
+  "wallet-gateway", "nur-coin", "cyber-risk", "nuclear-risk", "military-risk",
+  "galactic-risk", "political-risk", "financial-risk", "ai-assistant",
 ];
 
 export default function Home() {
@@ -143,7 +146,7 @@ export default function Home() {
       "broadcast-studio","verification-portal","wallet-gateway","nur-coin",
       "global-markets","economic-data","data-ingest","geopolitics","fundamentals",
       "screener","news-feed","encyclopedia","pricing","media","live-tv","options",
-      "ai-tools","macro-risk","news","alerts","research","terminal"
+      "ai-tools","macro-risk","news","alerts","research","terminal","ai-assistant"
     ];
     if (inSwitch.includes(activeView)) { setDynamicPanel(null); return; }
     let cancelled = false;
@@ -190,109 +193,113 @@ export default function Home() {
   const renderMainContent = () => {
     switch (activeView) {
       case "umay-master":
-        return <UmayMasterTerminalPanel />;
+        return <WindowFrame view="umay-master"><UmayMasterTerminalPanel /></WindowFrame>;
       case "umay-boss":
-        return <UmayBossTerminal />;
+        return <WindowFrame view="umay-boss"><UmayBossTerminal /></WindowFrame>;
       case "holding-ecosystem":
-        return <HoldingEcosystemPanel />;
+        return <WindowFrame view="holding-ecosystem"><HoldingEcosystemPanel /></WindowFrame>;
       case "tatar-finans":
-        return <TatarFinansPanel />;
+        return <WindowFrame view="tatar-finans"><TatarFinansPanel /></WindowFrame>;
       case "nur-kids":
-        return <NurKidsPanel />;
+        return <WindowFrame view="nur-kids"><NurKidsPanel /></WindowFrame>;
       case "nur-education":
-        return <NurEducationPanel />;
+        return <WindowFrame view="nur-education"><NurEducationPanel /></WindowFrame>;
       case "compute-access":
-        return <ComputeForAccessPanel />;
+        return <WindowFrame view="compute-access"><ComputeForAccessPanel /></WindowFrame>;
       case "geophysics-resources":
-        return <GeophysicsResourcesPanel />;
+        return <WindowFrame view="geophysics-resources"><GeophysicsResourcesPanel /></WindowFrame>;
       case "resource-intelligence":
-        return <ResourceIntelligencePanel />;
+        return <WindowFrame view="resource-intelligence"><ResourceIntelligencePanel /></WindowFrame>;
       case "institutional-suite":
-        return <InstitutionalSuitePanel />;
+        return <WindowFrame view="institutional-suite"><InstitutionalSuitePanel /></WindowFrame>;
       case "orbital-telemetry":
-        return <OrbitalTelemetryPanel />;
+        return <WindowFrame view="orbital-telemetry"><OrbitalTelemetryPanel /></WindowFrame>;
       case "galactic-fleet":
-        return <GalacticFleetPanel />;
+        return <WindowFrame view="galactic-fleet"><GalacticFleetPanel /></WindowFrame>;
       case "orbital-command":
-        return <OrbitalCommandPanel />;
+        return <WindowFrame view="orbital-command"><OrbitalCommandPanel /></WindowFrame>;
       case "civilization-terminals":
-        return <CivilizationTerminalPanel onClose={() => setActiveView("dashboard")} />;
+        return <WindowFrame view="civilization-terminals"><CivilizationTerminalPanel onClose={() => setActiveView("dashboard")} /></WindowFrame>;
       case "civilization-arbitrage":
-        return <CivilizationArbitrageEngine onClose={() => setActiveView("dashboard")} />;
+        return <WindowFrame view="civilization-arbitrage"><CivilizationArbitrageEngine onClose={() => setActiveView("dashboard")} /></WindowFrame>;
       case "master-fleet-mining":
-        return <MasterFleetMiningAdminPanel />;
+        return <WindowFrame view="master-fleet-mining"><MasterFleetMiningAdminPanel /></WindowFrame>;
       case "fleet-miner":
-        return <FleetMinerPanel />;
+        return <WindowFrame view="fleet-miner"><FleetMinerPanel /></WindowFrame>;
       case "professional-ai":
-        return <ProfessionalAIHubPanel />;
+        return <WindowFrame view="professional-ai"><ProfessionalAIHubPanel /></WindowFrame>;
       case "professional-social":
-        return <FinancialSocialPanel />;
+        return <WindowFrame view="professional-social"><FinancialSocialPanel /></WindowFrame>;
       case "user-profile":
-        return <UserProfilePanel />;
+        return <WindowFrame view="user-profile"><UserProfilePanel /></WindowFrame>;
       case "profession-hub":
-        return <ProfessionHubPanel />;
+        return <WindowFrame view="profession-hub"><ProfessionHubPanel /></WindowFrame>;
       case "wish-framework":
-        return <WISHFrameworkPanel />;
+        return <WindowFrame view="wish-framework"><WISHFrameworkPanel /></WindowFrame>;
       case "dashboard":
         return <DashboardPanel />;
       case "portfolio":
-        return <PortfolioManager />;
+        return <WindowFrame view="portfolio"><PortfolioManager /></WindowFrame>;
       case "charts":
-        return <ChartsPanel />;
+        return <WindowFrame view="charts"><ChartsPanel /></WindowFrame>;
       case "backtest":
-        return <BacktestPanel />;
+        return <WindowFrame view="backtest"><BacktestPanel /></WindowFrame>;
       case "oms-ems":
-        return <OMSEMSPanel />;
+        return <WindowFrame view="oms-ems"><OMSEMSPanel /></WindowFrame>;
       case "quant-copilot":
-        return <AIQuantCopilot />;
+        return <WindowFrame view="quant-copilot"><AIQuantCopilot /></WindowFrame>;
       case "broadcast-studio":
-        return <BroadcastStudioPanel />;
+        return <WindowFrame view="broadcast-studio"><BroadcastStudioPanel /></WindowFrame>;
       case "verification-portal":
-        return <VerificationPanel />;
+        return <WindowFrame view="verification-portal"><VerificationPanel /></WindowFrame>;
       case "wallet-gateway":
-        return <DigitalWalletGateway />;
+        return <WindowFrame view="wallet-gateway"><DigitalWalletGateway /></WindowFrame>;
       case "nur-coin":
-        return <NurCoinEcosystemPanel />;
+        return <WindowFrame view="nur-coin"><NurCoinEcosystemPanel /></WindowFrame>;
       case "global-markets":
-        return <GlobalMarketsPanel />;
+        return <WindowFrame view="global-markets"><GlobalMarketsPanel /></WindowFrame>;
       case "economic-data":
-        return <EconomicDataPanel />;
+        return <WindowFrame view="economic-data"><EconomicDataPanel /></WindowFrame>;
       case "data-ingest":
-        return <DataIngestPanel />;
+        return <WindowFrame view="data-ingest"><DataIngestPanel /></WindowFrame>;
       case "geopolitics":
         return (
-          <CockpitFrame showControls>
-            <GeopoliticsPanel />
-          </CockpitFrame>
+          <WindowFrame view="geopolitics">
+            <CockpitFrame showControls>
+              <GeopoliticsPanel />
+            </CockpitFrame>
+          </WindowFrame>
         );
       case "fundamentals":
-        return <FundamentalsPanel />;
+        return <WindowFrame view="fundamentals"><FundamentalsPanel /></WindowFrame>;
       case "screener":
-        return <ScreenerPanel />;
+        return <WindowFrame view="screener"><ScreenerPanel /></WindowFrame>;
       case "news-feed":
-        return <NewsFeedPanel />;
+        return <WindowFrame view="news-feed"><NewsFeedPanel /></WindowFrame>;
       case "encyclopedia":
-        return <EncyclopediaPanel />;
+        return <WindowFrame view="encyclopedia"><EncyclopediaPanel /></WindowFrame>;
       case "pricing":
-        return <PricingPanel />;
+        return <WindowFrame view="pricing"><PricingPanel /></WindowFrame>;
       case "media":
-        return <MediaPanel />;
+        return <WindowFrame view="media"><MediaPanel /></WindowFrame>;
       case "live-tv":
-        return <LiveBroadcast />;
+        return <WindowFrame view="live-tv"><LiveBroadcast /></WindowFrame>;
       case "options":
-        return <OptionsPanel />;
+        return <WindowFrame view="options"><OptionsPanel /></WindowFrame>;
       case "ai-tools":
-        return <AIToolsPanel />;
+        return <WindowFrame view="ai-tools"><AIToolsPanel /></WindowFrame>;
       case "macro-risk":
-        return <MacroRiskPanel />;
+        return <WindowFrame view="macro-risk"><MacroRiskPanel /></WindowFrame>;
       case "news":
-        return <MarketBriefsPanel />;
+        return <WindowFrame view="news"><MarketBriefsPanel /></WindowFrame>;
       case "alerts":
-        return <RiskAlertsPanel />;
+        return <WindowFrame view="alerts"><RiskAlertsPanel /></WindowFrame>;
       case "research":
-        return <ResearchPanel />;
+        return <WindowFrame view="research"><ResearchPanel /></WindowFrame>;
       case "terminal":
-        return <NURTerminalPanel />;
+        return <WindowFrame view="terminal"><NURTerminalPanel /></WindowFrame>;
+      case "ai-assistant":
+        return <WindowFrame view="ai-assistant"><NurAIAssistant /></WindowFrame>;
       case "editor":
         return (
           <div className="flex flex-col flex-1 min-h-0">
@@ -303,7 +310,11 @@ export default function Home() {
           </div>
         );
       default:
-        if (DynamicPanel) return <DynamicPanel />;
+        if (DynamicPanel) return (
+          <WindowFrame view={activeView as any}>
+            <DynamicPanel />
+          </WindowFrame>
+        );
         return (
           <div className="flex flex-col flex-1 min-h-0">
             <EditorTabs />

@@ -220,7 +220,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   activeTabId: null,
   consoleMessages: [],
   isRunning: false,
-  activeView: "geopolitics",
+  activeView: "dashboard",
   sidebarOpen: true,
   hudDrawerOpen: false,
   matrixRainOpacity: 0.075,
