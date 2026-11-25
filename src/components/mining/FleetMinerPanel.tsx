@@ -224,7 +224,7 @@ export default function FleetMinerPanel() {
             {/* Left: ship selector + mode */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {/* Mode selector */}
-              <Panel label="MADENCİLİK MODU">
+              <Panel label="MINING MODE">
                 {(["eco", "balanced", "overclock"] as ModeKey[]).map(m => {
                   const mc = MODES[m];
                   const active = mode === m;
@@ -244,7 +244,7 @@ export default function FleetMinerPanel() {
               {/* Start/Stop */}
               <button onClick={running ? stopMiner : startMiner}
                 style={{ padding: "12px 0", fontSize: 11, fontWeight: 900, letterSpacing: 3, background: running ? "rgba(255,68,68,0.15)" : "rgba(0,229,255,0.15)", color: running ? C.red : C.cyan, border: `1px solid ${running ? C.red : C.cyan}`, borderRadius: 3, cursor: "pointer" }}>
-                {running ? "⬛ DURDUR" : "▶ BAŞLAT"}
+                {running ? "⬛ STOP" : "▶ START"}
               </button>
 
               {workerError && (
@@ -280,26 +280,26 @@ export default function FleetMinerPanel() {
                       <circle key={i} cx={`${(i / Math.max(hist.length - 1, 1)) * 100}%`} cy={80 - (v / maxH) * 70} r={2} fill={running ? C.cyan : C.dim} />
                     ))}
                     {hist.length === 0 && (
-                      <text x="50%" y="50%" textAnchor="middle" fill={C.dim} fontSize={10}>Madenci başlatılmadı</text>
+                      <text x="50%" y="50%" textAnchor="middle" fill={C.dim} fontSize={10}>Miner not started</text>
                     )}
                   </svg>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9 }}>
-                  <span style={{ color: C.dim }}>Anlık</span>
+                  <span style={{ color: C.dim }}>Live</span>
                   <span style={{ color: C.cyan, fontVariantNumeric: "tabular-nums", fontWeight: 700 }}>{hashrateMhs.toFixed(4)} MH/s</span>
                 </div>
               </Panel>
 
               {/* Stats grid */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <StatCard label="TOPLAM HASH" val={totalHashes.toLocaleString()} col={C.text} />
-                <StatCard label="BLOK BULUNDU" val={String(blocksMined)} col={C.green} />
-                <StatCard label="KAZANILAN NUR" val={sessionEarned.toFixed(6)} col={C.gold} />
-                <StatCard label="KASAYA (%95)" val={vaultAmount.toFixed(6)} col="#a78bfa" />
+                <StatCard label="TOTAL HASH" val={totalHashes.toLocaleString()} col={C.text} />
+                <StatCard label="BLOCKS FOUND" val={String(blocksMined)} col={C.green} />
+                <StatCard label="EARNED NUR" val={sessionEarned.toFixed(6)} col={C.gold} />
+                <StatCard label="TO VAULT (95%)" val={vaultAmount.toFixed(6)} col="#a78bfa" />
               </div>
 
               {/* Selected ship info */}
-              <Panel label={`GEMİ — ${selectedShip.id}`}>
+              <Panel label={`SHIP — ${selectedShip.id}`}>
                 <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${selectedShip.accentColor ?? C.cyan}22`, border: `1px solid ${selectedShip.accentColor ?? C.cyan}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🛸</div>
                   <div>
@@ -318,7 +318,7 @@ export default function FleetMinerPanel() {
             {/* Right: ship selector + block log */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12, overflow: "hidden" }}>
               {/* Ship picker */}
-              <Panel label="GEMİ SEÇ">
+              <Panel label="SELECT SHIP">
                 <div style={{ maxHeight: 200, overflow: "auto" }}>
                   {allFleet.map(ship => {
                     const active = ship.id === selectedShip.id;
@@ -337,7 +337,7 @@ export default function FleetMinerPanel() {
               <Panel label="BLOK LOG">
                 <div style={{ maxHeight: 180, overflow: "auto" }}>
                   {blocks.length === 0
-                    ? <div style={{ fontSize: 8, color: C.dim, padding: "8px 0" }}>Henüz blok yok...</div>
+                    ? <div style={{ fontSize: 8, color: C.dim, padding: "8px 0" }}>No blocks yet...</div>
                     : blocks.map((b, i) => (
                       <div key={i} style={{ padding: "4px 0", borderBottom: `1px solid rgba(0,229,255,0.06)`, fontSize: 7 }}>
                         <div style={{ color: C.green }}>#{b.nonce} · +{b.reward.toFixed(6)} NUR</div>
@@ -355,13 +355,13 @@ export default function FleetMinerPanel() {
         {tab === "fleet" && (
           <div style={{ flex: 1, overflow: "auto", padding: "16px 20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <div style={{ fontSize: 8, letterSpacing: 3, color: C.dim }}>36 GEMİ CANLI TELEMETRI</div>
-              {fleetLoading && <div style={{ fontSize: 7, color: C.dim }}>yükleniyor...</div>}
+              <div style={{ fontSize: 8, letterSpacing: 3, color: C.dim }}>36 SHIPS LIVE TELEMETRY</div>
+              {fleetLoading && <div style={{ fontSize: 7, color: C.dim }}>loading...</div>}
             </div>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 8 }}>
               <thead>
                 <tr style={{ color: C.dim, fontSize: 7, letterSpacing: 2 }}>
-                  {["GEMİ ID", "HASHRATE (MH/s)", "AKTİF WORKER", "BLOK", "KAZANILAN NUR"].map(h => (
+                  {["SHIP ID", "HASHRATE (MH/s)", "ACTIVE WORKERS", "BLOCKS", "EARNED NUR"].map(h => (
                     <th key={h} style={{ padding: "6px 12px", textAlign: "left", borderBottom: `1px solid ${C.border}` }}>{h}</th>
                   ))}
                 </tr>
@@ -430,7 +430,7 @@ export default function FleetMinerPanel() {
                   { icon: "🛸", title: "36 Gemi", desc: "--list-ships ile tüm gemi listesini görüntüle" },
                   { icon: "🔐", title: "Canlı Heartbeat", desc: "Her 10 saniyede fleet API'ye hashrate raporu" },
                   { icon: "💰", title: "95% → Vault", desc: "Kazanımlar otomatik olarak #54751113 kasasına aktarılır" },
-                  { icon: "📊", title: "Anlık İstatistik", desc: "Terminal ekranında canlı MH/s, blok ve NUR sayacı" },
+                  { icon: "📊", title: "Live İstatistik", desc: "Terminal ekranında canlı MH/s, blok ve NUR sayacı" },
                   { icon: "⚙️", title: "3 Mod", desc: "Eco (🌱) · Balanced (⚡) · Overclock (🔥)" },
                 ].map(f => (
                   <div key={f.title} style={{ padding: "12px 14px", background: "rgba(0,229,255,0.03)", border: `1px solid ${C.border}`, borderRadius: 4 }}>

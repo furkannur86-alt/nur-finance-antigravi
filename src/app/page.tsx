@@ -68,6 +68,7 @@ import UmayMasterTerminalPanel from "@/components/umay/UmayMasterTerminalPanel";
 import FleetMinerPanel from "@/components/mining/FleetMinerPanel";
 import WindowFrame from "@/components/layout/WindowFrame";
 import NurAIAssistant from "@/components/ai/NurAIAssistant";
+import BackgroundGlobe from "@/components/ui/BackgroundGlobe";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
 
@@ -337,6 +338,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen relative overflow-hidden cockpit-app-root" style={{ background: "var(--ag-bg)" }}>
       {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
+      <BackgroundGlobe opacity={0.06} />
       <CommandPalette />
       <HUDNotificationSystem />
       <SovereignAuthModal />

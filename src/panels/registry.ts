@@ -421,7 +421,7 @@ export const PANELS = {
     load: () => import("@/components/analysis/PrivateEquityPanel"),
   },
   "geopolitical-risk": {
-    label: "Geopolitical Risk", statusLabel: "GEOPOLITICAL", group: "ANALYSIS",
+    label: "Geopolitical Risk", statusLabel: "GEOPOLITICAL", group: "RISK",
     icon: "🌍", color: "#ef4444", desc: "GPR index, sanctions, elections, tail risk scenario analysis",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/analysis/GeopoliticalRiskPanel"),
