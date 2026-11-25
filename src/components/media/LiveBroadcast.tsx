@@ -135,8 +135,8 @@ export default function LiveBroadcast() {
         setVideoProgress(0);
         setIsRecordingVideo(false);
         addNotification({
-          title: "🎬 1080p MP4 Video Üretildi",
-          message: `${selectedLang.name} bülteni (${activeSegment.toUpperCase()}) video çıktısı başarıyla hazırlandı.`,
+          title: "🎬 1080p MP4 Video Generated",
+          message: `${selectedLang.name} bulletin (${activeSegment.toUpperCase()}) video output successfully prepared.`,
           severity: "SUCCESS",
           category: "MEDIA",
         });
@@ -247,11 +247,11 @@ export default function LiveBroadcast() {
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 font-mono">İkram Getir:</span>
+                  <span className="text-[11px] text-slate-400 font-mono">Serve Refreshments:</span>
                   {[
-                    "Fıstıklı Baklava",
-                    "Çıtır Lahmacun",
-                    "Demli Çay & Simit",
+                    "Pistachio Baklava",
+                    "Crispy Lahmacun",
+                    "Brewed Tea & Simit",
                   ].map((food) => (
                     <button
                       key={food}
@@ -404,7 +404,7 @@ export default function LiveBroadcast() {
           <button
             onClick={handleBossNurCrash}
             className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600/30 via-amber-500/40 to-amber-600/30 hover:from-amber-600/50 hover:to-amber-600/50 text-[#ffd54f] border border-amber-400/60 text-xs font-mono font-extrabold transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,166,35,0.3)] animate-pulse"
-            title="Kanal Sahibi Boss Nur'u Canlı Yayına Çağır (Baskın)"
+            title="Invite Channel Owner Boss Nur to Live Broadcast (Raid)"
           >
             <span>👑 BOSS NUR (BASKIN)</span>
           </button>
@@ -413,7 +413,7 @@ export default function LiveBroadcast() {
           <button
             onClick={handleGenerateSnapshot}
             className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow"
-            title="4K Stüdyo Karesini PNG Olarak İndir"
+            title="Download 4K Studio Frame as PNG"
           >
             <span>📸 KARE İNDİR</span>
           </button>
@@ -437,12 +437,12 @@ export default function LiveBroadcast() {
             className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 text-xs font-bold border border-white/10 transition-all"
             title="Yüzen Pencere Olarak Aç"
           >
-            ⤢ YÜZEN
+            ⤢ FLOAT
           </button>
           <button
             onClick={() => popoutToNativeWindow("live-tv")}
             className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 text-xs font-bold border border-white/10 transition-all"
-            title="Ayrı Ekrana Çıkar"
+            title="Open in Separate Window"
           >
             ↗ DUAL
           </button>
@@ -485,7 +485,7 @@ export default function LiveBroadcast() {
                 <button
                   onClick={() => setIsHudMinimized(true)}
                   className="px-1.5 py-0.5 rounded bg-black/30 text-black hover:bg-black/50 text-[10px] font-bold"
-                  title="Küçült"
+                  title="Minimize"
                 >
                   _
                 </button>
@@ -598,7 +598,7 @@ export default function LiveBroadcast() {
         {/* Breaking News Red Ticker */}
         <div className="flex items-center h-9 bg-gradient-to-r from-red-600 via-red-700 to-red-600 px-4 text-xs font-bold text-white tracking-wider shadow-lg">
           <span className="px-2.5 py-0.5 rounded bg-white text-red-700 font-extrabold text-[10px] mr-3 shrink-0 uppercase tracking-widest shadow">
-            FLAŞ GELİŞME
+            BREAKING NEWS
           </span>
           <span className="truncate font-sans font-semibold text-slate-100">
             {selectedLang.headlines[headlineIdx] || selectedLang.headlines[0]}

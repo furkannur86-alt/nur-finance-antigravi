@@ -172,7 +172,7 @@ export default function CivilizationArbitrageEngine({
           {onMinimize && (
             <button
               onClick={onMinimize}
-              title="Küçült"
+              title="Minimize"
               className="w-7 h-7 flex items-center justify-center bg-white/5 hover:bg-white/20 border border-white/10 rounded text-slate-300 font-bold transition"
             >
               —
@@ -249,7 +249,7 @@ export default function CivilizationArbitrageEngine({
               <div className="border-b border-slate-800 pb-2">
                 <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                   <span>⚡</span>
-                  <span>HFT OMS / EMS EMİR GİRİŞ BİLETİ</span>
+                  <span>HFT OMS / EMS ORDER ENTRY TICKET</span>
                 </span>
               </div>
 
@@ -323,7 +323,7 @@ export default function CivilizationArbitrageEngine({
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <span className="text-xs font-mono font-bold text-slate-200 flex items-center gap-1.5">
                 <span>📋</span>
-                <span>EMS GERÇEKLEŞEN İŞLEMLER</span>
+                <span>EMS EXECUTED TRADES</span>
               </span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
             </div>

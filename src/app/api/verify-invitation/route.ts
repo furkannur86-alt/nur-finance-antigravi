@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const code = typeof body?.code === "string" ? body.code.trim().toUpperCase() : "";
 
-  if (!code) return NextResponse.json({ valid: false, detail: "Davet kodu boş olamaz." }, { status: 400 });
+  if (!code) return NextResponse.json({ valid: false, detail: "Invitation code cannot be empty." }, { status: 400 });
 
   const validCodes = getValidCodes();
   const valid = validCodes.includes(code) || code === "FURKAN" || code === "FURKAN-VIP" || code.includes("FURKAN");
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     valid,
     detail: valid
-      ? "Furkan Özel Liderlik VIP Davet Kodu Doğrulandı."
-      : "Davet kodu geçersiz. NUR Finance B yalnızca liderlik tarafından el ile seçilmiş davetlilere açıktır.",
+      ? "Leadership VIP Invitation Code Verified."
+      : "Invalid invitation code. NUR Finance B is available only to hand-selected invitees approved by NUR Finance leadership.",
   });
 }

@@ -300,15 +300,15 @@ export default function CivilizationTerminalPanel({
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setHudVisible(!hudVisible)}
-            title="HUD Panellerini Gizle/Göster [H]"
+            title="Toggle HUD Panels [H]"
             className="text-[11px] font-mono bg-slate-800/80 hover:bg-slate-700 border border-slate-600 text-slate-200 px-2 py-1 rounded transition"
           >
-            HUD [{hudVisible ? "Açık" : "Kapalı"}]
+            HUD [{hudVisible ? "ON" : "OFF"}]
           </button>
           {onMinimize && (
             <button
               onClick={onMinimize}
-              title="Paneli Küçült"
+              title="Minimize Panel"
               className="w-7 h-7 flex items-center justify-center bg-white/5 hover:bg-white/20 border border-white/10 rounded text-slate-300 font-bold transition"
             >
               —
@@ -370,7 +370,7 @@ export default function CivilizationTerminalPanel({
                 RELATIVISTIC HYPERSPACE WARP
               </h2>
               <p className="text-xs text-slate-300 font-mono">
-                Hedef: <strong className="text-amber-300">{activeShip.name}</strong> Köşkü
+                Target: <strong className="text-amber-300">{activeShip.name}</strong> Bridge
               </p>
               <div className="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-700">
                 <div
@@ -379,7 +379,7 @@ export default function CivilizationTerminalPanel({
                 ></div>
               </div>
               <span className="text-xs font-mono text-emerald-400 animate-pulse">
-                Hız: 0.999c // Warp Factor {activeShip.telemetry.warpDriveTier}
+                Speed: 0.999c // Warp Factor {activeShip.telemetry.warpDriveTier}
               </span>
             </div>
           </div>
@@ -391,7 +391,7 @@ export default function CivilizationTerminalPanel({
             <div className="h-9 bg-[#040914] border-b border-emerald-500/40 flex items-center justify-between px-3 z-10 font-mono text-xs">
               <div className="flex items-center gap-2 text-emerald-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>BAĞLI KÖPRÜ: <strong>{activeShip.name}</strong></span>
+                <span>CONNECTED BRIDGE: <strong>{activeShip.name}</strong></span>
                 <span className="text-slate-500">|</span>
                 <span className="text-slate-400">{activeShip.targetRegion}</span>
               </div>
@@ -400,7 +400,7 @@ export default function CivilizationTerminalPanel({
                   onClick={() => setInCockpitMode(false)}
                   className="px-2.5 py-0.5 bg-amber-950/60 hover:bg-amber-900 border border-amber-500 text-amber-300 rounded transition"
                 >
-                  ← Medeniyet Terminaline Dön
+                  ← Return to Civilization Terminal
                 </button>
                 <a
                   href={activeShip.terminalUrl}
@@ -408,7 +408,7 @@ export default function CivilizationTerminalPanel({
                   rel="noopener noreferrer"
                   className="px-2.5 py-0.5 bg-cyan-950/60 hover:bg-cyan-900 border border-cyan-500 text-cyan-300 rounded transition"
                 >
-                  ↗ Bağımsız Terminali Aç
+                  ↗ Open Independent Terminal
                 </a>
               </div>
             </div>
@@ -469,21 +469,21 @@ export default function CivilizationTerminalPanel({
                 {/* Telemetry Grid */}
                 <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
                   <div className="bg-black/60 p-2 rounded border border-slate-800">
-                    <span className="text-slate-500 block text-[9px]">REAKTÖR ÇEKİRDEĞİ</span>
+                    <span className="text-slate-500 block text-[9px]">REACTOR CORE</span>
                     <span className="text-cyan-400 font-bold">{activeShip.telemetry.reactorCore}</span>
                   </div>
                   <div className="bg-black/60 p-2 rounded border border-slate-800">
-                    <span className="text-slate-500 block text-[9px]">KALKAN MATRİSİ</span>
+                    <span className="text-slate-500 block text-[9px]">SHIELD MATRIX</span>
                     <span className="text-emerald-400 font-bold">
                       %{activeShip.telemetry.shieldStatus}
                     </span>
                   </div>
                   <div className="bg-black/60 p-2 rounded border border-slate-800">
-                    <span className="text-slate-500 block text-[9px]">YÖRÜNGE İRTİFASI</span>
+                    <span className="text-slate-500 block text-[9px]">ORBITAL ALTITUDE</span>
                     <span className="text-amber-300">{activeShip.orbitalCoordinates.altitudeKm} km</span>
                   </div>
                   <div className="bg-black/60 p-2 rounded border border-slate-800">
-                    <span className="text-slate-500 block text-[9px]">HİPERUZAY SÜRÜŞÜ</span>
+                    <span className="text-slate-500 block text-[9px]">HYPERSPACE DRIVE</span>
                     <span className="text-purple-300">{activeShip.telemetry.warpDriveTier}</span>
                   </div>
                 </div>
@@ -571,7 +571,7 @@ export default function CivilizationTerminalPanel({
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="bg-emerald-950/20 border border-emerald-900/40 p-2.5 rounded">
                     <span className="text-emerald-400 text-[10px] block font-bold">
-                      KURUMSAL ALIŞ DERİNLİĞİ (BID)
+                      INSTITUTIONAL BID DEPTH
                     </span>
                     <div className="mt-1 space-y-0.5 text-[11px] text-slate-300">
                       <div className="flex justify-between">

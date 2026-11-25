@@ -59,11 +59,11 @@ const SEGMENTS: BroadcastSegment[] = [
     voiceName:  "tr-TR-Standard-A",
     bgImage:    "public/images/studio/anchor-female.jpg",
     script:
-      "İyi günler sayın seyirciler. Nur Finans Küresel Piyasa Masası'ndan canlı yayınımız başlıyor. " +
-      "BIST 100 ve küresel borsalarda teknoloji hisselerinin öncülüğünde pozitif seyir izleniyor. " +
-      "Kantitatif modellerimiz piyasa nötr arbitraj fırsatlarını taramaya devam ediyor. " +
-      "NUR Finans terminali, Bloomberg ve Reuters'a rakip olarak küresel finans dünyasına seslenmeye devam ediyor.",
-    ticker: "NUR FİNANS | BIST 100 | USD/TRY | BTC/USD | ALTIN | PETROL",
+      "Good day dear viewers. Our live broadcast from the NUR Finance Global Markets Desk is starting. " +
+      "BIST 100 and global exchanges are showing positive momentum led by technology stocks. " +
+      "Our quantitative models continue scanning market-neutral arbitrage opportunities. " +
+      "The NUR Finance terminal continues to serve the global finance world as a competitor to Bloomberg and Reuters.",
+    ticker: "NUR FINANCE | BIST 100 | USD/TRY | BTC/USD | GOLD | CRUDE OIL",
   },
   {
     id:         "EN-DESK",

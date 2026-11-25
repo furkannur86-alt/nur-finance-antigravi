@@ -30,21 +30,21 @@ const CHARACTERS: CharacterProfile[] = [
   {
     id: "boss_nur",
     name: "Boss Nur (The Boss)",
-    role: "Kanal İmparatorluğu Sahibi & Kurucu Patriark",
-    location: "Global / Bütün Stüdyolar",
+    role: "Channel Empire Owner & Founding Patriarch",
+    location: "Global / All Studios",
     age: 61,
     heightCm: 163,
-    bustSize: "Oldukça Göbekli · Tonton Hedonist",
-    eyeColor: "Işıltılı Zümrüt Yeşili",
+    bustSize: "Portly Build · Jolly Hedonist",
+    eyeColor: "Sparkling Emerald Green",
     eyeHex: "#00C853",
-    physique: "1.63 m · Sevimli tonton göbek, babacan tavırlar, güler yüz, gür kahkaha",
-    wardrobe: "Lüks İtalyan kaşmir hırka, yakası açık beyaz ipek gömlek veya kadife ceket",
-    decolletePolicy: "Patriark Rahatlığı (Kravatsız & Açık Yaka)",
-    watchModel: "Ağır Som Sarı Altın Patek Philippe Grandmaster Chime",
-    voiceName: "Microsoft AhmetNeural (Babacan & Neşeli)",
-    voiceSample: "Hahahahaha! Oğlum siz ne anlatıyorsunuz öyle kuant muant, ben anlamam o işlerden! Benim kafam başka yere gidiyor! Şu fıstıklı baklavadan getirin hele!",
+    physique: "1.63 m · Lovable portly belly, fatherly demeanor, smiling face, hearty laugh",
+    wardrobe: "Luxury Italian cashmere cardigan, open-collar white silk shirt or velvet jacket",
+    decolletePolicy: "Patriarch Comfort (No Tie & Open Collar)",
+    watchModel: "Solid Yellow Gold Patek Philippe Grandmaster Chime",
+    voiceName: "Microsoft AhmetNeural (Fatherly & Jovial)",
+    voiceSample: "Hahahahaha! Son, what are you talking about with all this quant stuff, I don't understand any of it! My mind wanders elsewhere! Bring me some pistachio baklava!",
     imagePath: "/images/characters/boss_nur.jpg",
-    bio: "Kanal imparatorluğunun asıl sahibi. Sermayeyi o sağlamış, oğulları kurmuştur. Yayına çat kapı girip yemek yer, kahkahalar atar. Herkes ona sınırsız saygı gösterir. En büyük zayıflığı: Adı gizli olan karısından inanılmaz korkmasıdır!"
+    bio: "The true owner of the channel empire. He provided the capital, his sons built it. He crashes live broadcasts, eats food, and roars with laughter. Everyone shows him boundless respect. His greatest weakness: he is incredibly afraid of his wife, whose name is kept secret!"
   },
   {
     id: "elena_vance",
@@ -53,36 +53,36 @@ const CHARACTERS: CharacterProfile[] = [
     location: "Genève Private Suite / Zurich",
     age: 30,
     heightCm: 185,
-    bustSize: "90D (Feminen Kum Saati)",
-    eyeColor: "Işıltılı Zümrüt Yeşili",
+    bustSize: "90D (Feminine Hourglass)",
+    eyeColor: "Sparkling Emerald Green",
     eyeHex: "#00C853",
-    physique: "185 cm · Belirgin feminen hatlar ve kıvrımlar · Çekici ekran duruşu",
-    wardrobe: "Milano tasarımı zümrüt yeşili lüks kruvaze blazer ve kalem etek",
-    decolletePolicy: "Şık ve televizyon yayın sınırlarında estetik dekolte",
+    physique: "185 cm · Prominent feminine curves · Attractive on-screen presence",
+    wardrobe: "Milan-designed emerald green luxury double-breasted blazer and pencil skirt",
+    decolletePolicy: "Elegant & within broadcast standards aesthetic neckline",
     watchModel: "Swiss Haute Horlogerie Rose Gold Royal Chronograph",
     voiceName: "Google Journey-F (Genève Institutional)",
     voiceSample: "Good morning. From the Geneva sovereign wealth desk, global central bank reserves and liquidity channels remain robust with continuous surveillance.",
     imagePath: "/images/characters/elena_vance.jpg",
-    bio: "Cenevre Gölü ve Alpler manzaralı özel bankacılık süitinden küresel makroekonomik kararları, faiz politikalarını ve merkez bankası rezervlerini sunar. Şık yayın dekoltesi ve lüks İsviçre saatiyle zenginliği yansıtır."
+    bio: "Presents global macroeconomic decisions, interest rate policies and central bank reserves from a private banking suite overlooking Lake Geneva and the Alps. Reflects wealth with elegant broadcast attire and luxury Swiss timepiece."
   },
   {
     id: "umay_nur",
     name: "Umay Nur",
-    role: "Başekonomist & Canlı Yayın Masası Lideri",
+    role: "Chief Economist & Live Broadcast Desk Lead",
     location: "Istanbul Bosphorus Desk / London",
     age: 29,
     heightCm: 185,
-    bustSize: "90 (Zarif ve Asil)",
-    eyeColor: "Işıltılı Zümrüt Yeşili",
+    bustSize: "90 (Elegant & Noble)",
+    eyeColor: "Sparkling Emerald Green",
     eyeHex: "#00C853",
-    physique: "185 cm · Asil, vakur, son derece ciddi ve aristokrat finans lideri",
-    wardrobe: "Yüksek yaka (High-Neck) krem-beyaz lüks kruvaze takım elbise",
-    decolletePolicy: "SIFIR DEKOLTE · SIFIR MİNİ ETEK (Tamamen Kapalı ve Ciddi)",
-    watchModel: "Klasik İsviçre Sarı Altın Nautilus Perpetual Calendar",
-    voiceName: "Google Wavenet-B (TR-İstanbul)",
-    voiceSample: "İyi günler. Nur Finans Küresel Piyasa Masası'ndan canlı yayınımız başlıyor. BIST-100 ve küresel sermaye hareketlerini aktarıyoruz.",
+    physique: "185 cm · Noble, dignified, extremely serious aristocratic finance leader",
+    wardrobe: "High-Neck cream-white luxury double-breasted suit",
+    decolletePolicy: "ZERO NECKLINE · ZERO MINI SKIRT (Fully Covered & Formal)",
+    watchModel: "Classic Swiss Yellow Gold Nautilus Perpetual Calendar",
+    voiceName: "Google Wavenet-B (TR-Istanbul)",
+    voiceSample: "Good day. Our live broadcast from the NUR Finance Global Markets Desk is now starting. We are reporting on global capital movements and market indices.",
     imagePath: "/images/characters/umay_nur.jpg",
-    bio: "Kanalın en saygın ve otoriter lideri. Yüksek yaka asil krem-beyaz takım elbisesiyle tam ciddiyet ve kurumsal ağırlık sergiler. Kesinlikle dekolte veya mini etek giymez; zarafeti asaletindedir."
+    bio: "The channel's most respected and authoritative leader. Displays full gravitas and institutional weight in her high-neck noble cream-white suit. Never wears revealing necklines or mini skirts; her elegance lies in her nobility."
   },
   {
     id: "marcus_sterling",
@@ -91,17 +91,17 @@ const CHARACTERS: CharacterProfile[] = [
     location: "Wall Street Hudson Yards / London",
     age: 28,
     heightCm: 193,
-    bustSize: "Geniş Omuz / Atletik Göğüs",
-    eyeColor: "Işıltılı Zümrüt Yeşili",
+    bustSize: "Broad Shoulders / Athletic Chest",
+    eyeColor: "Sparkling Emerald Green",
     eyeHex: "#00C853",
-    physique: "193 cm · Kaslı atletik gövde, geniş omuzlar, keskin çene hattı (jawline)",
-    wardrobe: "Savile Row özel dikim 3 parça lacivert takım elbise ve ipek kravat",
-    decolletePolicy: "Maskülen Güç & Atletik Duruş",
-    watchModel: "Skeleton Titanyum Tourbillon Chronograph",
-    voiceName: "Google Journey-D (Derin Otoriter Bariton)",
+    physique: "193 cm · Muscular athletic build, broad shoulders, sharp jawline",
+    wardrobe: "Savile Row bespoke 3-piece navy suit and silk tie",
+    decolletePolicy: "Masculine Power & Athletic Stance",
+    watchModel: "Skeleton Titanium Tourbillon Chronograph",
+    voiceName: "Google Journey-D (Deep Authoritative Baritone)",
     voiceSample: "The quantitative arbitrage engine has confirmed high-frequency dark pool volume with institutional Kelly allocations locked.",
     imagePath: "/images/characters/marcus_sterling.jpg",
-    bio: "Wall Street ve Londra finans merkezlerinde yüksek frekanslı kantitatif algoritmaları, Black-Scholes opsiyon yüzeylerini ve DePIN donanım hashrate telemetrisini yönetir."
+    bio: "Manages high-frequency quantitative algorithms, Black-Scholes option surfaces and DePIN hardware hashrate telemetry across Wall Street and London financial centers."
   }
 ];
 
@@ -149,7 +149,7 @@ export default function CharacterStudioGallery() {
             rel="noopener noreferrer"
             className="px-4 py-2 bg-[#00d4aa]/10 border border-[#00d4aa] text-[#00d4aa] rounded-lg text-xs font-mono hover:bg-[#00d4aa]/20 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(0,212,170,0.15)]"
           >
-            <span>🔗</span> Tam Ekran Vitrin (HTML)
+            <span>🔗</span> Full Screen Showcase (HTML)
           </a>
         </div>
       </div>
@@ -157,13 +157,13 @@ export default function CharacterStudioGallery() {
       {/* Rules Notice */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 bg-[#00C853]/10 border border-[#00C853]/30 rounded-xl text-xs font-mono text-[#b9f6ca] mb-6">
         <div className="flex items-center gap-2">
-          <span>👁️</span> <strong>Gözler:</strong> %100 Zümrüt Yeşili (#00C853)
+          <span>👁️</span> <strong>Eyes:</strong> 100% Emerald Green (#00C853)
         </div>
         <div className="flex items-center gap-2">
-          <span>⌚</span> <strong>Saatler:</strong> İsviçre Haute Horlogerie
+          <span>⌚</span> <strong>Watches:</strong> Swiss Haute Horlogerie
         </div>
         <div className="flex items-center gap-2">
-          <span>👗</span> <strong>Umay Nur:</strong> SIFIR Dekolte · En Ciddi Duruş
+          <span>👗</span> <strong>Umay Nur:</strong> ZERO Neckline · Most Formal Stance
         </div>
       </div>
 
@@ -213,17 +213,17 @@ export default function CharacterStudioGallery() {
 
                   <div className="space-y-2 bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] mb-4">
                     <div className="flex justify-between">
-                      <span className="text-[#8899a6]">Fizik & Göğüs:</span>
+                      <span className="text-[#8899a6]">Physique & Build:</span>
                       <span className="text-white font-medium">{char.bustSize}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#8899a6]">Dekolte Durumu:</span>
+                      <span className="text-[#8899a6]">Dress Code Policy:</span>
                       <span className={`font-semibold ${char.id === "umay_nur" ? "text-amber-400" : "text-[#69f0ae]"}`}>
                         {char.decolletePolicy}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#8899a6]">Lüks Kol Saati:</span>
+                      <span className="text-[#8899a6]">Luxury Timepiece:</span>
                       <span className="text-[#ffd54f] font-mono line-clamp-1">{char.watchModel}</span>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ export default function CharacterStudioGallery() {
                         : "bg-[#00d4aa]/15 border border-[#00d4aa]/60 text-[#00d4aa] hover:bg-[#00d4aa]/25"
                     }`}
                   >
-                    <span>{isPlayingVoice && selectedChar.id === char.id ? "⏹ Durdur" : "🔊 HD Ses Örneğini Dinle"}</span>
+                    <span>{isPlayingVoice && selectedChar.id === char.id ? "⏹ Stop" : "🔊 Listen to HD Voice Sample"}</span>
                   </button>
 
                   <div className="text-[10px] font-mono text-[#607d8b] bg-black/50 p-2 rounded border border-white/5 truncate">
@@ -261,7 +261,7 @@ export default function CharacterStudioGallery() {
         <div className="flex items-center gap-3 mb-5">
           <span className="text-lg">🏛️</span>
           <h3 className="text-lg font-bold font-serif text-[#f5a623] tracking-wide">
-            YAYIN STÜDYOLARI & EGEMEN MERKEZLER
+            BROADCAST STUDIOS & SOVEREIGN HEADQUARTERS
           </h3>
         </div>
 
@@ -280,9 +280,9 @@ export default function CharacterStudioGallery() {
               </div>
             </div>
             <div className="p-4">
-              <h4 className="text-sm font-bold text-white mb-1">NUR TV 2126 4K Ultra-Futuristik Stüdyo</h4>
+              <h4 className="text-sm font-bold text-white mb-1">NUR TV 2126 4K Ultra-Futuristic Studio</h4>
               <p className="text-xs text-[#8899a6] mb-3">
-                Kavisli devasa LED duvarlar, 3D Geopolitik Hologram Dünya, canlı mum grafik akışı ve çift başlı altın kartal arması.
+                Curved massive LED walls, 3D Geopolitical Hologram Globe, live candlestick chart feed and double-headed golden eagle crest.
               </p>
               <div className="text-[10px] font-mono text-[#00d4aa]/70 bg-black/40 p-2 rounded">
                 public/images/studio/broadcast_studio.jpg
@@ -306,7 +306,7 @@ export default function CharacterStudioGallery() {
             <div className="p-4">
               <h4 className="text-sm font-bold text-white mb-1">Sovereign Executive Penthouse Boardroom</h4>
               <p className="text-xs text-[#8899a6] mb-3">
-                Cenevre ve Londra panoramik manzaralı siyah mermer toplantı masası, şeffaf likidite panelleri ve özel bankacılık süiti.
+                Black marble conference table with panoramic Geneva and London views, transparent liquidity panels and private banking suite.
               </p>
               <div className="text-[10px] font-mono text-[#00d4aa]/70 bg-black/40 p-2 rounded">
                 public/images/studio/executive-office.jpg

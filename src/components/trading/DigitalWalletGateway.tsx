@@ -356,24 +356,24 @@ export default function DigitalWalletGateway() {
 
             {/* AML/KYC Compliance Notice */}
             <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-950/20 text-[11px] text-amber-200 leading-relaxed">
-              &#9888; Bu, yüksek tutarlı (&euro;100K/yıl) kurumsal bir ödeme kanalıdır ve AML/KYC uyum politikamıza tabidir. Ad-soyad ve e-posta
-              bilgileriniz kayıt altına alınır, ödemeler zincir üzerinde bağımsız olarak doğrulanır ve gerektiğinde uyum ekibimiz tarafından
-              manuel incelemeye alınabilir.
+              &#9888; This is a high-value (&euro;100K/year) institutional payment channel subject to our AML/KYC compliance policy. Your name and email
+              are recorded, payments are independently verified on-chain, and may be subject to manual review by our compliance team
+              when necessary.
             </div>
 
             {/* Eligibility Gate */}
             {!isEligible && (
               <div className="p-4 rounded-lg border border-red-500/30 bg-red-950/20 flex items-center justify-between gap-4">
                 <p className="text-xs text-red-300 leading-relaxed">
-                  Ödeme yapmadan önce seçtiğiniz katman için ön koşulları (kullanım geçmişi{selectedPlan === "B" ? " ve davet kodu" : ""})
-                  Doğrulama Portalı üzerinden tamamlamanız gerekir.
+                  Before making a payment, you must complete the prerequisites for your selected tier (usage history{selectedPlan === "B" ? " and invitation code" : ""})
+                  through the Verification Portal.
                 </p>
                 <button
                   type="button"
                   onClick={() => setActiveView("verification-portal")}
                   className="px-3 py-1.5 rounded text-xs font-bold bg-red-400 hover:bg-red-300 text-black shrink-0 transition-colors"
                 >
-                  Doğrulama Portalı &rarr;
+                  Verification Portal &rarr;
                 </button>
               </div>
             )}
@@ -410,7 +410,7 @@ export default function DigitalWalletGateway() {
                   <span className="text-[var(--ag-accent2)] font-mono">100,000 USDT / Yıl</span>
                 </div>
                 <p className="text-[11px] text-[var(--ag-muted)]">
-                  Bloomberg Terminal muadili amiral gemisi. Doğrulanmış VIP davetiye ile anında açılır.
+                  Bloomberg Terminal equivalent flagship product. Instant activation with verified VIP invitation.
                 </p>
               </div>
             </div>
@@ -418,7 +418,7 @@ export default function DigitalWalletGateway() {
             {/* Network Selector */}
             <div>
               <label className="text-[11px] font-semibold text-[var(--ag-muted)] uppercase block mb-1.5">
-                Ödeme Ağı (Blokzincir Seçimi)
+                Payment Network (Blockchain Selection)
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {SUPPORTED_NETWORKS.map((net) => (
@@ -505,19 +505,19 @@ export default function DigitalWalletGateway() {
 
               <div>
                 <label className="text-xs font-bold text-white block mb-1">
-                  İşlem Kodu (TXID / Transaction Hash)
+                  Transaction ID (TXID / Transaction Hash)
                 </label>
                 <input
                   type="text"
                   value={txHash}
                   onChange={(e) => setTxHash(e.target.value)}
-                  placeholder="Transfer sonrası aldığınız 0x... işlem kodunu buraya yapıştırın"
+                  placeholder="Paste your 0x... transaction hash received after transfer"
                   className="w-full p-2.5 rounded text-xs bg-black/60 border text-white font-mono focus:outline-none focus:border-[var(--ag-accent)]"
                   style={{ borderColor: "var(--ag-border)" }}
                 />
                 <span className="text-[10px] text-[var(--ag-muted)] mt-1 block">
-                  İşlem kodunuz girildikten sonra blokzincir tarayıcısı üzerinden bağımsız olarak doğrulanır. Otomatik doğrulama başarısız
-                  olursa işleminiz uyum ekibimiz tarafından manuel incelemeye alınır — anında onay garanti edilmez.
+                  Your transaction hash will be independently verified on the blockchain explorer. If automatic verification fails,
+                  your transaction will be manually reviewed by our compliance team — instant approval is not guaranteed.
                 </span>
               </div>
 
@@ -526,7 +526,7 @@ export default function DigitalWalletGateway() {
                 disabled={isVerifyingTx || !txHash.trim() || !fullName.trim() || !email.trim() || !isEligible}
                 className="w-full py-3 rounded text-xs font-bold uppercase tracking-wider bg-[var(--ag-accent)] hover:bg-[var(--ag-accent)]/80 text-black transition-all disabled:opacity-40 shadow-lg shadow-[rgba(0,212,170,0.15)]"
               >
-                {isVerifyingTx ? "BLOKZİNCİR DOĞRULANIYOR..." : "ÖDEMEYİ DOĞRULA VE TERMİNALİ AÇ"}
+                {isVerifyingTx ? "VERIFYING ON BLOCKCHAIN..." : "VERIFY PAYMENT & ACTIVATE TERMINAL"}
               </button>
             </form>
           </div>
@@ -537,11 +537,11 @@ export default function DigitalWalletGateway() {
           <div className="max-w-3xl mx-auto space-y-4">
             <div className="p-4 rounded-lg border bg-black/30 mb-4" style={{ borderColor: "var(--ag-border)" }}>
               <h3 className="text-sm font-bold text-[var(--ag-accent)] mb-1">
-                Adım Adım Dijital Cüzdan Kurulum ve Fonlama Kılavuzu
+                Step-by-Step Digital Wallet Setup & Funding Guide
               </h3>
               <p className="text-xs text-[var(--ag-muted)] leading-relaxed">
-                NUR Terminal, küresel kurumsal yatırımcılar için Web3 cüzdanından doğrudan ödemeyi destekler (KYC/AML kimlik bilgisi ile birlikte).
-                Aşağıdaki 5 adımı takip ederek 5 dakika içinde cüzdanınızı hazırlayabilirsiniz:
+                NUR Terminal supports direct Web3 wallet payments for global institutional investors (with KYC/AML identity verification).
+                Follow the 5 steps below to set up your wallet in under 5 minutes:
               </p>
             </div>
 
@@ -558,7 +558,7 @@ export default function DigitalWalletGateway() {
                     {s.desc}
                   </p>
                   <div className="pl-7 text-[10px] text-[var(--ag-accent)] font-mono">
-                    &bull; Güvenlik İpucu: {s.tip}
+                    &bull; Security Tip: {s.tip}
                   </div>
                 </div>
               ))}
@@ -577,23 +577,23 @@ export default function DigitalWalletGateway() {
         {activeTab === "security" && (
           <div className="max-w-3xl mx-auto space-y-4">
             <div className="p-4 rounded-lg border bg-black/30" style={{ borderColor: "var(--ag-border)" }}>
-              <h3 className="text-sm font-bold text-white mb-2">KYC/AML Uyumlu Ödeme Mimarisi</h3>
+              <h3 className="text-sm font-bold text-white mb-2">KYC/AML Compliant Payment Architecture</h3>
               <p className="text-xs text-[var(--ag-muted)] leading-relaxed mb-3">
-                Bu kurumsal ödeme kanalı, yürürlükteki AML/KYC yükümlülüklerine tabidir. Ad-soyad ve e-posta bilgisi her ödemede zorunludur;
-                işlemler blokzincir üzerinde bağımsız olarak doğrulanır ve uyum ekibi tarafından denetlenebilir.
+                This institutional payment channel is subject to current AML/KYC obligations. Full name and email are required for every payment;
+                transactions are independently verified on-chain and may be audited by the compliance team.
               </p>
               <ul className="text-xs text-[var(--ag-muted)] space-y-2">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--ag-accent)]" />
-                  <span><strong>Ödeme Doğrulama:</strong> Her TXID, beklenen adrese ve tutara karşı zincir üzerinde bağımsız olarak kontrol edilir.</span>
+                  <span><strong>Payment Verification:</strong> Each TXID is independently verified on-chain against the expected address and amount.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--ag-accent)]" />
-                  <span><strong>Terminal Erişim Anahtarı:</strong> Cüzdan adresinize özel şifrelenmiş bir JWT oturum belirteci atanır.</span>
+                  <span><strong>Terminal Access Key:</strong> An encrypted JWT session token is assigned to your wallet address.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--ag-accent)]" />
-                  <span><strong>Manuel İnceleme:</strong> Otomatik doğrulama başarısız olursa işlem, kimliğiniz ve ödeme kaydınızla birlikte uyum ekibine düşer.</span>
+                  <span><strong>Manual Review:</strong> If automatic verification fails, the transaction along with your identity and payment record is escalated to the compliance team.</span>
                 </li>
               </ul>
             </div>

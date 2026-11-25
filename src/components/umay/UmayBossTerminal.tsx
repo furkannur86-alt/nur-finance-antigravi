@@ -186,7 +186,7 @@ export default function UmayBossTerminal() {
 
       const lower = userText.toLowerCase();
 
-      if (lower.includes("young") || lower.includes("scared") || lower.includes("can't") || lower.includes("afraid") || lower.includes("küçük") || lower.includes("kork")) {
+      if (lower.includes("young") || lower.includes("scared") || lower.includes("can't") || lower.includes("afraid") || lower.includes("small") || lower.includes("fear")) {
         responseText = "Ms. Umay, never think that way! Fatih Sultan Mehmet Han ascended the throne at just 12 years old and set his mind to conquering Istanbul at that age. Your tactical genius in chess, your harmony in piano, and your sharp intellect are more than sufficient to run this company. We are here for you at every step!";
         bonusProfit = 1000;
       } else if (chatLanguage === "DE" || lower.includes("hallo") || lower.includes("deutsch")) {

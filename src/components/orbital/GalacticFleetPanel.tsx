@@ -60,7 +60,7 @@ export default function GalacticFleetPanel({
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="text-[11px] font-mono bg-white/10 border border-white/20 text-white px-2 py-1 rounded hover:bg-white/20 transition"
           >
-            {isFullscreen ? "Küçült" : "Tam Ekran"}
+            {isFullscreen ? "Minimize" : "Fullscreen"}
           </button>
           {onMinimize && (
             <button

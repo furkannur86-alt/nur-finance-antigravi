@@ -128,14 +128,14 @@ export default function MediaPanel() {
             className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-mono font-semibold border border-white/10 transition-all"
             title="Yüzen Pencere Olarak Aç"
           >
-            ⤢ YÜZEN PENCERE
+            ⤢ FLOATING WINDOW
           </button>
           <button
             onClick={() => popoutToNativeWindow("media")}
             className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-mono font-semibold border border-white/10 transition-all"
-            title="Ayrı Ekrana Çıkar"
+            title="Open in Separate Window"
           >
-            ↗ ÇİFT EKRAN
+            ↗ DUAL SCREEN
           </button>
           <button
             onClick={handleToggleLive}
@@ -145,7 +145,7 @@ export default function MediaPanel() {
                 : "bg-gradient-to-r from-[#00d4aa] to-emerald-500 hover:from-[#00c29b] hover:to-emerald-400 text-black font-extrabold shadow-[0_0_15px_rgba(0,212,170,0.3)]"
             }`}
           >
-            <span>{isLiveOnAir ? "⏹ YAYINI DURDUR" : "🔴 CANLI YAYINI BAŞLAT"}</span>
+            <span>{isLiveOnAir ? "⏹ STOP BROADCAST" : "🔴 START LIVE BROADCAST"}</span>
           </button>
         </div>
       </div>
@@ -153,11 +153,11 @@ export default function MediaPanel() {
       {/* ── SUB-HEADER TAB SWITCHER ───────────────────────────────── */}
       <div className="flex items-center gap-2 px-5 py-2.5 bg-[#090e17] border-b border-white/5 shrink-0 overflow-x-auto">
         {[
-          { id: "characters", label: "🌟 Karakterler & Stüdyo Vitrini", badge: "3 Ana Karakter" },
-          { id: "live-studio", label: "🎙️ Canlı Yayın & Seslendirme Testi", badge: "HD Studio" },
-          { id: "channels", label: "🌍 15 Küresel TV Kanalı", badge: `${channels.length} Kanal` },
-          { id: "hosts-guests", label: "👥 Sunucular & Konuklar", badge: `${hosts.length + guests.length} Kişi` },
-          { id: "schedule", label: "📅 Yayın Akışı & Programlar", badge: `${shows.length} Program` },
+          { id: "characters", label: "🌟 Characters & Studio Showcase", badge: "3 Main Characters" },
+          { id: "live-studio", label: "🎙️ Live Broadcast & Voice Test", badge: "HD Studio" },
+          { id: "channels", label: "🌍 15 Global TV Channels", badge: `${channels.length} Channels` },
+          { id: "hosts-guests", label: "👥 Hosts & Guests", badge: `${hosts.length + guests.length} People` },
+          { id: "schedule", label: "📅 Broadcast Schedule & Programs", badge: `${shows.length} Programs` },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -397,7 +397,7 @@ export default function MediaPanel() {
             {/* Channel List (5 Cols) */}
             <div className="lg:col-span-5 bg-[#0d1420] border border-white/10 rounded-2xl p-4 shadow-xl max-h-[700px] overflow-y-auto space-y-2">
               <div className="text-xs font-mono font-bold text-[#00d4aa] uppercase tracking-wider mb-3">
-                15 Küresel TV Ağı Kanalı
+                15 Global TV Network Channels
               </div>
               {channels.map((chan) => {
                 const isSelected = selectedChannel.id === chan.id;
@@ -444,14 +444,14 @@ export default function MediaPanel() {
                     onClick={() => handleSpeak(`This is NUR Finance ${selectedChannel.nameLocal} live from ${selectedChannel.city}.`)}
                     className="px-3 py-1.5 bg-[#00d4aa]/15 border border-[#00d4aa] text-[#00d4aa] rounded-lg text-xs font-mono font-bold hover:bg-[#00d4aa]/25 transition-all"
                   >
-                    🔊 Kanal Tanıtımını Dinle
+                    🔊 Listen to Channel Intro
                   </button>
                 </div>
 
                 <p className="text-sm text-slate-300 leading-relaxed mb-5">{selectedChannel.description}</p>
 
                 <div className="text-xs font-mono font-bold text-[#f5a623] uppercase tracking-wider mb-3">
-                  Kanalın Programları & Yayın Akışı
+                  Channel Programs & Broadcast Schedule
                 </div>
                 <div className="space-y-2 max-h-[360px] overflow-y-auto pr-2">
                   {shows

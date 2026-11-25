@@ -117,8 +117,8 @@ export const channels: NURChannel[] = [
     timezone: "Europe/Istanbul", studioName: "Stüdyo NUR — Levent",
     flag: "🇹🇷", status: "live", launchDate: "2026-01-15",
     description: "Borsa Istanbul, Turkish economy, investment analysis, emerging markets.",
-    descriptionLocal: "Borsa İstanbul, Türk ekonomisi, yatırım analizi ve gelişen piyasalar.",
-    youtubeHandle: "@NURFinansTurkiye", topics: ["BIST", "TCMB", "Ekonomi", "Yatırım"],
+    descriptionLocal: "Borsa Istanbul, Turkish economy, investment analysis and emerging markets.",
+    youtubeHandle: "@NURFinansTurkiye", topics: ["BIST", "CBRT", "Economy", "Investment"],
     brandColor: "#e30a17", accentColor: "#e30a17"
   },
   {
@@ -334,10 +334,10 @@ export const hosts: NURHost[] = [
     ageRange: "28-32", nationality: "Turkish",
     languages: ["Turkish", "English", "French"],
     education: [
-      { degree: "MBA", field: "International Finance", institution: "Koç Üniversitesi", year: 2017 },
-      { degree: "Lisans", field: "Ekonomi", institution: "Boğaziçi Üniversitesi", year: 2015 }
+      { degree: "MBA", field: "International Finance", institution: "Koc University", year: 2017 },
+      { degree: "BSc", field: "Economics", institution: "Bogazici University", year: 2015 }
     ],
-    certifications: ["CFA Charterholder", "SPK İleri Düzey"],
+    certifications: ["CFA Charterholder", "CMB Advanced Level"],
     previousEmployers: ["Bloomberg TV", "Sovereign Asset Management"],
     specializations: ["BIST & Global Macro", "Sovereign Liquidity", "Quant Arbitrage"],
     bio: "Chief Anchor for NUR Finans. Renowned for authoritative macroeconomic analysis, sovereign financial modeling, and captivating market open broadcasts. Epitome of serious, high-institution financial leadership.",
@@ -353,11 +353,11 @@ export const hosts: NURHost[] = [
     languages: ["Turkish", "English", "German"],
     education: [
       { degree: "MSc", field: "Financial Engineering", institution: "ETH Zürich / Sabancı", year: 2018 },
-      { degree: "BSc", field: "Industrial Engineering", institution: "ODTÜ", year: 2016 }
+      { degree: "BSc", field: "Industrial Engineering", institution: "METU", year: 2016 }
     ],
-    certifications: ["CFA Level III", "SPK Türev Araçlar"],
-    previousEmployers: ["Deutsche Bank (Equity Research)", "İş Portföy"],
-    specializations: ["Türev Piyasalar", "Döviz Likiditesi", "Emtia Stratejileri"],
+    certifications: ["CFA Level III", "CMB Derivatives License"],
+    previousEmployers: ["Deutsche Bank (Equity Research)", "Is Portfolio Management"],
+    specializations: ["Derivatives Markets", "FX Liquidity", "Commodity Strategies"],
     bio: "Evening Anchor for NUR Finans. Expert in derivatives architecture, FX volatility surface modeling, and institutional liquidity flows.",
     status: "active",
     imagePrompt: "Stunning female financial anchor Umay Gül, 27-31 years old, 186cm tall, 90 bust size, intense luminous emerald green eyes, rich chestnut styled hair, fair skin, highly serious professional posture with high-neck navy tailored luxury suit and Swiss gold timepiece, modern broadcast studio with holographic candlesticks, 8k photorealistic"
@@ -986,15 +986,15 @@ export const guests: NURGuest[] = [
     title: "Prof. Dr.", gender: "male", ageRange: "59-65", nationality: "Turkish",
     languages: ["Turkish", "English", "Arabic"],
     education: [
-      { degree: "Doktora", field: "İktisat", institution: "Bilkent Üniversitesi", year: 1993 },
-      { degree: "Yüksek Lisans", field: "Ekonomi", institution: "London School of Economics", year: 1989 }
+      { degree: "PhD", field: "Economics", institution: "Bilkent University", year: 1993 },
+      { degree: "MSc", field: "Economics", institution: "London School of Economics", year: 1989 }
     ],
     currentPosition: "Emeritus Professor",
     institution: "Independent Economic Research",
-    specializations: ["TCMB politikası", "Enflasyon", "Gelişen piyasalar"],
+    specializations: ["CBRT policy", "Inflation", "Emerging markets"],
     publications: 108,
     typicalSegmentMinutes: 25,
-    bio: "Bilkent doktorası. Eski TCMB danışmanı. Türk ekonomisi ve gelişen piyasalar konusunda referans isim.",
+    bio: "Bilkent University PhD. Former CBRT advisor. Leading authority on the Turkish economy and emerging markets.",
     imagePrompt: "Distinguished Turkish professor, 59-65, grey hair and mustache, glasses, formal dark suit, Istanbul office with Bosphorus view, photorealistic"
   },
   {
@@ -1102,16 +1102,16 @@ export const shows: NURShow[] = [
     segments: ["Nasdaq Wrap", "FAANG Scorecard", "Crypto Pulse", "AI Sector", "After-Hours"] },
 
   // ── NUR TURKEY ──
-  { id: "show-bist-ac", channelId: "nur-turkey", name: "Borsa Sabah", nameLocal: "Borsa Sabah",
+  { id: "show-bist-ac", channelId: "nur-turkey", name: "Borsa Morning", nameLocal: "Borsa Morning",
     format: "market-open", durationMinutes: 120, hostIds: ["host-defne"], recurringGuestIds: ["guest-osman"],
     schedule: { days: ["Mon","Tue","Wed","Thu","Fri"], startUTC: "06:30", endUTC: "08:30" },
-    description: "BIST açılış öncesi analiz, döviz kurları, TCMB takibi.",
-    segments: ["Piyasa Nabzı", "Döviz & Altın", "BIST Açılış", "TCMB İzleme", "Konuk Analiz"] },
-  { id: "show-bist-kp", channelId: "nur-turkey", name: "Kapanış Analizi", nameLocal: "Kapanış Analizi",
+    description: "Pre-BIST opening analysis, FX rates, CBRT monitoring.",
+    segments: ["Market Pulse", "FX & Gold", "BIST Opening", "CBRT Watch", "Guest Analysis"] },
+  { id: "show-bist-kp", channelId: "nur-turkey", name: "Closing Analysis", nameLocal: "Closing Analysis",
     format: "market-close", durationMinutes: 90, hostIds: ["host-zeynep"], recurringGuestIds: ["guest-osman"],
     schedule: { days: ["Mon","Tue","Wed","Thu","Fri"], startUTC: "15:00", endUTC: "16:30" },
-    description: "BIST kapanış, günün özeti, teknik analiz, yarına bakış.",
-    segments: ["BIST Kapanış", "Günün Hisseleri", "Teknik Analiz", "Döviz Kapanış", "Yarının Ajandası"] },
+    description: "BIST closing, daily summary, technical analysis, tomorrow's outlook.",
+    segments: ["BIST Closing", "Stocks of the Day", "Technical Analysis", "FX Closing", "Tomorrow's Agenda"] },
 
   // ── NUR ARABIC ──
   { id: "show-gulf-open", channelId: "nur-arabic", name: "Gulf Markets Open", nameLocal: "افتتاح أسواق الخليج",

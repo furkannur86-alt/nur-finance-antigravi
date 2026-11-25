@@ -33,22 +33,22 @@ function validateFormat(networkId: OnChainNetworkId, txHash: string): boolean {
 async function verifyBitcoin(txHash: string, expectedAddress: string, expectedMinAmount: number): Promise<VerifyTxResult> {
   // Blockstream's public Esplora API — no key required.
   const res = await fetch(`https://blockstream.info/api/tx/${txHash}`, { cache: "no-store" }).catch(() => null);
-  if (!res || !res.ok) return { ok: false, status: "NOT_FOUND", detail: "İşlem Bitcoin ağında bulunamadı." };
+  if (!res || !res.ok) return { ok: false, status: "NOT_FOUND", detail: "Transaction not found on the Bitcoin network." };
 
   const tx = await res.json();
   const matchingOutput = (tx.vout || []).find((o: { scriptpubkey_address?: string; value: number }) => o.scriptpubkey_address === expectedAddress);
   if (!matchingOutput) {
-    return { ok: false, status: "NOT_FOUND", detail: "İşlem, beklenen kurumsal adrese ödeme içermiyor." };
+    return { ok: false, status: "NOT_FOUND", detail: "Transaction does not contain a payment to the expected institutional address." };
   }
 
   const btcAmount = matchingOutput.value / 1e8;
   const statusRes = await fetch(`https://blockstream.info/api/tx/${txHash}/status`, { cache: "no-store" }).catch(() => null);
   const confirmed = statusRes && statusRes.ok ? (await statusRes.json()).confirmed : false;
 
-  if (!confirmed) return { ok: false, status: "PENDING_CONFIRMATIONS", detail: "İşlem ağda görüldü ancak henüz onaylanmadı.", confirmations: 0 };
-  if (btcAmount < expectedMinAmount) return { ok: false, status: "AMOUNT_MISMATCH", detail: `Gönderilen tutar (${btcAmount} BTC) beklenen minimumun altında.` };
+  if (!confirmed) return { ok: false, status: "PENDING_CONFIRMATIONS", detail: "Transaction seen on the network but not yet confirmed.", confirmations: 0 };
+  if (btcAmount < expectedMinAmount) return { ok: false, status: "AMOUNT_MISMATCH", detail: `Sent amount (${btcAmount} BTC) is below the expected minimum.` };
 
-  return { ok: true, status: "CONFIRMED", detail: "Bitcoin işlemi zincir üzerinde doğrulandı.", confirmations: 3 };
+  return { ok: true, status: "CONFIRMED", detail: "Bitcoin transaction verified on-chain.", confirmations: 3 };
 }
 
 async function verifyEvmErc20(
@@ -63,28 +63,28 @@ async function verifyEvmErc20(
     return {
       ok: false,
       status: "UNVERIFIABLE",
-      detail: `${apiKeyEnvVar} tanımlı değil — otomatik doğrulama yapılamıyor. Manuel inceleme kuyruğuna alındı.`,
+      detail: `${apiKeyEnvVar} is not defined — automatic verification unavailable. Queued for manual review.`,
     };
   }
 
   // Look up ERC-20 token transfers to our address and check whether this txHash appears with a sufficient amount.
   const url = `${explorerBase}?module=account&action=tokentx&address=${expectedAddress}&sort=desc&apikey=${apiKey}`;
   const res = await fetch(url, { cache: "no-store" }).catch(() => null);
-  if (!res || !res.ok) return { ok: false, status: "UNVERIFIABLE", detail: "Blok gezgini API isteği başarısız oldu — manuel inceleme gerekli." };
+  if (!res || !res.ok) return { ok: false, status: "UNVERIFIABLE", detail: "Block explorer API request failed — manual review required." };
 
   const data = await res.json();
   const transfers: Array<{ hash: string; value: string; tokenDecimal: string; confirmations: string }> = data.result || [];
   const match = transfers.find((t) => t.hash.toLowerCase() === txHash.toLowerCase());
-  if (!match) return { ok: false, status: "NOT_FOUND", detail: "İşlem, beklenen adrese yapılan token transferleri arasında bulunamadı." };
+  if (!match) return { ok: false, status: "NOT_FOUND", detail: "Transaction not found among token transfers to the expected address." };
 
   const decimals = parseInt(match.tokenDecimal || "6", 10);
   const amount = parseInt(match.value, 10) / 10 ** decimals;
   const confirmations = parseInt(match.confirmations || "0", 10);
 
-  if (amount < expectedMinAmount) return { ok: false, status: "AMOUNT_MISMATCH", detail: `Gönderilen tutar (${amount}) beklenen minimumun altında.` };
-  if (confirmations < 12) return { ok: false, status: "PENDING_CONFIRMATIONS", detail: `Yalnızca ${confirmations} onay var, en az 12 gerekli.`, confirmations };
+  if (amount < expectedMinAmount) return { ok: false, status: "AMOUNT_MISMATCH", detail: `Sent amount (${amount}) is below the expected minimum.` };
+  if (confirmations < 12) return { ok: false, status: "PENDING_CONFIRMATIONS", detail: `Only ${confirmations} confirmations, minimum 12 required.`, confirmations };
 
-  return { ok: true, status: "CONFIRMED", detail: "Token transferi zincir üzerinde doğrulandı.", confirmations };
+  return { ok: true, status: "CONFIRMED", detail: "Token transfer verified on-chain.", confirmations };
 }
 
 async function verifyTron(txHash: string, expectedAddress: string, expectedMinAmount: number): Promise<VerifyTxResult> {
@@ -95,24 +95,24 @@ async function verifyTron(txHash: string, expectedAddress: string, expectedMinAm
     headers,
     cache: "no-store",
   }).catch(() => null);
-  if (!res || !res.ok) return { ok: false, status: "UNVERIFIABLE", detail: "TronGrid API isteği başarısız oldu — manuel inceleme gerekli." };
+  if (!res || !res.ok) return { ok: false, status: "UNVERIFIABLE", detail: "TronGrid API request failed — manual review required." };
 
   const data = await res.json();
   const transfers: Array<{ transaction_id: string; value: string; token_info: { decimals: number } }> = data.data || [];
   const match = transfers.find((t) => t.transaction_id === txHash);
-  if (!match) return { ok: false, status: "NOT_FOUND", detail: "İşlem, beklenen adrese yapılan TRC-20 transferleri arasında bulunamadı." };
+  if (!match) return { ok: false, status: "NOT_FOUND", detail: "Transaction not found among TRC-20 transfers to the expected address." };
 
   const amount = parseInt(match.value, 10) / 10 ** (match.token_info?.decimals ?? 6);
-  if (amount < expectedMinAmount) return { ok: false, status: "AMOUNT_MISMATCH", detail: `Gönderilen tutar (${amount}) beklenen minimumun altında.` };
+  if (amount < expectedMinAmount) return { ok: false, status: "AMOUNT_MISMATCH", detail: `Sent amount (${amount}) is below the expected minimum.` };
 
-  return { ok: true, status: "CONFIRMED", detail: "TRC-20 işlemi zincir üzerinde doğrulandı." };
+  return { ok: true, status: "CONFIRMED", detail: "TRC-20 transaction verified on-chain." };
 }
 
 export async function verifyOnChainTransaction(params: VerifyTxParams): Promise<VerifyTxResult> {
   const { networkId, txHash, expectedAddress, expectedMinAmount } = params;
 
   if (!validateFormat(networkId, txHash)) {
-    return { ok: false, status: "INVALID_FORMAT", detail: "İşlem kodu (TXID) formatı geçersiz." };
+    return { ok: false, status: "INVALID_FORMAT", detail: "Invalid transaction ID (TXID) format." };
   }
 
   try {
@@ -128,9 +128,9 @@ export async function verifyOnChainTransaction(params: VerifyTxParams): Promise<
       case "tron-usdt":
         return await verifyTron(txHash, expectedAddress, expectedMinAmount);
       default:
-        return { ok: false, status: "UNVERIFIABLE", detail: "Desteklenmeyen ağ." };
+        return { ok: false, status: "UNVERIFIABLE", detail: "Unsupported network." };
     }
   } catch {
-    return { ok: false, status: "UNVERIFIABLE", detail: "Doğrulama sırasında beklenmeyen bir hata oluştu — manuel inceleme gerekli." };
+    return { ok: false, status: "UNVERIFIABLE", detail: "An unexpected error occurred during verification — manual review required." };
   }
 }
