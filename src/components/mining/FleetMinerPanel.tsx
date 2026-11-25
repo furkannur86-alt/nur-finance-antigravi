@@ -334,7 +334,7 @@ export default function FleetMinerPanel() {
               </Panel>
 
               {/* Block log */}
-              <Panel label="BLOK LOG">
+              <Panel label="BLOCK LOG">
                 <div style={{ maxHeight: 180, overflow: "auto" }}>
                   {blocks.length === 0
                     ? <div style={{ fontSize: 8, color: C.dim, padding: "8px 0" }}>No blocks yet...</div>
@@ -385,8 +385,8 @@ export default function FleetMinerPanel() {
         {tab === "download" && (
           <div style={{ flex: 1, overflow: "auto", padding: "24px 28px" }}>
             <div style={{ maxWidth: 680 }}>
-              <div style={{ fontSize: 11, fontWeight: 900, color: C.gold, marginBottom: 6, letterSpacing: 3 }}>📥 İNDİRİLEBİLİR BOT PAKETİ</div>
-              <div style={{ fontSize: 9, color: C.dim, marginBottom: 24 }}>Masaüstünde çalışan yüksek performanslı Python standalone istemci. Tüm CPU çekirdeklerini kullanır.</div>
+              <div style={{ fontSize: 11, fontWeight: 900, color: C.gold, marginBottom: 6, letterSpacing: 3 }}>📥 DOWNLOADABLE BOT PACKAGE</div>
+              <div style={{ fontSize: 9, color: C.dim, marginBottom: 24 }}>High-performance Python standalone client running on desktop. Utilizes all CPU cores.</div>
 
               {/* Python bot card */}
               <div style={{ padding: 20, background: "rgba(255,215,0,0.04)", border: `1px solid ${C.gold}40`, borderRadius: 6, marginBottom: 16 }}>
@@ -394,27 +394,27 @@ export default function FleetMinerPanel() {
                   <div style={{ fontSize: 28 }}>🐍</div>
                   <div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: C.gold }}>NUR Fleet Miner — Python</div>
-                    <div style={{ fontSize: 8, color: C.dim }}>nur_fleet_miner.py · Python 3.8+ · Çoklu thread · Tüm 36 gemi desteklenir</div>
+                    <div style={{ fontSize: 8, color: C.dim }}>nur_fleet_miner.py · Python 3.8+ · Multi-threaded · All 36 ships supported</div>
                   </div>
                   <a href="/downloads/nur_fleet_miner.py" download="nur_fleet_miner.py"
                     style={{ marginLeft: "auto", padding: "8px 20px", fontSize: 9, fontWeight: 700, background: "rgba(255,215,0,0.15)", color: C.gold, border: `1px solid ${C.gold}`, borderRadius: 3, textDecoration: "none", letterSpacing: 2 }}>
-                    ⬇ İNDİR
+                    ⬇ DOWNLOAD
                   </a>
                 </div>
 
                 <div style={{ background: "#010810", border: `1px solid rgba(0,229,255,0.1)`, borderRadius: 4, padding: "14px 16px", fontFamily: "monospace" }}>
-                  <div style={{ fontSize: 7, color: C.dim, marginBottom: 8, letterSpacing: 2 }}>KULLANIM</div>
+                  <div style={{ fontSize: 7, color: C.dim, marginBottom: 8, letterSpacing: 2 }}>USAGE</div>
                   {[
-                    ["# Kurulum (bağımlılık yok)", C.dim],
+                    ["# Install (no dependencies)", C.dim],
                     ["python nur_fleet_miner.py", C.cyan],
                     ["", ""],
-                    ["# Gemi seçerek başlat", C.dim],
+                    ["# Start with specific ship", C.dim],
                     ["python nur_fleet_miner.py --ship CN_SOV --mode overclock", C.cyan],
                     ["", ""],
-                    ["# Endpoint belirt (production)", C.dim],
+                    ["# Specify endpoint (production)", C.dim],
                     ["python nur_fleet_miner.py --ship TR_LIB --endpoint https://nurfinance.com", C.cyan],
                     ["", ""],
-                    ["# Yardım", C.dim],
+                    ["# Help", C.dim],
                     ["python nur_fleet_miner.py --help", C.cyan],
                     ["python nur_fleet_miner.py --list-ships", C.cyan],
                   ].map(([line, col], i) => (
@@ -426,11 +426,11 @@ export default function FleetMinerPanel() {
               {/* Feature grid */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 {[
-                  { icon: "⚡", title: "Çoklu Thread", desc: "CPU çekirdek sayısı kadar paralel mining thread" },
-                  { icon: "🛸", title: "36 Gemi", desc: "--list-ships ile tüm gemi listesini görüntüle" },
-                  { icon: "🔐", title: "Canlı Heartbeat", desc: "Her 10 saniyede fleet API'ye hashrate raporu" },
-                  { icon: "💰", title: "95% → Vault", desc: "Kazanımlar otomatik olarak #54751113 kasasına aktarılır" },
-                  { icon: "📊", title: "Live İstatistik", desc: "Terminal ekranında canlı MH/s, blok ve NUR sayacı" },
+                  { icon: "⚡", title: "Multi-Thread", desc: "Parallel mining threads equal to CPU core count" },
+                  { icon: "🛸", title: "36 Ships", desc: "View all ships with --list-ships" },
+                  { icon: "🔐", title: "Live Heartbeat", desc: "Hashrate report to fleet API every 10 seconds" },
+                  { icon: "💰", title: "95% → Vault", desc: "Earnings automatically transferred to vault #54751113" },
+                  { icon: "📊", title: "Live Stats", desc: "Real-time MH/s, blocks and NUR counter on terminal" },
                   { icon: "⚙️", title: "3 Mod", desc: "Eco (🌱) · Balanced (⚡) · Overclock (🔥)" },
                 ].map(f => (
                   <div key={f.title} style={{ padding: "12px 14px", background: "rgba(0,229,255,0.03)", border: `1px solid ${C.border}`, borderRadius: 4 }}>
@@ -443,9 +443,9 @@ export default function FleetMinerPanel() {
 
               {/* Requirements */}
               <div style={{ marginTop: 16, padding: "12px 16px", background: "rgba(0,229,255,0.03)", border: `1px solid ${C.border}`, borderRadius: 4 }}>
-                <div style={{ fontSize: 8, color: C.dim, letterSpacing: 2, marginBottom: 6 }}>GEREKSİNİMLER</div>
+                <div style={{ fontSize: 8, color: C.dim, letterSpacing: 2, marginBottom: 6 }}>REQUIREMENTS</div>
                 <div style={{ fontSize: 9, color: C.text }}>
-                  Python 3.8 veya üzeri · Harici paket gerekmez (stdlib only) · Windows / macOS / Linux
+                  Python 3.8 or higher · No external packages required (stdlib only) · Windows / macOS / Linux
                 </div>
               </div>
             </div>

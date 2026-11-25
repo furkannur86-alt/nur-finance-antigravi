@@ -152,8 +152,8 @@ export default function DigitalWalletGateway() {
         // works purely from in-memory state either way.
         updateMyTier(selectedTierId).catch(() => {});
         addNotification({
-          title: "Ödeme Zincir Üzerinde Doğrulandı",
-          message: `${selectedNetwork.name} üzerindeki işlem doğrulandı. NUR Finance ${selectedPlan} terminal erişimi aktifleştirildi.`,
+          title: "Payment Verified On-Chain",
+          message: `Transaction on ${selectedNetwork.name} verified. NUR Finance ${selectedPlan} terminal access activated.`,
           severity: "SUCCESS",
           category: "SETTLEMENT",
         });
@@ -161,23 +161,23 @@ export default function DigitalWalletGateway() {
       } else if (result.status === "UNVERIFIABLE") {
         updateVerification({ tier: selectedTierId, overallStatus: "UNDER_REVIEW" });
         addNotification({
-          title: "Ödeme İncelemeye Alındı",
-          message: `Otomatik zincir doğrulaması şu an kullanılamıyor (${result.detail}). Uyum ekibimiz işlemi manuel olarak inceleyecek.`,
+          title: "Payment Under Review",
+          message: `Automatic on-chain verification unavailable (${result.detail}). Our compliance team will review the transaction manually.`,
           severity: "WARNING",
           category: "COMPLIANCE",
         });
       } else {
         addNotification({
-          title: "Ödeme Doğrulanamadı",
-          message: result.detail || "İşlem zincir üzerinde doğrulanamadı.",
+          title: "Payment Verification Failed",
+          message: result.detail || "Transaction could not be verified on-chain.",
           severity: "CRITICAL",
           category: "COMPLIANCE",
         });
       }
     } catch {
       addNotification({
-        title: "Doğrulama Hatası",
-        message: "Doğrulama servisine ulaşılamadı. Lütfen tekrar deneyin veya destek ile iletişime geçin.",
+        title: "Verification Error",
+        message: "Could not reach verification service. Please try again or contact support.",
         severity: "CRITICAL",
         category: "COMPLIANCE",
       });
@@ -199,11 +199,11 @@ export default function DigitalWalletGateway() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-[var(--ag-accent)]">NUR Terminal Digital Wallet Settlement Gateway</span>
               <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-400">
-                KYC/AML UYUMLU &bull; KİMLİK DOĞRULAMALI
+                KYC/AML COMPLIANT &bull; IDENTITY VERIFIED
               </span>
             </div>
             <p className="text-[11px] text-[var(--ag-muted)]">
-              Zincir Üzerinde Doğrulanmış Kripto Ödeme &bull; Kimlik Bilgisi Gerekli &bull; Multi-Chain USDT/USDC Gateway
+              On-Chain Verified Crypto Payment &bull; Identity Required &bull; Multi-Chain USDT/USDC Gateway
             </p>
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            Ödeme ve Transfer
+            Payment & Transfer
           </button>
           <button
             onClick={() => setActiveTab("pos_vault")}
@@ -228,7 +228,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            💳 POS &amp; Soğuk Cüzdan Kasası
+            💳 POS &amp; Cold Wallet Vault
           </button>
           <button
             onClick={() => setActiveTab("guide")}
@@ -238,7 +238,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            Cüzdan Açma & Fonlama Rehberi
+            Wallet Setup & Funding Guide
           </button>
           <button
             onClick={() => setActiveTab("security")}
@@ -248,7 +248,7 @@ export default function DigitalWalletGateway() {
                 : "text-[var(--ag-muted)] hover:text-white"
             }`}
           >
-            Gizlilik ve Güvenlik Protokolü
+            Privacy & Security Protocol
           </button>
         </div>
       </div>
@@ -277,15 +277,15 @@ export default function DigitalWalletGateway() {
                       const { connectWeb3Wallet } = await import("@/lib/web3/web3-contract-service");
                       const res = await connectWeb3Wallet();
                       addNotification({
-                        title: "Web3 Cüzdan Bağlandı",
+                        title: "Web3 Wallet Connected",
                         message: `Adres: ${res.address.slice(0, 6)}...${res.address.slice(-4)} | Bakiye: ${parseFloat(res.balanceNur).toFixed(2)} NUR`,
                         severity: "SUCCESS",
                         category: "SETTLEMENT",
                       });
                     } catch (err) {
                       addNotification({
-                        title: "Cüzdan Bağlantı Hatası",
-                        message: err instanceof Error ? err.message : "Cüzdan bağlanamadı",
+                        title: "Wallet Connection Error",
+                        message: err instanceof Error ? err.message : "Could not connect wallet",
                         severity: "CRITICAL",
                         category: "SETTLEMENT",
                       });
@@ -304,12 +304,12 @@ export default function DigitalWalletGateway() {
                       FURKAN SOVEREIGN DESKTOP TREASURY & VAULT
                     </div>
                     <span className="text-sm font-bold text-white">
-                      Masaüstü Özel Kurumsal Cüzdan Yönetim Merkezi
+                      Desktop Enterprise Wallet Management Center
                     </span>
                   </div>
                 </div>
                 <div className="text-right font-mono">
-                  <span className="text-[10px] text-slate-400 block">Toplam Doğrulanmış Cüzdan Bakiyesi</span>
+                  <span className="text-[10px] text-slate-400 block">Total Verified Wallet Balance</span>
                   <span className="text-base font-bold text-emerald-400">$47,700,000 USDT</span>
                 </div>
               </div>
@@ -325,7 +325,7 @@ export default function DigitalWalletGateway() {
                   <div className="text-[9px] font-mono text-slate-400 break-all">
                     0x742d35Cc6634C0532925a3b844Bc454e4438f44e
                   </div>
-                  <div className="text-[9px] text-slate-500 font-mono">Ağ: Ethereum (ERC-20)</div>
+                  <div className="text-[9px] text-slate-500 font-mono">Network: Ethereum (ERC-20)</div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-black/60 border border-cyan-500/30 space-y-1">
@@ -337,7 +337,7 @@ export default function DigitalWalletGateway() {
                   <div className="text-[9px] font-mono text-slate-400 break-all">
                     0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7
                   </div>
-                  <div className="text-[9px] text-slate-500 font-mono">Ağ: Polygon / Arbitrum L2</div>
+                  <div className="text-[9px] text-slate-500 font-mono">Network: Polygon / Arbitrum L2</div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-black/60 border border-purple-500/30 space-y-1">
@@ -349,7 +349,7 @@ export default function DigitalWalletGateway() {
                   <div className="text-[9px] font-mono text-slate-400 break-all">
                     bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq
                   </div>
-                  <div className="text-[9px] text-slate-500 font-mono">Ağ: Bitcoin Native (SegWit)</div>
+                  <div className="text-[9px] text-slate-500 font-mono">Network: Bitcoin Native (SegWit)</div>
                 </div>
               </div>
             </div>
