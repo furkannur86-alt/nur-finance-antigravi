@@ -1104,6 +1104,42 @@ export const PANELS = {
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/media/PodcastResearchPanel"),
   },
+  "space-weather": {
+    label: "Space Weather", statusLabel: "SPACE WX", group: "GALACTIC",
+    icon: "☀️", color: "#f59e0b", desc: "Solar flare alerts, geomagnetic storms, satellite risk & space debris tracking",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/orbital/SpaceWeatherPanel"),
+  },
+  "asteroid-mining": {
+    label: "Asteroid Mining", statusLabel: "ASTEROID", group: "GALACTIC",
+    icon: "☄️", color: "#8b5cf6", desc: "Near-earth object valuations, mining feasibility scores & resource extraction estimates",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/orbital/AsteroidMiningPanel"),
+  },
+  "system-health": {
+    label: "System Health", statusLabel: "SYS HEALTH", group: "CORE",
+    icon: "🖥️", color: "#06b6d4", desc: "Platform uptime, API latency, data feed status & system diagnostics",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/dashboard/SystemHealthPanel"),
+  },
+  "user-permissions": {
+    label: "User Permissions", statusLabel: "PERMISSIONS", group: "CORE",
+    icon: "🔐", color: "#ef4444", desc: "Role-based access control, team management, audit logs & compliance settings",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/dashboard/UserPermissionsPanel"),
+  },
+  "influencer-tracker": {
+    label: "Influencer Tracker", statusLabel: "INFLUENCER", group: "SOCIAL",
+    icon: "👤", color: "#ec4899", desc: "Top fintwit accounts, prediction accuracy scores, following changes & call tracking",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/social/InfluencerTrackerPanel"),
+  },
+  "prime-brokerage": {
+    label: "Prime Brokerage", statusLabel: "PRIME BROK", group: "TRADING",
+    icon: "🏦", color: "#0ea5e9", desc: "Margin balances, securities lending, locate availability & financing rates",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/trading/PrimeBrokeragePanel"),
+  },
 } as const satisfies Record<string, PanelEntry>;
 
 export type PanelView = keyof typeof PANELS;
