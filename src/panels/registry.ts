@@ -1003,13 +1003,13 @@ export const PANELS = {
   "nuclear-risk": {
     label: "Nuclear Risk", statusLabel: "NUCLEAR", group: "RISK",
     icon: "☢️", color: "#ef4444", desc: "Nuclear threat levels, reactor incidents, proliferation tracking & fallout modeling",
-    minPlan: "r", dataMode: "demo",
+    minPlan: "free", dataMode: "demo",
     load: () => import("@/components/risk/NuclearRiskPanel"),
   },
   "military-risk": {
     label: "Military Risk", statusLabel: "MILITARY", group: "RISK",
     icon: "🎖️", color: "#ef4444", desc: "Global conflict zones, troop movements, defense spending & arms trade flows",
-    minPlan: "r", dataMode: "demo",
+    minPlan: "free", dataMode: "demo",
     load: () => import("@/components/risk/MilitaryRiskPanel"),
   },
   "political-risk": {
@@ -1017,6 +1017,42 @@ export const PANELS = {
     icon: "🏛️", color: "#ef4444", desc: "Election risk, regime stability, sanctions tracking, policy change impact & sovereign default probability",
     minPlan: "pro", dataMode: "demo",
     load: () => import("@/components/risk/PoliticalRiskPanel"),
+  },
+  "professional-ai": {
+    label: "Professional AI Suite", statusLabel: "PRO AI", group: "ANALYSIS",
+    icon: "🩺", color: "#10b981", desc: "Multi-discipline AI hub: medical triage, engineering calcs, legal audit, DCF valuation",
+    minPlan: "professional", dataMode: "demo",
+    load: () => import("@/components/professional/ProfessionalAIHubPanel"),
+  },
+  "profession-hub": {
+    label: "Profession Hub", statusLabel: "PROFESSIONS", group: "SOCIAL",
+    icon: "👥", color: "#a855f7", desc: "Professional network and career development hub",
+    minPlan: "free", dataMode: "demo",
+    load: () => import("@/components/social/ProfessionHubPanel"),
+  },
+  "wish-framework": {
+    label: "WISH Framework", statusLabel: "WISH", group: "ANALYSIS",
+    icon: "🎯", color: "#3b82f6", desc: "Weighted Investment Scoring Heuristic for systematic stock evaluation",
+    minPlan: "pro", dataMode: "demo",
+    load: () => import("@/components/trading/WISHFrameworkPanel"),
+  },
+  "broadcast-studio": {
+    label: "Broadcast Studio", statusLabel: "STUDIO", group: "MEDIA",
+    icon: "🎬", color: "#f59e0b", desc: "Financial broadcast production studio with live streaming",
+    minPlan: "professional", dataMode: "demo",
+    load: () => import("@/components/media/BroadcastStudioPanel"),
+  },
+  "verification-portal": {
+    label: "Verification Portal", statusLabel: "VERIFY", group: "CORE",
+    icon: "✅", color: "#22c55e", desc: "Account verification and compliance portal",
+    minPlan: "free", dataMode: "demo",
+    load: () => import("@/components/pricing/VerificationPanel"),
+  },
+  "institutional-suite": {
+    label: "Institutional Suite", statusLabel: "INSTITUTIONAL", group: "CORE",
+    icon: "🏦", color: "#6366f1", desc: "Institutional-grade trading, compliance, and administration suite",
+    minPlan: "institutional", dataMode: "demo",
+    load: () => import("@/components/institutional/InstitutionalSuitePanel"),
   },
 } as const satisfies Record<string, PanelEntry>;
 

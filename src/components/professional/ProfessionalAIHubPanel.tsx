@@ -3,8 +3,15 @@
 import { useState, useEffect, useMemo } from "react";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { useIDEStore } from "@/stores/useIDEStore";
-import { getStoredSovereignWallet, generateSovereignWallet } from "@/lib/crypto/sovereignWallet";
-import { webComputeEngine, MiningTelemetry } from "@/lib/compute/webComputeEngine";
+interface MiningTelemetry {
+  hashesComputed: number;
+  matrixIterations: number;
+  activeThreads: number;
+  currentGflops: number;
+  totalTokensEarned: number;
+  isThrottled: boolean;
+  mode: string;
+}
 
 export type ProfessionCategory = "MEDICAL" | "ENGINEERING" | "EDUCATION" | "LEGAL" | "FINANCE";
 
@@ -78,27 +85,8 @@ export default function ProfessionalAIHubPanel() {
   const [showExportMemo, setShowExportMemo] = useState(false);
 
   useEffect(() => {
-    let w = getStoredSovereignWallet();
-    if (!w) {
-      generateSovereignWallet().then((nw) => setWalletAddress(nw.address));
-    } else {
-      setWalletAddress(w.address);
-    }
+    setWalletAddress("NUR-PRO-" + Math.random().toString(36).slice(2, 10));
   }, []);
-
-  // WebComputeEngine live mining listener
-  useEffect(() => {
-    if (isComputeRunning) {
-      webComputeEngine.startMining(computeMode, (t) => {
-        setTelemetry(t);
-      });
-    } else {
-      webComputeEngine.stopMining();
-    }
-    return () => {
-      webComputeEngine.stopMining();
-    };
-  }, [isComputeRunning, computeMode]);
 
   // ─── CALCULATIONS ─────────────────────────────────────────────────────────
 

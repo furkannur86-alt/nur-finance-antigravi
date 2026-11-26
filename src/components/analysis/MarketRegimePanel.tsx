@@ -5,18 +5,19 @@ import DemoBadge from "@/components/ui/DemoBadge";
 
 type Tab = "current" | "history" | "signals" | "playbook";
 type Regime = "RISK-ON" | "RISK-OFF" | "TRANSITION";
+type Signal = "green" | "yellow" | "red";
 
 const CURRENT_REGIME: Regime = "RISK-ON";
 
 const INDICATORS = [
-  { name: "VIX Level", value: 14.2, threshold: 20, unit: "", direction: "below" as const, signal: "green" as const },
-  { name: "Yield Curve (10Y-2Y)", value: 0.42, threshold: 0, unit: "bp", direction: "above" as const, signal: "green" as const },
-  { name: "IG Credit Spread", value: 92, threshold: 150, unit: "bp", direction: "below" as const, signal: "green" as const },
-  { name: "Equity Momentum (SPX 200d)", value: 8.4, threshold: 0, unit: "%", direction: "above" as const, signal: "green" as const },
-  { name: "Market Breadth (A/D)", value: 1.35, threshold: 1.0, unit: "", direction: "above" as const, signal: "green" as const },
-  { name: "USD Strength (DXY)", value: 104.8, threshold: 105, unit: "", direction: "below" as const, signal: "yellow" as const },
-  { name: "Commodity Trend (CRB)", value: -1.2, threshold: 0, unit: "%", direction: "above" as const, signal: "yellow" as const },
-  { name: "Liquidity (Fed B/S QoQ)", value: -2.1, threshold: -5, unit: "%", direction: "above" as const, signal: "yellow" as const },
+  { name: "VIX Level", value: 14.2, threshold: 20, unit: "", direction: "below" as const, signal: "green" as Signal },
+  { name: "Yield Curve (10Y-2Y)", value: 0.42, threshold: 0, unit: "bp", direction: "above" as const, signal: "green" as Signal },
+  { name: "IG Credit Spread", value: 92, threshold: 150, unit: "bp", direction: "below" as const, signal: "green" as Signal },
+  { name: "Equity Momentum (SPX 200d)", value: 8.4, threshold: 0, unit: "%", direction: "above" as const, signal: "green" as Signal },
+  { name: "Market Breadth (A/D)", value: 1.35, threshold: 1.0, unit: "", direction: "above" as const, signal: "green" as Signal },
+  { name: "USD Strength (DXY)", value: 104.8, threshold: 105, unit: "", direction: "below" as const, signal: "yellow" as Signal },
+  { name: "Commodity Trend (CRB)", value: -1.2, threshold: 0, unit: "%", direction: "above" as const, signal: "yellow" as Signal },
+  { name: "Liquidity (Fed B/S QoQ)", value: -2.1, threshold: -5, unit: "%", direction: "above" as const, signal: "yellow" as Signal },
 ];
 
 const HISTORY: { month: string; regime: Regime }[] = [

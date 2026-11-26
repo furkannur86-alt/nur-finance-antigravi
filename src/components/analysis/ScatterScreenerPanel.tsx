@@ -64,7 +64,7 @@ const SECTOR_COLORS: Record<string, string> = {
 };
 
 function getVal(s: Stock, key: string): number {
-  return (s as Record<string, number | string>)[key] as number;
+  return (s as unknown as Record<string, number | string>)[key] as number;
 }
 
 export default function ScatterScreenerPanel() {

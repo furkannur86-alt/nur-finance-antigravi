@@ -70,13 +70,14 @@ export interface BacktestResult {
   kellyFraction: number;
 }
 
+import type { PanelView as _PanelView } from "@/panels/registry";
 export type { PanelView } from "@/panels/registry";
 export { PANELS, getStatusLabel, getPanelsByGroup } from "@/panels/registry";
 export type { DataMode, PlanTier, PanelEntry } from "@/panels/registry";
 
 export interface FloatingWindowConfig {
   id: string;
-  view: PanelView;
+  view: _PanelView;
   title: string;
   x: number;
   y: number;

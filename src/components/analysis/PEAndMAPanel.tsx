@@ -53,14 +53,14 @@ interface ArbSpread {
   risk: "Low" | "Medium" | "High";
 }
 
-const ARB_SPREADS: ArbSpread[] = [
-  { target: "Discover Financial", ticker: "DFS", current: 138.42, dealPrice: 148.26, spread: 7.11, annualized: 14.2, daysToClose: 183, risk: "Medium" },
-  { target: "Ansys Inc", ticker: "ANSS", current: 342.18, dealPrice: 390.00, spread: 13.98, annualized: 22.4, daysToClose: 228, risk: "Medium" },
-  { target: "US Steel", ticker: "X", current: 38.72, dealPrice: 55.00, spread: 42.04, annualized: 68.9, daysToClose: 223, risk: "High" },
-  { target: "Kellanova", ticker: "K", current: 78.56, dealPrice: 83.50, spread: 6.29, annualized: 15.7, daysToClose: 146, risk: "Low" },
-  { target: "Tropical Smoothie", ticker: "PRIV", current: 0, dealPrice: 0, spread: 0, annualized: 0, daysToClose: 210, risk: "Low" },
-  { target: "Ares SPAC Target", ticker: "CVII", current: 10.12, dealPrice: 10.50, spread: 3.75, annualized: 9.1, daysToClose: 150, risk: "Medium" },
-].filter(a => a.current > 0);
+const ARB_SPREADS: ArbSpread[] = ([
+  { target: "Discover Financial", ticker: "DFS", current: 138.42, dealPrice: 148.26, spread: 7.11, annualized: 14.2, daysToClose: 183, risk: "Medium" as const },
+  { target: "Ansys Inc", ticker: "ANSS", current: 342.18, dealPrice: 390.00, spread: 13.98, annualized: 22.4, daysToClose: 228, risk: "Medium" as const },
+  { target: "US Steel", ticker: "X", current: 38.72, dealPrice: 55.00, spread: 42.04, annualized: 68.9, daysToClose: 223, risk: "High" as const },
+  { target: "Kellanova", ticker: "K", current: 78.56, dealPrice: 83.50, spread: 6.29, annualized: 15.7, daysToClose: 146, risk: "Low" as const },
+  { target: "Tropical Smoothie", ticker: "PRIV", current: 0, dealPrice: 0, spread: 0, annualized: 0, daysToClose: 210, risk: "Low" as const },
+  { target: "Ares SPAC Target", ticker: "CVII", current: 10.12, dealPrice: 10.50, spread: 3.75, annualized: 9.1, daysToClose: 150, risk: "Medium" as const },
+] as ArbSpread[]).filter(a => a.current > 0);
 
 interface PEFund {
   name: string;

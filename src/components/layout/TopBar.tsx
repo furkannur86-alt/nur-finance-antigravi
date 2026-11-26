@@ -388,20 +388,20 @@ export default function TopBar() {
         </button>
 
         {/* Plan Badge */}
-        {demoPlan && (demoPlan === "b" || demoPlan === "r") && (
+        {demoPlan && (demoPlan === "professional" || demoPlan === "institutional") && (
           <div
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-md shrink-0"
             style={{
-              background: demoPlan === "b"
+              background: demoPlan === "professional"
                 ? "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))"
                 : "linear-gradient(135deg, rgba(0,240,255,0.15), rgba(0,240,255,0.05))",
-              border: `1px solid ${demoPlan === "b" ? "rgba(255,215,0,0.4)" : "rgba(0,240,255,0.4)"}`,
+              border: `1px solid ${demoPlan === "professional" ? "rgba(255,215,0,0.4)" : "rgba(0,240,255,0.4)"}`,
             }}
           >
-            <span className="text-[10px]">{demoPlan === "b" ? "👑" : "🛡️"}</span>
+            <span className="text-[10px]">{demoPlan === "professional" ? "👑" : "🛡️"}</span>
             <span
               className="text-[9px] font-mono font-black tracking-[0.15em]"
-              style={{ color: demoPlan === "b" ? "#ffd700" : "#00f0ff" }}
+              style={{ color: demoPlan === "professional" ? "#ffd700" : "#00f0ff" }}
             >
               NUR FINANCE {demoPlan.toUpperCase()}
             </span>

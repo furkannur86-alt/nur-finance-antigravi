@@ -264,7 +264,7 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
-                  onClick={() => setActiveView(tier.id === "compute-access" ? "compute-access" : "wallet-gateway")}
+                  onClick={() => setActiveView("dashboard")}
                   className="w-full py-2 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
                   style={{
                     background: tier.highlight ? tier.color : "transparent",
@@ -343,11 +343,11 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
-                  onClick={() => setActiveView("verification-portal")}
+                  onClick={() => setActiveView("dashboard")}
                   className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
                   style={{ background: "#3b82f6", color: "#fff" }}
                 >
-                  Apply for NUR Finance R
+                  Subscribe to Professional
                 </button>
               </div>
 
@@ -420,11 +420,11 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
-                  onClick={() => setActiveView("verification-portal")}
+                  onClick={() => setActiveView("dashboard")}
                   className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
                   style={{ background: "#f59e0b", color: "#000" }}
                 >
-                  Request Invitation
+                  Contact Enterprise Sales
                 </button>
               </div>
             </div>
@@ -526,11 +526,11 @@ export default function PricingPanel() {
                 </ul>
 
                 <button
-                  onClick={() => setActiveView("wallet-gateway")}
+                  onClick={() => setActiveView("dashboard")}
                   className="w-full py-2 rounded-lg text-xs font-semibold border transition-all hover:opacity-90"
                   style={{ borderColor: "var(--ag-accent)", color: "var(--ag-accent)" }}
                 >
-                  Start Investing via Crypto
+                  Start Free Trial
                 </button>
               </div>
             ))}

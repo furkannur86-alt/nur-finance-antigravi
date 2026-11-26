@@ -60,7 +60,7 @@ const INITIAL_POSTS: SocialPost[] = [
     isVerifiedKYC: true,
     timeAgo: "1h ago",
     content: "New EU AI Act Article 5 compliance diff published. All institutional analytics platforms with full audit trails remain 100% compliant.",
-    sentiment: "REGULATORY",
+    sentiment: "NEUTRAL",
     targetAsset: "EU Regulatory & Compliance",
     likes: 55,
     commentsCount: 18,

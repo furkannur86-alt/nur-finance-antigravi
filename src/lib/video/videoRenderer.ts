@@ -11,7 +11,7 @@
  *   - nur_digest:      daily NUR Finance digest card
  */
 
-export type TemplateType = "market_bulletin" | "stock_analysis" | "nur_digest";
+export type TemplateType = "market_bulletin" | "stock_analysis" | "nur_digest" | "market_recap";
 export type OutputFormat = "webm" | "mp4";
 
 export interface RenderOptions {

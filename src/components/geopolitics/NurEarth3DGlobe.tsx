@@ -29,13 +29,13 @@ import { GLOBAL_BOURSES, GlobalBourse, GEOFINANCIAL_COMMODITY_SHOCKS } from "@/l
 import { ACTIVE_CYBER_ATTACK_ARCS, CYBER_DEFENSE_NODES, CyberAttackArc } from "@/lib/geo/cyberWarfareData";
 
 const GLOBAL_STRATEGIC_CITIES: { name: string; lat: number; lon: number; code: string }[] = [];
-const GLOBAL_MILITARY_BASES: { id: string; name: string; lat: number; lon: number; details: string; country: string }[] = [];
+const GLOBAL_MILITARY_BASES: { id: string; name: string; lat: number; lon: number; details: string; country: string; faction: string; type: string; strategicRole: string; radarRangeKm: number }[] = [];
 const SUBMARINE_FIBER_CABLES: { name: string; coordinates: [number, number][] }[] = [];
-const STRATEGIC_PIPELINES: { name: string; type: string; coordinates: [number, number][] }[] = [];
+const STRATEGIC_PIPELINES: { id: string; name: string; type: string; coordinates: [number, number][]; status: string; capacity: string; operator: string }[] = [];
 const TECTONIC_BOUNDARIES: { name: string; coordinates: [number, number][] }[] = [];
 const MAJOR_OCEAN_CURRENTS: { name: string; coordinates: [number, number][] }[] = [];
 const GLOBAL_ATMOSPHERIC_EVENTS: { name: string; lat: number; lon: number; type: string }[] = [];
-const ACTIVE_CONFLICT_THEATERS: { name: string; lat: number; lon: number; details: string }[] = [];
+const ACTIVE_CONFLICT_THEATERS: { id: string; name: string; lat: number; lon: number; details: string; theater: string; activeUnitsCount: number; threatLevel: string; region: string; belligerents: string[]; fatalityEstimate: number; tacticalStatus: string; correlatedAssets: string[] }[] = [];
 
 export type SensorMode = "TRUE_COLOR" | "FLIR_THERMAL" | "CYBER_NIGHT" | "DEFCON_WAR_ROOM";
 export type ViewportMode = "3D_GLOBE" | "2D_TACTICAL_MAP";
@@ -979,9 +979,6 @@ export default function NurEarth3DGlobe() {
 
       setGlobeRotation({ yaw: currentYaw, pitch: currentPitch });
       setZoom(currentZoom);
-
-      // Update dynamic 2D radar scan sweep on the 3D spherical texture
-      tactical2D.updateRadar(currentYaw * 3);
 
       // Rotate Earth & Atmosphere
       earth.rotation.y = currentYaw;
