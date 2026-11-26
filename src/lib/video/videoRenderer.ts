@@ -8,20 +8,15 @@
  * Template types:
  *   - market_bulletin: live prices, indices snapshot
  *   - stock_analysis:  OHLCV candles + RSI + MACD
- *   - depin_metrics:   mining pool stats, NUR earnings
  *   - nur_digest:      daily NUR Finance digest card
- *
- * Persona wardrobe standards:
- *   Female (Elena Vance, Elif Nur, Sovereign Concierge): Luminous Emerald Green eyes.
- *   Male   (Marcus Sterling, Alexander Croft, Klaus Weber): Emerald Green or Steel Blue eyes.
  */
 
-export type TemplateType = "market_bulletin" | "stock_analysis" | "depin_metrics" | "nur_digest";
+export type TemplateType = "market_bulletin" | "stock_analysis" | "nur_digest";
 export type OutputFormat = "webm" | "mp4";
 
 export interface RenderOptions {
   template: TemplateType;
-  data: BulletinData | StockAnalysisData | DepinData | DigestData;
+  data: BulletinData | StockAnalysisData | DigestData;
   width?: number;          // default 1920
   height?: number;         // default 1080
   fps?: number;            // default 60
@@ -68,15 +63,6 @@ export interface StockAnalysisData {
   currentPrice?: number;
 }
 
-export interface DepinData {
-  activeDevices: number;
-  totalHashRateMHs: number;
-  totalEarningsNUR: number;
-  nurPriceEur: number;
-  topRegions: { region: string; count: number }[];
-  rewardsDistributed24h: number;
-  poolShare?: number;       // user pool share %
-}
 
 export interface DigestData {
   date: string;
@@ -425,92 +411,6 @@ function renderStockAnalysis(
   });
 }
 
-// ─── Template: DePIN Metrics ──────────────────────────────────────────────────
-
-function renderDepinMetrics(
-  ctx: CanvasRenderingContext2D,
-  w: number, h: number,
-  data: DepinData,
-  t: number
-) {
-  const p = 60;
-  renderBackground(ctx, w, h);
-  renderLogo(ctx, w, p, t);
-
-  drawText(ctx, "DEPIN MINING POOL", p, 140, PALETTE.accent, 44, "700");
-  drawText(ctx, "Compute-for-Access Network · Powered by $NUR", p, 176, PALETTE.textSub, 20, "400");
-
-  drawLine(ctx, p, 200, w - p, 200, PALETTE.border, 1);
-
-  // Big stats
-  const stats = [
-    { label: "ACTIVE DEVICES", value: data.activeDevices.toLocaleString() },
-    { label: "TOTAL HASHRATE", value: `${data.totalHashRateMHs.toLocaleString()} MH/s` },
-    { label: "NUR EARNED (24H)", value: `${data.rewardsDistributed24h.toFixed(0)} NUR` },
-    { label: "NUR PRICE", value: `€${data.nurPriceEur.toFixed(4)}` },
-  ];
-
-  const statW = (w - p * 2) / stats.length;
-  stats.forEach((s, i) => {
-    const sx = p + i * statW;
-    const sy = 240;
-    drawRect(ctx, sx + 10, sy, statW - 20, 120, PALETTE.surface, 10);
-    drawText(ctx, s.label, sx + 26, sy + 28, PALETTE.textSub, 13, "400");
-    drawText(ctx, s.value, sx + 26, sy + 82, PALETTE.accent, 32, "700");
-  });
-
-  // Region bar chart
-  const regions = data.topRegions.slice(0, 6);
-  const barX = p;
-  const barY = 420;
-  const barH = 260;
-  const barAreaW = (w - p * 2) * 0.55;
-  drawRect(ctx, barX, barY, barAreaW, barH, PALETTE.surface, 10);
-  drawText(ctx, "REGIONAL DISTRIBUTION", barX + 20, barY + 30, PALETTE.textSub, 14, "400");
-
-  const maxCount = Math.max(...regions.map(r => r.count), 1);
-  const regionH = 30;
-  const regionStart = barY + 54;
-  regions.forEach((r, i) => {
-    const ry = regionStart + i * (regionH + 8);
-    const barFrac = r.count / maxCount;
-    const revealFrac = Math.min((t - i * 300) / 800, barFrac);
-    const barLen = Math.max(revealFrac, 0) * (barAreaW - 120);
-    drawRect(ctx, barX + 100, ry, barLen, regionH, PALETTE.accent + "40", 4);
-    drawRect(ctx, barX + 100, ry, barLen * 0.6, regionH, PALETTE.accent + "80", 4);
-    drawText(ctx, r.region, barX + 20, ry + 21, PALETTE.textSub, 16, "400");
-    drawText(ctx, r.count.toLocaleString(), barX + barAreaW - 16, ry + 21, PALETTE.textPrime, 16, "700", "right");
-  });
-
-  // NUR earnings arc gauge (right side)
-  const gx = w - p - 220;
-  const gy = 430 + 130;
-  const gr = 110;
-  const earned = Math.min(data.totalEarningsNUR / 35_000_000, 1);
-  const revealEarned = Math.min(t / 2500, earned);
-
-  ctx.strokeStyle = PALETTE.surface;
-  ctx.lineWidth = 18;
-  ctx.beginPath();
-  ctx.arc(gx, gy, gr, Math.PI * 0.75, Math.PI * 2.25);
-  ctx.stroke();
-
-  const arcGrad = ctx.createLinearGradient(gx - gr, gy, gx + gr, gy);
-  arcGrad.addColorStop(0, PALETTE.nurBlue);
-  arcGrad.addColorStop(1, PALETTE.accent);
-  ctx.strokeStyle = arcGrad;
-  ctx.lineWidth = 18;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.arc(gx, gy, gr, Math.PI * 0.75, Math.PI * 0.75 + Math.PI * 1.5 * revealEarned);
-  ctx.stroke();
-  ctx.lineCap = "butt";
-
-  drawText(ctx, `${(revealEarned * 100).toFixed(1)}%`, gx, gy + 12, PALETTE.accent, 36, "700", "center");
-  drawText(ctx, "OF COMPUTE POOL", gx, gy + 40, PALETTE.textSub, 13, "400", "center");
-  drawText(ctx, "DISTRIBUTED", gx, gy + 60, PALETTE.textSub, 13, "400", "center");
-}
-
 // ─── Template: NUR Digest ────────────────────────────────────────────────────
 
 function renderNurDigest(
@@ -568,9 +468,6 @@ function renderFrame(
       break;
     case "stock_analysis":
       renderStockAnalysis(ctx, w, h, data as StockAnalysisData, t, frame);
-      break;
-    case "depin_metrics":
-      renderDepinMetrics(ctx, w, h, data as DepinData, t);
       break;
     case "nur_digest":
       renderNurDigest(ctx, w, h, data as DigestData, t);

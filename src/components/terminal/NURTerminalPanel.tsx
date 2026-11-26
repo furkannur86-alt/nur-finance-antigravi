@@ -309,16 +309,16 @@ const COMMANDS: Record<string, { desc: string; category: string; fn: (args: stri
       line("data",   "  Next Halving: ~2028-04  Block: 851,234"),
     ];
   }},
-  NUR: { desc:"$NUR Coin ecosystem status", category:"CRYPTO", fn:()=>[
-    line("info",   "  $NUR SOVEREIGN TOKEN  ——  v1.0 Genesis"),
+  NUR: { desc:"NUR Finance platform status", category:"SYSTEM", fn:()=>[
+    line("info",   "  NUR FINANCE TERMINAL  ——  v3.0"),
     line("sep",    "  " + "─".repeat(45)),
-    line("data",   "  Network     : Ethereum Mainnet (ERC-20)"),
-    line("data",   "  Symbol      : NUR"),
-    line("data",   "  Supply      : 21,000,000 (hard cap, à la BTC)"),
-    line("success","  Staking APY : 8.4%  (NUR Finance B holders)"),
-    line("data",   "  Utility     : Access · Governance · Yield"),
-    line("data",   "  Contract    : 0xNUR...SOVEREIGN"),
-    line("info",   "  Phase       : Testnet → Mainnet Q1 2027"),
+    line("data",   "  Platform    : NUR Finance Professional Terminal"),
+    line("data",   "  Tier        : Professional (€199/mo)"),
+    line("data",   "  Data Feed   : Real-time Level 1 & Level 2"),
+    line("success","  Status      : All systems operational"),
+    line("data",   "  Uptime      : 99.97%"),
+    line("data",   "  API         : REST + WebSocket active"),
+    line("info",   "  Support     : support@nur.finance"),
   ]},
   DEFI: { desc:"DeFi protocol overview", category:"CRYPTO", fn:()=>[
     line("data",   "  TOP DEFI PROTOCOLS  (TVL)"),
@@ -335,10 +335,10 @@ const COMMANDS: Record<string, { desc: string; category: string; fn: (args: stri
   OMS: { desc:"Open orders & OMS status", category:"TRADING", fn:()=>[
     line("info",   "  OMS/EMS — ORDER MANAGEMENT SYSTEM"),
     line("sep",    "  " + "─".repeat(50)),
-    line("success","  ● CONNECTED  to NUR Sovereign Broker Gateway"),
+    line("success","  ● CONNECTED  to NUR Finance Broker Gateway"),
     line("data",   "  Open orders  :  0   |  Filled today: 0"),
-    line("data",   "  Buying power :  $0  (Paper mode — connect wallet)"),
-    line("info",   "  → Use WALLET command to connect MetaMask"),
+    line("data",   "  Buying power :  $0  (Paper mode — connect brokerage)"),
+    line("info",   "  → Use ACCOUNT command to connect brokerage"),
   ]},
   WALLET: { desc:"Wallet connection status", category:"TRADING", fn:()=>[
     line("info",   "  DIGITAL WALLET GATEWAY"),

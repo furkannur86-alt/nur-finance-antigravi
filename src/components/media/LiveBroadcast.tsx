@@ -15,7 +15,6 @@ import { useIDEStore } from "@/stores/useIDEStore";
 export type StudioBackdropMode =
   | "NUR_STUDIO_2126"
   | "3D_GLOBE"
-  | "ORBITAL_RADAR"
   | "FINANCIAL_BOURSES"
   | "EXECUTIVE_OFFICE";
 
@@ -321,18 +320,6 @@ export default function LiveBroadcast() {
           <div className="w-full h-full relative">
             <NurEarth3DGlobe />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/70 pointer-events-none" />
-          </div>
-        ) : backdropMode === "ORBITAL_RADAR" ? (
-          <div className="w-full h-full relative flex items-center justify-center bg-[radial-gradient(ellipse_at_center,#062b40_0%,#020914_70%,#000000_100%)]">
-            <div className="w-[450px] h-[450px] rounded-full border border-cyan-500/30 relative animate-pulse flex items-center justify-center">
-              <div className="w-[320px] h-[320px] rounded-full border border-cyan-400/20" />
-              <div className="w-[180px] h-[180px] rounded-full border border-cyan-300/30" />
-              <div className="w-full h-[1px] bg-cyan-500/30 absolute" />
-              <div className="h-full w-[1px] bg-cyan-500/30 absolute" />
-              <div className="absolute top-1/3 left-1/4 px-2 py-0.5 rounded bg-red-500/30 text-red-300 font-mono text-[10px] border border-red-500/50">
-                ORBITAL DEFENSE RADAR: STARLINK #54751113
-              </div>
-            </div>
           </div>
         ) : (
           <div className="w-full h-full p-8 grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-950/90 overflow-hidden opacity-85 font-mono">

@@ -211,7 +211,7 @@ export default function ProfessionalAIHubPanel() {
                 100% FREE PRO SUITE
               </span>
               <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold font-mono border border-cyan-500/40">
-                POWERED BY SOVEREIGN DePIN
+                INSTITUTIONAL AI ANALYTICS
               </span>
             </div>
             <h1 className="text-sm font-bold text-white font-serif tracking-wide mt-0.5">
@@ -224,7 +224,7 @@ export default function ProfessionalAIHubPanel() {
         <div className="flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-xl border border-white/10 font-mono text-xs">
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${isComputeRunning ? "bg-emerald-400 animate-pulse" : "bg-slate-600"}`} />
-            <span className="text-[10px] text-slate-400">DePIN:</span>
+            <span className="text-[10px] text-slate-400">Engine:</span>
             <select
               value={computeMode}
               onChange={(e) => setComputeMode(e.target.value as any)}
@@ -834,7 +834,7 @@ export default function ProfessionalAIHubPanel() {
                 <div className="text-right text-[10px] font-mono text-slate-400">
                   <div>DATE: {new Date().toLocaleDateString("en-GB")}</div>
                   <div>NODE: {walletAddress.slice(0, 14)}...</div>
-                  <div className="text-emerald-400 font-bold">STATUS: VERIFIED DEPIN COMPUTE</div>
+                  <div className="text-emerald-400 font-bold">STATUS: VERIFIED ANALYTICS NODE</div>
                 </div>
               </div>
 

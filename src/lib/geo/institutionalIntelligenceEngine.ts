@@ -94,7 +94,7 @@ export interface SovereignStateDossier {
     stealthAirCombatAirframes: number;
     nuclearWarheadStockpile?: number;
     navalDisplacementTotalTons: number;
-    c4isrOrbitalDownlinkReady: boolean;
+    c4isrDataLinkReady: boolean;
   };
 
   // Pillar 7: Cyber Warfare & Infrastructure Resilience
@@ -167,7 +167,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 650,
       nuclearWarheadStockpile: 5244,
       navalDisplacementTotalTons: 3500000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 98,
@@ -236,7 +236,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 220,
       nuclearWarheadStockpile: 500,
       navalDisplacementTotalTons: 2400000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 95,
@@ -305,7 +305,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 24, // KAAN Prototypes + UCAVs (KIZILELMA, ANKA-3)
       nuclearWarheadStockpile: 0, // NATO nuclear sharing host (Incirlik)
       navalDisplacementTotalTons: 320000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 88,
@@ -374,7 +374,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 84, // F-15SA / Typhoon
       nuclearWarheadStockpile: 0,
       navalDisplacementTotalTons: 110000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 92,
@@ -443,7 +443,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 35, // F-35A on order
       nuclearWarheadStockpile: 0,
       navalDisplacementTotalTons: 220000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 91,
@@ -512,7 +512,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 32, // Su-57
       nuclearWarheadStockpile: 5580,
       navalDisplacementTotalTons: 1900000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 96,
@@ -581,7 +581,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 38, // F-35B Lightning II
       nuclearWarheadStockpile: 225, // Trident D5
       navalDisplacementTotalTons: 480000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 97,
@@ -650,7 +650,7 @@ export const SOVEREIGN_INSTITUTIONAL_DOSSIERS: SovereignStateDossier[] = [
       stealthAirCombatAirframes: 36, // Rafale + AMCA Program
       nuclearWarheadStockpile: 172,
       navalDisplacementTotalTons: 550000,
-      c4isrOrbitalDownlinkReady: true,
+      c4isrDataLinkReady: true,
     },
     cyberWarfare: {
       nationalCyberDefenseReadinessScore: 89,

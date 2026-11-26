@@ -16,19 +16,17 @@ import { cyberSound } from "@/lib/audio/sound-synth";
 export type StudioStageType =
   | "hegelian-debate"
   | "3d-globe"
-  | "orbital-radar"
   | "financial-bourses"
   | "anchor-female"
   | "anchor-male"
   | "executive-office";
 
 const STUDIO_STAGES: { id: StudioStageType; name: string; path?: string }[] = [
-  { id: "hegelian-debate", name: "⚖️ Studio C — Hegelian Debate Arena (Marcus vs Elena → Elif Nur)" },
-  { id: "anchor-female", name: "Studio A — NUR TV 2126 4K Main Stage", path: "/images/studio/broadcast_studio.jpg" },
-  { id: "executive-office", name: "Studio B — Sovereign Executive Suite", path: "/images/studio/executive-office.jpg" },
-  { id: "financial-bourses", name: "📊 Global Financial Bourses Matrix" },
-  { id: "orbital-radar", name: "📡 Starship Orbital Radar & Space Telemetry" },
-  { id: "3d-globe", name: "🌐 3D Planetary Earth & Geopolitical Globe" },
+  { id: "hegelian-debate", name: "Studio C — Macro Debate Arena" },
+  { id: "anchor-female", name: "Studio A — NUR TV 4K Main Stage", path: "/images/studio/broadcast_studio.jpg" },
+  { id: "executive-office", name: "Studio B — Executive Suite", path: "/images/studio/executive-office.jpg" },
+  { id: "financial-bourses", name: "Global Financial Bourses Matrix" },
+  { id: "3d-globe", name: "3D Geopolitical Globe" },
 ];
 
 export default function BroadcastStudioPanel() {
@@ -338,24 +336,13 @@ export default function BroadcastStudioPanel() {
                     ANTITHESIS &bull; SKY YACHT YIELD
                   </div>
                   <div className="text-xs font-bold text-pink-200 font-serif">Elena Vance</div>
-                  <p className="text-[9px] text-slate-300 line-clamp-2">"Frictionless 24/7 liquidity, Web3 speed & unbounded markets."</p>
+                  <p className="text-[9px] text-slate-300 line-clamp-2">"Frictionless 24/7 liquidity, real-time execution & unbounded markets."</p>
                 </div>
               </div>
             ) : selectedStudio.id === "3d-globe" ? (
               <div className="w-full h-full relative">
                 <NurEarth3DGlobe />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 pointer-events-none" />
-              </div>
-            ) : selectedStudio.id === "orbital-radar" ? (
-              <div className="w-full h-full relative flex items-center justify-center bg-[radial-gradient(ellipse_at_center,#062b40_0%,#020914_70%,#000000_100%)]">
-                <div className="w-[300px] h-[300px] rounded-full border border-cyan-500/30 relative animate-pulse flex items-center justify-center">
-                  <div className="w-[200px] h-[200px] rounded-full border border-cyan-400/20" />
-                  <div className="w-full h-[1px] bg-cyan-500/30 absolute" />
-                  <div className="h-full w-[1px] bg-cyan-500/30 absolute" />
-                  <div className="absolute top-1/4 left-1/4 px-2 py-0.5 rounded bg-red-500/30 text-red-300 font-mono text-[9px]">
-                    RADAR: PASS #54751113
-                  </div>
-                </div>
               </div>
             ) : selectedStudio.id === "financial-bourses" ? (
               <div className="w-full h-full p-4 grid grid-cols-3 gap-2 bg-slate-950/90 font-mono text-[10px]">
@@ -558,7 +545,7 @@ export default function BroadcastStudioPanel() {
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Video Wall Mode:</span>
-              <span className="text-emerald-400 font-bold">Starship + 3D Tactical</span>
+              <span className="text-emerald-400 font-bold">Multi-Feed Composite</span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Broadcast Status:</span>

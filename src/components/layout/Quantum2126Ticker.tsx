@@ -41,7 +41,7 @@ export default function Quantum2126Ticker() {
           className="text-[9px] font-mono font-black tracking-[0.15em]"
           style={{ color: "#67e8f9" }}
         >
-          YEAR 2126 · QUANTUM HUD
+          LIVE · MARKET HUD
         </span>
       </div>
 
@@ -81,9 +81,9 @@ export default function Quantum2126Ticker() {
               color: "#fbbf24",
               boxShadow: "0 0 8px rgba(251,191,36,0.15)",
             }}
-            title="Sovereign Executive Mode Active"
+            title="Admin Mode Active"
           >
-            👑 SOVEREIGN
+            🔑 ADMIN
           </button>
         ) : (
           <button
@@ -101,9 +101,9 @@ export default function Quantum2126Ticker() {
               e.currentTarget.style.color = "rgba(78,98,128,0.7)";
               e.currentTarget.style.borderColor = "transparent";
             }}
-            title="Sovereign Vault (Ctrl+Shift+S)"
+            title="Admin Login (Ctrl+Shift+S)"
           >
-            🔒 STEALTH
+            🔒 LOGIN
           </button>
         )}
       </div>

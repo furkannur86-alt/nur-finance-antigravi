@@ -25,7 +25,7 @@ Type a question or command to get started.`;
 const RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ["risk", "danger", "threat"],
-    response: "Our RISK section includes Financial Risk, Cyber Risk, Nuclear Risk, Military Risk, Galactic Risk (NASA asteroid tracking), and Political Risk panels. Navigate to the RISK group in the sidebar to access these. For a quick overview, try the Risk Dashboard panel.",
+    response: "Our RISK section includes Financial Risk, Cyber Risk, Nuclear Risk, Military Risk, and Political Risk panels. Navigate to the RISK group in the sidebar to access these.",
   },
   {
     keywords: ["globe", "earth", "map", "geopolitics"],
@@ -37,7 +37,7 @@ const RESPONSES: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ["trade", "trading", "buy", "sell", "order"],
-    response: "Trading tools: OMS/EMS for order management, Options Panel for derivatives, Digital Wallet Gateway for crypto, and the WISH Framework for strategy execution. Access them from the TRADING group in the sidebar.",
+    response: "Trading tools: OMS/EMS for order management, Options Panel for derivatives, and the WISH Framework for strategy execution. Access them from the TRADING group in the sidebar.",
   },
   {
     keywords: ["chart", "graph", "technical", "analysis"],
@@ -49,7 +49,7 @@ const RESPONSES: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ["portfolio", "position", "pnl", "profit"],
-    response: "Portfolio management: The Portfolio Manager shows your holdings, P&L, and allocation. The Dashboard gives a market overview. For institutional-grade analytics, check the Institutional Suite panel.",
+    response: "Portfolio management: The Portfolio Manager shows your holdings, P&L, and allocation. The Dashboard gives a market overview. For institutional-grade analytics, upgrade to the Professional or Institutional tier.",
   },
   {
     keywords: ["help", "how", "what", "guide", "tutorial"],
@@ -57,15 +57,15 @@ const RESPONSES: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ["price", "plan", "subscription", "cost", "pricing"],
-    response: "NUR Finance offers tiered access:\n• Free: Core market data and basic tools\n• Pro: Advanced analytics and screeners\n• Quant: Algorithmic trading tools and AI copilot\n• Team: Collaborative features\n• NUR Finance R: Reuters-tier terminal (~€100K/yr, requires 1yr Reuters history)\n• NUR Finance B: Bloomberg-tier terminal (~€100K/yr, requires 1yr Bloomberg history + invitation)",
+    response: "NUR Finance offers tiered access:\n• Retail: Free (limited) or €29–€49/mo — delayed data, watchlists, news, basic charts\n• Professional: €199/mo — real-time L1/L2 data, 60 FPS charts, options Greeks, AI copilot\n• Institutional: €999+/mo — everything in Professional plus multi-seat admin, FIX Protocol DMA, compliance logs\nNo prerequisites. Instant checkout via credit card, SEPA, or wire transfer.",
   },
   {
     keywords: ["crypto", "bitcoin", "coin", "wallet"],
-    response: "Crypto tools: NUR Coin Ecosystem for our native token, Digital Wallet Gateway for multi-chain transactions, and the Fleet Miner for browser-based mining. Access crypto analytics across the TRADING group.",
+    response: "Crypto coverage: Real-time BTC, ETH and major altcoin pricing, derivatives data, and market analytics. Access crypto market tools across the TRADING and MARKETS groups.",
   },
   {
     keywords: ["ai", "copilot", "quant", "algorithm"],
-    response: "AI & Quant tools: The AI Quant Copilot builds and backtests strategies using factor models. The AI Tools panel offers NLP-powered market analysis. Professional AI Hub covers DePIN and advanced ML models. All available in the ANALYSIS group.",
+    response: "AI & Quant tools: The AI Quant Copilot builds and backtests strategies using factor models. The AI Tools panel offers NLP-powered market analysis. The Professional AI Hub provides advanced ML models for institutional analytics. All available in the ANALYSIS group.",
   },
 ];
 

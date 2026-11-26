@@ -47,7 +47,6 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; color: string }
   media:              { label: "Media Network",     icon: "📡", color: "#e879f9" },
   "nur-education":    { label: "Education",         icon: "🎓", color: "#34d399" },
   "nur-kids":         { label: "Nur Kids",          icon: "👨‍👩‍👧", color: "#34d399" },
-  "tatar-finans":     { label: "Tatar Finance",      icon: "🛡️", color: "#fbbf24" },
   editor:             { label: "Code Editor",       icon: "⌨️", color: "#6b7280" },
 };
 
@@ -97,7 +96,7 @@ export default function TopBar() {
     });
   }, [user, updateVerification]);
 
-  // Ctrl+Shift+S → Sovereign, Space → Launcher (only when not in an input)
+  // Ctrl+Shift+S → Admin Auth, Space → Launcher (only when not in an input)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && (e.key === "S" || e.key === "s")) {

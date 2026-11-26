@@ -354,25 +354,25 @@ export default function VerificationPanel() {
             </button>
           </form>
 
-          {/* Anonymous Web3 Settlement & Wallet Academy Bridge */}
+          {/* Payment Methods */}
           <div className="p-4 rounded-lg border bg-emerald-950/20 border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="text-xs font-bold text-emerald-400 flex items-center gap-2">
-                <span>&#128274; Digital Wallet Settlement &amp; Client Academy</span>
+                <span>&#128274; Payment &amp; Settlement Options</span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">
                   KYC/AML COMPLIANT
                 </span>
               </div>
               <p className="text-[11px] text-[var(--ag-muted)]">
-                On-chain verified multi-chain settlement via USDT/USDC (Ethereum, Polygon, Arbitrum, TRON, BTC) — with identity attestation and step-by-step wallet setup guide.
+                Secure payment via credit card, SEPA direct debit, or wire transfer. Enterprise clients may request invoice-based billing with net-30 terms.
               </p>
             </div>
             <button
               type="button"
-              onClick={() => setActiveView("wallet-gateway")}
+              onClick={() => setActiveView("pricing")}
               className="px-4 py-2 rounded text-xs font-bold bg-emerald-400 hover:bg-emerald-300 text-black shrink-0 transition-colors"
             >
-              Open Web3 Wallet Gateway &rarr;
+              View Pricing &amp; Plans &rarr;
             </button>
           </div>
 

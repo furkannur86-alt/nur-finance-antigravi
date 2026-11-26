@@ -222,8 +222,8 @@ export default function ProfessionHubPanel() {
                   <div className="text-sm font-bold" style={{ color: "#00d4aa" }}>Download Free — Access Your Profession&apos;s Tools</div>
                   <p className="text-[10px] mt-1 text-white/60 leading-relaxed">
                     Install NUR Finance on your laptop or desktop to access free tools tailored to your career.
-                    When your computer is idle, your GPU/CPU contributes to NUR&apos;s network — you earn $NUR Coin rewards.
-                    More powerful hardware = more earnings. Zero disruption to your work (non-aggressive mode default).
+                    Get real-time market data, professional analytics, and customizable workspaces.
+                    Upgrade to Professional for full access to all institutional-grade features.
                   </p>
                   <button className="mt-2 px-4 py-1.5 rounded-lg text-[11px] font-bold" style={{ background: "#00d4aa", color: "#000" }}>
                     ⬇️ Download NUR Finance Desktop
@@ -274,12 +274,12 @@ export default function ProfessionHubPanel() {
               </div>
             </div>
 
-            {/* Compute download pitch */}
+            {/* Desktop app pitch */}
             <div className="rounded-xl p-4 mb-4" style={{ background: "rgba(0,212,170,0.05)", border: "1px solid rgba(0,212,170,0.15)" }}>
-              <div className="text-[10px] font-bold mb-1" style={{ color: "#00d4aa" }}>🖥 Earn $NUR While Your Computer Idles</div>
+              <div className="text-[10px] font-bold mb-1" style={{ color: "#00d4aa" }}>🖥 NUR Finance Desktop App</div>
               <p className="text-[10px] text-white/50 leading-relaxed">
-                Download the NUR Finance desktop app. When you&apos;re not using your computer, it contributes GPU/CPU compute to NUR&apos;s AI network.
-                Your earnings in $NUR Coin scale with your hardware score. Withdraw to bank via KYC-verified account.
+                Download the NUR Finance desktop app for a dedicated terminal experience with multi-monitor support,
+                real-time alerts, and faster data feeds. Available for Windows, macOS, and Linux.
               </p>
             </div>
 

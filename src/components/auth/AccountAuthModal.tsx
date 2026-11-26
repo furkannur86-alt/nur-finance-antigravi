@@ -82,14 +82,14 @@ export default function AccountAuthModal({ open, onClose }: AccountAuthModalProp
           <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 text-xs text-amber-200 leading-relaxed">
             ⚠️ Supabase environment variables pending. When configured in <code className="text-white">.env.local</code> (
             <code className="text-white">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="text-white">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>
-            ), sovereign cloud account authentication will be fully live.
+            ), cloud account authentication will be fully live.
           </div>
         ) : loading ? (
-          <div className="text-xs text-slate-400 font-mono text-center py-4">Authenticating clearance...</div>
+          <div className="text-xs text-slate-400 font-mono text-center py-4">Authenticating...</div>
         ) : user ? (
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1 text-center">
-              <span className="text-emerald-400 font-bold text-xs uppercase">✅ Authenticated Clearance</span>
+              <span className="text-emerald-400 font-bold text-xs uppercase">✅ Authenticated</span>
               <p className="text-[11px] text-slate-300">{user.email}</p>
             </div>
             <button

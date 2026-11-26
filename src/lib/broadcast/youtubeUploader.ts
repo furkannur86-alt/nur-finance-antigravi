@@ -88,7 +88,7 @@ export function generateVideoMetadata(input: TitleGeneratorInput): VideoMetadata
         tags: [
           "NUR Finance", "market bulletin", "daily markets", "global markets",
           "stock market news", "financial terminal", "bloomberg alternative",
-          "reuters alternative", "NUR coin", "DePIN", "compute for access",
+          "reuters alternative", "market analysis", "financial data",
           "market analysis", date,
         ],
         categoryId: "25",
@@ -109,7 +109,7 @@ export function generateVideoMetadata(input: TitleGeneratorInput): VideoMetadata
           `Powered by NUR Finance AI — real-time market intelligence.`,
           "",
           `🔗 Full terminal: https://nur.finance`,
-          `💡 Mine $NUR with your GPU and access the terminal for free.`,
+          `💡 Try the free tier at nur.finance`,
           "",
           `#${sym} #StockAnalysis #NURFinance #TechnicalAnalysis #Investing`,
         ].join("\n"),
@@ -127,22 +127,19 @@ export function generateVideoMetadata(input: TitleGeneratorInput): VideoMetadata
 
     case "depin_metrics": {
       return {
-        title: `$NUR Mining Pool Live Stats | DePIN Network Update – ${date}`,
+        title: `NUR Finance Market Recap – ${date}`,
         description: [
-          `Live DePIN mining pool metrics for the NUR Finance compute network.`,
+          `Daily market recap from NUR Finance.`,
           "",
-          `⛏️ Share your idle GPU → Earn $NUR → Access the NUR Finance terminal for free`,
-          `📊 Active miners | Hash rate | NUR earned | Regional distribution`,
+          `📊 Key market metrics | Sector performance | Macro outlook`,
           "",
-          `🔗 Join the pool: https://nur.finance/compute`,
-          `💰 NUR/EUR rate updated daily`,
+          `🔗 Full terminal: https://nur.finance`,
           "",
-          `#NURCoin #DePIN #GPUMining #CryptoMining #PassiveIncome #Web3`,
+          `#NURFinance #MarketRecap #FinancialData`,
         ].join("\n"),
         tags: [
-          "NUR coin", "DePIN", "GPU mining", "compute for access",
-          "NUR Finance", "crypto mining", "passive income", "Web3",
-          "decentralized infrastructure", date,
+          "NUR Finance", "market recap", "financial data",
+          "market analysis", "daily markets", date,
         ],
         categoryId: "22",
         privacy: "public",

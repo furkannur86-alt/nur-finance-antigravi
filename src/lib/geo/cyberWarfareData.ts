@@ -176,8 +176,8 @@ export const CYBER_DEFENSE_NODES: CyberDefenseNode[] = [
   },
   {
     id: 'node-sovereign-nur',
-    name: 'Nur Cyber Command Sovereign SOC',
-    country: 'Global Starship Bridge',
+    name: 'Nur Cyber Command SOC',
+    country: 'Turkey',
     coords: [39.9334, 32.8597],
     type: 'SOVEREIGN_SOC',
     status: 'OPERATIONAL',

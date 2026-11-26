@@ -549,19 +549,14 @@ export const useIDEStore = create<IDEState>((set, get) => ({
 
     const defaultTitles: Record<string, string> = {
       geopolitics: "🌐 Nur Earth 3D & Planetary Recon",
-      "broadcast-studio": "📺 Nur Finans Medya Studio Control",
+      "broadcast-studio": "📺 NUR Finance Broadcast Studio",
       "geophysics-resources": "💎 Geophysics & Strategic Reserves",
-      "institutional-suite": "🏛️ Institutional Sovereign Suite ($8.5K)",
-      "orbital-telemetry": "🛰️ Orbital Telemetry HUD (13·35·42·55·54751113)",
-      "professional-ai": "🩺 Professional AI Hub & DePIN Cluster",
-      "professional-social": "👥 NUR Sovereign Financial Social Network",
-      "umay-boss": "👑 Umay Boss Sovereign Terminal",
-      "holding-ecosystem": "🏛️ Holding Ecosystem Command",
+      "professional-ai": "🩺 Professional AI Hub",
+      "professional-social": "👥 NUR Financial Social Network",
       charts: "📈 High-Resolution Multi-Chart Station",
-      "oms-ems": "⚡ OMS / EMS Sovereign Execution Desk",
+      "oms-ems": "⚡ OMS / EMS Execution Desk",
       "quant-copilot": "🤖 AI Quant Copilot & Factor Engine",
-      "nur-coin": "🪙 Nur Coin Sovereign Matrix",
-      terminal: "💻 Sovereign Linux Command Terminal",
+      terminal: "💻 Linux Command Terminal",
     };
 
     const count = get().floatingWindows.length;

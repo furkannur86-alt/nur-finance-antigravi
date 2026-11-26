@@ -24,7 +24,7 @@ const SOCIAL_FEED = [
   { id: "f2", user: "SarahM_HedgeFund", avatar: "👩‍💼", time: "12m ago", likes: 89, content: "Turkish CDS spreads tightening despite CBRT rate cut. Interesting divergence from historical playbook. Watching TRY/USD closely.", tags: ["#Turkey","#EM","#MacroRisk"] },
   { id: "f3", user: "OilTrader_Gulf",   avatar: "👨‍⚕️", time: "28m ago", likes: 52, content: "Hormuz closure risk re-pricing. Brent front month up $3.4 in 90 minutes. OPEC+ emergency call possible by Friday.", tags: ["#Oil","#Geopolitics","#Brent"] },
   { id: "f4", user: "Prof_EkonomiTR",   avatar: "👩‍🏫", time: "1h ago",  likes: 120, content: "Just published: 'Demographic dividend vs aging trap — India vs China 2030 comparison'. See Research tab for full report.", tags: ["#Macro","#Demographics","#India"] },
-  { id: "f5", user: "CryptoNur_Dev",    avatar: "👨‍💻", time: "2h ago",  likes: 67, content: "NUR Coin testnet throughput: 4,200 TPS in latest benchmark. Mainnet launch Q1 2025 on track. Liquidity pool seeded.", tags: ["#NURCoin","#DeFi","#Blockchain"] },
+  { id: "f5", user: "QuantDev_EU",      avatar: "👨‍💻", time: "2h ago",  likes: 67, content: "Backtested momentum-reversion hybrid on Russell 2000. Sharpe 2.1 over 5yr lookback, max drawdown -8.3%. Going live with paper trading next week.", tags: ["#Quant","#Algo","#Backtest"] },
   { id: "f6", user: "GoldBull_ME",      avatar: "👩‍💼", time: "3h ago",  likes: 44, content: "Central bank gold buying accelerating: Poland, Hungary, Turkey all added >10 tonnes Q3. Bullish macro signal for XAU.", tags: ["#Gold","#CentralBanks","#XAU"] },
 ];
 
@@ -307,7 +307,7 @@ export default function UserProfilePanel() {
                 <span className="text-[11px] font-bold text-red-400">Identity Verification Required for Earnings</span>
               </div>
               <p className="text-[10px] text-white/60 leading-relaxed">
-                NUR Finance operates as a regulated financial platform. To receive compute earnings, trading profits, or NUR Coin payouts to your bank account, you must complete full KYC verification. This is a legal requirement — treat your NUR account like a bank account. False information will result in permanent account closure and legal referral.
+                NUR Finance operates as a regulated financial platform. To receive trading profits or investment returns to your bank account, you must complete full KYC verification. This is a legal requirement — treat your NUR account like a bank account. False information will result in permanent account closure and legal referral.
               </p>
             </div>
 
@@ -368,7 +368,7 @@ export default function UserProfilePanel() {
               { title: "Notifications", items: [
                 { label: "Market alerts", desc: "Price movements & volatility triggers", on: true },
                 { label: "Social mentions", desc: "When someone tags or replies to you", on: true },
-                { label: "Compute earnings", desc: "NUR Coin earned from your hardware", on: true },
+                { label: "Portfolio updates", desc: "Daily P&L and position changes", on: true },
                 { label: "Weekly portfolio report", desc: "Sunday performance digest", on: false },
               ]},
               { title: "Privacy", items: [

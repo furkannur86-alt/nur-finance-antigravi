@@ -1087,7 +1087,7 @@ export default function NurEarth3DGlobe() {
       className="flex flex-col h-full w-full overflow-hidden select-none relative font-sans"
       style={{ background: "var(--ag-bg)", color: "var(--ag-text)" }}
     >
-      {/* ── TOP ORBITAL COMMAND HEADER ────────────────────────────────────────── */}
+      {/* ── TOP COMMAND HEADER ────────────────────────────────────────── */}
       <div
         className="px-4 py-2.5 border-b shrink-0 flex flex-col gap-2 z-20"
         style={{ background: "var(--ag-surface)", borderColor: "var(--ag-border)" }}
@@ -1507,7 +1507,7 @@ export default function NurEarth3DGlobe() {
                 </div>
               ) : (
                 <div className="h-28 bg-slate-900 rounded flex items-center justify-center text-[9px] text-slate-500">
-                  Acquiring orbital imagery feed...
+                  Acquiring satellite imagery feed...
                 </div>
               )}
 

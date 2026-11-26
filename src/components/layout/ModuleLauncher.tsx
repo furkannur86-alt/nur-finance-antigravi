@@ -96,12 +96,12 @@ export default function ModuleLauncher({ open, onClose }: Props) {
             ref={inputRef}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Modul ara...  (Esc ile kapat)"
+            placeholder="Search modules...  (Esc to close)"
             className="flex-1 bg-transparent outline-none text-sm"
             style={{ color: "rgba(255,255,255,0.9)", caretColor: "#00d4aa" }}
           />
           <span className="text-[10px] px-2 py-1 rounded" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.35)" }}>
-            {filtered.length} modul
+            {filtered.length} modules
           </span>
           <button
             onClick={onClose}
@@ -213,7 +213,7 @@ export default function ModuleLauncher({ open, onClose }: Props) {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4aa" }} />
-            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Modul Aktif</span>
+            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Active Modules</span>
           </div>
         </div>
       </div>

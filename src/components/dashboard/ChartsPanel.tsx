@@ -34,9 +34,9 @@ const INSTRUMENTS: Instrument[] = [
   { symbol: "COPPER", name: "Grade A Copper Comex (lb)", category: "COMMODITIES", basePrice: 4.18, spread: 0.005, change24h: +2.10, volume24h: "$5.4B", digits: 4 },
   { symbol: "EUR/USD", name: "Euro vs US Dollar Interbank", category: "FOREX", basePrice: 1.1085, spread: 0.0001, change24h: +0.22, volume24h: "$84.0B", digits: 4 },
   { symbol: "USD/JPY", name: "US Dollar vs Japanese Yen", category: "FOREX", basePrice: 142.60, spread: 0.01, change24h: -0.85, volume24h: "$62.0B", digits: 2 },
-  { symbol: "BTC/USD", name: "Bitcoin Sovereign L1", category: "CRYPTO", basePrice: 58450.00, spread: 1.00, change24h: +3.65, volume24h: "$29.3B", digits: 2 },
-  { symbol: "ETH/USD", name: "Ethereum EVM Smart Contracts", category: "CRYPTO", basePrice: 2420.50, spread: 0.10, change24h: +2.15, volume24h: "$14.7B", digits: 2 },
-  { symbol: "NUR/USD", name: "Nur Sovereign DePIN Cluster Utility", category: "CRYPTO", basePrice: 54.75, spread: 0.01, change24h: +13.35, volume24h: "$3.5M", digits: 2 },
+  { symbol: "BTC/USD", name: "Bitcoin", category: "CRYPTO", basePrice: 58450.00, spread: 1.00, change24h: +3.65, volume24h: "$29.3B", digits: 2 },
+  { symbol: "ETH/USD", name: "Ethereum", category: "CRYPTO", basePrice: 2420.50, spread: 0.10, change24h: +2.15, volume24h: "$14.7B", digits: 2 },
+  { symbol: "SOL/USD", name: "Solana", category: "CRYPTO", basePrice: 142.30, spread: 0.05, change24h: +4.20, volume24h: "$3.8B", digits: 2 },
 ];
 
 function generateHistoricalCandles(basePrice: number, count: number = 40): CandleData[] {

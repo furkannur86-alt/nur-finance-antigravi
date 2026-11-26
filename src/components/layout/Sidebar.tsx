@@ -12,8 +12,6 @@ const GROUP_COLORS: Record<string, string> = {
   RISK: "#ef4444",
   MEDIA: "#e879f9",
   SOCIAL: "#ec4899",
-  GALACTIC: "#00f0ff",
-  SOVEREIGN: "#fbbf24",
 };
 
 const GROUP_ICONS: Record<string, string> = {
@@ -24,8 +22,6 @@ const GROUP_ICONS: Record<string, string> = {
   RISK: "⚠️",
   MEDIA: "📡",
   SOCIAL: "👥",
-  GALACTIC: "🚀",
-  SOVEREIGN: "👑",
 };
 
 type GroupedPanel = { id: PanelView; label: string; icon: string; color: string; desc: string };

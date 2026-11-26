@@ -51,7 +51,7 @@ const HISTORICAL_EPOCHS = [
   { id: "zirp_2010", name: "🚀 2010–2019 ZIRP & Mega-Cap Tech Supercycle", range: "2y" },
   { id: "covid_2020", name: "🦠 2020–2021 Pandemic Liquidity V-Shape", range: "1y" },
   { id: "rate_hike_2022", name: "⚡ 2022–2024 Global Inflation & AI Wave", range: "2y" },
-  { id: "sovereign_2026", name: "🛡️ 2025–2026+ Sovereign DePIN & Post-Quantum Regime", range: "6mo" },
+  { id: "sovereign_2026", name: "🛡️ 2025–2026+ Multi-Asset Macro Rotation", range: "6mo" },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
