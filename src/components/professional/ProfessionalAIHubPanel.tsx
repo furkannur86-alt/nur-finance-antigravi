@@ -243,7 +243,7 @@ export default function ProfessionalAIHubPanel() {
 
           <div className="flex items-center gap-2 pl-3 border-l border-white/10 text-[10px]">
             <span className="text-slate-400">YIELD:</span>
-            <span className="text-emerald-400 font-bold">+{telemetry.totalTokensEarned.toFixed(5)} $NUR</span>
+            <span className="text-emerald-400 font-bold">+{telemetry.totalTokensEarned.toFixed(5)} credits</span>
           </div>
 
           <button
@@ -800,7 +800,7 @@ export default function ProfessionalAIHubPanel() {
               <div className="flex items-center gap-2">
                 <EagleCrest size={24} animate={false} />
                 <span className="text-sm font-bold text-amber-400 font-serif">
-                  UMAY GÜL NUR HOLDING • EXECUTIVE AUDIT DOSSIER
+                  NUR FINANCE • EXECUTIVE AUDIT DOSSIER
                 </span>
               </div>
               <div className="flex items-center gap-2">

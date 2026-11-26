@@ -19,12 +19,12 @@ const SYMBOLS_POOL = [
 
   // Fibonacci & Sacred Mathematical Constants
   "φ 1.618033", "0.618", "233", "377", "610", "987", "1597", "2584", "4181",
-  "∑(P×Q)", "∫e^-rt", "σ√t", "ln(S/K)", "100K€ UMAY FUND",
+  "∑(P×Q)", "∫e^-rt", "σ√t", "ln(S/K)", "100K€ FUND",
 
-  // Renaissance Esoteric & Imperial Latin Maxims
-  "DOMINUS ORIENTIS ET OCCIDENTIS", "AURUM POTESTAS EST", "VERITAS VINCIT",
-  "SAPIENTIA ET VIRTUS", "UMAY GÜL NUR", "NUR FINANCE SOVEREIGN",
-  "FORTUNA FAVET FORTIBUS", "DEUS REX REGUM", "NUR CAPITAL",
+  // Financial Latin Maxims
+  "AURUM POTESTAS EST", "VERITAS VINCIT",
+  "SAPIENTIA ET VIRTUS", "NUR FINANCE", "NUR CAPITAL",
+  "FORTUNA FAVET FORTIBUS",
 ];
 
 export default function FinancialMatrixRain({ opacity = 0.075, speed = 1 }: FinancialMatrixRainProps) {
@@ -83,7 +83,7 @@ export default function FinancialMatrixRain({ opacity = 0.075, speed = 1 }: Fina
         const isHead = Math.random() > 0.82;
         const isLatinOrCrest =
           text.includes("DOMINUS") ||
-          text.includes("UMAY") ||
+          text.includes("NUR") ||
           text.includes("1.618") ||
           text.includes("100K");
 

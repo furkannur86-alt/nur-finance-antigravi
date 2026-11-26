@@ -81,7 +81,7 @@ export function generateVideoMetadata(input: TitleGeneratorInput): VideoMetadata
           `⚡ NUR Finance — Competing with Bloomberg & Reuters at a fraction of the cost.`,
           `🔗 Terminal access: https://nur.finance`,
           "",
-          `💡 Compute-for-Access: Mine $NUR with your idle GPU and get FREE terminal access.`,
+          `💡 Subscribe for real-time market data, analytics, and institutional-grade trading tools.`,
           "",
           `#NURFinance #MarketBulletin #GlobalMarkets #StockMarket #FinancialNews #Bloomberg #Reuters`,
         ].join("\n"),
@@ -125,7 +125,7 @@ export function generateVideoMetadata(input: TitleGeneratorInput): VideoMetadata
       };
     }
 
-    case "depin_metrics": {
+    case "market_recap": {
       return {
         title: `NUR Finance Market Recap – ${date}`,
         description: [

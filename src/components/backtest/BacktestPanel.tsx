@@ -343,8 +343,8 @@ export default function BacktestPanel() {
               <div className="flex items-center gap-3">
                 <EagleCrest size={36} animate={false} />
                 <div>
-                  <h3 className="text-base font-bold text-white font-serif">UMAY GÜL NUR HOLDING &bull; QUANTITATIVE AUDIT FACTSHEET</h3>
-                  <p className="text-[10px] font-mono text-cyan-400">CRYPTOGRAPHIC INVARIANT: #54751113 &bull; IASAM COMPLIANT</p>
+                  <h3 className="text-base font-bold text-white font-serif">NUR FINANCE &bull; QUANTITATIVE AUDIT FACTSHEET</h3>
+                  <p className="text-[10px] font-mono text-cyan-400">IFRS COMPLIANT &bull; INSTITUTIONAL GRADE</p>
                 </div>
               </div>
               <button

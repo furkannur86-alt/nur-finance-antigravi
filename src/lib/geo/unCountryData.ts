@@ -52,7 +52,7 @@ export const UN_COUNTRY_DOSSIERS: Record<string, UNCountryDossier> = {
     languages: ["Turkish (Official)", "Kurdish", "Arabic", "English (Diplomatic/Trade)"],
     population: "85.8 Million",
     gdpNominalUSD: "$1.15 Trillion",
-    currency: "Turkish Lira (TRY) / Sovereign $NUR",
+    currency: "Turkish Lira (TRY)",
     defconRating: 3,
     nuclearStatus: {
       hasNuclearWeapons: false,
@@ -324,7 +324,7 @@ export const UN_COUNTRY_DOSSIERS: Record<string, UNCountryDossier> = {
     lat: 31.76,
     lon: 35.21,
     zoomLevel: 6.2,
-    satelliteNotes: "Iron Dome / Arrow-3 missile defense radar tracks synchronized with sovereign orbital sensors.",
+    satelliteNotes: "Iron Dome / Arrow-3 missile defense radar tracks synchronized with defense tracking sensors.",
   },
   GBR: {
     code: "GBR",
@@ -430,6 +430,6 @@ export const UN_COUNTRY_DOSSIERS: Record<string, UNCountryDossier> = {
     lat: 35.67,
     lon: 139.65,
     zoomLevel: 4.8,
-    satelliteNotes: "Sea of Japan ballistic missile early-warning radar tied into sovereign orbital space net.",
+    satelliteNotes: "Sea of Japan ballistic missile early-warning radar tied into defense early-warning network.",
   },
 };

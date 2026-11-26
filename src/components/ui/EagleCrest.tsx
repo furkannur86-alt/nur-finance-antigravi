@@ -93,7 +93,7 @@ export default function EagleCrest({
       ctx.fillStyle = bodyGrad;
       ctx.fill();
 
-      // Left wing (West / Batı)
+      // Left wing (West)
       ctx.save();
       ctx.translate(-r * 0.12, r * 0.02);
       ctx.rotate((-22 + wingFlap) * Math.PI / 180);

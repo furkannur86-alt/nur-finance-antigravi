@@ -5,7 +5,6 @@ import EagleCrest from "@/components/ui/EagleCrest";
 import NurEarth3DGlobe from "@/components/geopolitics/NurEarth3DGlobe";
 import {
   BROADCAST_LANGUAGES,
-  BOSS_NUR_SPECIAL,
   LanguageBroadcastProfile,
   hdVoiceEngine,
 } from "@/lib/broadcast/multilingual-broadcast";
@@ -34,13 +33,11 @@ const MARKET_MATRIX = [
 export default function LiveBroadcast() {
   const { openFloatingWindow, popoutToNativeWindow, addNotification } = useIDEStore();
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
   const [backdropMode, setBackdropMode] = useState<StudioBackdropMode>("NUR_STUDIO_2126");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [headlineIdx, setHeadlineIdx] = useState(0);
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking">("opening");
-  const [isBossNurActive, setIsBossNurActive] = useState(false);
-  const [bossNurFood, setBossNurFood] = useState("Fıstıklı Baklava & Demli Çay");
 
   // Draggable HUD Card State
   const [hudPos, setHudPos] = useState({ x: 24, y: 120 });
@@ -107,8 +104,8 @@ export default function LiveBroadcast() {
   const handleGenerateSnapshot = () => {
     cyberSound.playQuantumUnlock();
     addNotification({
-      title: "📸 4K Stüdyo Karesi Kaydedildi",
-      message: `${selectedLang.defaultAnchorName} (${selectedLang.name}) anlık yayın karesi PNG olarak oluşturuldu.`,
+      title: "📸 4K Studio Frame Saved",
+      message: `${selectedLang.defaultAnchorName} (${selectedLang.name}) broadcast frame exported as PNG.`,
       severity: "SUCCESS",
       category: "MEDIA",
     });
@@ -145,28 +142,6 @@ export default function LiveBroadcast() {
     }, 1200);
   };
 
-  const handleBossNurCrash = () => {
-    cyberSound.playQuantumUnlock();
-    setIsBossNurActive(true);
-    addNotification({
-      title: "👑 BOSS NUR YAYINA GİRDİ!",
-      message: "Kanal imparatorluğunun kurucusu ve asıl sahibi canlı stüdyoya çat kapı giriş yaptı!",
-      severity: "SUCCESS",
-      category: "MEDIA",
-    });
-
-    hdVoiceEngine.stop();
-    setIsSpeaking(true);
-    hdVoiceEngine.speak(
-      BOSS_NUR_SPECIAL.fullScript,
-      "tr-TR",
-      () => setIsSpeaking(true),
-      () => setIsSpeaking(false),
-      () => setIsSpeaking(false),
-      { isMale: true, anchorName: "Boss Nur", rate: "+18%" }
-    );
-  };
-
   const handleSpeak = () => {
     const speechText = selectedLang.scripts[activeSegment];
     hdVoiceEngine.speak(
@@ -194,104 +169,6 @@ export default function LiveBroadcast() {
       onMouseUp={handleMouseUp}
       className="relative w-full h-full bg-slate-950 overflow-hidden select-none font-sans text-white flex flex-col justify-between"
     >
-      {/* ── BOSS NUR GUEST CRASH OVERLAY ─────────────────────────────────── */}
-      {isBossNurActive && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-2xl bg-gradient-to-r from-amber-950/95 via-black/95 to-amber-950/95 border-2 border-[#f5a623] rounded-2xl p-4 shadow-[0_0_50px_rgba(245,166,35,0.4)] backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-300">
-          <div className="flex items-start justify-between border-b border-[#f5a623]/30 pb-3 mb-3">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl animate-bounce">👑</span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold bg-[#f5a623] text-black px-2 py-0.5 rounded">
-                    PATRİYARK BASKINI
-                  </span>
-                  <span className="text-xs font-serif font-bold text-[#ffd54f]">
-                    BOSS NUR CANLI YAYINDA
-                  </span>
-                </div>
-                <div className="text-[11px] text-amber-200/80 font-mono mt-0.5">
-                  1.63m Boy · Göbekli · Altın Patek Philippe · İkram: {bossNurFood}
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                cyberSound.playClick();
-                setIsBossNurActive(false);
-                hdVoiceEngine.stop();
-                setIsSpeaking(false);
-              }}
-              className="px-2.5 py-1 rounded-lg bg-red-600/30 text-red-300 hover:bg-red-600 text-xs font-mono font-bold"
-            >
-              ✕ KAPAT
-            </button>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="relative w-24 h-28 rounded-xl overflow-hidden border-2 border-[#f5a623] shrink-0 shadow-xl bg-black">
-              <img
-                src="/images/characters/boss_nur.jpg"
-                alt="Boss Nur"
-                className="w-full h-full object-cover object-top"
-              />
-              <div className="absolute bottom-0 inset-x-0 bg-amber-500 text-black text-[9px] font-extrabold text-center py-0.5">
-                KAHKAHA & NEŞE
-              </div>
-            </div>
-
-            <div className="flex-1 space-y-2">
-              <div className="p-2.5 bg-black/60 rounded-xl border border-amber-500/20 text-xs text-amber-100 italic leading-relaxed font-sans">
-                &ldquo;{BOSS_NUR_SPECIAL.fullScript}&rdquo;
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 font-mono">Serve Refreshments:</span>
-                  {[
-                    "Pistachio Baklava",
-                    "Crispy Lahmacun",
-                    "Brewed Tea & Simit",
-                  ].map((food) => (
-                    <button
-                      key={food}
-                      onClick={() => {
-                        cyberSound.playClick();
-                        setBossNurFood(food);
-                      }}
-                      className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
-                        bossNurFood === food
-                          ? "bg-[#f5a623] text-black"
-                          : "bg-white/10 text-slate-300 hover:bg-white/20"
-                      }`}
-                    >
-                      {food}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => {
-                    cyberSound.playQuantumUnlock();
-                    addNotification({
-                      title: "📞 HANİM ARIYOR!",
-                      message: "Boss Nur telaşla telefonu kapattı ve stüdyodan kaçtı!",
-                      severity: "WARNING",
-                      category: "MEDIA",
-                    });
-                    setIsBossNurActive(false);
-                    hdVoiceEngine.stop();
-                    setIsSpeaking(false);
-                  }}
-                  className="px-2.5 py-1 rounded bg-red-600/80 hover:bg-red-600 text-white text-[10px] font-mono font-bold animate-pulse"
-                >
-                  📞 HANIM ARADI (KAÇ!)
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ── BACKGROUND STUDIO VIDEO WALL ──────────────────────────────────── */}
       <div className="absolute inset-0 z-0 bg-slate-950 overflow-hidden">
         {backdropMode === "NUR_STUDIO_2126" ? (
@@ -304,14 +181,14 @@ export default function LiveBroadcast() {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/50 pointer-events-none" />
             <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/90 text-white font-mono text-[10px] font-bold tracking-widest uppercase shadow-lg border border-red-400/40 animate-pulse">
               <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-              <span>NUR TV 2126 4K HDR CANLI YAYIN STÜDYOSU</span>
+              <span>NUR TV 4K HDR LIVE BROADCAST STUDIO</span>
             </div>
           </div>
         ) : backdropMode === "EXECUTIVE_OFFICE" ? (
           <div className="w-full h-full relative overflow-hidden">
             <img
               src="/images/studio/executive-office.jpg"
-              alt="Sovereign Penthouse"
+              alt="Executive Suite"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/60 pointer-events-none" />
@@ -344,10 +221,10 @@ export default function LiveBroadcast() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold text-white font-serif tracking-wider">
-                NUR TV 2126 4K BROADCAST
+                NUR TV 4K BROADCAST
               </h2>
               <span className="text-[10px] px-2 py-0.5 rounded bg-red-600 font-mono font-bold text-white animate-pulse">
-                ● CANLI (LIVE)
+                ● LIVE
               </span>
             </div>
             <div className="flex items-center gap-4 text-[10px] font-mono text-slate-400 mt-0.5">
@@ -363,12 +240,12 @@ export default function LiveBroadcast() {
         <div className="flex items-center gap-2">
           {/* Stage Dropdown */}
           <div className="flex items-center gap-1 bg-black/60 border border-white/10 p-1 rounded-xl text-xs font-mono">
-            <span className="text-slate-400 px-2 text-[10px]">FON:</span>
+            <span className="text-slate-400 px-2 text-[10px]">BACKDROP:</span>
             {[
-              { id: "NUR_STUDIO_2126", label: "🏢 4K Stüdyo" },
-              { id: "EXECUTIVE_OFFICE", label: "🏛️ Penthouse" },
-              { id: "FINANCIAL_BOURSES", label: "📊 Borsa" },
-              { id: "3D_GLOBE", label: "🌐 3D Küre" },
+              { id: "NUR_STUDIO_2126", label: "🏢 4K Studio" },
+              { id: "EXECUTIVE_OFFICE", label: "🏛️ Executive" },
+              { id: "FINANCIAL_BOURSES", label: "📊 Bourses" },
+              { id: "3D_GLOBE", label: "🌐 3D Globe" },
             ].map((m) => (
               <button
                 key={m.id}
@@ -387,22 +264,13 @@ export default function LiveBroadcast() {
             ))}
           </div>
 
-          {/* Boss Nur Live Crasher Button */}
-          <button
-            onClick={handleBossNurCrash}
-            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600/30 via-amber-500/40 to-amber-600/30 hover:from-amber-600/50 hover:to-amber-600/50 text-[#ffd54f] border border-amber-400/60 text-xs font-mono font-extrabold transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,166,35,0.3)] animate-pulse"
-            title="Invite Channel Owner Boss Nur to Live Broadcast (Raid)"
-          >
-            <span>👑 BOSS NUR (BASKIN)</span>
-          </button>
-
           {/* Snapshot & Video Generator Tools */}
           <button
             onClick={handleGenerateSnapshot}
             className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow"
             title="Download 4K Studio Frame as PNG"
           >
-            <span>📸 KARE İNDİR</span>
+            <span>📸 SNAPSHOT</span>
           </button>
 
           <button
@@ -413,14 +281,14 @@ export default function LiveBroadcast() {
                 ? "bg-amber-500 text-black animate-pulse"
                 : "bg-red-600/30 hover:bg-red-600/50 text-red-300 border border-red-500/50"
             }`}
-            title="1080p MP4 Video Bülteni Üret"
+            title="Generate 1080p MP4 Video Bulletin"
           >
-            <span>{isRecordingVideo ? `⏳ ÜRETİLİYOR (%${videoProgress})` : "🎬 VİDEO ÜRET"}</span>
+            <span>{isRecordingVideo ? `⏳ RENDERING (${videoProgress}%)` : "🎬 RENDER VIDEO"}</span>
           </button>
 
           {/* Window Buttons */}
           <button
-            onClick={() => openFloatingWindow("live-tv", "📺 NUR TV 2126 Live")}
+            onClick={() => openFloatingWindow("live-tv", "📺 NUR TV Live")}
             className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 text-xs font-bold border border-white/10 transition-all"
             title="Yüzen Pencere Olarak Aç"
           >
@@ -453,7 +321,7 @@ export default function LiveBroadcast() {
               onClick={() => setIsHudMinimized(false)}
               className="ml-2 px-2 py-0.5 rounded bg-[#00d4aa]/20 text-[#00d4aa] text-[10px] font-bold hover:bg-[#00d4aa]/40"
             >
-              ⤢ AÇ
+              ⤢ EXPAND
             </button>
           </div>
         ) : (
@@ -522,7 +390,7 @@ export default function LiveBroadcast() {
                     </button>
                   ))}
                 </div>
-                <span className="text-[10px] text-[#69f0ae] font-bold">🟢 ZÜMRÜT GÖZ</span>
+                <span className="text-[10px] text-[#69f0ae] font-bold">🟢 ON AIR</span>
               </div>
 
               {/* Anchor Photo & Teleprompter Text */}
@@ -552,7 +420,7 @@ export default function LiveBroadcast() {
                       : "bg-[#00d4aa] text-black hover:bg-[#00c29b]"
                   }`}
                 >
-                  <span>{isSpeaking ? "⏹ SESİ DURDUR" : "🔊 SESLENDİR & TEST ET"}</span>
+                  <span>{isSpeaking ? "⏹ STOP AUDIO" : "🔊 SPEAK & TEST"}</span>
                 </button>
               </div>
             </div>
@@ -564,7 +432,7 @@ export default function LiveBroadcast() {
       <div className="absolute bottom-16 right-4 w-64 p-3 rounded-xl bg-black/85 backdrop-blur-xl border border-white/10 text-xs font-mono shadow-2xl hidden md:block z-10">
         <div className="flex items-center justify-between border-b border-white/10 pb-1.5 mb-2">
           <span className="text-[10px] font-extrabold text-[#f5a623] uppercase tracking-wider">
-            CANLI PİYASA MATRİSİ
+            LIVE MARKET MATRIX
           </span>
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
         </div>
@@ -595,7 +463,7 @@ export default function LiveBroadcast() {
         {/* Global Finance Scrolling News Ticker */}
         <div className="flex items-center justify-between h-10 bg-black/95 backdrop-blur-md border-t border-cyan-500/30 px-4 text-xs font-mono">
           <div className="flex items-center gap-2 text-cyan-400 font-bold shrink-0 border-r border-white/15 pr-4 text-[10px]">
-            <span className="text-slate-400">TELEMETRİ:</span>
+            <span className="text-slate-400">TELEMETRY:</span>
             <span className="text-amber-300">[BIST 10,240 • BRENT $82.40 • BTC $68,450]</span>
           </div>
 

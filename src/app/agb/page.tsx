@@ -10,105 +10,88 @@ export default function AGBPage() {
           href="/"
           style={{ color: "var(--ag-accent)", textDecoration: "none", fontSize: 14 }}
         >
-          &larr; Return to Sovereign Terminal
+          &larr; Return to Terminal
         </Link>
 
         <h1 style={{ fontSize: 32, fontWeight: 700, marginTop: 24, marginBottom: 32 }}>
-          Protocol Terms of Service & Quantitative License Agreement
+          Terms of Service
         </h1>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>§ 1 Scope & Architecture</h2>
+          <h2 style={sectionTitle}>&sect; 1 Scope</h2>
           <div style={card}>
             <p>
-              These Terms govern the decentralized access to the <strong>NUR Finance Sovereign Network</strong> (<em>Dominus Orientis et Occidentis</em>), 
-              the AntiGravi Terminal v3.0, algorithmic OMS/EMS execution engines, and multi-chain settlement gateways.
+              These Terms govern access to the <strong>NUR Finance</strong> platform,
+              the AntiGravi Terminal, algorithmic OMS/EMS execution engines, and all associated financial data services.
             </p>
           </div>
         </section>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>§ 2 Institutional Tier Access</h2>
+          <h2 style={sectionTitle}>&sect; 2 Service Tiers</h2>
           <div style={card}>
-            <p>The protocol provides tiered quantitative access levels:</p>
+            <p>NUR Finance offers tiered access:</p>
             <ul style={list}>
-              <li><strong>Explorer</strong> — Quantitative research and public macro indicators.</li>
-              <li><strong>Analyst</strong> — Advanced screening, multi-factor risk engines, and WISH matrix tools.</li>
-              <li><strong>Tier-R Corporate Sovereign</strong> — High-throughput institutional terminal for accredited trading desks.</li>
-              <li><strong>Tier-B Enterprise Sovereign</strong> — VIP institutional tier with dedicated neural copilot channels and priority latency routes.</li>
+              <li><strong>Retail</strong> &mdash; Free (limited) or &euro;29&ndash;&euro;49/month. Delayed data feeds, watchlists, news, basic charts, portfolio tracker.</li>
+              <li><strong>Professional</strong> &mdash; &euro;199/month. Real-time Level 1 &amp; Level 2 data, 60 FPS interactive charts, full options chain with Greeks, AI copilot, unlimited layouts.</li>
+              <li><strong>Institutional</strong> &mdash; &euro;999+/month. Everything in Professional plus multi-seat team administration, FIX Protocol DMA, compliance audit logs, dedicated war room view, custom API access.</li>
             </ul>
+            <p style={{ marginTop: 8 }}>
+              No prerequisites, no invitation system. All tiers are available via instant checkout (credit card, SEPA, wire transfer, or enterprise invoice).
+            </p>
           </div>
         </section>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>§ 3 Decentralized Settlement & Payments</h2>
+          <h2 style={sectionTitle}>&sect; 3 Payments &amp; Billing</h2>
           <div style={card}>
             <p>
-              All licenses, fees, and access keys are settled strictly on-chain through the 
-              <strong>Zero-PII Multi-Chain Crypto Settlement Gateway</strong> (USDT/USDC on Polygon, Arbitrum, Ethereum, TRON, or BTC).
-            </p>
-            <p style={{ marginTop: 8 }}>
-              Payments are irreversibly verified on-chain via transaction hash (TXID) without requiring fiat bank KYC, personal identity disclosure, or custodial intermediaries.
+              Subscription fees are processed through standard institutional payment gateways (Stripe, SEPA direct debit, or wire transfer for enterprise accounts).
+              All prices are in EUR unless otherwise stated. Subscriptions renew automatically unless cancelled before the billing cycle ends.
             </p>
           </div>
         </section>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>§ 4 Algorithmic Disclaimer — No Fiduciary Advice</h2>
+          <h2 style={sectionTitle}>&sect; 4 Disclaimer &mdash; No Investment Advice</h2>
           <div style={card}>
             <p style={{ fontWeight: 600, color: "var(--ag-warning)", marginBottom: 8 }}>
-              CRITICAL NOTICE
+              IMPORTANT NOTICE
             </p>
             <p>
-              NUR Finance provides computational quantitative analytics, algorithmic order simulation, and macro feeds. 
-              The system does not act as a custodial broker, fiduciary wealth manager, or registered investment advisor. 
-              Execution and portfolio allocations are performed at the sole discretion and sovereign risk of the operator.
+              NUR Finance provides computational quantitative analytics, algorithmic order simulation, and macro data feeds.
+              The platform does not act as a custodial broker, fiduciary wealth manager, or registered investment advisor.
+              Execution and portfolio allocations are performed at the sole discretion and risk of the user.
             </p>
           </div>
         </section>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>§ 5 Intellectual Property & Zero-PII Privacy</h2>
+          <h2 style={sectionTitle}>&sect; 5 Intellectual Property &amp; Privacy</h2>
           <div style={card}>
             <p>
-              All quantitative algorithms, mathematical formulas, and interface designs are protected under registered intellectual property claims. 
-              Client data and algorithmic scripts remain local to the user&apos;s runtime environment.
+              All quantitative algorithms, mathematical formulas, and interface designs are protected under registered intellectual property claims.
+              User data is handled in accordance with applicable data protection regulations (GDPR). Client data and algorithmic scripts remain local to the user&apos;s runtime environment.
             </p>
           </div>
         </section>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>§ 6 Smart Mining Free Access — Compute-for-Access</h2>
+          <h2 style={sectionTitle}>&sect; 6 Data Usage &amp; Market Data</h2>
           <div style={card}>
             <p>
-              Users who activate the <strong>Smart Mining Free Access</strong> tier grant NUR Finance permission to utilize
-              idle GPU compute cycles on their device for cryptocurrency mining operations in exchange for full terminal access
-              at no subscription cost.
-            </p>
-            <ul style={list}>
-              <li><strong>Germany (DE):</strong> Mining is capped at 14 off-peak hours/day. Maximum electricity cost to the user
-              is €30/month. Auto-throttle engages if the cap is approached. Minimum NUR Finance earning: €10/month per device.</li>
-              <li><strong>All other countries:</strong> Mining operates at maximum aggressive capacity with no electricity cap.
-              Mining hours range from 18–24 hours/day depending on regional electricity rates. Users accept full electricity cost
-              associated with GPU utilization.</li>
-            </ul>
-            <p style={{ marginTop: 12 }}>
-              <strong>Hardware requirements:</strong> Minimum 4 GB dedicated VRAM and 8 GB system RAM.
-              Devices that do not meet the benchmark threshold will not activate mining.
-            </p>
-            <p style={{ marginTop: 8 }}>
-              Users may terminate compute-for-access at any time and switch to a paid subscription plan.
-              Mining ceases immediately upon opt-out. No refunds or credits are issued for compute cycles
-              already contributed during the active period.
+              Market data provided through the platform is sourced from licensed data providers.
+              Redistribution of real-time data feeds without authorization is prohibited.
+              Delayed data (15-minute) is available on the free tier; real-time data requires a Professional or Institutional subscription.
             </p>
           </div>
         </section>
 
         <section>
-          <h2 style={sectionTitle}>§ 7 Governing Protocol</h2>
+          <h2 style={sectionTitle}>&sect; 7 Governing Law</h2>
           <div style={card}>
             <p>
-              This protocol is governed by sovereign cryptographic code execution and decentralized autonomous consensus.
+              These terms are governed by the laws of the Federal Republic of Germany. Any disputes arising from the use of NUR Finance services shall be subject to the jurisdiction of the courts in Frankfurt am Main.
             </p>
           </div>
         </section>
@@ -138,4 +121,3 @@ const list: React.CSSProperties = {
   listStyleType: "disc",
   lineHeight: 2,
 };
-

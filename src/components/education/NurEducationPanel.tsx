@@ -81,10 +81,10 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     id: 5,
-    question: "What is the maximum mathematical circulating supply of $NUR Sovereign Token?",
-    options: ["21,000,000", "54,751,113", "100,000,000", "1,000,000,000"],
+    question: "What is the primary purpose of a circuit breaker in stock markets?",
+    options: ["Increase trading volume", "Halt trading during extreme volatility", "Set stock prices", "Calculate dividends"],
     correct: 1,
-    explanation: "The invariant supply of $NUR is strictly governed at 54,751,113 NUR based on sovereign numerology.",
+    explanation: "Circuit breakers temporarily halt trading when indices drop by predetermined thresholds (e.g. 7%, 13%, 20%) to prevent panic selling and restore orderly markets.",
   },
 ];
 
@@ -320,7 +320,7 @@ export default function NurEducationPanel() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-black/40 p-3 rounded-xl border border-white/5 mb-4 text-[11px]">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-emerald-400 font-bold">$NUR Token</span>
+                    <span className="text-emerald-400 font-bold">Equities</span>
                     <span className="font-mono text-white">{allocNur}%</span>
                   </div>
                   <input
@@ -487,11 +487,11 @@ export default function NurEducationPanel() {
                         }}
                         className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg"
                       >
-                        🎁 CLAIM 50 $NUR TOKENS
+                        🎁 START FREE TRIAL
                       </button>
                     ) : (
                       <span className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40">
-                        ✅ REWARD CLAIMED (NUR-54751113)
+                        ✅ FREE TRIAL ACTIVATED
                       </span>
                     )}
                   </div>

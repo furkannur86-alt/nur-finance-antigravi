@@ -29,7 +29,7 @@ export default function MediaPanel() {
   const { openFloatingWindow, popoutToNativeWindow, setBreakingNewsTicker, addNotification } = useIDEStore();
 
   const [activeTab, setActiveTab] = useState<ActiveMediaTab>("characters");
-  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
   const [selectedChannel, setSelectedChannel] = useState<NURChannel>(channels[2]); // Default Turkey
   const [stageBackdrop, setStageBackdrop] = useState<StageBackdrop>("studio-2126");
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");
@@ -65,8 +65,8 @@ export default function MediaPanel() {
       setIsLiveOnAir(true);
       handleSpeak();
       addNotification({
-        title: "🔴 NUR TV Canlı Yayında (On-Air)",
-        message: `${selectedLang.nativeName} Masası (${selectedLang.defaultAnchorName}) yayını başlattı.`,
+        title: "🔴 NUR TV On Air",
+        message: `${selectedLang.nativeName} desk (${selectedLang.defaultAnchorName}) broadcast started.`,
         severity: "SUCCESS",
         category: "NUR_TV",
       });
@@ -76,11 +76,11 @@ export default function MediaPanel() {
   const handlePushBreaking = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customHeadline.trim()) return;
-    const banner = `[${selectedLang.name.toUpperCase()} TV] SON DAKİKA: ${customHeadline.trim()}`;
+    const banner = `[${selectedLang.name.toUpperCase()} TV] BREAKING: ${customHeadline.trim()}`;
     setBreakingNewsTicker(banner);
     addNotification({
-      title: "Altyazı Güncellendi",
-      message: `Bülten bandına eklendi: "${customHeadline}"`,
+      title: "Ticker Updated",
+      message: `Added to news ticker: "${customHeadline}"`,
       severity: "INFO",
       category: "NUR_TV",
     });
@@ -116,7 +116,7 @@ export default function MediaPanel() {
               )}
             </div>
             <p className="text-[11px] text-[#8899a6]">
-              24/7 Çok Dilli Küresel Finans Televizyonu & Egemen Yapay Zeka Sunucuları
+              24/7 Multilingual Global Financial Television & AI Anchors
             </p>
           </div>
         </div>
@@ -196,16 +196,16 @@ export default function MediaPanel() {
                 {/* Viewport Top Bar */}
                 <div className="flex items-center justify-between px-4 py-2 bg-black/60 border-b border-white/10 text-xs font-mono">
                   <div className="flex items-center gap-2">
-                    <span className="text-[#8899a6]">STÜDYO FONU:</span>
+                    <span className="text-[#8899a6]">BACKDROP:</span>
                     <select
                       value={stageBackdrop}
                       onChange={(e) => setStageBackdrop(e.target.value as StageBackdrop)}
                       className="bg-black/80 border border-white/10 text-white rounded px-2 py-1 text-xs focus:outline-none focus:border-[#00d4aa]"
                     >
-                      <option value="studio-2126">NUR TV 2126 Holografik Stüdyo Seti</option>
-                      <option value="executive-office">Cenevre Sovereign Penthouse</option>
-                      <option value="market-matrix">Küresel Borsa Likidite Matrisi</option>
-                      <option value="3d-globe">3D Geopolitik Gezegen Modeli</option>
+                      <option value="studio-2126">NUR TV 4K Studio Set</option>
+                      <option value="executive-office">Executive Suite</option>
+                      <option value="market-matrix">Global Bourse Liquidity Matrix</option>
+                      <option value="3d-globe">3D Geopolitical Globe</option>
                     </select>
                   </div>
 
@@ -218,7 +218,7 @@ export default function MediaPanel() {
                           : "bg-[#00d4aa]/20 border border-[#00d4aa]/60 text-[#00d4aa] hover:bg-[#00d4aa]/30"
                       }`}
                     >
-                      <span>{isVoiceSpeaking ? "⏹ DURDUR" : "🔊 METNİ SESLENDİR"}</span>
+                      <span>{isVoiceSpeaking ? "⏹ STOP" : "🔊 SPEAK TEXT"}</span>
                     </button>
                   </div>
                 </div>
@@ -276,7 +276,7 @@ export default function MediaPanel() {
                   {/* Live Lower-Third News Ticker */}
                   <div className="absolute bottom-0 inset-x-0 bg-black/90 border-t border-[#00d4aa]/40 p-2.5 flex items-center gap-3 backdrop-blur-md z-10 font-mono">
                     <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-extrabold shrink-0 animate-pulse">
-                      FLAŞ HABER
+                      BREAKING
                     </span>
                     <div className="text-xs text-[#69f0ae] truncate font-medium">
                       {selectedLang.headlines[0]}
@@ -291,7 +291,7 @@ export default function MediaPanel() {
                   type="text"
                   value={customHeadline}
                   onChange={(e) => setCustomHeadline(e.target.value)}
-                  placeholder="Canlı yayın alt bandına anlık altyazı / haber metni gönder..."
+                  placeholder="Push breaking news headline to live ticker..."
                   className="flex-1 bg-[#0d1420] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00d4aa]"
                 />
                 <button
@@ -308,7 +308,7 @@ export default function MediaPanel() {
               {/* Language Selector */}
               <div className="bg-[#0d1420] border border-white/10 rounded-2xl p-4 shadow-xl">
                 <div className="text-xs font-mono font-bold text-[#00d4aa] mb-2.5 uppercase tracking-wider">
-                  Yayın Dili ve Masası Seçimi
+                  Broadcast Language & Desk Selection
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {BROADCAST_LANGUAGES.map((lang) => {
@@ -484,11 +484,11 @@ export default function MediaPanel() {
                 type="text"
                 value={hostSearch}
                 onChange={(e) => setHostSearch(e.target.value)}
-                placeholder="Sunucu, ülke, uzmanlık veya dil ara..."
+                placeholder="Search anchors, countries, expertise, or language..."
                 className="w-full max-w-md bg-[#0d1420] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#00d4aa]"
               />
               <div className="text-xs font-mono text-[#8899a6]">
-                Toplam {filteredHosts.length} Sunucu
+                Total {filteredHosts.length} Anchors
               </div>
             </div>
 
@@ -517,7 +517,7 @@ export default function MediaPanel() {
         {/* 5. SCHEDULE TIMETABLE */}
         {activeTab === "schedule" && (
           <div className="max-w-[1500px] mx-auto bg-[#0d1420] border border-white/10 rounded-2xl p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-white font-serif mb-4">Küresel 24/7 Yayın Programı</h3>
+            <h3 className="text-lg font-bold text-white font-serif mb-4">Global 24/7 Broadcast Schedule</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {shows.slice(0, 10).map((show) => (
                 <div key={show.id} className="p-4 bg-black/40 border border-white/5 rounded-xl">

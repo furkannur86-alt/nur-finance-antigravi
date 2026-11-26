@@ -158,7 +158,7 @@ export default function UserProfilePanel() {
 
                   {/* Stats row */}
                   <div className="grid grid-cols-4 gap-2 mt-4 pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                    {[["847", "Followers"], ["234", "Following"], ["12", "Posts"], ["$NUR 42.3", "Balance"]].map(([v, l]) => (
+                    {[["847", "Followers"], ["234", "Following"], ["12", "Posts"], ["Pro", "Tier"]].map(([v, l]) => (
                       <div key={l} className="text-center">
                         <div className="text-sm font-bold text-white font-mono">{v}</div>
                         <div className="text-[9px]" style={{ color: "rgba(255,255,255,0.35)" }}>{l}</div>

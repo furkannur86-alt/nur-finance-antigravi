@@ -446,9 +446,9 @@ export default function FinancialSocialPanel() {
               </div>
 
               <div className="p-3 rounded-xl bg-black/50 border border-white/10 text-[10px] text-slate-300 space-y-1">
-                <div className="text-emerald-400 font-bold">AUTOMATIC FIAT CASHOUT PROTOCOL:</div>
+                <div className="text-emerald-400 font-bold">PROFESSIONAL SUBSCRIPTION BENEFITS:</div>
                 <div>
-                  Earned $NUR compute tokens are convertible 1:1 to EUR/USD and direct-deposited to your linked IBAN on the 1st and 15th of each calendar month.
+                  Professional tier subscribers receive real-time Level 1 & Level 2 data, unlimited custom layouts, and priority API access included in the monthly subscription.
                 </div>
               </div>
             </div>

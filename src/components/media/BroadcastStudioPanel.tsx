@@ -32,7 +32,7 @@ const STUDIO_STAGES: { id: StudioStageType; name: string; path?: string }[] = [
 export default function BroadcastStudioPanel() {
   const { setBreakingNewsTicker, addNotification, openFloatingWindow, popoutToNativeWindow } = useIDEStore();
 
-  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]); // Default Turkish Umay Nur
+  const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
   const [selectedStudio, setSelectedStudio] = useState(STUDIO_STAGES[0]);
   const [activeDebater, setActiveDebater] = useState<"marcus" | "elena" | "elif_nur">("elif_nur");
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");

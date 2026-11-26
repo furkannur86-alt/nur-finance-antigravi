@@ -39,7 +39,7 @@ const PROFESSION_CARDS: ProfCard[] = [
       { name: "EdTech Stock Watchlist",      desc: "Coursera, Duolingo, Chegg, 2U — sector coverage",                free: true  },
       { name: "Pension Fund Analyzer",       desc: "State teacher pension fund returns vs S&P500 benchmark",          free: true  },
       { name: "Dollar-Cost Averaging Calc",  desc: "Monthly DCA simulator for index funds on a teacher salary",       free: true  },
-      { name: "Government Bond Ladder",      desc: "US Treasury, Bund, TÜFE-linked bond laddering tool",             free: false },
+      { name: "Government Bond Ladder",      desc: "US Treasury, Bund, TIPS-linked bond laddering tool",             free: false },
       { name: "Side Income Tax Optimizer",   desc: "Freelance, tutoring, online course income — tax efficiency",      free: false },
     ],
   },
