@@ -36,18 +36,9 @@ import AIQuantCopilot from "@/components/ai/AIQuantCopilot";
 import BroadcastStudioPanel from "@/components/media/BroadcastStudioPanel";
 import VerificationPanel from "@/components/pricing/VerificationPanel";
 import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
-import DigitalWalletGateway from "@/components/trading/DigitalWalletGateway";
-import NurCoinEcosystemPanel from "@/components/crypto/NurCoinEcosystemPanel";
-import HoldingEcosystemPanel from "@/components/holding/HoldingEcosystemPanel";
-import UmayBossTerminal from "@/components/umay/UmayBossTerminal";
-import TatarFinansPanel from "@/components/tatar/TatarFinansPanel";
-import NurKidsPanel from "@/components/kids/NurKidsPanel";
-import NurEducationPanel from "@/components/education/NurEducationPanel";
-import ComputeForAccessPanel from "@/components/compute/ComputeForAccessPanel";
 import GeophysicsResourcesPanel from "@/components/geophysics/GeophysicsResourcesPanel";
-import InstitutionalSuitePanel from "@/components/institutional/InstitutionalSuitePanel";
-import OrbitalTelemetryPanel from "@/components/orbital/OrbitalTelemetryPanel";
 import ProfessionalAIHubPanel from "@/components/professional/ProfessionalAIHubPanel";
+import NurEducationPanel from "@/components/education/NurEducationPanel";
 import FinancialSocialPanel from "@/components/social/FinancialSocialPanel";
 import ResourceIntelligencePanel from "@/components/resources/ResourceIntelligencePanel";
 import ProfessionHubPanel from "@/components/social/ProfessionHubPanel";
@@ -56,16 +47,8 @@ import WISHFrameworkPanel from "@/components/trading/WISHFrameworkPanel";
 import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
 import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
 import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
-import CockpitFrame from "@/components/cockpit/CockpitFrame";
 import FloatingWindowManager from "@/components/layout/FloatingWindowManager";
 import { PANELS } from "@/panels/registry";
-import GalacticFleetPanel from "@/components/orbital/GalacticFleetPanel";
-import OrbitalCommandPanel from "@/components/orbital/OrbitalCommandPanel";
-import CivilizationTerminalPanel from "@/components/orbital/CivilizationTerminalPanel";
-import CivilizationArbitrageEngine from "@/components/trading/CivilizationArbitrageEngine";
-import MasterFleetMiningAdminPanel from "@/components/orbital/MasterFleetMiningAdminPanel";
-import UmayMasterTerminalPanel from "@/components/umay/UmayMasterTerminalPanel";
-import FleetMinerPanel from "@/components/mining/FleetMinerPanel";
 import WindowFrame from "@/components/layout/WindowFrame";
 import NurAIAssistant from "@/components/ai/NurAIAssistant";
 import BackgroundGlobe from "@/components/ui/BackgroundGlobe";
@@ -77,23 +60,8 @@ const MAX_CONSOLE_HEIGHT = 500;
 const DEFAULT_CONSOLE_HEIGHT = 200;
 
 const FULLSCREEN_VIEWS = [
-  "umay-master",
-  "umay-boss",
-  "holding-ecosystem",
-  "tatar-finans",
-  "nur-kids",
   "nur-education",
-  "compute-access",
   "geophysics-resources",
-  "resource-intelligence",
-  "institutional-suite",
-  "orbital-telemetry",
-  "galactic-fleet",
-  "orbital-command",
-  "civilization-terminals",
-  "civilization-arbitrage",
-  "master-fleet-mining",
-  "fleet-miner",
   "professional-ai",
   "professional-social",
   "user-profile",
@@ -103,8 +71,8 @@ const FULLSCREEN_VIEWS = [
   "fundamentals", "screener", "news-feed", "encyclopedia", "pricing",
   "media", "options", "ai-tools", "news", "alerts", "research", "terminal", "live-tv",
   "macro-risk", "oms-ems", "quant-copilot", "broadcast-studio", "verification-portal",
-  "wallet-gateway", "nur-coin", "cyber-risk", "nuclear-risk", "military-risk",
-  "galactic-risk", "political-risk", "financial-risk", "ai-assistant",
+  "cyber-risk", "nuclear-risk", "military-risk",
+  "political-risk", "financial-risk", "ai-assistant",
 ];
 
 export default function Home() {
@@ -127,7 +95,7 @@ export default function Home() {
         setIsPopoutMode(true);
       }
       const plan = urlParams.get("plan");
-      if (plan && ["free", "pro", "quant", "team", "r", "b"].includes(plan)) {
+      if (plan && ["free", "pro", "quant", "team", "professional", "institutional"].includes(plan)) {
         setDemoPlan(plan as any);
       }
     }
@@ -138,13 +106,10 @@ export default function Home() {
     const entry = PANELS[activeView as keyof typeof PANELS];
     if (!entry) { setDynamicPanel(null); return; }
     const inSwitch = [
-      "umay-master","umay-boss","holding-ecosystem","tatar-finans","nur-kids","nur-education",
-      "compute-access","geophysics-resources","resource-intelligence","institutional-suite",
-      "orbital-telemetry","galactic-fleet","orbital-command","civilization-terminals",
-      "civilization-arbitrage","master-fleet-mining","fleet-miner","professional-ai",
+      "nur-education","geophysics-resources","professional-ai",
       "professional-social","user-profile","profession-hub","wish-framework",
       "dashboard","portfolio","charts","backtest","oms-ems","quant-copilot",
-      "broadcast-studio","verification-portal","wallet-gateway","nur-coin",
+      "broadcast-studio","verification-portal",
       "global-markets","economic-data","data-ingest","geopolitics","fundamentals",
       "screener","news-feed","encyclopedia","pricing","media","live-tv","options",
       "ai-tools","macro-risk","news","alerts","research","terminal","ai-assistant"
@@ -193,40 +158,10 @@ export default function Home() {
 
   const renderMainContent = () => {
     switch (activeView) {
-      case "umay-master":
-        return <WindowFrame view="umay-master"><UmayMasterTerminalPanel /></WindowFrame>;
-      case "umay-boss":
-        return <WindowFrame view="umay-boss"><UmayBossTerminal /></WindowFrame>;
-      case "holding-ecosystem":
-        return <WindowFrame view="holding-ecosystem"><HoldingEcosystemPanel /></WindowFrame>;
-      case "tatar-finans":
-        return <WindowFrame view="tatar-finans"><TatarFinansPanel /></WindowFrame>;
-      case "nur-kids":
-        return <WindowFrame view="nur-kids"><NurKidsPanel /></WindowFrame>;
       case "nur-education":
         return <WindowFrame view="nur-education"><NurEducationPanel /></WindowFrame>;
-      case "compute-access":
-        return <WindowFrame view="compute-access"><ComputeForAccessPanel /></WindowFrame>;
       case "geophysics-resources":
         return <WindowFrame view="geophysics-resources"><GeophysicsResourcesPanel /></WindowFrame>;
-      case "resource-intelligence":
-        return <WindowFrame view="resource-intelligence"><ResourceIntelligencePanel /></WindowFrame>;
-      case "institutional-suite":
-        return <WindowFrame view="institutional-suite"><InstitutionalSuitePanel /></WindowFrame>;
-      case "orbital-telemetry":
-        return <WindowFrame view="orbital-telemetry"><OrbitalTelemetryPanel /></WindowFrame>;
-      case "galactic-fleet":
-        return <WindowFrame view="galactic-fleet"><GalacticFleetPanel /></WindowFrame>;
-      case "orbital-command":
-        return <WindowFrame view="orbital-command"><OrbitalCommandPanel /></WindowFrame>;
-      case "civilization-terminals":
-        return <WindowFrame view="civilization-terminals"><CivilizationTerminalPanel onClose={() => setActiveView("dashboard")} /></WindowFrame>;
-      case "civilization-arbitrage":
-        return <WindowFrame view="civilization-arbitrage"><CivilizationArbitrageEngine onClose={() => setActiveView("dashboard")} /></WindowFrame>;
-      case "master-fleet-mining":
-        return <WindowFrame view="master-fleet-mining"><MasterFleetMiningAdminPanel /></WindowFrame>;
-      case "fleet-miner":
-        return <WindowFrame view="fleet-miner"><FleetMinerPanel /></WindowFrame>;
       case "professional-ai":
         return <WindowFrame view="professional-ai"><ProfessionalAIHubPanel /></WindowFrame>;
       case "professional-social":
@@ -253,10 +188,6 @@ export default function Home() {
         return <WindowFrame view="broadcast-studio"><BroadcastStudioPanel /></WindowFrame>;
       case "verification-portal":
         return <WindowFrame view="verification-portal"><VerificationPanel /></WindowFrame>;
-      case "wallet-gateway":
-        return <WindowFrame view="wallet-gateway"><DigitalWalletGateway /></WindowFrame>;
-      case "nur-coin":
-        return <WindowFrame view="nur-coin"><NurCoinEcosystemPanel /></WindowFrame>;
       case "global-markets":
         return <WindowFrame view="global-markets"><GlobalMarketsPanel /></WindowFrame>;
       case "economic-data":
@@ -264,13 +195,7 @@ export default function Home() {
       case "data-ingest":
         return <WindowFrame view="data-ingest"><DataIngestPanel /></WindowFrame>;
       case "geopolitics":
-        return (
-          <WindowFrame view="geopolitics">
-            <CockpitFrame showControls>
-              <GeopoliticsPanel />
-            </CockpitFrame>
-          </WindowFrame>
-        );
+        return <WindowFrame view="geopolitics"><GeopoliticsPanel /></WindowFrame>;
       case "fundamentals":
         return <WindowFrame view="fundamentals"><FundamentalsPanel /></WindowFrame>;
       case "screener":

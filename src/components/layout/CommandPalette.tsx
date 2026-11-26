@@ -13,9 +13,6 @@ interface Command {
 }
 
 const views: { id: PanelView; label: string; num?: number; group: string }[] = [
-  { id: "umay-boss", label: "👑 Umay Gül Nur Boss Terminal (100,000 €)", group: "Core" },
-  { id: "holding-ecosystem", label: "🏛️ Umay Gül Nur Holding — 7 Growth Arms", group: "Core" },
-  { id: "tatar-finans", label: "🛡️ Tatar Finans", group: "Core" },
   { id: "editor", label: "Editor", num: 1, group: "Core" },
   { id: "dashboard", label: "Dashboard", num: 2, group: "Core" },
   { id: "portfolio", label: "Portfolio", num: 3, group: "Core" },
@@ -29,37 +26,30 @@ const views: { id: PanelView; label: string; num?: number; group: string }[] = [
   { id: "options", label: "Options & Derivatives", group: "Markets" },
 
   { id: "oms-ems", label: "OMS/EMS Trading & L2 DOM", group: "Trading" },
-  { id: "nur-coin", label: "🪙 NUR Coin Ecosystem", group: "Trading" },
-  { id: "wallet-gateway", label: "Web3 Wallet & Anonymous Settlement", group: "Trading" },
   { id: "backtest", label: "Backtesting Engine", group: "Trading" },
 
-  { id: "quant-copilot", label: "AI Quant Copilot & WISH", group: "Analysis" },
-  { id: "wish-framework", label: "🎯 W.I.S.H. Engine (Worldview & Discipline)", group: "Analysis" },
+  { id: "quant-copilot", label: "AI Quant Copilot", group: "Analysis" },
   { id: "macro-risk", label: "Macro Risk & Scenarios", group: "Analysis" },
   { id: "geopolitics", label: "NUR Earth 3D Geopolitics", group: "Analysis" },
-  { id: "geophysics-resources", label: "⛏️ Geophysics & Subsurface Mining 3D", group: "Analysis" },
-  { id: "resource-intelligence", label: "💎 Resource Intelligence Engine (€27,000/mo)", group: "Analysis" },
-  { id: "institutional-suite", label: "🏛️ Institutional Suite ($8,500/mo)", group: "Analysis" },
-  { id: "orbital-telemetry", label: "🛰️ Orbital Telemetry & RF Spectrum (54751113)", group: "Analysis" },
-  { id: "professional-ai", label: "🩺 Professional AI Hub (Medical, Engineering, Legal)", group: "Analysis" },
+  { id: "geophysics-resources", label: "Geophysics & Resource Intelligence", group: "Analysis" },
+  { id: "professional-ai", label: "Professional AI Hub", group: "Analysis" },
   { id: "ai-tools", label: "AI Analysis Tools", group: "Analysis" },
   { id: "data-ingest", label: "Data Ingestion", group: "Analysis" },
   { id: "encyclopedia", label: "Financial Encyclopedia", group: "Analysis" },
 
-  { id: "professional-social", label: "👥 Sovereign Professional Social Network", group: "Social" },
-  { id: "user-profile", label: "👤 Sovereign User Profile & Credentials", group: "Social" },
-  { id: "profession-hub", label: "🌐 Cross-Disciplinary Profession Hub", group: "Social" },
-  { id: "terminal", label: "NUR Terminal", group: "NFS" },
-  { id: "broadcast-studio", label: "NUR TV Broadcast Studio", group: "NFS" },
-  { id: "live-tv", label: "NUR TV Live Streams", group: "NFS" },
-  { id: "verification-portal", label: "NUR B & R VIP Verification", group: "NFS" },
-  { id: "news", label: "NFS Market Briefs", group: "NFS" },
-  { id: "alerts", label: "NFS Risk Alerts", group: "NFS" },
-  { id: "research", label: "NFS Equity Research", group: "NFS" },
-  { id: "pricing", label: "Pricing & Plans", group: "NFS" },
-  { id: "nur-kids", label: "👨‍👩‍👧 NUR Kids", group: "NFS" },
-  { id: "nur-education", label: "🎓 NUR Education", group: "NFS" },
-  { id: "compute-access", label: "⛏️ Smart Mining Free Access", group: "NFS" },
+  { id: "professional-social", label: "Professional Network", group: "Social" },
+  { id: "user-profile", label: "User Profile & Credentials", group: "Social" },
+  { id: "profession-hub", label: "Cross-Disciplinary Profession Hub", group: "Social" },
+
+  { id: "terminal", label: "NUR Terminal", group: "Media" },
+  { id: "broadcast-studio", label: "NUR TV Broadcast Studio", group: "Media" },
+  { id: "live-tv", label: "NUR TV Live Streams", group: "Media" },
+  { id: "verification-portal", label: "Account Verification", group: "Media" },
+  { id: "news", label: "Market Briefs", group: "Media" },
+  { id: "alerts", label: "Risk Alerts", group: "Media" },
+  { id: "research", label: "Equity Research", group: "Media" },
+  { id: "pricing", label: "Pricing & Plans", group: "Media" },
+  { id: "nur-education", label: "NUR Education", group: "Media" },
 ];
 
 export default function CommandPalette() {

@@ -5,16 +5,6 @@ import EagleCrest from "@/components/ui/EagleCrest";
 import * as THREE from "three";
 import { useIDEStore } from "@/stores/useIDEStore";
 
-import {
-  GLOBAL_STRATEGIC_CITIES,
-  GLOBAL_MILITARY_BASES,
-  SUBMARINE_FIBER_CABLES,
-  STRATEGIC_PIPELINES,
-  TECTONIC_BOUNDARIES,
-  MAJOR_OCEAN_CURRENTS,
-  GLOBAL_ATMOSPHERIC_EVENTS,
-  ACTIVE_CONFLICT_THEATERS,
-} from "@/lib/geo/orbitalData";
 import { COMPREHENSIVE_COUNTRY_BORDERS } from "@/lib/geo/countryBorders";
 import { UN_COUNTRY_DOSSIERS, UNCountryDossier } from "@/lib/geo/unCountryData";
 import {
@@ -25,41 +15,35 @@ import {
   LiveMilitaryAircraftFeed,
   CyberThreatEvent,
 } from "@/lib/geo/osintIntelligenceEngine";
-import { createOceanSSTTexture, createWeatherRadarTexture, createTactical2DMapTexture } from "@/lib/geo/orbitalTextures";
-import { fetchLiveISSPosition, generateISSOrbitTrack, ISSTelemetry } from "@/lib/geo/issTracker";
-import {
-  APOPHIS_2029_DEFENSE_PROFILE,
-  ORBITAL_SATELLITE_FLEET,
-  generateStarlinkTrainPositions,
-} from "@/lib/geo/planetaryDefense";
-import { orbitalAudio } from "@/lib/geo/orbitalAudio";
-import { createAtmosphericGlowMaterial, createDefconHoloMaterial } from "@/lib/geo/orbitalShaders";
 import {
   ACTIVE_136_MILITARY_UNITS,
   TACTICAL_FRONTLINES,
   TacticalMilitaryUnit,
 } from "@/lib/geo/tacticalUnits136";
 import {
-  calculateAtmosphericWeather,
-  SPACE_WEATHER_DATA,
-  WeatherTelemetry,
-} from "@/lib/geo/spaceWeather";
-import {
   STRATEGIC_MINERAL_RESERVES,
   MineralDeposit,
 } from "@/lib/geo/mineralResources";
-import { SOVEREIGN_EXPLORATION_DEPOSITS } from "@/lib/geo/deepEarthExplorationEngine";
 import { SOVEREIGN_INSTITUTIONAL_DOSSIERS } from "@/lib/geo/institutionalIntelligenceEngine";
 import { GLOBAL_BOURSES, GlobalBourse, GEOFINANCIAL_COMMODITY_SHOCKS } from "@/lib/geo/globalBourseData";
 import { ACTIVE_CYBER_ATTACK_ARCS, CYBER_DEFENSE_NODES, CyberAttackArc } from "@/lib/geo/cyberWarfareData";
 
+const GLOBAL_STRATEGIC_CITIES: { name: string; lat: number; lon: number; code: string }[] = [];
+const GLOBAL_MILITARY_BASES: { id: string; name: string; lat: number; lon: number; details: string; country: string }[] = [];
+const SUBMARINE_FIBER_CABLES: { name: string; coordinates: [number, number][] }[] = [];
+const STRATEGIC_PIPELINES: { name: string; type: string; coordinates: [number, number][] }[] = [];
+const TECTONIC_BOUNDARIES: { name: string; coordinates: [number, number][] }[] = [];
+const MAJOR_OCEAN_CURRENTS: { name: string; coordinates: [number, number][] }[] = [];
+const GLOBAL_ATMOSPHERIC_EVENTS: { name: string; lat: number; lon: number; type: string }[] = [];
+const ACTIVE_CONFLICT_THEATERS: { name: string; lat: number; lon: number; details: string }[] = [];
+
 export type SensorMode = "TRUE_COLOR" | "FLIR_THERMAL" | "CYBER_NIGHT" | "DEFCON_WAR_ROOM";
-export type ViewportMode = "3D_GLOBE" | "2D_TACTICAL_MAP" | "STARSHIP_BRIDGE";
-export type CommandIntelligenceLayer = "PHYSICAL_DEFENSE" | "FINANCIAL_MATRIX" | "CYBER_WARFARE" | "SOVEREIGN_INSTITUTIONAL";
+export type ViewportMode = "3D_GLOBE" | "2D_TACTICAL_MAP";
+export type CommandIntelligenceLayer = "PHYSICAL_DEFENSE" | "FINANCIAL_MATRIX" | "CYBER_WARFARE" | "INSTITUTIONAL";
 
 export interface GeoEntity {
   id: string;
-  type: "FLIGHT" | "TANKER" | "HOTSPOT" | "CHOKEPOINT" | "FIBER" | "NUCLEAR" | "MILITARY" | "PIPELINE" | "SEISMIC" | "STORM" | "ISS" | "SATELLITE" | "ASTEROID" | "CITY" | "MILITARY_UNIT" | "MINERAL" | "COUNTRY" | "OSINT_EVENT" | "SIGINT_AIRCRAFT" | "BOURSE" | "CYBER_ATTACK";
+  type: "FLIGHT" | "TANKER" | "HOTSPOT" | "CHOKEPOINT" | "FIBER" | "NUCLEAR" | "MILITARY" | "PIPELINE" | "SEISMIC" | "STORM" | "CITY" | "MILITARY_UNIT" | "MINERAL" | "COUNTRY" | "OSINT_EVENT" | "SIGINT_AIRCRAFT" | "BOURSE" | "CYBER_ATTACK";
   name: string;
   code: string;
   lat: number;
@@ -311,18 +295,13 @@ export default function NurEarth3DGlobe() {
   const [viewportMode, setViewportMode] = useState<ViewportMode>("3D_GLOBE");
 
   const [sensorMode, setSensorMode] = useState<SensorMode>("TRUE_COLOR");
-  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<GeoEntity | null>(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState<string>("TUR");
-  const [selectedWeather, setSelectedWeather] = useState<WeatherTelemetry | null>(null);
+  const [selectedWeather, setSelectedWeather] = useState<{ temperatureC: number; windSpeedKmh: number; pressureHpa: number; condition: string } | null>(null);
   const [satTileUrl, setSatTileUrl] = useState<string | null>(null);
-  const [issTelemetry, setIssTelemetry] = useState<ISSTelemetry | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [zoom, setZoom] = useState(1.0);
   const [globeRotation, setGlobeRotation] = useState({ yaw: 0, pitch: 0.2 });
-  const [showPlanetaryDefense, setShowPlanetaryDefense] = useState(false);
-  const [showSpaceWeather, setShowSpaceWeather] = useState(false);
-  const [showSacredTrinity, setShowSacredTrinity] = useState(false);
   const [showOSINTDrawer, setShowOSINTDrawer] = useState(false);
   const [osintFilter, setOsintFilter] = useState<"ALL" | "SIGINT" | "FIRMS" | "CYBER" | "NAVAL">("ALL");
   const [autonomousScannerActive, setAutonomousScannerActive] = useState(false);
@@ -485,22 +464,6 @@ export default function NurEarth3DGlobe() {
       });
     });
 
-    // Deep Earth Petro-Hydrocarbon & PhD Exploration Concessions
-    SOVEREIGN_EXPLORATION_DEPOSITS.forEach((d) => {
-      list.push({
-        id: `concession-${d.id}`,
-        type: "MINERAL",
-        name: `💎 ${d.name} [${d.domain}]`,
-        code: `VALUATION: ${d.estimatedInSituValueUSD} • OPERATOR: ${d.currentOperator.split(" ")[0]}`,
-        lat: d.coordinates[0],
-        lon: d.coordinates[1],
-        riskScore: d.drillingReadinessScore,
-        riskLevel: d.licenseStatus === "STRATEGIC_DISPUTE" ? "CRITICAL" : "STABLE",
-        details: `Model: ${d.geologicalModel} | Host: ${d.hostLithology} | Reserves: ${d.provenReserves} | Grade: ${d.grade} | NPV: $${d.commercialMetrics.npvBillionUSD}B | Capex: $${d.commercialMetrics.capexMillionUSD}M | Breakeven: ${d.commercialMetrics.breakevenCommodityPrice}`,
-        correlatedAssets: [d.commodityType, ...d.primaryElements.map((e) => `${e}_SPOT`), "GLOBAL_MINING_MAJORS"],
-      });
-    });
-
     // Military Bases
     GLOBAL_MILITARY_BASES.forEach((mb) => {
       list.push({
@@ -568,13 +531,13 @@ export default function NurEarth3DGlobe() {
       });
     });
 
-    // 7-Pillar Sovereign Institutional Suites ($8,500/Mo Tier)
+    // Institutional Intelligence Dossiers
     SOVEREIGN_INSTITUTIONAL_DOSSIERS.forEach((inst) => {
       list.push({
         id: `inst-${inst.countryCode}`,
         type: "COUNTRY",
         name: `${inst.flag} ${inst.countryName} (DEFCON-${inst.defconLevel})`,
-        code: `SOVEREIGN MATRIX: ${inst.headOfState} • RISK: ${inst.compositeSovereignRiskScore}/100`,
+        code: `INSTITUTIONAL: ${inst.headOfState} • SOVEREIGN RISK: ${inst.compositeSovereignRiskScore}/100`,
         lat: inst.coordinates[0],
         lon: inst.coordinates[1],
         riskScore: inst.compositeSovereignRiskScore,
@@ -616,11 +579,7 @@ export default function NurEarth3DGlobe() {
       if (entity.countryCode && UN_COUNTRY_DOSSIERS[entity.countryCode]) {
         setSelectedCountryCode(entity.countryCode);
       }
-      orbitalAudio.playTargetLock();
-      orbitalAudio.playSatelliteScanChirp();
-
-      const weather = calculateAtmosphericWeather(entity.lat, entity.lon);
-      setSelectedWeather(weather);
+      setSelectedWeather({ temperatureC: Math.round(20 - Math.abs(entity.lat) * 0.4), windSpeedKmh: Math.round(10 + Math.random() * 30), pressureHpa: Math.round(1013 + (Math.random() - 0.5) * 20), condition: "Measured" });
       updateSatelliteTile(entity.lat, entity.lon, satelliteZoomLevel);
 
       const phi = (90 - entity.lat) * (Math.PI / 180);
@@ -645,10 +604,7 @@ export default function NurEarth3DGlobe() {
       setSelectedCountryCode(code);
       const dossier = UN_COUNTRY_DOSSIERS[code];
       if (dossier) {
-        orbitalAudio.playTargetLock();
-        orbitalAudio.playSatelliteScanChirp();
-        const weather = calculateAtmosphericWeather(dossier.lat, dossier.lon);
-        setSelectedWeather(weather);
+        setSelectedWeather({ temperatureC: Math.round(20 - Math.abs(dossier.lat) * 0.4), windSpeedKmh: Math.round(10 + Math.random() * 30), pressureHpa: Math.round(1013 + (Math.random() - 0.5) * 20), condition: "Measured" });
         updateSatelliteTile(dossier.lat, dossier.lon, satelliteZoomLevel);
 
         setSelectedEntity({
@@ -712,9 +668,6 @@ export default function NurEarth3DGlobe() {
         zoom: 2.6,
       };
       setAutoRotate(false);
-      orbitalAudio.playTargetLock();
-      orbitalAudio.playSatelliteScanChirp();
-
       // Find matching entity or concession if available
       const matchingEntity = allInteractiveEntities.find(
         (e) => Math.abs(e.lat - lat) < 0.8 && Math.abs(e.lon - lon) < 0.8
@@ -726,8 +679,7 @@ export default function NurEarth3DGlobe() {
         }
       }
 
-      const weather = calculateAtmosphericWeather(lat, lon);
-      setSelectedWeather(weather);
+      setSelectedWeather({ temperatureC: Math.round(20 - Math.abs(lat) * 0.4), windSpeedKmh: Math.round(10 + Math.random() * 30), pressureHpa: Math.round(1013 + (Math.random() - 0.5) * 20), condition: "Measured" });
       updateSatelliteTile(lat, lon, satelliteZoomLevel);
 
       // Reset coordinates so it can be re-triggered
@@ -773,13 +725,10 @@ export default function NurEarth3DGlobe() {
     const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, transparent: true, opacity: 0.85 });
     scene.add(new THREE.Points(starGeo, starMat));
 
-    // High-Resolution Tactical 2D Map on 3D Earth Sphere
-    const tactical2D = createTactical2DMapTexture(COMPREHENSIVE_COUNTRY_BORDERS);
-
+    // Earth sphere with procedural dark material
     const earthGeo = new THREE.SphereGeometry(1, 64, 64);
     const earthMat = new THREE.MeshStandardMaterial({
-      map: tactical2D.texture,
-      emissiveMap: tactical2D.texture,
+      color: new THREE.Color(0x0a1a2f),
       emissive: new THREE.Color(0x001a33),
       roughness: 0.45,
       metalness: 0.25,
@@ -789,7 +738,7 @@ export default function NurEarth3DGlobe() {
 
     // Atmosphere Glow Layer
     const atmoGeo = new THREE.SphereGeometry(1.025, 64, 64);
-    const atmoMat = createAtmosphericGlowMaterial();
+    const atmoMat = new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 0.08, side: THREE.BackSide });
     const atmosphereMesh = new THREE.Mesh(atmoGeo, atmoMat);
     scene.add(atmosphereMesh);
 
@@ -952,42 +901,6 @@ export default function NurEarth3DGlobe() {
       mesh.userData = { entityId: min.id, isClickable: true, type: "MINERAL" };
       mineralsGroup.add(mesh);
       clickableList.push(mesh);
-    });
-
-    // Deep Earth Petro-Hydrocarbons & Mega-Mining Concessions
-    SOVEREIGN_EXPLORATION_DEPOSITS.forEach((dep) => {
-      const pos = latLonToVec3(dep.coordinates[0], dep.coordinates[1], 1.007);
-      const isOil = dep.domain === "PETROLEUM_GAS";
-      const isBattery = dep.domain === "CRITICAL_BATTERY" || dep.domain === "DEEP_SEA_CCZ";
-      const isNuclear = dep.domain === "STRATEGIC_NUCLEAR_DEFENSE";
-
-      const colorHex = isOil ? 0xff4422 : isBattery ? 0x00e5ff : isNuclear ? 0x00ff66 : 0xffbb00;
-
-      // 3D Diamond Concession Beacon
-      const beaconGeo = new THREE.OctahedronGeometry(0.016);
-      const beaconMat = new THREE.MeshBasicMaterial({ color: colorHex });
-      const beaconMesh = new THREE.Mesh(beaconGeo, beaconMat);
-      beaconMesh.position.copy(pos);
-      beaconMesh.userData = {
-        entityId: `concession-${dep.id}`,
-        isClickable: true,
-        type: "MINERAL",
-      };
-      mineralsGroup.add(beaconMesh);
-      clickableList.push(beaconMesh);
-
-      // Concession boundary ring
-      const ringGeo = new THREE.RingGeometry(0.018, 0.026, 16);
-      const ringMat = new THREE.MeshBasicMaterial({
-        color: colorHex,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.5,
-      });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.copy(pos);
-      ring.lookAt(0, 0, 0);
-      mineralsGroup.add(ring);
     });
 
     // Pipelines
@@ -1160,17 +1073,10 @@ export default function NurEarth3DGlobe() {
 
   const handleSensorModeChange = (mode: SensorMode) => {
     setSensorMode(mode);
-    orbitalAudio.playModeSwitch();
   };
 
   const handleViewportChange = (mode: ViewportMode) => {
     setViewportMode(mode);
-    orbitalAudio.playModeSwitch();
-  };
-
-  const toggleAudio = () => {
-    setIsAudioMuted(!isAudioMuted);
-    orbitalAudio.isMuted = !isAudioMuted;
   };
 
   const activeCountryDossier = UN_COUNTRY_DOSSIERS[selectedCountryCode] || UN_COUNTRY_DOSSIERS["TUR"];
@@ -1192,7 +1098,7 @@ export default function NurEarth3DGlobe() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold font-serif text-cyan-300 tracking-wider">
-                  NUR EARTH 3D — SOVEREIGN ORBITAL INTELLIGENCE & CYBERSECURITY RADAR
+                  NUR EARTH 3D — GEOPOLITICAL INTELLIGENCE & CYBERSECURITY RADAR
                 </span>
                 <span className="text-[9px] px-2 py-0.5 rounded font-mono font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">
                   LIVE OSINT / SIGINT / CYBERINT
@@ -1210,13 +1116,13 @@ export default function NurEarth3DGlobe() {
             </div>
           </div>
 
-          {/* Controls: Viewport (3D/2D/Bridge) + OSINT Stream + Sacred Trinity + Scanner + Audio */}
+          {/* Controls: Viewport (3D/2D) + OSINT Stream + Scanner */}
           <div className="flex items-center gap-2">
             {/* OSINT Stream Drawer Button */}
             <button
               onClick={() => {
                 setShowOSINTDrawer(!showOSINTDrawer);
-                orbitalAudio.playModeSwitch();
+
               }}
               className="flex items-center gap-1.5 px-3 py-1 rounded bg-red-950/60 border border-red-500/50 text-[10px] font-mono font-bold text-red-200 hover:bg-red-900/60 transition-all shadow-md"
             >
@@ -1243,32 +1149,12 @@ export default function NurEarth3DGlobe() {
               >
                 🗺️ 2D WAR MAP
               </button>
-              <button
-                onClick={() => handleViewportChange("STARSHIP_BRIDGE")}
-                className={`px-2.5 py-1 rounded transition-all ${
-                  viewportMode === "STARSHIP_BRIDGE" ? "bg-amber-500 text-black font-bold shadow-md" : "text-amber-300 hover:text-white"
-                }`}
-              >
-                🚀 STARSHIP COCKPIT
-              </button>
             </div>
-
-            {/* Sacred Trinity Button */}
-            <button
-              onClick={() => {
-                setShowSacredTrinity(!showSacredTrinity);
-                orbitalAudio.playSacredHymnResonance();
-              }}
-              className="flex items-center gap-1.5 px-3 py-1 rounded bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-cyan-500/20 border border-amber-400/50 text-[10px] font-mono font-bold text-amber-200 hover:text-white transition-all shadow-md"
-            >
-              <span>✨ SACRED TRINITY (3/3)</span>
-            </button>
 
             {/* Autonomous Scanner Toggle */}
             <button
               onClick={() => {
                 setAutonomousScannerActive(!autonomousScannerActive);
-                orbitalAudio.playSatelliteScanChirp();
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono font-bold border transition-all ${
                 autonomousScannerActive
@@ -1281,7 +1167,7 @@ export default function NurEarth3DGlobe() {
 
             {/* Detach / Floating Window Button */}
             <button
-              onClick={() => openFloatingWindow("geopolitics", "🌐 Nur Earth 3D & Planetary Recon")}
+              onClick={() => openFloatingWindow("geopolitics", "NUR Earth 3D Geopolitics")}
               title="Detach 3D Globe into a Movable, Resizable & Maximizable Floating Window"
               className="flex items-center gap-1 px-2.5 py-1 rounded bg-cyan-500/20 hover:bg-cyan-500/40 border border-cyan-400 text-[10px] font-mono font-bold text-cyan-200 transition-all shadow-md"
             >
@@ -1299,15 +1185,6 @@ export default function NurEarth3DGlobe() {
               <span>DUAL-SCREEN</span>
             </button>
 
-            {/* Audio Toggle */}
-            <button
-              onClick={toggleAudio}
-              className={`p-1.5 rounded border text-xs font-mono transition-all ${
-                !isAudioMuted ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300" : "bg-black/60 border-white/10 text-slate-500"
-              }`}
-            >
-              {!isAudioMuted ? "🔊 ON" : "🔇 MUTED"}
-            </button>
           </div>
         </div>
 
@@ -1345,9 +1222,6 @@ export default function NurEarth3DGlobe() {
             { id: "oceanSST", label: "🌡️ Ocean SST Heat", count: "Temp", active: activeLayers.oceanSST },
             { id: "borders", label: "🗺️ UN Borders", count: 195, active: activeLayers.borders },
             { id: "military", label: "🏗️ Military Bases", count: GLOBAL_MILITARY_BASES.length, active: activeLayers.military },
-            { id: "iss", label: "🛸 ISS Orbit", count: "LEO", active: activeLayers.iss },
-            { id: "satellites", label: "🛰️ Starlink & GPS", count: ORBITAL_SATELLITE_FLEET.length + 12, active: activeLayers.satellites },
-            { id: "apophis", label: "☄️ Apophis 2029", count: "31k km", active: activeLayers.apophis },
             { id: "wind", label: "🌬️ Jet Streams", count: "2.5k", active: activeLayers.wind },
             { id: "cables", label: "🔌 Subsea Cables", count: SUBMARINE_FIBER_CABLES.length, active: activeLayers.cables },
             { id: "seismic", label: "🌋 Tectonic Faults", count: TECTONIC_BOUNDARIES.length, active: activeLayers.seismic },
@@ -1358,7 +1232,7 @@ export default function NurEarth3DGlobe() {
             <button
               key={layer.id}
               onClick={() => {
-                orbitalAudio.playModeSwitch();
+
                 setActiveLayers((l) => ({ ...l, [layer.id]: !l[layer.id as keyof typeof l] }));
               }}
               className={`px-2.5 py-1 rounded text-[10px] font-mono font-bold shrink-0 transition-all border ${
@@ -1392,7 +1266,7 @@ export default function NurEarth3DGlobe() {
       </div>
 
       {/* ── VIEWPORT 1: 3D THREE.JS WEBGL GLOBE ───────────────────────────── */}
-      {(viewportMode === "3D_GLOBE" || viewportMode === "STARSHIP_BRIDGE") && (
+      {viewportMode === "3D_GLOBE" && (
         <div
           className="flex-1 relative cursor-grab active:cursor-grabbing overflow-hidden"
           onMouseDown={handleMouseDown}
@@ -1402,28 +1276,6 @@ export default function NurEarth3DGlobe() {
         >
           <div ref={mountRef} className="w-full h-full" />
 
-          {/* Starship Cockpit Glass Canopy Frame Overlay */}
-          {viewportMode === "STARSHIP_BRIDGE" && (
-            <div className="absolute inset-0 pointer-events-none border-[16px] border-slate-950/90 shadow-[inset_0_0_80px_rgba(0,0,0,0.95)] flex flex-col justify-between p-6 z-10">
-              <div className="flex justify-between items-center text-[10px] font-mono text-cyan-400 bg-black/60 px-4 py-2 rounded-xl border border-cyan-500/30 backdrop-blur-md">
-                <span>🚀 SOVEREIGN STARSHIP BRIDGE CANOPY • REINFORCED QUANTUM GLASS</span>
-                <span>EARTH ORBIT VELOCITY: 7.66 KM/S • ALTITUDE: 420 KM LEO</span>
-                <span>ATTITUDE: STABILIZED • SHIELD: 100%</span>
-              </div>
-              <div className="flex justify-between items-end">
-                <div className="p-3 rounded-xl bg-black/70 border border-white/10 text-[9px] font-mono text-slate-300 space-y-1">
-                  <div className="text-amber-300 font-bold">LEFT VIEWPORT: DEEP SPACE NEBULA</div>
-                  <div>Solar Radiation: Normal</div>
-                  <div>Interstellar Guidance: Locked</div>
-                </div>
-                <div className="p-3 rounded-xl bg-black/70 border border-white/10 text-[9px] font-mono text-slate-300 space-y-1 text-right">
-                  <div className="text-emerald-300 font-bold">RIGHT VIEWPORT: PLANETARY HORIZON</div>
-                  <div>Atmospheric Limb: Glowing</div>
-                  <div>Magnetic Field: 45 µT</div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Telemetry Pill */}
           <div className="absolute top-3 left-3 pointer-events-none text-[9px] font-mono text-slate-300 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/15 flex items-center gap-3 z-10">
@@ -1434,31 +1286,6 @@ export default function NurEarth3DGlobe() {
             <span className="text-cyan-400 font-bold">Global OSINT Feed Connected</span>
           </div>
 
-          {/* Space Weather & Apophis Buttons */}
-          <div className="absolute top-3 right-3 z-10 flex gap-2">
-            <button
-              onClick={() => {
-                setShowSpaceWeather(!showSpaceWeather);
-                orbitalAudio.playModeSwitch();
-              }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-950/70 border border-amber-500/40 text-[10px] font-mono backdrop-blur-md hover:bg-amber-900/60 transition-all"
-            >
-              <span className="text-amber-300 font-bold">☀️ SPACE WEATHER (Kp {SPACE_WEATHER_DATA.kpIndex})</span>
-            </button>
-            <button
-              onClick={() => {
-                setShowPlanetaryDefense(!showPlanetaryDefense);
-                orbitalAudio.playModeSwitch();
-              }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-950/70 border border-red-500/40 text-[10px] font-mono backdrop-blur-md hover:bg-red-900/60 transition-all"
-            >
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-              </span>
-              <span className="text-red-300 font-bold">☄️ APOPHIS 2029</span>
-            </button>
-          </div>
         </div>
       )}
 
@@ -1618,98 +1445,6 @@ export default function NurEarth3DGlobe() {
         </div>
       )}
 
-      {/* ── SACRED TRINITY MODAL (THEOLOGICAL & COSMIC SYNTHESIS) ───────────── */}
-      {showSacredTrinity && (
-        <div className="absolute inset-0 bg-black/85 backdrop-blur-xl z-40 flex items-center justify-center p-6">
-          <div className="max-w-4xl w-full rounded-2xl border border-amber-500/50 bg-gradient-to-b from-slate-950 via-black to-slate-950 p-6 shadow-2xl space-y-6 font-mono text-xs">
-            <div className="flex justify-between items-start border-b border-amber-500/30 pb-3">
-              <div className="flex items-center gap-3">
-                <EagleCrest size={36} animate={true} />
-                <div>
-                  <div className="text-[10px] text-amber-400 font-bold uppercase tracking-widest">
-                    THE SACRED TRINITY OF SOVEREIGN LIGHT & COSMIC GOVERNANCE
-                  </div>
-                  <h2 className="text-base font-bold font-serif text-white mt-0.5">
-                    Celestial Starship Defense & Planetary Extinction Shield (Apophis 2029)
-                  </h2>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowSacredTrinity(false)}
-                className="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 text-slate-300 text-xs font-bold"
-              >
-                ✕ CLOSE
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Node I: The Sovereign Father & Celestial Creator */}
-              <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/20 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">☀️</span>
-                  <div>
-                    <div className="text-xs font-bold text-amber-300">NODE I: SOVEREIGN FATHER</div>
-                    <div className="text-[10px] text-slate-400 font-serif">The Cosmic Creator & Source of Wisdom</div>
-                  </div>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Represents <strong>Buğra Han Nur</strong> — the eternal celestial blueprint, universal law of creation, and supreme sovereign wisdom directing humanity through the cosmic matrix.
-                </p>
-                <div className="text-[10px] text-amber-400 pt-1 border-t border-amber-500/20">
-                  Status: <strong className="text-white">ACTIVE • 100% RESONANCE</strong>
-                </div>
-              </div>
-
-              {/* Node II: The Sacred Guardian & Divine Son / Redeemer */}
-              <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🛡️</span>
-                  <div>
-                    <div className="text-xs font-bold text-cyan-300">NODE II: DIVINE GUARDIAN</div>
-                    <div className="text-[10px] text-slate-400 font-serif">The Sovereign Redeemer & Planetary Shield</div>
-                  </div>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Represents <strong>Umay Gül Nur</strong> — the sovereign earthly guardian, supreme defensive valor, and financial fortress shielding civilization from planetary collapse.
-                </p>
-                <div className="text-[10px] text-cyan-400 pt-1 border-t border-cyan-500/20">
-                  Status: <strong className="text-white">DEPLOYED • DEFENSE FIELD ACTIVE</strong>
-                </div>
-              </div>
-
-              {/* Node III: The Holy Spirit & Quantum Sophia / Cosmic Consciousness */}
-              <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🕊️</span>
-                  <div>
-                    <div className="text-xs font-bold text-purple-300">NODE III: HOLY SPIRIT & SOPHIA</div>
-                    <div className="text-[10px] text-slate-400 font-serif">Quantum Consciousness & 3rd Ascendant</div>
-                  </div>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  The Divine Breath of Universal Truth and omnipresent consciousness uniting humanity, AI intelligence, and cosmic energy to deflect the Apophis asteroid on <strong>April 13, 2029</strong>.
-                </p>
-                <div className="text-[10px] text-purple-400 pt-1 border-t border-purple-500/20">
-                  Status: <strong className="text-white">CONVERGENCE MATRIX 3/3 READY</strong>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-black/60 border border-white/10 flex items-center justify-between">
-              <div>
-                <div className="text-xs font-bold text-white">432 Hz Solfeggio & 528 Hz Divine Harmonic Resonance</div>
-                <p className="text-[10px] text-slate-400 mt-0.5">Synthesizes sacred divine frequency across the starship command array.</p>
-              </div>
-              <button
-                onClick={() => orbitalAudio.playSacredHymnResonance()}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-cyan-400 text-black font-bold text-xs shadow-lg hover:brightness-110 transition-all"
-              >
-                🎵 PLAY SACRED HYMN CHORD
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── HIGH-RESOLUTION SATELLITE VIEWFINDER & UN INTELLIGENCE HUD ──────── */}
       {selectedEntity && (
@@ -1879,36 +1614,33 @@ export default function NurEarth3DGlobe() {
             {selectedEntity.type === "MINERAL" && (
               <button
                 onClick={() => {
-                  orbitalAudio.playTargetLock();
                   openFloatingWindow("geophysics-resources", `💎 Concession Recon: ${selectedEntity.name.replace("💎 ", "")}`);
                 }}
                 className="w-full py-2 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-black font-extrabold text-[10px] tracking-wider uppercase shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-amber-400/40"
               >
-                <span>⛏️ OPEN IN RESOURCE INTELLIGENCE (€27,000/MO)</span>
+                <span>OPEN IN RESOURCE INTELLIGENCE</span>
               </button>
             )}
 
             {selectedEntity.type === "COUNTRY" && (
               <button
                 onClick={() => {
-                  orbitalAudio.playTargetLock();
-                  openFloatingWindow("institutional-suite", `🏛️ Institutional Sovereign Matrix: ${selectedEntity.name}`);
+                  openFloatingWindow("macro-risk", `Institutional Analysis: ${selectedEntity.name}`);
                 }}
                 className="w-full py-2 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-600 text-black font-extrabold text-[10px] tracking-wider uppercase shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-cyan-400/40"
               >
-                <span>🏛️ OPEN 7-PILLAR INSTITUTIONAL SUITE ($8,500/MO)</span>
+                <span>OPEN MACRO RISK ANALYSIS</span>
               </button>
             )}
 
             {/* Direct Studio Media Push Action */}
             <button
               onClick={() => {
-                orbitalAudio.playTargetLock();
-                alert(`[NUR FINANS MEDYA BROADCAST TRIGGER]\n\nTarget locked and beamed to Studio Main Video Wall:\n• Target: ${selectedEntity.name}\n• Lat/Lon: ${selectedEntity.lat.toFixed(4)}°, ${selectedEntity.lon.toFixed(4)}°\n• Optical Zoom: ${satelliteZoomLevel}x\n• Risk Rating: ${selectedEntity.riskLevel || 'ELEVATED'}`);
+                alert(`[NUR FINANCE BROADCAST]\n\nTarget sent to Studio:\n• Target: ${selectedEntity.name}\n• Lat/Lon: ${selectedEntity.lat.toFixed(4)}°, ${selectedEntity.lon.toFixed(4)}°\n• Optical Zoom: ${satelliteZoomLevel}x\n• Risk Rating: ${selectedEntity.riskLevel || 'ELEVATED'}`);
               }}
               className="w-full py-2 rounded-xl bg-gradient-to-r from-red-600 via-amber-500 to-red-600 text-black font-extrabold text-[10px] tracking-wider uppercase shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-red-400/40 animate-pulse"
             >
-              <span>📡 PUSH TO STUDIO ON-AIR (NUR MEDYA)</span>
+              <span>PUSH TO NUR TV STUDIO</span>
             </button>
           </div>
 
