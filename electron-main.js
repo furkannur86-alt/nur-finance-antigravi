@@ -9,7 +9,7 @@ function createWindow() {
     height: 950,
     minWidth: 1280,
     minHeight: 800,
-    title: "NUR Finance Bloomberg & Reuters Desktop Terminal",
+    title: "NUR Finance Desktop Terminal",
     icon: path.join(__dirname, "public/favicon.ico"),
     backgroundColor: "#0a0e17",
     webPreferences: {

@@ -1,25 +1,27 @@
 # NUR Finance AntiGravi IDE v3.0
 
-Bloomberg/Reuters-tier financial terminal built with Next.js 16, React 19, and Tailwind CSS 4.
+Professional-grade financial terminal built with Next.js 16, React 19, and Tailwind CSS 4.
 
 ## Features
 
-- **33 Panel Views** — Dashboard, Portfolio, Charts, Backtest, Global Markets, Economic Data, Screener, Options, AI Tools, MacroRisk, OMS/EMS, Quant Copilot, Broadcast Studio, VIP Verify, NUR Coin Ecosystem, Holding Ecosystem, Education, Kids, Tatar Finans, and more
+- **164 Panel Views** — Dashboard, Portfolio, Charts, Backtest, Global Markets, Economic Data, Screener, Options, AI Tools, MacroRisk, OMS/EMS, Quant Copilot, Broadcast Studio, Education, and more
 - **Institutional OMS / EMS** — Direct Market Access L2 Depth of Market ladder, algorithmic smart order types (TWAP, VWAP, Iceberg), Kelly margin sizing, and execution audit logging
 - **AI Quant Copilot & WISH Engine** — WISH Framework matrix (Worldview, Indicators, Setup Gatekeeping, Discipline), autonomous long/short pair trade generator, and macro stress tests
 - **Real-Time HUD Alert Center** — Price, VIX regime shift, ACLED conflict proximity, and macro surprise evaluation with synthesized Web Audio chimes
-- **Interactive Broadcast Studio** — 12-language AI newsroom with 30 AI Anchors, real-time teleprompter, breaking banner injector, and canvas audio spectrum visualizer
-- **NUR Finance B & R VIP Verification** — Institutional compliance portal enforcing 1-year Reuters / Bloomberg history and handpicked VIP leadership invitations per non-negotiable business rules
-- **MacroRisk Engine & Kill Switch** — 10 macroeconomic risk indicators, scenario matrix, dynamic double-headed Eagle Crest, and emergency portfolio liquidation
+- **Interactive Broadcast Studio** — Multilingual AI newsroom with professional financial anchors, real-time teleprompter, breaking banner injector, and canvas audio spectrum visualizer
+- **MacroRisk Engine & Kill Switch** — 10 macroeconomic risk indicators, scenario matrix and emergency portfolio liquidation
 - **Real-Time Market Data** — Equities, forex, commodities, crypto, and indices across 60+ global exchanges
-- **NUR Terminal** — Bloomberg/Reuters-tier command-line interface for power users
+- **NUR Terminal** — Bloomberg-tier command-line interface for power users
 - **Code Editor** — Integrated quantitative finance development environment with backtesting
-- **Smart Mining Free Access** — Country-aware compute-for-access: Germany capped (€30/mo max electricity, 14h/day off-peak), all other countries aggressive mining with no caps
-- **NUR Coin Ecosystem** — Mining bots, staking, governance, and multi-chain settlement
-- **Holding Ecosystem** — 7 Growth Pillars organizational structure
-- **NUR Education** — 10 quantitative finance courses with compute consent
-- **NUR Kids** — Parent-supervised child financial tracking
-- **Crypto-Only Settlement** — Zero-PII multi-chain payment (USDT/USDC on Polygon, Arbitrum, Ethereum, TRON, BTC)
+- **NUR Earth 3D Globe** — Interactive geopolitical intelligence with oil basins, nuclear sites, conflict hotspots
+
+## Terminal Tiers
+
+| Tier | Price | Features |
+|------|-------|----------|
+| Retail | Free / €29–49/mo | Delayed data, basic charts, up to 3 panels |
+| Professional | €199/mo | Real-time L1/L2 data, full analytics, unlimited layouts |
+| Institutional | €999+/mo | Multi-seat, FIX DMA, compliance logs, API access |
 
 ## Tech Stack
 

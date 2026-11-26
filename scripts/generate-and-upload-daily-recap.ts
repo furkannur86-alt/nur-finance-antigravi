@@ -509,7 +509,7 @@ async function main() {
   const tags = [
     "NUR Finance", "daily recap", "market analysis", "stock market",
     "bloomberg terminal", "trading", "finance", "investing",
-    "cryptocurrency", "DePIN", ...gainers.slice(0, 3).map(e => e.symbol.split(".")[0]),
+    ...gainers.slice(0, 3).map(e => e.symbol.split(".")[0]),
   ];
 
   log("[YOUTUBE] Uploading...");

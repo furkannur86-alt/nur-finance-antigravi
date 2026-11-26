@@ -75,9 +75,8 @@ const SEGMENTS: BroadcastSegment[] = [
       "Good morning. This is the NUR Finance Global Markets Desk. " +
       "US equity futures are advancing as the ISM Services Index surges above 54.8, " +
       "confirming strong economic expansion across core sectors. " +
-      "The NUR Finance terminal continues to deliver sovereign-grade intelligence " +
-      "to institutional and professional traders worldwide. " +
-      "Our DePIN compute network is live — share your GPU and earn NUR coin for free terminal access.",
+      "The NUR Finance terminal continues to deliver institutional-grade intelligence " +
+      "to professional traders worldwide.",
     ticker: "NUR FINANCE | S&P 500 | NASDAQ | EUR/USD | BTC | GOLD | CRUDE OIL",
   },
   {
@@ -92,20 +91,6 @@ const SEGMENTS: BroadcastSegment[] = [
       "NUR Finance bietet professionellen Händlern souveräne Marktintelligenz, " +
       "die mit Bloomberg und Reuters konkurriert — zu einem Bruchteil der Kosten.",
     ticker: "NUR FINANCE | DAX 40 | EUR/USD | BUND | BITCOIN | GOLD",
-  },
-  {
-    id:         "NUR-DEPIN",
-    language:   "en-US",
-    anchorName: "NUR AI System",
-    voiceName:  "en-US-Neural2-C",
-    bgImage:    "public/images/studio/anchor-male.jpg",
-    script:
-      "Welcome to the NUR Finance DePIN Mining Network status report. " +
-      "Share your idle GPU and earn NUR coin — 1 NUR equals point 10 euros at seed pricing. " +
-      "Minimum withdrawal is 100 NUR, settled via SEPA within 3 to 5 business days. " +
-      "The NUR Finance compute pool holds 35 million NUR tokens for distribution to active miners. " +
-      "Join the sovereign compute revolution at nur dot finance.",
-    ticker: "NUR FINANCE DePIN | $NUR = €0.10 | MIN WITHDRAWAL: 100 NUR | SEPA 3-5 DAYS",
   },
 ];
 
