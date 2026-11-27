@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
 interface EagleCrestProps {
   size?: number;
   animate?: boolean;
@@ -11,376 +9,117 @@ interface EagleCrestProps {
 
 export default function EagleCrest({
   size = 48,
-  animate = true,
   className = "",
-  showMottoBadge = false,
 }: EagleCrestProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const frameRef = useRef(0);
-  const rafRef = useRef<number>(0);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.scale(dpr, dpr);
-
-    function draw(frame: number) {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, size, size);
-      const cx = size / 2;
-      const cy = size / 2;
-      const r = size * 0.44;
-      const breathe = animate ? Math.sin(frame * 0.035) * 1.6 : 0;
-      const wingFlap = animate ? Math.sin(frame * 0.045) * 2.8 : 0;
-      const rubyGlow = animate ? (Math.sin(frame * 0.08) + 1) * 0.5 : 0.8;
-
-      ctx.save();
-      ctx.translate(cx, cy + breathe * 0.3);
-
-      // Outer Heraldic Ring (Renaissance Gold)
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.98, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(212, 175, 55, 0.4)";
-      ctx.lineWidth = Math.max(1, size * 0.02);
-      ctx.stroke();
-
-      // Dotted Sacred Geometry Ring
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.92, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(212, 175, 55, 0.25)";
-      ctx.lineWidth = 0.8;
-      ctx.setLineDash([2, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Shield background (Deep Obsidian & Imperial Midnight Blue)
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.82);
-      ctx.bezierCurveTo(r * 0.68, -r * 0.82, r * 0.82, -r * 0.38, r * 0.82, 0);
-      ctx.bezierCurveTo(r * 0.82, r * 0.52, r * 0.38, r * 0.88, 0, r * 0.96);
-      ctx.bezierCurveTo(-r * 0.38, r * 0.88, -r * 0.82, r * 0.52, -r * 0.82, 0);
-      ctx.bezierCurveTo(-r * 0.82, -r * 0.38, -r * 0.68, -r * 0.82, 0, -r * 0.82);
-      ctx.closePath();
-      const shieldGrad = ctx.createLinearGradient(0, -r, 0, r);
-      shieldGrad.addColorStop(0, "#161b26");
-      shieldGrad.addColorStop(0.5, "#0b0f17");
-      shieldGrad.addColorStop(1, "#05070a");
-      ctx.fillStyle = shieldGrad;
-      ctx.fill();
-      ctx.strokeStyle = "#d4af37";
-      ctx.lineWidth = Math.max(1, size * 0.025);
-      ctx.stroke();
-
-      // Inner subtle glow
-      ctx.strokeStyle = "rgba(0, 212, 170, 0.3)";
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      // Body (Golden Imperial Armor)
-      ctx.beginPath();
-      ctx.ellipse(0, r * 0.08, r * 0.17, r * 0.34, 0, 0, Math.PI * 2);
-      const bodyGrad = ctx.createLinearGradient(0, -r * 0.25, 0, r * 0.45);
-      bodyGrad.addColorStop(0, "#f3e5ab");
-      bodyGrad.addColorStop(0.3, "#d4af37");
-      bodyGrad.addColorStop(1, "#8b6914");
-      ctx.fillStyle = bodyGrad;
-      ctx.fill();
-
-      // Left wing (West)
-      ctx.save();
-      ctx.translate(-r * 0.12, r * 0.02);
-      ctx.rotate((-22 + wingFlap) * Math.PI / 180);
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(-r * 0.35, -r * 0.25, -r * 0.65, -r * 0.45, -r * 0.62, -r * 0.08);
-      ctx.bezierCurveTo(-r * 0.55, r * 0.15, -r * 0.25, r * 0.2, 0, r * 0.12);
-      ctx.closePath();
-      const leftWingGrad = ctx.createLinearGradient(-r * 0.6, -r * 0.3, 0, r * 0.2);
-      leftWingGrad.addColorStop(0, "#f3e5ab");
-      leftWingGrad.addColorStop(0.5, "#d4af37");
-      leftWingGrad.addColorStop(1, "#996515");
-      ctx.fillStyle = leftWingGrad;
-      ctx.fill();
-
-      // Feathers Left
-      for (let i = 1; i <= 5; i++) {
-        ctx.beginPath();
-        const t = i / 6;
-        ctx.moveTo(-r * 0.08 * t, -r * 0.04 * t);
-        ctx.lineTo(-r * 0.58 * t, -r * 0.32 * t);
-        ctx.strokeStyle = "rgba(70, 45, 5, 0.7)";
-        ctx.lineWidth = Math.max(0.5, size * 0.012);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Right wing (East / Doğu) - Mirror
-      ctx.save();
-      ctx.translate(r * 0.12, r * 0.02);
-      ctx.rotate((22 - wingFlap) * Math.PI / 180);
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(r * 0.35, -r * 0.25, r * 0.65, -r * 0.45, r * 0.62, -r * 0.08);
-      ctx.bezierCurveTo(r * 0.55, r * 0.15, r * 0.25, r * 0.2, 0, r * 0.12);
-      ctx.closePath();
-      const rightWingGrad = ctx.createLinearGradient(r * 0.6, -r * 0.3, 0, r * 0.2);
-      rightWingGrad.addColorStop(0, "#f3e5ab");
-      rightWingGrad.addColorStop(0.5, "#d4af37");
-      rightWingGrad.addColorStop(1, "#996515");
-      ctx.fillStyle = rightWingGrad;
-      ctx.fill();
-
-      // Feathers Right
-      for (let i = 1; i <= 5; i++) {
-        ctx.beginPath();
-        const t = i / 6;
-        ctx.moveTo(r * 0.08 * t, -r * 0.04 * t);
-        ctx.lineTo(r * 0.58 * t, -r * 0.32 * t);
-        ctx.strokeStyle = "rgba(70, 45, 5, 0.7)";
-        ctx.lineWidth = Math.max(0.5, size * 0.012);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Left Head (Facing West)
-      ctx.save();
-      ctx.translate(-r * 0.14, -r * 0.26);
-      ctx.rotate(-14 * Math.PI / 180);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r * 0.09, r * 0.11, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#d4af37";
-      ctx.fill();
-
-      // Beak Left (Gold/Amber)
-      ctx.beginPath();
-      ctx.moveTo(-r * 0.08, -r * 0.02);
-      ctx.lineTo(-r * 0.18, r * 0.02);
-      ctx.lineTo(-r * 0.08, r * 0.04);
-      ctx.closePath();
-      ctx.fillStyle = "#f59e0b";
-      ctx.fill();
-
-      // Glowing Ruby Eye Left
-      ctx.beginPath();
-      ctx.arc(-r * 0.03, -r * 0.02, r * 0.02, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 46, 99, ${0.7 + rubyGlow * 0.3})`;
-      ctx.fill();
-      ctx.restore();
-
-      // Right Head (Facing East)
-      ctx.save();
-      ctx.translate(r * 0.14, -r * 0.26);
-      ctx.rotate(14 * Math.PI / 180);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r * 0.09, r * 0.11, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#d4af37";
-      ctx.fill();
-
-      // Beak Right (Gold/Amber)
-      ctx.beginPath();
-      ctx.moveTo(r * 0.08, -r * 0.02);
-      ctx.lineTo(r * 0.18, r * 0.02);
-      ctx.lineTo(r * 0.08, r * 0.04);
-      ctx.closePath();
-      ctx.fillStyle = "#f59e0b";
-      ctx.fill();
-
-      // Glowing Ruby Eye Right
-      ctx.beginPath();
-      ctx.arc(r * 0.03, -r * 0.02, r * 0.02, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 46, 99, ${0.7 + rubyGlow * 0.3})`;
-      ctx.fill();
-      ctx.restore();
-
-      // Imperial Crown atop Both Heads (Seljuk / Renaissance Golden Triple-Crown)
-      ctx.beginPath();
-      ctx.moveTo(-r * 0.14, -r * 0.4);
-      ctx.lineTo(-r * 0.09, -r * 0.54);
-      ctx.lineTo(-r * 0.03, -r * 0.44);
-      ctx.lineTo(0, -r * 0.58);
-      ctx.lineTo(r * 0.03, -r * 0.44);
-      ctx.lineTo(r * 0.09, -r * 0.54);
-      ctx.lineTo(r * 0.14, -r * 0.4);
-      ctx.closePath();
-      ctx.fillStyle = "#fbbf24";
-      ctx.fill();
-      ctx.strokeStyle = "#92400e";
-      ctx.lineWidth = 0.6;
-      ctx.stroke();
-
-      // Tail Feathers
-      ctx.beginPath();
-      ctx.moveTo(-r * 0.12, r * 0.38);
-      ctx.lineTo(-r * 0.18, r * 0.68);
-      ctx.lineTo(-r * 0.06, r * 0.62);
-      ctx.lineTo(0, r * 0.74);
-      ctx.lineTo(r * 0.06, r * 0.62);
-      ctx.lineTo(r * 0.18, r * 0.68);
-      ctx.lineTo(r * 0.12, r * 0.38);
-      ctx.closePath();
-      ctx.fillStyle = "#8b6914";
-      ctx.fill();
-
-      // Central Imperial Medallion with "NUR" / "NF" Monogram
-      ctx.beginPath();
-      ctx.arc(0, r * 0.12, r * 0.14, 0, Math.PI * 2);
-      ctx.fillStyle = "#0c131f";
-      ctx.fill();
-      ctx.strokeStyle = "#d4af37";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      ctx.fillStyle = "#00d4aa";
-      ctx.font = `bold ${Math.max(7, r * 0.14)}px monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("NF", 0, r * 0.13);
-
-      // Celestial Aura Pulse
-      if (animate) {
-        const auraAlpha = 0.06 + Math.sin(frame * 0.04) * 0.05;
-        ctx.beginPath();
-        ctx.arc(0, 0, r * 0.98, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(212, 175, 55, ${auraAlpha})`;
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    }
-
-    function loop() {
-      draw(frameRef.current);
-      frameRef.current++;
-      rafRef.current = requestAnimationFrame(loop);
-    }
-
-    if (animate) {
-      loop();
-    } else {
-      draw(0);
-    }
-
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [size, animate]);
-
   return (
-    <>
-      <div
-        onClick={() => setModalOpen(true)}
-        className={`relative inline-flex flex-col items-center justify-center group cursor-pointer ${className}`}
-        title="DOMINUS ORIENTIS ET OCCIDENTIS (Lord of East and West) — NUR Finance Master Emblem (Click for Details)"
+    <div
+      className={`relative inline-flex items-center justify-center ${className}`}
+      title="NUR Finance"
+    >
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 100 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <canvas ref={canvasRef} style={{ width: size, height: size }} />
-        {showMottoBadge && (
-          <span className="text-[9px] font-serif italic text-amber-300 tracking-wider mt-0.5 whitespace-nowrap opacity-90 group-hover:opacity-100 transition-opacity">
-            Dominus Orientis et Occidentis
-          </span>
-        )}
-      </div>
+        {/* Outer ring */}
+        <circle cx="50" cy="50" r="47" stroke="#d4af37" strokeWidth="1.5" strokeOpacity="0.4" />
 
-      {/* Esoteric Heraldic Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl p-6 rounded-xl border border-amber-500/40 bg-gradient-to-b from-slate-950 via-slate-900 to-black shadow-2xl shadow-amber-500/10 text-white space-y-4">
-            {/* Close button */}
-            <button
-              onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-mono"
-            >
-              ✕ CLOSE
-            </button>
+        {/* Shield */}
+        <path
+          d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z"
+          fill="url(#shield-grad)"
+          stroke="#d4af37"
+          strokeWidth="2"
+        />
 
-            {/* Crest Hero Header */}
-            <div className="flex items-center gap-4 border-b border-amber-500/20 pb-4">
-              <canvas
-                ref={(c) => {
-                  if (!c) return;
-                  const ctx = c.getContext("2d");
-                  if (!ctx) return;
-                  c.width = 140;
-                  c.height = 140;
-                  // Render single high-res crest
-                  const cx = 70;
-                  const cy = 70;
-                  const r = 58;
-                  ctx.beginPath();
-                  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-                  ctx.fillStyle = "#0c131f";
-                  ctx.fill();
-                  ctx.strokeStyle = "#d4af37";
-                  ctx.lineWidth = 2;
-                  ctx.stroke();
-                }}
-                className="w-16 h-16 shrink-0 hidden"
-              />
-              <div>
-                <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400">
-                  Official Dynasty & Quantitative Insignia
-                </div>
-                <h3 className="text-xl font-serif font-bold text-amber-200">
-                  DOMINUS ORIENTIS ET OCCIDENTIS
-                </h3>
-                <p className="text-xs text-emerald-400 font-medium mt-0.5">
-                  &ldquo;Lord of East and West&rdquo; &bull; NUR Finance Sovereign Emblem
-                </p>
-              </div>
-            </div>
+        {/* Left wing */}
+        <path
+          d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z"
+          fill="url(#wing-grad-l)"
+        />
+        {/* Left feather lines */}
+        <line x1="36" y1="42" x2="20" y2="28" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
+        <line x1="34" y1="44" x2="18" y2="33" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
+        <line x1="32" y1="46" x2="17" y2="38" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
 
-            {/* Content description */}
-            <div className="space-y-3 text-xs leading-relaxed text-slate-300">
-              <div className="p-3 rounded-lg bg-amber-950/20 border border-amber-500/30 space-y-1">
-                <div className="font-bold text-amber-300 text-xs">🏛️ Double-Headed Eagle & Esoteric Meaning:</div>
-                <p>
-                  The Double-Headed Eagle — a symbol of Seljuk and Byzantine / Renaissance imperial heritage — represents
-                  NUR Finance&apos;s quantitative vision of simultaneously commanding <strong>Eastern (Asia/Middle East)</strong> and <strong>Western (Wall Street/London)</strong> capital markets.
-                </p>
-              </div>
+        {/* Right wing */}
+        <path
+          d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z"
+          fill="url(#wing-grad-r)"
+        />
+        {/* Right feather lines */}
+        <line x1="64" y1="42" x2="80" y2="28" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
+        <line x1="66" y1="44" x2="82" y2="33" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
+        <line x1="68" y1="46" x2="83" y2="38" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
 
-              <div className="grid grid-cols-2 gap-3 text-[11px]">
-                <div className="p-2.5 rounded bg-black/40 border border-white/10 space-y-1">
-                  <span className="font-bold text-cyan-300">👑 Sovereign Quantitative Architecture</span>
-                  <p className="text-[10px] text-slate-400">
-                    Decentralized, independent, cross-border quantitative execution protocol. Zero PII (No Personal Data) and cryptographic absolute sovereignty standard.
-                  </p>
-                </div>
-                <div className="p-2.5 rounded bg-black/40 border border-white/10 space-y-1">
-                  <span className="font-bold text-emerald-300">🌐 Master Domain</span>
-                  <p className="text-[10px] text-slate-400">
-                    All subsidiaries, OMS/EMS execution engine and 7 Growth Arms are managed autonomously via nurfinans.com.
-                  </p>
-                </div>
-              </div>
+        {/* Body */}
+        <ellipse cx="50" cy="48" rx="8" ry="16" fill="url(#body-grad)" />
 
-              <div className="p-3 rounded bg-black/50 border border-emerald-500/30 text-[11px] text-slate-300">
-                <span className="font-mono text-emerald-400 font-bold">✨ Renaissance & Esoteric Touch:</span>
-                <p className="mt-1">
-                  The subtle cascading financial matrix in the background (Financial Fibonacci, Kelly Criterion and Ancient Latin Accounting formulas)
-                  creates the atmosphere of a living, mysterious and elite finance temple — rather than a mechanical website.
-                </p>
-              </div>
-            </div>
+        {/* Left head */}
+        <ellipse cx="40" cy="30" rx="5" ry="6" fill="#d4af37" transform="rotate(-14 40 30)" />
+        <polygon points="34,28 28,31 34,33" fill="#f59e0b" />
+        <circle cx="38" cy="29" r="1.5" fill="#ff2e63" fillOpacity="0.85" />
 
-            {/* Action */}
-            <div className="flex justify-end pt-2">
-              <button
-                onClick={() => setModalOpen(false)}
-                className="px-4 py-2 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-black transition-colors"
-              >
-                Understood &bull; Continue
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+        {/* Right head */}
+        <ellipse cx="60" cy="30" rx="5" ry="6" fill="#d4af37" transform="rotate(14 60 30)" />
+        <polygon points="66,28 72,31 66,33" fill="#f59e0b" />
+        <circle cx="62" cy="29" r="1.5" fill="#ff2e63" fillOpacity="0.85" />
+
+        {/* Crown */}
+        <polygon
+          points="38,24 42,14 46,21 50,10 54,21 58,14 62,24"
+          fill="#fbbf24"
+          stroke="#92400e"
+          strokeWidth="0.6"
+        />
+
+        {/* Tail feathers */}
+        <polygon
+          points="42,62 38,76 44,72 50,80 56,72 62,76 58,62"
+          fill="#8b6914"
+        />
+
+        {/* Central medallion */}
+        <circle cx="50" cy="52" r="7" fill="#0c131f" stroke="#d4af37" strokeWidth="1" />
+        <text
+          x="50"
+          y="53"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="#00d4aa"
+          fontFamily="monospace"
+          fontWeight="bold"
+          fontSize="7"
+        >
+          NF
+        </text>
+
+        {/* Gradients */}
+        <defs>
+          <linearGradient id="shield-grad" x1="50" y1="8" x2="50" y2="94" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#161b26" />
+            <stop offset="0.5" stopColor="#0b0f17" />
+            <stop offset="1" stopColor="#05070a" />
+          </linearGradient>
+          <linearGradient id="body-grad" x1="50" y1="32" x2="50" y2="64" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#f3e5ab" />
+            <stop offset="0.3" stopColor="#d4af37" />
+            <stop offset="1" stopColor="#8b6914" />
+          </linearGradient>
+          <linearGradient id="wing-grad-l" x1="14" y1="22" x2="38" y2="55" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#f3e5ab" />
+            <stop offset="0.5" stopColor="#d4af37" />
+            <stop offset="1" stopColor="#996515" />
+          </linearGradient>
+          <linearGradient id="wing-grad-r" x1="86" y1="22" x2="62" y2="55" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#f3e5ab" />
+            <stop offset="0.5" stopColor="#d4af37" />
+            <stop offset="1" stopColor="#996515" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
   );
 }
-

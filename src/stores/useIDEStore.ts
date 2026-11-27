@@ -180,7 +180,7 @@ interface IDEState {
   alertRules: AlertRule[];
   verification: VIPVerificationStatus;
   matrixRainOpacity: number;
-  isSovereignAdmin: boolean;
+
   sovereignAuthModalOpen: boolean;
   soundMuted: boolean;
   focusedCoordinates: [number, number] | null;
@@ -210,7 +210,7 @@ interface IDEState {
   runActiveFile: () => void;
   setMatrixRainOpacity: (opacity: number) => void;
   cycleMatrixRainOpacity: () => void;
-  setSovereignAdmin: (isAdmin: boolean) => void;
+  setSovereignAdmin: (isAdmin?: boolean) => void;
   setSovereignAuthModalOpen: (open: boolean) => void;
   toggleSoundMuted: () => void;
 
@@ -250,7 +250,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   sidebarOpen: true,
   hudDrawerOpen: false,
   matrixRainOpacity: 0,
-  isSovereignAdmin: false,
+
   sovereignAuthModalOpen: false,
   soundMuted: false,
   focusedCoordinates: null,
@@ -328,7 +328,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   setExpandedPanel: (expandedPanel) => set({ expandedPanel }),
   setDemoPlan: (demoPlan) => set({ demoPlan }),
   setFocusedCoordinates: (focusedCoordinates) => set({ focusedCoordinates }),
-  setSovereignAdmin: (isSovereignAdmin) => set({ isSovereignAdmin }),
+  setSovereignAdmin: () => {},
   setSovereignAuthModalOpen: (sovereignAuthModalOpen) => set({ sovereignAuthModalOpen }),
   toggleSoundMuted: () => set((s) => ({ soundMuted: !s.soundMuted })),
 

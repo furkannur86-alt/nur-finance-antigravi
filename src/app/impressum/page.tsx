@@ -18,11 +18,10 @@ export default function ImpressumPage() {
         </h1>
 
         <section style={{ marginBottom: 32 }}>
-          <h2 style={sectionTitle}>1. Protocol & Architecture Specification</h2>
+          <h2 style={sectionTitle}>1. Company Information</h2>
           <div style={card}>
-            <p><strong>NUR Finance Sovereign Network</strong></p>
-            <p><em>Dominus Orientis et Occidentis</em></p>
-            <p>Decentralized Quantitative Computing Protocol & Sovereign Cloud Node</p>
+            <p><strong>NUR Finance</strong></p>
+            <p>Financial Data, Analytics & Media Platform</p>
             <p>Domain: <code>nurfinans.com</code></p>
           </div>
         </section>

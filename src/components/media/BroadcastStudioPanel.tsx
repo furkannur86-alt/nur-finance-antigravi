@@ -34,7 +34,7 @@ export default function BroadcastStudioPanel() {
 
   const [selectedLang, setSelectedLang] = useState<LanguageBroadcastProfile>(BROADCAST_LANGUAGES[0]);
   const [selectedStudio, setSelectedStudio] = useState(STUDIO_STAGES[0]);
-  const [activeDebater, setActiveDebater] = useState<"marcus" | "elena" | "elif_nur">("elif_nur");
+  const [activeDebater, setActiveDebater] = useState<"macro" | "technical" | "strategy">("strategy");
   const [activeSegment, setActiveSegment] = useState<"opening" | "macro" | "quant" | "breaking" | "closing">("opening");
   const [teleprompterSpeed, setTeleprompterSpeed] = useState(2);
   const [isPrompting, setIsPrompting] = useState(true);
@@ -261,82 +261,82 @@ export default function BroadcastStudioPanel() {
           <div className="relative aspect-video w-full max-h-[50%] bg-black overflow-hidden border-b shrink-0 flex items-center justify-center" style={{ borderColor: "var(--ag-border)" }}>
             {selectedStudio.id === "hegelian-debate" ? (
               <div className="w-full h-full grid grid-cols-3 gap-2 p-3 bg-slate-950/95 relative z-0">
-                {/* Speaker 1: Marcus Sterling (Thesis) */}
+                {/* Panelist 1: Global Macro Analyst */}
                 <div
                   onClick={() => {
                     cyberSound.playClick();
-                    setActiveDebater("marcus");
+                    setActiveDebater("macro");
                   }}
                   className={`relative rounded-xl overflow-hidden border cursor-pointer transition-all flex flex-col justify-end p-2.5 ${
-                    activeDebater === "marcus"
+                    activeDebater === "macro"
                       ? "border-amber-400 ring-2 ring-amber-400/40 shadow-lg shadow-amber-500/20"
                       : "border-white/10 opacity-70 hover:opacity-100"
                   }`}
                 >
                   <Image
-                    src="/images/characters/marcus_sterling.jpg"
-                    alt="Marcus Sterling"
+                    src="/images/studio/anchor-male.jpg"
+                    alt="Global Macro Analyst"
                     fill
                     className="object-cover -z-10"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent -z-10" />
                   <div className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/30 text-amber-300 w-fit mb-1 border border-amber-400/40">
-                    THESIS &bull; SOVEREIGN CAPITAL
+                    MACRO OUTLOOK
                   </div>
-                  <div className="text-xs font-bold text-white font-serif">Marcus Sterling</div>
-                  <p className="text-[9px] text-slate-300 line-clamp-2">"Physical gold, sovereign energy & defense state order."</p>
+                  <div className="text-xs font-bold text-white font-serif">Global Macro Analyst</div>
+                  <p className="text-[9px] text-slate-300 line-clamp-2">Sovereign debt, commodities & geopolitical risk assessment.</p>
                 </div>
 
-                {/* Speaker 2: Elif Nur Erdem (Synthesis) */}
+                {/* Panelist 2: Chief Strategist (Synthesis) */}
                 <div
                   onClick={() => {
                     cyberSound.playClick();
-                    setActiveDebater("elif_nur");
+                    setActiveDebater("strategy");
                   }}
                   className={`relative rounded-xl overflow-hidden border cursor-pointer transition-all flex flex-col justify-end p-2.5 ${
-                    activeDebater === "elif_nur"
+                    activeDebater === "strategy"
                       ? "border-cyan-400 ring-2 ring-cyan-400/50 shadow-xl shadow-cyan-500/30"
                       : "border-white/10 opacity-70 hover:opacity-100"
                   }`}
                 >
                   <Image
-                    src="/images/characters/elif_nur.jpg"
-                    alt="Elif Nur Erdem"
+                    src="/images/studio/anchor-female.jpg"
+                    alt="Chief Strategist"
                     fill
                     className="object-cover -z-10"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent -z-10" />
                   <div className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/30 text-cyan-300 w-fit mb-1 border border-cyan-400/40">
-                    👑 SYNTHESIS &bull; NUR DIALECTIC
+                    STRATEGY
                   </div>
-                  <div className="text-xs font-bold text-cyan-200 font-serif">Elif Nur Erdem</div>
-                  <p className="text-[9px] text-slate-200 line-clamp-2">"Relativistic synthesis: Sovereign vault anchors borderless global yield."</p>
+                  <div className="text-xs font-bold text-cyan-200 font-serif">Chief Investment Strategist</div>
+                  <p className="text-[9px] text-slate-200 line-clamp-2">Cross-asset allocation, portfolio construction & risk-adjusted returns.</p>
                 </div>
 
-                {/* Speaker 3: Elena Vance (Antithesis) */}
+                {/* Panelist 3: Technical Analyst (Antithesis) */}
                 <div
                   onClick={() => {
                     cyberSound.playClick();
-                    setActiveDebater("elena");
+                    setActiveDebater("technical");
                   }}
                   className={`relative rounded-xl overflow-hidden border cursor-pointer transition-all flex flex-col justify-end p-2.5 ${
-                    activeDebater === "elena"
+                    activeDebater === "technical"
                       ? "border-pink-400 ring-2 ring-pink-400/40 shadow-lg shadow-pink-500/20"
                       : "border-white/10 opacity-70 hover:opacity-100"
                   }`}
                 >
                   <Image
-                    src="/images/characters/elena_vance.jpg"
-                    alt="Elena Vance"
+                    src="/images/studio/anchor-male.jpg"
+                    alt="Technical Analyst"
                     fill
                     className="object-cover -z-10"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent -z-10" />
                   <div className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-pink-500/30 text-pink-300 w-fit mb-1 border border-pink-400/40">
-                    ANTITHESIS &bull; SKY YACHT YIELD
+                    TECHNICAL ANALYSIS
                   </div>
-                  <div className="text-xs font-bold text-pink-200 font-serif">Elena Vance</div>
-                  <p className="text-[9px] text-slate-300 line-clamp-2">"Frictionless 24/7 liquidity, real-time execution & unbounded markets."</p>
+                  <div className="text-xs font-bold text-pink-200 font-serif">Chief Technical Analyst</div>
+                  <p className="text-[9px] text-slate-300 line-clamp-2">Price action, market structure & quantitative momentum signals.</p>
                 </div>
               </div>
             ) : selectedStudio.id === "3d-globe" ? (

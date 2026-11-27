@@ -174,7 +174,7 @@ export default function AIAvatarStudio() {
               }}
             >
               <img
-                src={profile.id === "elena" ? "/images/studio/elena_vance.jpg" : "/images/studio/marcus_sterling.jpg"}
+                src={profile.id === "elena" ? "/images/studio/anchor-female.jpg" : "/images/studio/anchor-male.jpg"}
                 alt={profile.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
