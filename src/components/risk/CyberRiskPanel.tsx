@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import DemoBadge from "@/components/ui/DemoBadge";
+import GlobeWidget from "@/components/ui/GlobeWidget";
 
 const TABS = [
   { id: "threat-intel", label: "Threat Intel", icon: "🛡️" },
@@ -62,6 +63,37 @@ function scoreColor(score: number) {
   return score >= 80 ? "#10b981" : score >= 65 ? "#f59e0b" : "#ef4444";
 }
 
+const GLOBE_HEADLINES: Record<string, string[]> = {
+  "threat-intel": [
+    "APT29 targets NATO defense networks via spear-phishing",
+    "Lazarus Group deploys trojanized DeFi apps in APAC",
+    "Sandworm wiper campaign hits EU energy infrastructure",
+    "APT41 supply-chain attack compromises US telecom",
+    "Turla watering-hole targets diplomatic networks",
+  ],
+  "breach-tracker": [
+    "MegaCorp Health: 23.4M patient records exposed",
+    "RetailX Global: 45M payment cards compromised",
+    "GovPortal.eu: 6.7M citizen IDs breached",
+    "CloudStack Inc: 8.9M API keys leaked",
+    "TransCo Logistics: 12M employee records stolen",
+  ],
+  "cve-monitor": [
+    "CVE-2026-44128: Linux Kernel RCE actively exploited",
+    "CVE-2026-42001: Cisco IOS XE auth bypass — no patch",
+    "CVE-2026-43300: Fortinet RCE under mass exploitation",
+    "CVE-2026-38901: Apache Struts 7.1 RCE unpatched",
+    "OpenSSL 3.4.x buffer overflow patched — upgrade urged",
+  ],
+  "sector-scores": [
+    "Healthcare cyber score drops to 61 — third straight decline",
+    "Financial services leads at 87 — $18.4B budget",
+    "Manufacturing sector most vulnerable at score 54",
+    "Education sector breaches surge — 184 incidents",
+    "Tech sector resilient at 91 with $22.6B investment",
+  ],
+};
+
 export default function CyberRiskPanel() {
   const [tab, setTab] = useState(TABS[0].id);
 
@@ -86,6 +118,8 @@ export default function CyberRiskPanel() {
       </div>
 
       <div className="flex-1 overflow-auto p-4">
+        <div className="flex gap-3 h-full">
+        <div className="flex-1 min-w-0 overflow-y-auto">
         {tab === "threat-intel" && (
           <div className="space-y-1">
             <div className="grid grid-cols-[1fr_80px_120px_140px_80px_60px] gap-2 px-2 py-1 text-[9px] font-mono uppercase tracking-wider" style={{ color: "#64748b" }}>
@@ -160,6 +194,11 @@ export default function CyberRiskPanel() {
             ))}
           </div>
         )}
+        </div>
+        <div className="shrink-0 w-[260px] hidden lg:block" style={{ borderLeft: "1px solid rgba(239,68,68,0.1)" }}>
+          <GlobeWidget width={260} height={320} title="CYBER THREAT MAP" headlines={GLOBE_HEADLINES[tab] || GLOBE_HEADLINES["threat-intel"]} />
+        </div>
+        </div>
       </div>
     </div>
   );

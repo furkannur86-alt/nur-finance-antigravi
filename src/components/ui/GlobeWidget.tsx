@@ -94,7 +94,7 @@ export default function GlobeWidget({
             width={maximized ? (typeof window !== "undefined" ? window.innerWidth : 800) : width}
             height={maximized ? (typeof window !== "undefined" ? window.innerHeight - 28 : 600) : height}
             headlines={headlines}
-            rotationSpeed={0.12}
+            rotationSpeed={0.06}
           />
         </div>
       )}

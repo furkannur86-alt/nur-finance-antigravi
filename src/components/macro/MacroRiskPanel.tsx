@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import GlobeWidget from "@/components/ui/GlobeWidget";
 
 interface RiskIndicator {
   id: string;
@@ -268,6 +269,30 @@ export default function MacroRiskPanel() {
     ? indicators.filter((i) => i.category === selectedCategory)
     : indicators;
 
+  const globeHeadlines = useMemo(() => {
+    if (activeTab === "dashboard") return [
+      "Fed holds rates steady — markets price Q2 2027 cut",
+      "BIST 100 hits record on foreign inflows",
+      "Brent crude slips below $74 on OPEC+ outlook",
+      "Gold surges past $2,700 on safe-haven demand",
+      "ECB signals further easing as inflation cools",
+    ];
+    if (activeTab === "scenarios") return [
+      "Soft landing probability rises as CPI decelerates",
+      "Stagflation risk elevated in emerging markets",
+      "Credit stress in CRE sector under close watch",
+      "AI productivity gains boosting Goldilocks scenario",
+      "Taiwan Strait tensions weigh on geopolitical risk",
+    ];
+    return [
+      "FOMC rate decision due — markets brace for hold",
+      "ECB to cut by 25bps per consensus forecast",
+      "US CPI expected at 0.7% YoY — lowest since 2021",
+      "BOJ may adjust yield curve control parameters",
+      "China GDP growth forecast at 3.1% QoQ",
+    ];
+  }, [activeTab]);
+
   return (
     <div className="h-full flex flex-col" style={{ background: "var(--ag-bg)" }}>
       {/* Header */}
@@ -306,6 +331,8 @@ export default function MacroRiskPanel() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex gap-3 h-full">
+        <div className="flex-1 min-w-0 overflow-y-auto">
         {activeTab === "dashboard" && (
           <div className="space-y-4">
             {/* Composite Risk Gauge */}
@@ -488,6 +515,11 @@ export default function MacroRiskPanel() {
             </div>
           </div>
         )}
+        </div>
+        <div className="shrink-0 w-[260px] hidden lg:block" style={{ borderLeft: "1px solid rgba(239,68,68,0.1)" }}>
+          <GlobeWidget width={260} height={320} title="MACRO RISK" headlines={globeHeadlines} />
+        </div>
+        </div>
       </div>
     </div>
   );

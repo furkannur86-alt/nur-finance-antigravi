@@ -188,7 +188,7 @@ export default function MetallicGlobe({
 
     // Headlines overlay (bottom)
     if (headlines.length > 0) {
-      const idx = Math.floor((rot / 60) % headlines.length);
+      const idx = Math.floor((rot / 90) % headlines.length);
       const headline = headlines[idx >= 0 ? idx : 0];
       if (headline) {
         ctx.fillStyle = "rgba(0,0,0,0.6)";
