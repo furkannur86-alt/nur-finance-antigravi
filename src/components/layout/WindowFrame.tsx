@@ -183,14 +183,16 @@ export default function WindowFrame({ view, children }: WindowFrameProps) {
 
         {/* Content */}
         <div className="flex-1 min-h-0 overflow-auto relative">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style={{ opacity: 0.025, zIndex: 0 }}>
-            <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z" fill="#d4af37"/>
-              <path d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z" fill="#d4af37"/>
-              <path d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z" fill="#d4af37"/>
-              <ellipse cx="50" cy="48" rx="8" ry="16" fill="#d4af37"/>
-              <circle cx="50" cy="52" r="7" fill="#0c131f" stroke="#d4af37" strokeWidth="1"/>
-              <text x="50" y="53" textAnchor="middle" dominantBaseline="middle" fill="#d4af37" fontFamily="monospace" fontWeight="bold" fontSize="7">NF</text>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style={{ opacity: 0.03, zIndex: 0 }}>
+            <svg width="140" height="140" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M80 95 L60 60 L50 65 L40 45 L35 55 L22 30 L28 58 L18 42 L26 68 L15 58 L28 82 L35 78 L30 90 L45 82 L55 88 L65 92Z" fill="#cc0000"/>
+              <path d="M120 95 L140 60 L150 65 L160 45 L165 55 L178 30 L172 58 L182 42 L174 68 L185 58 L172 82 L165 78 L170 90 L155 82 L145 88 L135 92Z" fill="#cc0000"/>
+              <path d="M88 80 C88 70 92 62 100 60 C108 62 112 70 112 80 L112 120 C112 130 108 138 100 140 C92 138 88 130 88 120Z" fill="#cc0000"/>
+              <path d="M80 62 C74 56 70 48 72 42 C74 38 78 36 82 38 C86 40 88 46 88 52 C88 56 86 60 82 64Z" fill="#cc0000"/>
+              <path d="M120 62 C126 56 130 48 128 42 C126 38 122 36 118 38 C114 40 112 46 112 52 C112 56 114 60 118 64Z" fill="#cc0000"/>
+              <polygon points="84,36 88,22 93,30 97,18 100,14 103,18 107,30 112,22 116,36" fill="#cc0000"/>
+              <circle cx="100" cy="105" r="14" fill="#0a0a0a" stroke="#cc0000" strokeWidth="1.5"/>
+              <text x="100" y="107" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontFamily="Georgia,serif" fontWeight="bold" fontSize="12">NF</text>
             </svg>
           </div>
           <div className="relative" style={{ zIndex: 1 }}>{children}</div>

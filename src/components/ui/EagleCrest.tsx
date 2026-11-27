@@ -9,114 +9,140 @@ interface EagleCrestProps {
 
 export default function EagleCrest({
   size = 48,
+  animate = false,
   className = "",
 }: EagleCrestProps) {
+  const id = `ec-${size}`;
+
   return (
     <div
       className={`relative inline-flex items-center justify-center ${className}`}
       title="NUR Finance"
+      style={animate ? {
+        animation: "eagleSpin 8s linear infinite",
+        transformStyle: "preserve-3d",
+        perspective: "400px",
+      } : undefined}
     >
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes eagleSpin {
+          0% { transform: rotateY(0deg); }
+          100% { transform: rotateY(360deg); }
+        }
+      `}} />
       <svg
         width={size}
         height={size}
-        viewBox="0 0 100 100"
+        viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Outer ring */}
-        <circle cx="50" cy="50" r="47" stroke="#d4af37" strokeWidth="1.5" strokeOpacity="0.4" />
+        {/* Outer circle border */}
+        <circle cx="100" cy="100" r="96" stroke="#cc0000" strokeWidth="2" strokeOpacity="0.6" />
+        <circle cx="100" cy="100" r="92" stroke="#ffffff" strokeWidth="0.5" strokeOpacity="0.15" />
 
-        {/* Shield */}
-        <path
-          d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z"
-          fill="url(#shield-grad)"
-          stroke="#d4af37"
-          strokeWidth="2"
-        />
+        {/* Dark background shield */}
+        <circle cx="100" cy="100" r="90" fill={`url(#${id}-bg)`} />
 
-        {/* Left wing */}
-        <path
-          d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z"
-          fill="url(#wing-grad-l)"
-        />
-        {/* Left feather lines */}
-        <line x1="36" y1="42" x2="20" y2="28" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
-        <line x1="34" y1="44" x2="18" y2="33" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
-        <line x1="32" y1="46" x2="17" y2="38" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
+        {/* === LEFT WING (spread, 5 primary feathers) === */}
+        <path d="M80 95 L60 60 L50 65 L40 45 L35 55 L22 30 L28 58 L18 42 L26 68 L15 58 L28 82 L35 78 L30 90 L45 82 L55 88 L65 92Z" fill={`url(#${id}-wing-l)`} stroke="#1a0000" strokeWidth="0.5" />
+        {/* Left wing feather details */}
+        <line x1="75" y1="90" x2="30" y2="40" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.5" />
+        <line x1="72" y1="92" x2="25" y2="52" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.5" />
+        <line x1="68" y1="93" x2="22" y2="62" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.5" />
+        <line x1="62" y1="92" x2="28" y2="78" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.4" />
 
-        {/* Right wing */}
-        <path
-          d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z"
-          fill="url(#wing-grad-r)"
-        />
-        {/* Right feather lines */}
-        <line x1="64" y1="42" x2="80" y2="28" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
-        <line x1="66" y1="44" x2="82" y2="33" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
-        <line x1="68" y1="46" x2="83" y2="38" stroke="#462d05" strokeWidth="0.8" strokeOpacity="0.7" />
+        {/* === RIGHT WING (mirror) === */}
+        <path d="M120 95 L140 60 L150 65 L160 45 L165 55 L178 30 L172 58 L182 42 L174 68 L185 58 L172 82 L165 78 L170 90 L155 82 L145 88 L135 92Z" fill={`url(#${id}-wing-r)`} stroke="#1a0000" strokeWidth="0.5" />
+        {/* Right wing feather details */}
+        <line x1="125" y1="90" x2="170" y2="40" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.5" />
+        <line x1="128" y1="92" x2="175" y2="52" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.5" />
+        <line x1="132" y1="93" x2="178" y2="62" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.5" />
+        <line x1="138" y1="92" x2="172" y2="78" stroke="#330000" strokeWidth="0.4" strokeOpacity="0.4" />
 
-        {/* Body */}
-        <ellipse cx="50" cy="48" rx="8" ry="16" fill="url(#body-grad)" />
+        {/* === BODY (central torso) === */}
+        <path d="M88 80 C88 70 92 62 100 60 C108 62 112 70 112 80 L112 120 C112 130 108 138 100 140 C92 138 88 130 88 120Z" fill={`url(#${id}-body)`} stroke="#1a0000" strokeWidth="0.6" />
 
-        {/* Left head */}
-        <ellipse cx="40" cy="30" rx="5" ry="6" fill="#d4af37" transform="rotate(-14 40 30)" />
-        <polygon points="34,28 28,31 34,33" fill="#f59e0b" />
-        <circle cx="38" cy="29" r="1.5" fill="#ff2e63" fillOpacity="0.85" />
+        {/* Body armor lines */}
+        <path d="M92 85 C96 83 104 83 108 85" stroke="#330000" strokeWidth="0.4" fill="none" />
+        <path d="M91 92 C96 90 104 90 109 92" stroke="#330000" strokeWidth="0.4" fill="none" />
+        <path d="M91 99 C96 97 104 97 109 99" stroke="#330000" strokeWidth="0.4" fill="none" />
 
-        {/* Right head */}
-        <ellipse cx="60" cy="30" rx="5" ry="6" fill="#d4af37" transform="rotate(14 60 30)" />
-        <polygon points="66,28 72,31 66,33" fill="#f59e0b" />
-        <circle cx="62" cy="29" r="1.5" fill="#ff2e63" fillOpacity="0.85" />
+        {/* === LEFT HEAD === */}
+        <path d="M80 62 C74 56 70 48 72 42 C74 38 78 36 82 38 C86 40 88 46 88 52 C88 56 86 60 82 64Z" fill="#cc0000" stroke="#1a0000" strokeWidth="0.6" />
+        {/* Left beak */}
+        <polygon points="70,42 58,46 70,50" fill="#ffffff" stroke="#1a0000" strokeWidth="0.4" />
+        {/* Left eye */}
+        <circle cx="77" cy="46" r="2.5" fill="#ffffff" />
+        <circle cx="77" cy="46" r="1.2" fill="#0a0a0a" />
 
-        {/* Crown */}
-        <polygon
-          points="38,24 42,14 46,21 50,10 54,21 58,14 62,24"
-          fill="#fbbf24"
-          stroke="#92400e"
-          strokeWidth="0.6"
-        />
+        {/* === RIGHT HEAD === */}
+        <path d="M120 62 C126 56 130 48 128 42 C126 38 122 36 118 38 C114 40 112 46 112 52 C112 56 114 60 118 64Z" fill="#cc0000" stroke="#1a0000" strokeWidth="0.6" />
+        {/* Right beak */}
+        <polygon points="130,42 142,46 130,50" fill="#ffffff" stroke="#1a0000" strokeWidth="0.4" />
+        {/* Right eye */}
+        <circle cx="123" cy="46" r="2.5" fill="#ffffff" />
+        <circle cx="123" cy="46" r="1.2" fill="#0a0a0a" />
 
-        {/* Tail feathers */}
-        <polygon
-          points="42,62 38,76 44,72 50,80 56,72 62,76 58,62"
-          fill="#8b6914"
-        />
+        {/* === CROWN (between heads) === */}
+        <polygon points="84,36 88,22 93,30 97,18 100,14 103,18 107,30 112,22 116,36" fill="#cc0000" stroke="#ffffff" strokeWidth="0.5" />
+        {/* Crown jewels */}
+        <circle cx="100" cy="22" r="2" fill="#ffffff" fillOpacity="0.9" />
+        <circle cx="92" cy="28" r="1.2" fill="#ffffff" fillOpacity="0.7" />
+        <circle cx="108" cy="28" r="1.2" fill="#ffffff" fillOpacity="0.7" />
 
-        {/* Central medallion */}
-        <circle cx="50" cy="52" r="7" fill="#0c131f" stroke="#d4af37" strokeWidth="1" />
+        {/* === TAIL FEATHERS === */}
+        <path d="M90 130 L82 158 L88 152 L92 164 L96 154 L100 170 L104 154 L108 164 L112 152 L118 158 L110 130Z" fill={`url(#${id}-tail)`} stroke="#1a0000" strokeWidth="0.4" />
+
+        {/* === LEFT TALON === */}
+        <path d="M88 130 L78 142 L74 148 M78 142 L82 150 M78 142 L72 144" stroke="#cc0000" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+
+        {/* === RIGHT TALON === */}
+        <path d="M112 130 L122 142 L126 148 M122 142 L118 150 M122 142 L128 144" stroke="#cc0000" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+
+        {/* === CENTRAL SHIELD / MEDALLION === */}
+        <circle cx="100" cy="105" r="14" fill="#0a0a0a" stroke="#cc0000" strokeWidth="1.5" />
+        <circle cx="100" cy="105" r="11" fill="none" stroke="#ffffff" strokeWidth="0.3" strokeOpacity="0.3" />
+        {/* NF monogram */}
         <text
-          x="50"
-          y="53"
+          x="100"
+          y="106"
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="#00d4aa"
-          fontFamily="monospace"
+          fill="#ffffff"
+          fontFamily="'Georgia', serif"
           fontWeight="bold"
-          fontSize="7"
+          fontSize="12"
         >
           NF
         </text>
 
-        {/* Gradients */}
+        {/* === GRADIENTS === */}
         <defs>
-          <linearGradient id="shield-grad" x1="50" y1="8" x2="50" y2="94" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#161b26" />
-            <stop offset="0.5" stopColor="#0b0f17" />
-            <stop offset="1" stopColor="#05070a" />
+          <radialGradient id={`${id}-bg`} cx="50%" cy="50%" r="50%">
+            <stop offset="0" stopColor="#1a1a1a" />
+            <stop offset="0.7" stopColor="#0d0d0d" />
+            <stop offset="1" stopColor="#050505" />
+          </radialGradient>
+          <linearGradient id={`${id}-body`} x1="100" y1="60" x2="100" y2="140" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#dd2222" />
+            <stop offset="0.3" stopColor="#cc0000" />
+            <stop offset="0.7" stopColor="#990000" />
+            <stop offset="1" stopColor="#660000" />
           </linearGradient>
-          <linearGradient id="body-grad" x1="50" y1="32" x2="50" y2="64" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#f3e5ab" />
-            <stop offset="0.3" stopColor="#d4af37" />
-            <stop offset="1" stopColor="#8b6914" />
+          <linearGradient id={`${id}-wing-l`} x1="15" y1="30" x2="80" y2="95" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#dd2222" />
+            <stop offset="0.4" stopColor="#cc0000" />
+            <stop offset="1" stopColor="#770000" />
           </linearGradient>
-          <linearGradient id="wing-grad-l" x1="14" y1="22" x2="38" y2="55" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#f3e5ab" />
-            <stop offset="0.5" stopColor="#d4af37" />
-            <stop offset="1" stopColor="#996515" />
+          <linearGradient id={`${id}-wing-r`} x1="185" y1="30" x2="120" y2="95" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#dd2222" />
+            <stop offset="0.4" stopColor="#cc0000" />
+            <stop offset="1" stopColor="#770000" />
           </linearGradient>
-          <linearGradient id="wing-grad-r" x1="86" y1="22" x2="62" y2="55" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#f3e5ab" />
-            <stop offset="0.5" stopColor="#d4af37" />
-            <stop offset="1" stopColor="#996515" />
+          <linearGradient id={`${id}-tail`} x1="100" y1="130" x2="100" y2="170" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#cc0000" />
+            <stop offset="1" stopColor="#550000" />
           </linearGradient>
         </defs>
       </svg>

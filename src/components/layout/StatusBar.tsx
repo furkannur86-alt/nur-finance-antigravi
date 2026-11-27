@@ -52,10 +52,10 @@ export default function StatusBar() {
         <span style={{ color: "rgba(0,212,170,0.2)" }}>│</span>
 
         <span className="flex items-center gap-1" style={{ color: "rgba(0,212,170,0.4)" }}>
-          <svg width="10" height="10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z" fill="#d4af37" fillOpacity="0.5"/>
-            <path d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z" fill="#d4af37" fillOpacity="0.6"/>
-            <path d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z" fill="#d4af37" fillOpacity="0.6"/>
+          <svg width="10" height="10" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M80 95 L60 60 L40 45 L22 30 L28 58 L15 58 L28 82 L30 90 L55 88 L65 92Z" fill="#cc0000" fillOpacity="0.6"/>
+            <path d="M120 95 L140 60 L160 45 L178 30 L172 58 L185 58 L172 82 L170 90 L145 88 L135 92Z" fill="#cc0000" fillOpacity="0.6"/>
+            <path d="M88 80 C88 70 92 62 100 60 C108 62 112 70 112 80 L112 120 C112 130 108 138 100 140 C92 138 88 130 88 120Z" fill="#cc0000" fillOpacity="0.5"/>
           </svg>
           NUR FINANCE TERMINAL v3.0
         </span>
