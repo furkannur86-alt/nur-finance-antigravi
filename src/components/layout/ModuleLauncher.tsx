@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function ModuleLauncher({ open, onClose }: Props) {
-  const { setActiveView, isSovereignAdmin } = useIDEStore();
+  const { setActiveView } = useIDEStore();
   const [search, setSearch] = useState("");
   const [hovered, setHovered] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -46,7 +46,7 @@ export default function ModuleLauncher({ open, onClose }: Props) {
   }, [onClose]);
 
   const filtered = MODULES.filter((m) => {
-    if (m.adminOnly && !isSovereignAdmin) return false;
+    
     if (!search) return true;
     return (
       m.label.toLowerCase().includes(search.toLowerCase()) ||
@@ -213,7 +213,7 @@ export default function ModuleLauncher({ open, onClose }: Props) {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4aa" }} />
-            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.filter(m => !m.adminOnly).length} Active Modules</span>
+            <span className="text-[9px]" style={{ color: "rgba(0,212,170,0.6)" }}>NUR Finance · {MODULES.length} Active Modules</span>
           </div>
         </div>
       </div>

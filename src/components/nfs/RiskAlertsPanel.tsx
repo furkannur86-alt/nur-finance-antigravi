@@ -243,8 +243,8 @@ export default function RiskAlertsPanel() {
             <span className="text-rose-400 font-bold text-xs">{currentVaR}%</span>
           </div>
           <div className="bg-slate-950/60 p-2 rounded border border-slate-800">
-            <span className="text-slate-500 block text-[9px]">SOVEREIGN PROTOCOL</span>
-            <span className="text-emerald-400 font-bold text-xs">ACTIVE (NUR-54751113)</span>
+            <span className="text-slate-500 block text-[9px]">RISK PROTOCOL</span>
+            <span className="text-emerald-400 font-bold text-xs">ACTIVE</span>
           </div>
         </div>
 

@@ -1107,7 +1107,7 @@ export default function NurEarth3DGlobe() {
               <p className="text-[10px] text-[var(--ag-muted)] font-mono mt-0.5 flex items-center gap-2">
                 <span>Global Military Intelligence • NASA FIRMS Thermal • CISA Cyber Defense</span>
                 <span className="text-amber-400 font-bold bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/30">
-                  EPOCH #54751113 • CH: 13·35·42·55
+                  GEOPOLITICAL RISK INDEX • REAL-TIME MONITORING
                 </span>
               </p>
             </div>

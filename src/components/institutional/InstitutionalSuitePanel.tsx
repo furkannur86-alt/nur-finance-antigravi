@@ -118,7 +118,7 @@ export default function InstitutionalSuitePanel() {
     const text = `
 ================================================================================
 SOVEREIGN CLASSIFIED INSTITUTIONAL DOSSIER • TOP SECRET CLEARANCE ($8,500/MO TIER)
-TELEMETRY HARMONICS: [13 • 35 • 42 • 55 • #54751113]
+INSTITUTIONAL ANALYTICS • REAL-TIME FEED
 ================================================================================
 COUNTRY: ${selectedDossier.flag} ${selectedDossier.countryName} (${selectedDossier.countryCode})
 CAPITAL & REGIME: ${selectedDossier.capital} | DEFCON RATING: DEFCON-${selectedDossier.defconLevel}

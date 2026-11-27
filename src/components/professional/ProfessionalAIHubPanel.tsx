@@ -816,7 +816,7 @@ export default function ProfessionalAIHubPanel() {
                     EXECUTIVE TECHNICAL DOSSIER & SOVEREIGN AUDIT MEMORANDUM
                   </h1>
                   <p className="text-[10px] text-slate-400 mt-1">
-                    CONFIDENTIALITY: RESTRICTED • CODESET: #13-35-42-55 • AUDIT RECORD: #54751113
+                    CONFIDENTIALITY: RESTRICTED • ANALYSIS ENGINE • AUDIT TRAIL ACTIVE
                   </p>
                 </div>
                 <div className="text-right text-[10px] font-mono text-slate-400">
@@ -876,7 +876,7 @@ export default function ProfessionalAIHubPanel() {
               {/* Cryptographic Proof & Signature */}
               <div className="pt-4 border-t border-white/10 flex justify-between items-end text-[10px]">
                 <div className="space-y-1">
-                  <div className="text-slate-400">CRYPTOGRAPHIC PROOF (SEAL #54751113):</div>
+                  <div className="text-slate-400">VERIFICATION SEAL • AUTHENTICATED:</div>
                   <div className="font-mono text-cyan-400 select-all break-all">
                     SHA256:0x4d9f8c12e8b0a9e7f6c5d4b3a210fedcba9876543210123456789abcdef01234
                   </div>

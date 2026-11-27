@@ -7,53 +7,50 @@ import TopBar from "@/components/layout/TopBar";
 import Sidebar from "@/components/layout/Sidebar";
 import StatusBar from "@/components/layout/StatusBar";
 import EditorTabs from "@/components/editor/EditorTabs";
-import TerminalPanel from "@/components/terminal/TerminalPanel";
-import PortfolioManager from "@/components/portfolio/PortfolioManager";
-import DashboardPanel from "@/components/dashboard/DashboardPanel";
-import ChartsPanel from "@/components/dashboard/ChartsPanel";
-import BacktestPanel from "@/components/backtest/BacktestPanel";
-import GlobalMarketsPanel from "@/components/markets/GlobalMarketsPanel";
-import EconomicDataPanel from "@/components/markets/EconomicDataPanel";
-import DataIngestPanel from "@/components/ingest/DataIngestPanel";
-import GeopoliticsPanel from "@/components/geopolitics/GeopoliticsPanel";
-import FundamentalsPanel from "@/components/fundamentals/FundamentalsPanel";
-import ScreenerPanel from "@/components/screener/ScreenerPanel";
-import NewsFeedPanel from "@/components/news/NewsFeedPanel";
-import EncyclopediaPanel from "@/components/encyclopedia/EncyclopediaPanel";
-import PricingPanel from "@/components/pricing/PricingPanel";
-import MediaPanel from "@/components/media/MediaPanel";
-import LiveBroadcast from "@/components/media/LiveBroadcast";
-import OptionsPanel from "@/components/derivatives/OptionsPanel";
-import AIToolsPanel from "@/components/ai/AIToolsPanel";
-import MacroRiskPanel from "@/components/macro/MacroRiskPanel";
-import MarketBriefsPanel from "@/components/nfs/MarketBriefsPanel";
-import RiskAlertsPanel from "@/components/nfs/RiskAlertsPanel";
-import ResearchPanel from "@/components/nfs/ResearchPanel";
-import NURTerminalPanel from "@/components/terminal/NURTerminalPanel";
 import CommandPalette from "@/components/layout/CommandPalette";
-import OMSEMSPanel from "@/components/trading/OMSEMSPanel";
-import AIQuantCopilot from "@/components/ai/AIQuantCopilot";
-import BroadcastStudioPanel from "@/components/media/BroadcastStudioPanel";
-import VerificationPanel from "@/components/pricing/VerificationPanel";
-import HUDNotificationSystem from "@/components/alerts/HUDNotificationSystem";
-import GeophysicsResourcesPanel from "@/components/geophysics/GeophysicsResourcesPanel";
-import ProfessionalAIHubPanel from "@/components/professional/ProfessionalAIHubPanel";
-import NurEducationPanel from "@/components/education/NurEducationPanel";
-import FinancialSocialPanel from "@/components/social/FinancialSocialPanel";
-import ResourceIntelligencePanel from "@/components/resources/ResourceIntelligencePanel";
-import ProfessionHubPanel from "@/components/social/ProfessionHubPanel";
-import UserProfilePanel from "@/components/social/UserProfilePanel";
-import WISHFrameworkPanel from "@/components/trading/WISHFrameworkPanel";
-import SovereignAuthModal from "@/components/auth/SovereignAuthModal";
-import Quantum2126Ticker from "@/components/layout/Quantum2126Ticker";
-import FinancialMatrixRain from "@/components/ui/FinancialMatrixRain";
 import FloatingWindowManager from "@/components/layout/FloatingWindowManager";
-import { PANELS } from "@/panels/registry";
 import WindowFrame from "@/components/layout/WindowFrame";
-import NurAIAssistant from "@/components/ai/NurAIAssistant";
-import BackgroundGlobe from "@/components/ui/BackgroundGlobe";
+import { PANELS } from "@/panels/registry";
 
 const CodeEditor = dynamic(() => import("@/components/editor/CodeEditor"), { ssr: false });
+const TerminalPanel = dynamic(() => import("@/components/terminal/TerminalPanel"), { ssr: false });
+const PortfolioManager = dynamic(() => import("@/components/portfolio/PortfolioManager"), { ssr: false });
+const DashboardPanel = dynamic(() => import("@/components/dashboard/DashboardPanel"), { ssr: false });
+const ChartsPanel = dynamic(() => import("@/components/dashboard/ChartsPanel"), { ssr: false });
+const BacktestPanel = dynamic(() => import("@/components/backtest/BacktestPanel"), { ssr: false });
+const GlobalMarketsPanel = dynamic(() => import("@/components/markets/GlobalMarketsPanel"), { ssr: false });
+const EconomicDataPanel = dynamic(() => import("@/components/markets/EconomicDataPanel"), { ssr: false });
+const DataIngestPanel = dynamic(() => import("@/components/ingest/DataIngestPanel"), { ssr: false });
+const GeopoliticsPanel = dynamic(() => import("@/components/geopolitics/GeopoliticsPanel"), { ssr: false });
+const FundamentalsPanel = dynamic(() => import("@/components/fundamentals/FundamentalsPanel"), { ssr: false });
+const ScreenerPanel = dynamic(() => import("@/components/screener/ScreenerPanel"), { ssr: false });
+const NewsFeedPanel = dynamic(() => import("@/components/news/NewsFeedPanel"), { ssr: false });
+const EncyclopediaPanel = dynamic(() => import("@/components/encyclopedia/EncyclopediaPanel"), { ssr: false });
+const PricingPanel = dynamic(() => import("@/components/pricing/PricingPanel"), { ssr: false });
+const MediaPanel = dynamic(() => import("@/components/media/MediaPanel"), { ssr: false });
+const LiveBroadcast = dynamic(() => import("@/components/media/LiveBroadcast"), { ssr: false });
+const OptionsPanel = dynamic(() => import("@/components/derivatives/OptionsPanel"), { ssr: false });
+const AIToolsPanel = dynamic(() => import("@/components/ai/AIToolsPanel"), { ssr: false });
+const MacroRiskPanel = dynamic(() => import("@/components/macro/MacroRiskPanel"), { ssr: false });
+const MarketBriefsPanel = dynamic(() => import("@/components/nfs/MarketBriefsPanel"), { ssr: false });
+const RiskAlertsPanel = dynamic(() => import("@/components/nfs/RiskAlertsPanel"), { ssr: false });
+const ResearchPanel = dynamic(() => import("@/components/nfs/ResearchPanel"), { ssr: false });
+const NURTerminalPanel = dynamic(() => import("@/components/terminal/NURTerminalPanel"), { ssr: false });
+const OMSEMSPanel = dynamic(() => import("@/components/trading/OMSEMSPanel"), { ssr: false });
+const AIQuantCopilot = dynamic(() => import("@/components/ai/AIQuantCopilot"), { ssr: false });
+const BroadcastStudioPanel = dynamic(() => import("@/components/media/BroadcastStudioPanel"), { ssr: false });
+const VerificationPanel = dynamic(() => import("@/components/pricing/VerificationPanel"), { ssr: false });
+const HUDNotificationSystem = dynamic(() => import("@/components/alerts/HUDNotificationSystem"), { ssr: false });
+const GeophysicsResourcesPanel = dynamic(() => import("@/components/geophysics/GeophysicsResourcesPanel"), { ssr: false });
+const ProfessionalAIHubPanel = dynamic(() => import("@/components/professional/ProfessionalAIHubPanel"), { ssr: false });
+const NurEducationPanel = dynamic(() => import("@/components/education/NurEducationPanel"), { ssr: false });
+const FinancialSocialPanel = dynamic(() => import("@/components/social/FinancialSocialPanel"), { ssr: false });
+const ResourceIntelligencePanel = dynamic(() => import("@/components/resources/ResourceIntelligencePanel"), { ssr: false });
+const ProfessionHubPanel = dynamic(() => import("@/components/social/ProfessionHubPanel"), { ssr: false });
+const UserProfilePanel = dynamic(() => import("@/components/social/UserProfilePanel"), { ssr: false });
+const WISHFrameworkPanel = dynamic(() => import("@/components/trading/WISHFrameworkPanel"), { ssr: false });
+const SovereignAuthModal = dynamic(() => import("@/components/auth/SovereignAuthModal"), { ssr: false });
+const NurAIAssistant = dynamic(() => import("@/components/ai/NurAIAssistant"), { ssr: false });
 
 const MIN_CONSOLE_HEIGHT = 80;
 const MAX_CONSOLE_HEIGHT = 500;
@@ -76,7 +73,7 @@ const FULLSCREEN_VIEWS = [
 ];
 
 export default function Home() {
-  const { activeView, setActiveView, sidebarOpen, addConsoleMessage, consoleMessages, matrixRainOpacity, setDemoPlan } = useIDEStore();
+  const { activeView, setActiveView, sidebarOpen, addConsoleMessage, consoleMessages, setDemoPlan } = useIDEStore();
   const didInit = useRef(false);
   const [consoleHeight, setConsoleHeight] = useState(DEFAULT_CONSOLE_HEIGHT);
   const [consoleCollapsed, setConsoleCollapsed] = useState(false);
@@ -124,8 +121,8 @@ export default function Home() {
     if (didInit.current) return;
     didInit.current = true;
     if (consoleMessages.length === 0) {
-      addConsoleMessage({ type: "info", text: "AntiGravi IDE v3.0 PRO - Nur Finance Quantitative Engine" });
-      addConsoleMessage({ type: "success", text: "Faz 3 Engine initialized: OMS/EMS, AI Quant Copilot, HUD Alerts & Broadcast Studio active." });
+      addConsoleMessage({ type: "info", text: "NUR Finance Terminal v3.0 — Institutional Analytics Engine" });
+      addConsoleMessage({ type: "success", text: "Systems online: OMS/EMS, AI Quant Copilot, Risk Alerts & Broadcast Studio." });
     }
   }, [addConsoleMessage, consoleMessages.length]);
 
@@ -262,12 +259,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen relative overflow-hidden cockpit-app-root" style={{ background: "var(--ag-bg)" }}>
-      {matrixRainOpacity > 0 && <FinancialMatrixRain opacity={matrixRainOpacity} />}
-      <BackgroundGlobe opacity={0.06} />
       <CommandPalette />
       <HUDNotificationSystem />
       <SovereignAuthModal />
-      <Quantum2126Ticker />
       <TopBar />
       <FloatingWindowManager />
       <div className="flex flex-1 min-h-0">
@@ -294,4 +288,3 @@ export default function Home() {
     </div>
   );
 }
-

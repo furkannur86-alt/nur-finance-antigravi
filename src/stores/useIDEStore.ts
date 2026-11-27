@@ -249,7 +249,7 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   activeView: "dashboard",
   sidebarOpen: true,
   hudDrawerOpen: false,
-  matrixRainOpacity: 0.075,
+  matrixRainOpacity: 0,
   isSovereignAdmin: false,
   sovereignAuthModalOpen: false,
   soundMuted: false,

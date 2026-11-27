@@ -61,7 +61,6 @@ export default function TopBar() {
     notifications,
     matrixRainOpacity,
     cycleMatrixRainOpacity,
-    isSovereignAdmin,
     setSovereignAuthModalOpen,
     updateVerification,
     openFloatingWindow,
