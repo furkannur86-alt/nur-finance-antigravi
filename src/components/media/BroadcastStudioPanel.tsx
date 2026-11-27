@@ -14,7 +14,7 @@ import {
 import { cyberSound } from "@/lib/audio/sound-synth";
 
 export type StudioStageType =
-  | "hegelian-debate"
+  | "panel-debate"
   | "3d-globe"
   | "financial-bourses"
   | "anchor-female"
@@ -22,7 +22,7 @@ export type StudioStageType =
   | "executive-office";
 
 const STUDIO_STAGES: { id: StudioStageType; name: string; path?: string }[] = [
-  { id: "hegelian-debate", name: "Studio C — Macro Debate Arena" },
+  { id: "panel-debate", name: "Studio C — Macro Debate Arena" },
   { id: "anchor-female", name: "Studio A — NUR TV 4K Main Stage", path: "/images/studio/broadcast_studio.jpg" },
   { id: "executive-office", name: "Studio B — Executive Suite", path: "/images/studio/executive-office.jpg" },
   { id: "financial-bourses", name: "Global Financial Bourses Matrix" },
@@ -259,7 +259,7 @@ export default function BroadcastStudioPanel() {
         <div className="flex-1 flex flex-col min-w-0 border-r" style={{ borderColor: "var(--ag-border)" }}>
           {/* Video Preview Box */}
           <div className="relative aspect-video w-full max-h-[50%] bg-black overflow-hidden border-b shrink-0 flex items-center justify-center" style={{ borderColor: "var(--ag-border)" }}>
-            {selectedStudio.id === "hegelian-debate" ? (
+            {selectedStudio.id === "panel-debate" ? (
               <div className="w-full h-full grid grid-cols-3 gap-2 p-3 bg-slate-950/95 relative z-0">
                 {/* Panelist 1: Global Macro Analyst */}
                 <div
