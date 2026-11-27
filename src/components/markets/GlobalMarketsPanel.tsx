@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { cyberSound } from "@/lib/audio/sound-synth";
+import { BullIcon, BearIcon } from "@/components/ui/MarketIcons";
+import NFWatermark from "@/components/ui/NFWatermark";
 
 interface MarketItem {
   symbol: string;
@@ -145,7 +147,8 @@ export default function GlobalMarketsPanel() {
   const regionCountries = countries[stockRegion] || [];
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto p-3 gap-3" style={{ background: "var(--ag-bg)" }}>
+    <div className="flex flex-col h-full overflow-y-auto p-3 gap-3 relative" style={{ background: "var(--ag-bg)" }}>
+      <NFWatermark />
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-bold" style={{ color: "var(--ag-text)" }}>Global Markets</h2>
         {activeTab !== "stocks" && (
@@ -372,7 +375,10 @@ export default function GlobalMarketsPanel() {
                         {item.change !== 0 ? `${positive ? "+" : ""}${item.change.toFixed(2)}` : "—"}
                       </td>
                       <td className="text-right py-1.5 font-mono font-bold" style={{ color: positive ? "var(--ag-success)" : "var(--ag-danger)" }}>
-                        {item.changePercent !== 0 ? `${positive ? "+" : ""}${item.changePercent.toFixed(2)}%` : "—"}
+                        <span className="inline-flex items-center gap-0.5">
+                          {item.changePercent !== 0 && (positive ? <BullIcon size={11} /> : <BearIcon size={11} />)}
+                          {item.changePercent !== 0 ? `${positive ? "+" : ""}${item.changePercent.toFixed(2)}%` : "—"}
+                        </span>
                       </td>
                     </tr>
                   );

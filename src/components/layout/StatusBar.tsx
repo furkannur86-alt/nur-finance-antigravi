@@ -52,12 +52,12 @@ export default function StatusBar() {
         <span style={{ color: "rgba(0,212,170,0.2)" }}>│</span>
 
         <span className="flex items-center gap-1" style={{ color: "rgba(0,212,170,0.4)" }}>
-          <svg width="10" height="10" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M80 95 L60 60 L40 45 L22 30 L28 58 L15 58 L28 82 L30 90 L55 88 L65 92Z" fill="#cc0000" fillOpacity="0.6"/>
-            <path d="M120 95 L140 60 L160 45 L178 30 L172 58 L185 58 L172 82 L170 90 L145 88 L135 92Z" fill="#cc0000" fillOpacity="0.6"/>
-            <path d="M88 80 C88 70 92 62 100 60 C108 62 112 70 112 80 L112 120 C112 130 108 138 100 140 C92 138 88 130 88 120Z" fill="#cc0000" fillOpacity="0.5"/>
+          <svg width="12" height="12" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" shapeRendering="geometricPrecision">
+            <path d="M80 95 L60 60 L40 45 L22 30 L28 58 L15 58 L28 82 L30 90 L55 88 L65 92Z" fill="#cc0000" fillOpacity="0.7" stroke="#cc0000" strokeWidth="2"/>
+            <path d="M120 95 L140 60 L160 45 L178 30 L172 58 L185 58 L172 82 L170 90 L145 88 L135 92Z" fill="#cc0000" fillOpacity="0.7" stroke="#cc0000" strokeWidth="2"/>
+            <path d="M88 80 C88 70 92 62 100 60 C108 62 112 70 112 80 L112 120 C112 130 108 138 100 140 C92 138 88 130 88 120Z" fill="#cc0000" fillOpacity="0.6" stroke="#cc0000" strokeWidth="1.5"/>
           </svg>
-          NUR FINANCE TERMINAL v3.0
+          NUR FINANCE TERMINAL v8.2
         </span>
 
         <span style={{ color: "rgba(0,212,170,0.2)" }}>│</span>

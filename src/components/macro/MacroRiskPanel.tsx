@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import GlobeWidget from "@/components/ui/GlobeWidget";
+import NFWatermark from "@/components/ui/NFWatermark";
 
 interface RiskIndicator {
   id: string;
@@ -294,7 +295,8 @@ export default function MacroRiskPanel() {
   }, [activeTab]);
 
   return (
-    <div className="h-full flex flex-col" style={{ background: "var(--ag-bg)" }}>
+    <div className="h-full flex flex-col relative" style={{ background: "var(--ag-bg)" }}>
+      <NFWatermark />
       {/* Header */}
       <div className="p-3 border-b" style={{ borderColor: "var(--ag-border)" }}>
         <div className="flex items-center justify-between mb-3">

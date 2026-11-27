@@ -8,6 +8,8 @@ import LiveChart from "./LiveChart";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import EagleCrest from "@/components/ui/EagleCrest";
 import GlobeWidget from "@/components/ui/GlobeWidget";
+import { BullIcon, BearIcon } from "@/components/ui/MarketIcons";
+import NFWatermark from "@/components/ui/NFWatermark";
 
 /* ── Spark mini-chart ───────────────────────────────────── */
 function Spark({ color, positive }: { color: string; positive: boolean }) {
@@ -115,7 +117,8 @@ export default function DashboardPanel() {
   const dateStr = time.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: "#020810", color: "#e2e8f0" }}>
+    <div className="flex flex-col h-full overflow-hidden relative" style={{ background: "#020810", color: "#e2e8f0" }}>
+      <NFWatermark />
 
       {/* Header bar */}
       <div className="flex items-center justify-between px-5 py-2.5 border-b shrink-0"
@@ -252,8 +255,11 @@ export default function DashboardPanel() {
                   borderColor: m.pos ? "rgba(0,255,136,0.15)" : "rgba(239,68,68,0.15)",
                 }}>
                 <div className="text-[9px] font-mono text-slate-500">{m.s}</div>
-                <div className="text-xs font-bold font-mono"
-                  style={{ color: m.pos ? "#00ff88" : "#ef4444" }}>{m.p}</div>
+                <div className="text-xs font-bold font-mono flex items-center justify-center gap-0.5"
+                  style={{ color: m.pos ? "#00ff88" : "#ef4444" }}>
+                  {m.pos ? <BullIcon size={10} /> : <BearIcon size={10} />}
+                  {m.p}
+                </div>
               </div>
             ))}
           </div>

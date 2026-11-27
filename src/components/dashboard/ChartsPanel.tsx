@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { useIDEStore } from "@/stores/useIDEStore";
+import NFWatermark from "@/components/ui/NFWatermark";
 
 export interface CandleData {
   time: string;
@@ -117,7 +118,8 @@ export default function ChartsPanel() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#020713] text-slate-100 font-sans select-none overflow-hidden">
+    <div className="flex flex-col h-full bg-[#020713] text-slate-100 font-sans select-none overflow-hidden relative">
+      <NFWatermark />
       {/* ── HEADER TOOLBAR ─────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between px-4 py-2.5 bg-slate-950/90 border-b border-cyan-500/30 gap-2 shrink-0">
         <div className="flex items-center gap-3">
