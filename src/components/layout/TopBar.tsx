@@ -211,7 +211,7 @@ export default function TopBar() {
           <EagleCrest size={26} animate />
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-wider text-amber-300 font-serif leading-none">NUR FINANCE</span>
-            <span className="text-[7px] font-mono text-slate-500 tracking-wide">nurfinans.com</span>
+            <span className="text-[7px] font-mono text-slate-500 tracking-wide">Commanding Eastern &amp; Western Markets</span>
           </div>
         </div>
 

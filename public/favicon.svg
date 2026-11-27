@@ -1,0 +1,17 @@
+<svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="47" stroke="#d4af37" stroke-width="2" stroke-opacity="0.5"/>
+  <path d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z" fill="#0b0f17" stroke="#d4af37" stroke-width="2"/>
+  <path d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z" fill="#d4af37"/>
+  <path d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z" fill="#d4af37"/>
+  <ellipse cx="50" cy="48" rx="8" ry="16" fill="#d4af37"/>
+  <ellipse cx="40" cy="30" rx="5" ry="6" fill="#d4af37" transform="rotate(-14 40 30)"/>
+  <polygon points="34,28 28,31 34,33" fill="#f59e0b"/>
+  <circle cx="38" cy="29" r="1.5" fill="#ff2e63"/>
+  <ellipse cx="60" cy="30" rx="5" ry="6" fill="#d4af37" transform="rotate(14 60 30)"/>
+  <polygon points="66,28 72,31 66,33" fill="#f59e0b"/>
+  <circle cx="62" cy="29" r="1.5" fill="#ff2e63"/>
+  <polygon points="38,24 42,14 46,21 50,10 54,21 58,14 62,24" fill="#fbbf24" stroke="#92400e" stroke-width="0.6"/>
+  <polygon points="42,62 38,76 44,72 50,80 56,72 62,76 58,62" fill="#8b6914"/>
+  <circle cx="50" cy="52" r="7" fill="#0c131f" stroke="#d4af37" stroke-width="1"/>
+  <text x="50" y="53" text-anchor="middle" dominant-baseline="middle" fill="#00d4aa" font-family="monospace" font-weight="bold" font-size="7">NF</text>
+</svg>

@@ -182,7 +182,19 @@ export default function WindowFrame({ view, children }: WindowFrameProps) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-h-0 overflow-auto">{children}</div>
+        <div className="flex-1 min-h-0 overflow-auto relative">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style={{ opacity: 0.025, zIndex: 0 }}>
+            <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z" fill="#d4af37"/>
+              <path d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z" fill="#d4af37"/>
+              <path d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z" fill="#d4af37"/>
+              <ellipse cx="50" cy="48" rx="8" ry="16" fill="#d4af37"/>
+              <circle cx="50" cy="52" r="7" fill="#0c131f" stroke="#d4af37" strokeWidth="1"/>
+              <text x="50" y="53" textAnchor="middle" dominantBaseline="middle" fill="#d4af37" fontFamily="monospace" fontWeight="bold" fontSize="7">NF</text>
+            </svg>
+          </div>
+          <div className="relative" style={{ zIndex: 1 }}>{children}</div>
+        </div>
 
         {/* Resize handles when not maximized */}
         {!isMaximized && (

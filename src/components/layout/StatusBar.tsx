@@ -51,7 +51,14 @@ export default function StatusBar() {
 
         <span style={{ color: "rgba(0,212,170,0.2)" }}>│</span>
 
-        <span style={{ color: "rgba(0,212,170,0.4)" }}>ANTIGRAV ENGINE v3.0</span>
+        <span className="flex items-center gap-1" style={{ color: "rgba(0,212,170,0.4)" }}>
+          <svg width="10" height="10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 8 C68 8 82 22 82 42 C82 65 68 85 50 94 C32 85 18 65 18 42 C18 22 32 8 50 8Z" fill="#d4af37" fillOpacity="0.5"/>
+            <path d="M38 44 C28 32 14 22 16 42 C18 55 28 58 38 52Z" fill="#d4af37" fillOpacity="0.6"/>
+            <path d="M62 44 C72 32 86 22 84 42 C82 55 72 58 62 52Z" fill="#d4af37" fillOpacity="0.6"/>
+          </svg>
+          NUR FINANCE TERMINAL v3.0
+        </span>
 
         <span style={{ color: "rgba(0,212,170,0.2)" }}>│</span>
 

@@ -14,33 +14,32 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "AntiGravi IDE — Nur Finance",
-    template: "%s | Nur Finance",
+    default: "NUR Finance Terminal",
+    template: "%s | NUR Finance",
   },
-  description: "Gravity-defying quantitative finance development environment by Nur Financial Services.",
+  description: "Institutional financial data, analytics and trading terminal by NUR Finance. Real-time market data, risk analytics, and financial media.",
   metadataBase: new URL("https://nurfinans.com"),
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/favicon.svg" },
   openGraph: {
-    title: "AntiGravi IDE — Nur Finance",
-    description: "Web-based quantitative finance IDE with live market data, backtesting, NFS media channels, and smart mining compute access.",
+    title: "NUR Finance Terminal",
+    description: "Institutional financial data, analytics and trading terminal. Real-time market data, risk analytics, and financial media.",
     type: "website",
-    siteName: "Nur Finance",
+    siteName: "NUR Finance",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AntiGravi IDE — Nur Finance",
-    description: "Quantitative finance IDE with live market data, backtesting, and NFS media.",
+    title: "NUR Finance Terminal",
+    description: "Institutional financial data, analytics and trading terminal by NUR Finance.",
   },
   keywords: [
-    "quantitative finance",
+    "financial terminal",
     "trading terminal",
-    "market analysis",
-    "backtesting",
-    "Nur Finance",
-    "AntiGravi",
-    "crypto settlement",
-    "smart mining",
+    "market data",
+    "risk analytics",
+    "NUR Finance",
+    "institutional analytics",
+    "financial media",
   ],
 };
 
