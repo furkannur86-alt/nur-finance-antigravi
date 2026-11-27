@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import DemoBadge from "@/components/ui/DemoBadge";
+import GlobeWidget from "@/components/ui/GlobeWidget";
 
 const TABS = [
   { id: "systemic", label: "Systemic Risk", icon: "🏦" },
@@ -88,7 +89,9 @@ export default function FinancialRiskPanel() {
         ))}
       </div>
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-4 flex gap-4">
+        {/* Left: Risk data tables */}
+        <div className="flex-1 min-w-0">
         {tab === "systemic" && (
           <div className="space-y-1">
             <div className="grid grid-cols-[1fr_100px_80px_80px_1fr] gap-2 px-2 py-1 text-[9px] font-mono uppercase tracking-wider" style={{ color: "#64748b" }}>
@@ -169,6 +172,23 @@ export default function FinancialRiskPanel() {
             ))}
           </div>
         )}
+        </div>
+
+        {/* Right: Risk Globe */}
+        <div className="shrink-0 w-[300px] rounded-xl border overflow-hidden" style={{ background: "rgba(0,5,20,0.7)", borderColor: "rgba(239,68,68,0.15)" }}>
+          <GlobeWidget
+            width={300}
+            height={380}
+            title="RISK HEATMAP"
+            headlines={[
+              "SRISK: $2.14T global bank capital shortfall",
+              "CoVaR spillover at critical -4.72%",
+              "China property contagion risk elevated",
+              "Yen carry unwind correlation 0.91",
+              "Corporate HY liquidity under stress",
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

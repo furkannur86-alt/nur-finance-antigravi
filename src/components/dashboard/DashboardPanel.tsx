@@ -7,6 +7,7 @@ import LiveWatchList from "./LiveWatchList";
 import LiveChart from "./LiveChart";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import EagleCrest from "@/components/ui/EagleCrest";
+import GlobeWidget from "@/components/ui/GlobeWidget";
 
 /* ── Spark mini-chart ───────────────────────────────────── */
 function Spark({ color, positive }: { color: string; positive: boolean }) {
@@ -181,8 +182,24 @@ export default function DashboardPanel() {
           </div>
         </div>
 
-        {/* Row 3 — Risk + Watchlist */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Row 3 — Globe + Risk + Watchlist */}
+        <div className="grid grid-cols-4 gap-4">
+
+          {/* Globe widget */}
+          <div className="col-span-1 rounded-xl border overflow-hidden" style={{ background: "rgba(0,5,20,0.7)", borderColor: "#0d1e38" }}>
+            <GlobeWidget
+              width={280}
+              height={260}
+              title="GLOBAL MARKETS"
+              headlines={[
+                "Fed signals rate hold through Q1 2027",
+                "BIST 100 rallies on foreign inflows",
+                "Brent crude drops below $74 on OPEC+ outlook",
+                "ECB inflation target met for first time since 2021",
+                "China PMI expansion signals recovery",
+              ]}
+            />
+          </div>
 
           {/* Risk panel */}
           <div className="col-span-1 rounded-xl border p-4" style={{ background: "rgba(0,5,20,0.7)", borderColor: "#0d1e38" }}>
