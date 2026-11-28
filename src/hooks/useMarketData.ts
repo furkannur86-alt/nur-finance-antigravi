@@ -59,8 +59,10 @@ export function usePortfolioData(): MarketDataState {
     }
 
     fetchLiveData();
+    const interval = setInterval(fetchLiveData, 30_000);
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, []);
 
@@ -99,8 +101,69 @@ export function useWatchlistData(): WatchlistState {
       }
     }
     load();
-    return () => { cancelled = true; };
+    const interval = setInterval(load, 30_000);
+    return () => { cancelled = true; clearInterval(interval); };
   }, []);
 
   return state;
+}
+
+interface MarketPulseItem {
+  symbol: string;
+  changePercent: number;
+}
+
+export function useMarketPulse(): { items: MarketPulseItem[]; source: "live" | "demo" } {
+  const [items, setItems] = useState<MarketPulseItem[]>([]);
+  const [source, setSource] = useState<"live" | "demo">("demo");
+
+  useEffect(() => {
+    let cancelled = false;
+    const PULSE_SYMBOLS = ["GSPC.INDX", "IXIC.INDX", "GDAXI.INDX", "N225.INDX", "BTC-USD.CC", "GC.COMM", "BZ.COMM", "VIX.INDX"];
+    const LABELS = ["SPX", "NDX", "DAX", "NKY", "BTC", "GOLD", "BRENT", "VIX"];
+
+    async function load() {
+      try {
+        const res = await fetch("/api/global-markets?type=indices");
+        if (!res.ok) return;
+        const json = await res.json();
+        if (cancelled) return;
+
+        const indexMap = new Map<string, number>();
+        for (const d of json.data || []) {
+          indexMap.set(d.symbol, d.changePercent);
+        }
+
+        const cryptoRes = await fetch("/api/global-markets?type=crypto");
+        const cryptoJson = await cryptoRes.json();
+        for (const d of cryptoJson.data || []) {
+          if (d.pair === "BTC-USD") indexMap.set("BTC-USD.CC", d.changePercent);
+        }
+
+        const commodRes = await fetch("/api/global-markets?type=commodities");
+        const commodJson = await commodRes.json();
+        for (const d of commodJson.data || []) {
+          if (d.symbol === "GC.COMM") indexMap.set("GC.COMM", d.changePercent);
+          if (d.symbol === "BZ.COMM") indexMap.set("BZ.COMM", d.changePercent);
+        }
+
+        const result = PULSE_SYMBOLS.map((sym, i) => ({
+          symbol: LABELS[i],
+          changePercent: indexMap.get(sym) ?? 0,
+        }));
+
+        if (result.some((r) => r.changePercent !== 0)) {
+          setItems(result);
+          setSource("live");
+        }
+      } catch {
+        // keep empty / demo
+      }
+    }
+    load();
+    const interval = setInterval(load, 60_000);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, []);
+
+  return { items, source };
 }

@@ -18,6 +18,7 @@ export const MAJOR_INDICES = [
   { symbol: "BIST100.INDX",name:"BIST 100",         region: "Europe"  },
   { symbol: "MERVAL.INDX",name: "Merval",           region: "Americas"},
   { symbol: "BVSP.INDX",  name: "Bovespa",          region: "Americas"},
+  { symbol: "VIX.INDX",   name: "CBOE VIX",         region: "US"      },
 ];
 
 export const COMMODITIES = [

@@ -16,15 +16,19 @@ export default function LiveChart({ symbol, color }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/market-data?type=history&symbol=${symbol}&range=${range}`)
-      .then((r) => r.json())
-      .then((json) => {
-        if (cancelled) return;
-        setData(json.chart || []);
-        setSource(json.source || "unknown");
-      })
-      .catch(() => { if (!cancelled) setSource("error"); });
-    return () => { cancelled = true; };
+    function fetchHistory() {
+      fetch(`/api/market-data?type=history&symbol=${symbol}&range=${range}`)
+        .then((r) => r.json())
+        .then((json) => {
+          if (cancelled) return;
+          setData(json.chart || []);
+          setSource(json.source || "unknown");
+        })
+        .catch(() => { if (!cancelled) setSource("error"); });
+    }
+    fetchHistory();
+    const interval = setInterval(fetchHistory, 300_000);
+    return () => { cancelled = true; clearInterval(interval); };
   }, [symbol, range]);
 
   const ranges = ["1mo", "3mo", "6mo", "1y"];

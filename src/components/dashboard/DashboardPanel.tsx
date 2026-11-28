@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePortfolioData } from "@/hooks/useMarketData";
+import { usePortfolioData, useMarketPulse } from "@/hooks/useMarketData";
 import PortfolioChart from "./PortfolioChart";
 import LiveWatchList from "./LiveWatchList";
 import LiveChart from "./LiveChart";
@@ -99,6 +99,7 @@ function RiskGauge({ value, label }: { value: number; label: string }) {
 /* ── Main ───────────────────────────────────────────────── */
 export default function DashboardPanel() {
   const { portfolio, source } = usePortfolioData();
+  const { items: pulseItems, source: pulseSource } = useMarketPulse();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -237,18 +238,17 @@ export default function DashboardPanel() {
 
         {/* Row 4 — Market pulse */}
         <div>
-          <SectionHeader title="Global Market Pulse" />
+          <SectionHeader title="Global Market Pulse" badge={pulseSource === "live" ? "LIVE" : "DEMO"} />
           <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
-            {[
-              { s: "SPX",   p: "+0.22%", pos: true  },
-              { s: "NDX",   p: "+0.25%", pos: true  },
-              { s: "DAX",   p: "-0.18%", pos: false },
-              { s: "NKY",   p: "+0.55%", pos: true  },
-              { s: "BTC",   p: "+1.24%", pos: true  },
-              { s: "GOLD",  p: "+0.14%", pos: true  },
-              { s: "BRENT", p: "-0.12%", pos: false },
-              { s: "VIX",   p: "-0.13%", pos: false },
-            ].map(m => (
+            {(pulseItems.length > 0
+              ? pulseItems.map((m) => ({ s: m.symbol, p: m.changePercent, pos: m.changePercent >= 0 }))
+              : [
+                  { s: "SPX", p: 0, pos: true }, { s: "NDX", p: 0, pos: true },
+                  { s: "DAX", p: 0, pos: true }, { s: "NKY", p: 0, pos: true },
+                  { s: "BTC", p: 0, pos: true }, { s: "GOLD", p: 0, pos: true },
+                  { s: "BRENT", p: 0, pos: true }, { s: "VIX", p: 0, pos: true },
+                ]
+            ).map(m => (
               <div key={m.s} className="rounded-lg border p-2 text-center"
                 style={{
                   background: m.pos ? "rgba(0,255,136,0.04)" : "rgba(239,68,68,0.04)",
@@ -258,7 +258,7 @@ export default function DashboardPanel() {
                 <div className="text-xs font-bold font-mono flex items-center justify-center gap-0.5"
                   style={{ color: m.pos ? "#00ff88" : "#ef4444" }}>
                   {m.pos ? <BullIcon size={10} /> : <BearIcon size={10} />}
-                  {m.p}
+                  {m.p >= 0 ? "+" : ""}{m.p.toFixed(2)}%
                 </div>
               </div>
             ))}

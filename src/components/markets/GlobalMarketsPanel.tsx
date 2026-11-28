@@ -121,6 +121,10 @@ export default function GlobalMarketsPanel() {
 
   useEffect(() => {
     if (activeTab !== "stocks") fetchData();
+    const interval = setInterval(() => {
+      if (activeTab !== "stocks") fetchData();
+    }, 60_000);
+    return () => clearInterval(interval);
   }, [activeTab, region, fetchData]);
 
   useEffect(() => {
