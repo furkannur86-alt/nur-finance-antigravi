@@ -3,11 +3,10 @@ import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
 import https from "https";
 
 /**
- * NUR Finance — Multi-Tier Hyper-Realistic Human Voice Engine
+ * NUR Finance — Multi-Language Neural Voice Engine
  *
- * Tier 1: ElevenLabs Multilingual v2 (If ELEVENLABS_API_KEY is configured in .env.local)
- * Tier 2: Microsoft Edge Studio Neural HD (Direct 24kHz/48kbps Neural Voices — EmelNeural, AriaNeural, ChristopherNeural, etc.)
- * Tier 3: High-Speed Web Audio Fallback
+ * Tier 1: ElevenLabs Multilingual v2 (requires ELEVENLABS_API_KEY)
+ * Tier 2: Microsoft Edge Studio Neural HD (24kHz Neural Voices)
  */
 
 export interface VoiceProfile {
@@ -18,39 +17,36 @@ export interface VoiceProfile {
 }
 
 const NEURAL_VOICE_MAP: Record<string, VoiceProfile> = {
-  tr: { voice: "tr-TR-EmelNeural", name: "Elif Nur Erdem (TR Studio Female)", defaultRate: "+22%", gender: "female" },
-  tr_male: { voice: "tr-TR-AhmetNeural", name: "Kaan Selçuk Demir (TR Sovereign Male)", defaultRate: "+20%", gender: "male" },
-  en: { voice: "en-US-AriaNeural", name: "Elena Vance (US Broadcast Female)", defaultRate: "+20%", gender: "female" },
-  en_male: { voice: "en-US-ChristopherNeural", name: "Marcus Sterling (UK Anchor Male)", defaultRate: "+18%", gender: "male" },
-  "en-gb": { voice: "en-GB-SoniaNeural", name: "Victoria Ashworth (London Royal)", defaultRate: "+18%", gender: "female" },
-  de: { voice: "de-DE-KatjaNeural", name: "Greta Lindemann (Frankfurt Female)", defaultRate: "+18%", gender: "female" },
-  de_male: { voice: "de-DE-ConradNeural", name: "Heinrich von Berg (Prussian Male)", defaultRate: "+18%", gender: "male" },
-  zh: { voice: "zh-CN-XiaoxiaoNeural", name: "Lin Xiaoyu (Beijing Female)", defaultRate: "+20%", gender: "female" },
-  zh_male: { voice: "zh-CN-YunxiNeural", name: "Chen Weilin (Shanghai Male)", defaultRate: "+20%", gender: "male" },
-  ja: { voice: "ja-JP-NanamiNeural", name: "Aoi Morimoto (Tokyo Female)", defaultRate: "+20%", gender: "female" },
-  ja_male: { voice: "ja-JP-KeitaNeural", name: "Kenjiro Takahashi (Shinto Male)", defaultRate: "+20%", gender: "male" },
-  fr: { voice: "fr-FR-DeniseNeural", name: "Camille Laurent (Paris Female)", defaultRate: "+18%", gender: "female" },
-  fr_male: { voice: "fr-FR-HenriNeural", name: "Antoine de Saint-Germain (Versailles Male)", defaultRate: "+18%", gender: "male" },
-  ru: { voice: "ru-RU-SvetlanaNeural", name: "Daria Volkova (Moscow Female)", defaultRate: "+18%", gender: "female" },
-  ru_male: { voice: "ru-RU-DmitryNeural", name: "Viktor Morozov (Slavic Citadel Male)", defaultRate: "+18%", gender: "male" },
-  ar: { voice: "ar-SA-ZariyahNeural", name: "Noor Al-Hassan (Riyadh Female)", defaultRate: "+15%", gender: "female" },
-  ar_male: { voice: "ar-SA-HamedNeural", name: "Tariq Al-Mansoor (Abbasid Wisdom Male)", defaultRate: "+15%", gender: "male" },
-  fa_male: { voice: "fa-IR-FaridNeural", name: "Kourosh Rostami (Persepolis Male)", defaultRate: "+18%", gender: "male" },
-  hi: { voice: "hi-IN-SwaraNeural", name: "Priya Iyer (Vedic Female)", defaultRate: "+18%", gender: "female" },
-  hi_male: { voice: "hi-IN-MadhurNeural", name: "Aarav Sharma (Maurya Vimana Male)", defaultRate: "+18%", gender: "male" },
-  es: { voice: "es-ES-ElviraNeural", name: "Valentina Morales (Madrid Female)", defaultRate: "+18%", gender: "female" },
-  es_male: { voice: "es-ES-AlvaroNeural", name: "Santiago De La Vega (Habsburgo Galleon Male)", defaultRate: "+18%", gender: "male" },
-  it: { voice: "it-IT-ElsaNeural", name: "Giulia Bellini (Rome Female)", defaultRate: "+18%", gender: "female" },
-  it_male: { voice: "it-IT-DiegoNeural", name: "Marco Aurelio Conti (Nova Roma Male)", defaultRate: "+18%", gender: "male" },
-  ko: { voice: "ko-KR-SunHiNeural", name: "Ji-won Kim (Seoul Female)", defaultRate: "+20%", gender: "female" },
-  ko_male: { voice: "ko-KR-InJoonNeural", name: "Min-jun Park (Goryeo Sovereign Male)", defaultRate: "+20%", gender: "male" },
+  tr: { voice: "tr-TR-EmelNeural", name: "Turkish Female Anchor", defaultRate: "+22%", gender: "female" },
+  tr_male: { voice: "tr-TR-AhmetNeural", name: "Turkish Male Anchor", defaultRate: "+20%", gender: "male" },
+  en: { voice: "en-US-AriaNeural", name: "US Broadcast Female", defaultRate: "+20%", gender: "female" },
+  en_male: { voice: "en-US-ChristopherNeural", name: "US Anchor Male", defaultRate: "+18%", gender: "male" },
+  "en-gb": { voice: "en-GB-SoniaNeural", name: "UK Broadcast Female", defaultRate: "+18%", gender: "female" },
+  de: { voice: "de-DE-KatjaNeural", name: "German Female Anchor", defaultRate: "+18%", gender: "female" },
+  de_male: { voice: "de-DE-ConradNeural", name: "German Male Anchor", defaultRate: "+18%", gender: "male" },
+  zh: { voice: "zh-CN-XiaoxiaoNeural", name: "Chinese Female Anchor", defaultRate: "+20%", gender: "female" },
+  zh_male: { voice: "zh-CN-YunxiNeural", name: "Chinese Male Anchor", defaultRate: "+20%", gender: "male" },
+  ja: { voice: "ja-JP-NanamiNeural", name: "Japanese Female Anchor", defaultRate: "+20%", gender: "female" },
+  ja_male: { voice: "ja-JP-KeitaNeural", name: "Japanese Male Anchor", defaultRate: "+20%", gender: "male" },
+  fr: { voice: "fr-FR-DeniseNeural", name: "French Female Anchor", defaultRate: "+18%", gender: "female" },
+  fr_male: { voice: "fr-FR-HenriNeural", name: "French Male Anchor", defaultRate: "+18%", gender: "male" },
+  ru: { voice: "ru-RU-SvetlanaNeural", name: "Russian Female Anchor", defaultRate: "+18%", gender: "female" },
+  ru_male: { voice: "ru-RU-DmitryNeural", name: "Russian Male Anchor", defaultRate: "+18%", gender: "male" },
+  ar: { voice: "ar-SA-ZariyahNeural", name: "Arabic Female Anchor", defaultRate: "+15%", gender: "female" },
+  ar_male: { voice: "ar-SA-HamedNeural", name: "Arabic Male Anchor", defaultRate: "+15%", gender: "male" },
+  fa_male: { voice: "fa-IR-FaridNeural", name: "Persian Male Anchor", defaultRate: "+18%", gender: "male" },
+  hi: { voice: "hi-IN-SwaraNeural", name: "Hindi Female Anchor", defaultRate: "+18%", gender: "female" },
+  hi_male: { voice: "hi-IN-MadhurNeural", name: "Hindi Male Anchor", defaultRate: "+18%", gender: "male" },
+  es: { voice: "es-ES-ElviraNeural", name: "Spanish Female Anchor", defaultRate: "+18%", gender: "female" },
+  es_male: { voice: "es-ES-AlvaroNeural", name: "Spanish Male Anchor", defaultRate: "+18%", gender: "male" },
+  it: { voice: "it-IT-ElsaNeural", name: "Italian Female Anchor", defaultRate: "+18%", gender: "female" },
+  it_male: { voice: "it-IT-DiegoNeural", name: "Italian Male Anchor", defaultRate: "+18%", gender: "male" },
+  ko: { voice: "ko-KR-SunHiNeural", name: "Korean Female Anchor", defaultRate: "+20%", gender: "female" },
+  ko_male: { voice: "ko-KR-InJoonNeural", name: "Korean Male Anchor", defaultRate: "+20%", gender: "male" },
 };
 
-/**
- * Calls ElevenLabs API if key is present in .env.local
- */
 async function generateElevenLabsTTS(text: string, apiKey: string, voiceId?: string): Promise<Buffer | null> {
-  const targetVoice = voiceId || "21m00Tcm4TlvDq8ikWAM"; // Default Rachel / Broadcaster
+  const targetVoice = voiceId || "21m00Tcm4TlvDq8ikWAM";
   const url = `https://api.elevenlabs.io/v1/text-to-speech/${targetVoice}?optimize_streaming_latency=3`;
 
   return new Promise((resolve) => {
@@ -91,9 +87,6 @@ async function generateElevenLabsTTS(text: string, apiKey: string, voiceId?: str
   });
 }
 
-/**
- * Calls Microsoft Edge Neural HD engine (EmelNeural, AriaNeural, etc.)
- */
 async function synthesizeEdgeNeuralHD(text: string, voiceName: string, rate = "+22%"): Promise<Buffer> {
   const tts = new MsEdgeTTS();
   await tts.setMetadata(voiceName, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
@@ -127,26 +120,26 @@ function resolveVoiceKey(langCode: string, isMale = false): string {
   if (lc.startsWith("es")) return isMale ? "es_male" : "es";
   if (lc.startsWith("it")) return isMale ? "it_male" : "it";
   if (lc.startsWith("ko")) return isMale ? "ko_male" : "ko";
-  return "tr";
+  return "en";
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const text = body.text || "";
-    const langCode = (body.languageCode || body.langCode || "tr-TR").toLowerCase();
-    const isMale = !!body.isMale || (body.anchorName && ["Marcus Sterling", "Umay Gün", "Demir", "Klaus Weber", "Laurent Mercier", "Виктор Петров", "زيد المنصور"].some(n => body.anchorName.includes(n)));
-    const customRate = body.rate || (body.speed ? `+${Math.round((body.speed - 1) * 100)}%` : undefined);
+    const langCode = (body.languageCode || body.langCode || "en-US").toLowerCase();
+    const isMale = !!body.isMale;
+    const customRate = body.rate;
 
     if (!text.trim()) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
     const voiceKey = resolveVoiceKey(langCode, isMale);
-    const voiceConfig = NEURAL_VOICE_MAP[voiceKey] || NEURAL_VOICE_MAP["tr"];
+    const voiceConfig = NEURAL_VOICE_MAP[voiceKey] || NEURAL_VOICE_MAP["en"];
     const activeRate = customRate || voiceConfig.defaultRate;
 
-    // 1. ElevenLabs priority if user has added ELEVENLABS_API_KEY to .env.local
+    // Tier 1: ElevenLabs if API key is configured
     const elevenKey = process.env.ELEVENLABS_API_KEY || "";
     if (elevenKey) {
       const elevenAudio = await generateElevenLabsTTS(text, elevenKey, body.elevenVoiceId);
@@ -154,7 +147,7 @@ export async function POST(req: NextRequest) {
         const base64 = elevenAudio.toString("base64");
         return NextResponse.json({
           success: true,
-          provider: "elevenlabs_studio_human",
+          provider: "elevenlabs",
           audioBase64: base64,
           audioUrl: `data:audio/mp3;base64,${base64}`,
           format: "mp3",
@@ -164,7 +157,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Microsoft Edge Studio Neural HD (EmelNeural / AriaNeural)
+    // Tier 2: Microsoft Edge Studio Neural HD
     try {
       const neuralBuffer = await synthesizeEdgeNeuralHD(text, voiceConfig.voice, activeRate);
       const base64 = neuralBuffer.toString("base64");
@@ -180,7 +173,7 @@ export async function POST(req: NextRequest) {
       });
     } catch (edgeErr) {
       console.error("[Edge TTS Error]:", edgeErr);
-      return NextResponse.json({ error: "Neural synthesis error", details: (edgeErr as Error).message }, { status: 502 });
+      return NextResponse.json({ error: "Neural synthesis unavailable", details: (edgeErr as Error).message }, { status: 502 });
     }
   } catch (err: unknown) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
@@ -189,17 +182,16 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const text = searchParams.get("text") || "Nur Finans canli yayinimiz basliyor.";
-  const lang = searchParams.get("lang") || "tr";
+  const text = searchParams.get("text") || "Welcome to NUR Finance Live. Markets are now open.";
+  const lang = searchParams.get("lang") || "en";
   const male = searchParams.get("male") === "true";
   const rateParam = searchParams.get("rate");
 
   const voiceKey = resolveVoiceKey(lang, male);
-  const voiceConfig = NEURAL_VOICE_MAP[voiceKey] || NEURAL_VOICE_MAP["tr"];
+  const voiceConfig = NEURAL_VOICE_MAP[voiceKey] || NEURAL_VOICE_MAP["en"];
   const activeRate = rateParam || voiceConfig.defaultRate;
 
   try {
-    // 1. ElevenLabs if present
     const elevenKey = process.env.ELEVENLABS_API_KEY || "";
     if (elevenKey) {
       const elevenAudio = await generateElevenLabsTTS(text, elevenKey);
@@ -214,7 +206,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 2. Microsoft Edge Studio Neural HD
     const audioBuf = await synthesizeEdgeNeuralHD(text, voiceConfig.voice, activeRate);
     return new NextResponse(new Uint8Array(audioBuf), {
       headers: {
@@ -227,4 +218,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
-

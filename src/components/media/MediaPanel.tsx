@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import EagleCrest from "@/components/ui/EagleCrest";
 import { BullIcon, BearIcon } from "@/components/ui/MarketIcons";
@@ -8,6 +8,7 @@ import NFWatermark from "@/components/ui/NFWatermark";
 import GlobeWidget from "@/components/ui/GlobeWidget";
 import { useIDEStore } from "@/stores/useIDEStore";
 import { cyberSound } from "@/lib/audio/sound-synth";
+import { hdVoiceEngine, BROADCAST_LANGUAGES } from "@/lib/broadcast/multilingual-broadcast";
 
 type MediaTab = "news-wire" | "social" | "video" | "live-broadcast" | "research";
 
@@ -126,11 +127,33 @@ function SentimentIcon({ sentiment }: { sentiment: "BULLISH" | "BEARISH" | "NEUT
   return <span className="text-[10px] text-slate-400">—</span>;
 }
 
+function VoiceButton({ text, lang = "en-US" }: { text: string; lang?: string }) {
+  const [speaking, setSpeaking] = useState(false);
+  const handleClick = useCallback(() => {
+    if (speaking) {
+      hdVoiceEngine.stop();
+      setSpeaking(false);
+    } else {
+      hdVoiceEngine.speak(text, lang, () => setSpeaking(true), () => setSpeaking(false), () => setSpeaking(false));
+    }
+  }, [text, lang, speaking]);
+  return (
+    <button onClick={handleClick} className="text-[9px] font-mono px-1.5 py-0.5 rounded transition-all shrink-0"
+      style={{ background: speaking ? "rgba(239,68,68,0.15)" : "rgba(0,212,170,0.08)", color: speaking ? "#ef4444" : "#00d4aa", border: `1px solid ${speaking ? "rgba(239,68,68,0.3)" : "rgba(0,212,170,0.2)"}` }}>
+      {speaking ? "■ STOP" : "🔊 LISTEN"}
+    </button>
+  );
+}
+
 export default function MediaPanel() {
   const { openFloatingWindow } = useIDEStore();
   const [activeTab, setActiveTab] = useState<MediaTab>("news-wire");
   const [newsFilter, setNewsFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const [broadcastLang, setBroadcastLang] = useState(BROADCAST_LANGUAGES[0]);
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const [broadcastSegment, setBroadcastSegment] = useState<string>("opening");
+  const broadcastRef = useRef<boolean>(false);
 
   const categories = useMemo(() => {
     const cats = new Set(DEMO_NEWS.map((n) => n.category));
@@ -243,6 +266,7 @@ export default function MediaPanel() {
                         <span className="text-[9px] font-mono" style={{ color: "#4a6080" }}>{item.category}</span>
                         <ImpactBadge impact={item.impact} />
                         <SentimentIcon sentiment={item.sentiment} />
+                        <VoiceButton text={`${item.headline}. ${item.summary}`} />
                         <span className="text-[9px] font-mono ml-auto shrink-0" style={{ color: "#4a6080" }}>{item.time}</span>
                       </div>
                       <h3 className="text-xs font-bold text-white leading-snug mb-1">{item.headline}</h3>
@@ -335,20 +359,105 @@ export default function MediaPanel() {
           {/* LIVE BROADCAST */}
           {activeTab === "live-broadcast" && (
             <div className="space-y-4 max-w-[1200px]">
-              <div className="text-[10px] font-mono font-bold uppercase tracking-wider mb-2" style={{ color: "#4a6080" }}>NUR Finance Live Channels</div>
+              {/* Language selector */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: "#4a6080" }}>Broadcast Language:</span>
+                {BROADCAST_LANGUAGES.map((lang) => (
+                  <button key={lang.id} onClick={() => { setBroadcastLang(lang); hdVoiceEngine.stop(); setIsBroadcasting(false); }}
+                    className="px-2.5 py-1 rounded text-[11px] font-medium transition-all"
+                    style={{ background: broadcastLang.id === lang.id ? "rgba(0,212,170,0.12)" : "rgba(255,255,255,0.03)", border: `1px solid ${broadcastLang.id === lang.id ? "rgba(0,212,170,0.4)" : "rgba(255,255,255,0.06)"}`, color: broadcastLang.id === lang.id ? "#00d4aa" : "#6b7a8d" }}>
+                    {lang.flag} {lang.name}
+                  </button>
+                ))}
+              </div>
+
               {/* Main broadcast window */}
-              <div className="aspect-video rounded-xl border overflow-hidden relative" style={{ background: "#000", borderColor: "rgba(204,0,0,0.3)" }}>
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <div className="rounded-xl border overflow-hidden relative" style={{ background: "#000", borderColor: isBroadcasting ? "rgba(204,0,0,0.5)" : "rgba(204,0,0,0.2)" }}>
+                <div className="aspect-video flex flex-col items-center justify-center gap-3 relative">
                   <EagleCrest size={48} />
-                  <span className="text-sm font-bold" style={{ color: "#cc0000" }}>NUR FINANCE TV</span>
-                  <span className="text-xs font-mono" style={{ color: "#6b7a8d" }}>Select a channel to begin streaming</span>
+                  <span className="text-sm font-bold" style={{ color: "#cc0000" }}>NUR FINANCE TV — {broadcastLang.city.toUpperCase()} DESK</span>
+                  <span className="text-xs font-mono" style={{ color: "#6b7a8d" }}>
+                    {isBroadcasting ? `Broadcasting: ${broadcastSegment.toUpperCase()} segment` : "Press BROADCAST to start neural voice narration"}
+                  </span>
+
+                  {/* Broadcast controls */}
+                  <div className="flex items-center gap-3 mt-2">
+                    <button
+                      onClick={() => {
+                        if (isBroadcasting) {
+                          hdVoiceEngine.stop();
+                          setIsBroadcasting(false);
+                          broadcastRef.current = false;
+                        } else {
+                          setIsBroadcasting(true);
+                          broadcastRef.current = true;
+                          const segments = ["opening", "macro", "quant", "breaking", "closing"];
+                          let idx = 0;
+                          const playNext = () => {
+                            if (!broadcastRef.current || idx >= segments.length) {
+                              setIsBroadcasting(false);
+                              broadcastRef.current = false;
+                              return;
+                            }
+                            const seg = segments[idx];
+                            setBroadcastSegment(seg);
+                            const script = broadcastLang.scripts[seg] || "";
+                            hdVoiceEngine.speak(script, broadcastLang.langCode, undefined, () => { idx++; setTimeout(playNext, 800); }, () => { idx++; setTimeout(playNext, 800); });
+                          };
+                          playNext();
+                        }
+                      }}
+                      className="px-5 py-2.5 rounded-lg text-sm font-bold transition-all"
+                      style={{
+                        background: isBroadcasting ? "rgba(239,68,68,0.9)" : "rgba(204,0,0,0.9)",
+                        color: "white",
+                        boxShadow: isBroadcasting ? "0 0 20px rgba(239,68,68,0.3)" : "0 0 20px rgba(204,0,0,0.3)",
+                      }}>
+                      {isBroadcasting ? "■ STOP BROADCAST" : "● START BROADCAST"}
+                    </button>
+                  </div>
+
+                  {/* Live indicator */}
+                  {isBroadcasting && (
+                    <div className="absolute top-3 left-3 flex items-center gap-2">
+                      <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-red-600 text-white animate-pulse">● LIVE</span>
+                      <span className="text-[9px] font-mono px-2 py-0.5 rounded" style={{ background: "rgba(0,212,170,0.15)", color: "#00d4aa" }}>
+                        {broadcastLang.flag} {broadcastLang.name} Neural HD Voice
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="absolute top-3 left-3 flex items-center gap-2">
-                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-red-600 text-white animate-pulse">● LIVE</span>
+
+                {/* Scrolling headlines ticker */}
+                <div className="px-4 py-2 border-t flex items-center gap-4 overflow-hidden" style={{ borderColor: "rgba(204,0,0,0.2)", background: "rgba(204,0,0,0.05)" }}>
+                  <span className="text-[9px] font-mono font-bold shrink-0" style={{ color: "#cc0000" }}>HEADLINES:</span>
+                  <div className="flex items-center gap-6 text-[10px] font-mono" style={{ color: "#8899a6" }}>
+                    {broadcastLang.headlines.map((h, i) => (
+                      <span key={i} className="shrink-0">{h}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
 
+              {/* Segment quick-play buttons */}
+              <div className="text-[10px] font-mono font-bold uppercase tracking-wider mb-1" style={{ color: "#4a6080" }}>Quick Play Segments</div>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                {Object.entries(broadcastLang.scripts).map(([key, script]) => (
+                  <button key={key}
+                    onClick={() => {
+                      setBroadcastSegment(key);
+                      hdVoiceEngine.speak(script, broadcastLang.langCode, () => setIsBroadcasting(true), () => setIsBroadcasting(false));
+                    }}
+                    className="p-2.5 rounded-lg border text-left transition-all hover:border-[rgba(0,212,170,0.3)]"
+                    style={{ background: "rgba(255,255,255,0.02)", borderColor: "rgba(255,255,255,0.06)" }}>
+                    <div className="text-[10px] font-mono font-bold text-white capitalize mb-0.5">{key.replace("_", " ")}</div>
+                    <div className="text-[9px] font-mono line-clamp-2" style={{ color: "#6b7a8d" }}>{script.substring(0, 80)}...</div>
+                  </button>
+                ))}
+              </div>
+
               {/* Channel selector */}
+              <div className="text-[10px] font-mono font-bold uppercase tracking-wider mt-4 mb-1" style={{ color: "#4a6080" }}>NUR Finance Live Channels</div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {[
                   { name: "Global Markets", lang: "EN", flag: "🌍", status: "LIVE" },
@@ -360,11 +469,9 @@ export default function MediaPanel() {
                   { name: "FX & Rates", lang: "EN", flag: "💱", status: "LIVE" },
                   { name: "Tech & Innovation", lang: "EN", flag: "🔬", status: "NEXT: 14:00 UTC" },
                 ].map((ch) => (
-                  <button
-                    key={ch.name}
+                  <button key={ch.name}
                     className="p-2.5 rounded-lg border text-left transition-all hover:border-[rgba(0,212,170,0.3)]"
-                    style={{ background: "rgba(255,255,255,0.02)", borderColor: "rgba(255,255,255,0.06)" }}
-                  >
+                    style={{ background: "rgba(255,255,255,0.02)", borderColor: "rgba(255,255,255,0.06)" }}>
                     <div className="flex items-center gap-2 mb-1">
                       <span>{ch.flag}</span>
                       <span className="text-xs font-bold text-white">{ch.name}</span>
